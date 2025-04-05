@@ -1,4 +1,4 @@
-// worker.js - ANTIGUA Y BARBUDA
+// worker.js - ARABIA SAUDITA
 
 addEventListener('fetch', event => {
   event.respondWith(handleRequest(event.request));
@@ -6,22 +6,34 @@ addEventListener('fetch', event => {
 
 const markersData = [
   {
-    name: "Saint John's - Centro",
-    latlng: [17.1175, -61.8456],
-    url: "https://ag1.contraentrega.ag",
-    info: "Oficina principal en Redcliffe Street. Horario: 8am-5pm (UTC-4)"
+    name: "Riyadh - Centro",
+    latlng: [24.7136, 46.6753],
+    url: "https://sa1.contraentrega.sa",
+    info: "Oficina principal en King Fahd Road. Horario: 9am-6pm (UTC+3)"
   },
   {
-    name: "English Harbour - Marina",
-    latlng: [17.0167, -61.7667],
-    url: "https://ag2.contraentrega.ag",
-    info: "Punto turístico en Nelson's Dockyard. Abierto hasta las 6pm"
+    name: "Yeda - Corniche",
+    latlng: [21.5433, 39.1728],
+    url: "https://sa2.contraentrega.sa",
+    info: "Entrega en zona costera. Abierto hasta las 9pm"
   },
   {
-    name: "Barbuda - Codrington",
-    latlng: [17.6333, -61.8333],
-    url: "https://ag3.contraentrega.ag",
-    info: "Entrega semanal. Miércoles y viernes 10am-2pm"
+    name: "Dammam - Centro Comercial",
+    latlng: [26.4207, 50.0888],
+    url: "https://sa3.contraentrega.sa",
+    info: "Punto en Mall of Dhahran. Horario: 10am-10pm"
+  },
+  {
+    name: "Meca - Distrito Haram",
+    latlng: [21.3891, 39.8579],
+    url: "https://sa4.contraentrega.sa",
+    info: "Servicio especial para peregrinos. Horario limitado"
+  },
+  {
+    name: "Medina - Centro",
+    latlng: [24.5247, 39.5692],
+    url: "https://sa5.contraentrega.sa",
+    info: "Entrega express. Abierto hasta medianoche"
   }
 ];
 
@@ -52,7 +64,7 @@ function generateHTML() {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Puntos de Entrega en Antigua y Barbuda</title>
+  <title>Puntos de Entrega en Arabia Saudita</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
@@ -209,31 +221,31 @@ function generateHTML() {
     let allMarkers = [];
     let searchTimeout;
 
-    // Límites geográficos de Antigua y Barbuda
-    const antiguaBounds = L.latLngBounds(
-      L.latLng(16.9, -62.2), // SO
-      L.latLng(17.7, -61.7)  // NE
+    // Límites geográficos de Arabia Saudita
+    const saudiBounds = L.latLngBounds(
+      L.latLng(16.0, 34.0), // SO
+      L.latLng(32.0, 56.0)  // NE
     );
 
     // Inicializar mapa
     function initMap() {
       map = L.map('map', {
         zoomControl: false,
-        maxBounds: antiguaBounds,
+        maxBounds: saudiBounds,
         maxBoundsViscosity: 0.75
-      }).setView([17.1167, -61.85], 10); // Vista centrada en las islas
+      }).setView([24.0, 45.0], 5); // Vista centrada en Arabia Saudita
 
       // Forzar el mapa a permanecer dentro de los límites
       map.on('drag', function() {
-        if (!antiguaBounds.contains(map.getCenter())) {
-          map.panInsideBounds(antiguaBounds, { animate: true });
+        if (!saudiBounds.contains(map.getCenter())) {
+          map.panInsideBounds(saudiBounds, { animate: true });
         }
       });
 
       // Bloquear zoom fuera de los límites
       map.on('zoomend', function() {
-        if (map.getZoom() < 9) {
-          map.setZoom(9);
+        if (map.getZoom() < 4) {
+          map.setZoom(4);
         }
       });
 
@@ -268,7 +280,7 @@ function generateHTML() {
         }
       });
       document.getElementById('zoom-out').addEventListener('click', () => {
-        if (map.getZoom() > 9) {
+        if (map.getZoom() > 4) {
           map.zoomOut();
         }
       });
@@ -281,7 +293,7 @@ function generateHTML() {
         const markers = await response.json();
         markers.forEach(markerData => {
           // Verificar que las coordenadas estén dentro de los límites
-          if (antiguaBounds.contains(markerData.latlng)) {
+          if (saudiBounds.contains(markerData.latlng)) {
             const marker = L.marker(markerData.latlng)
               .bindPopup(\`
                 <div style="max-width:250px">
@@ -353,7 +365,7 @@ function generateHTML() {
             <p>\${marker.data.info.substring(0, 60)}\${marker.data.info.length > 60 ? '...' : ''}</p>
           \`;
           resultItem.addEventListener('click', () => {
-            map.setView(marker.getLatLng(), 14);
+            map.setView(marker.getLatLng(), 12);
             marker.openPopup();
             searchResults.style.display = 'none';
           });
@@ -370,7 +382,7 @@ function generateHTML() {
         markerCluster.addLayers(results);
         // Ajustar vista para mostrar resultados
         if (results.length === 1) {
-          map.setView(results[0].getLatLng(), 14);
+          map.setView(results[0].getLatLng(), 12);
         } else {
           const group = new L.featureGroup(results);
           map.fitBounds(group.getBounds().pad(0.1));
@@ -382,7 +394,7 @@ function generateHTML() {
     function resetMarkers() {
       markerCluster.clearLayers();
       markerCluster.addLayers(allMarkers);
-      map.setView([17.1167, -61.85], 10);
+      map.setView([24.0, 45.0], 5);
     }
 
     // Configurar controles
