@@ -1,4 +1,4 @@
-// worker.js - AUSTRALIA
+// worker.js - AUSTRIA
 
 addEventListener('fetch', event => {
   event.respondWith(handleRequest(event.request));
@@ -6,28 +6,28 @@ addEventListener('fetch', event => {
 
 const markersData = [
   {
-    name: "Sydney - CBD",
-    latlng: [-33.8688, 151.2093],
-    url: "https://au1.contraentrega.com.au",
-    info: "Main office in Central Business District. Hours: 8am-6pm (AEST)"
+    name: "Wien - Zentrum",
+    latlng: [48.2082, 16.3738],
+    url: "https://at1.contraentrega.at",
+    info: "Hauptbüro am Stephansplatz. Öffnungszeiten: 8:00-18:00 (MEZ)"
   },
   {
-    name: "Melbourne - Downtown",
-    latlng: [-37.8136, 144.9631],
-    url: "https://au2.contraentrega.com.au",
-    info: "Flinders Street location. Open until 7pm weekdays"
+    name: "Graz - Hauptplatz",
+    latlng: [47.0707, 15.4395],
+    url: "https://at2.contraentrega.at",
+    info: "Zentrale Lage in der Altstadt. Samstags bis 15:00"
   },
   {
-    name: "Brisbane - South Bank",
-    latlng: [-27.4698, 153.0251],
-    url: "https://au3.contraentrega.com.au",
-    info: "Cultural precinct location. Weekends: 9am-5pm"
+    name: "Salzburg - Altstadt",
+    latlng: [47.8006, 13.0452],
+    url: "https://at3.contraentrega.at",
+    info: "Nah am Mozartplatz. Touristen-Service bis 19:00"
   },
   {
-    name: "Perth - West Coast",
-    latlng: [-31.9505, 115.8605],
-    url: "https://au4.contraentrega.com.au",
-    info: "Serving Western Australia. Extended hours in summer"
+    name: "Innsbruck - Maria-Theresien-Straße",
+    latlng: [47.2654, 11.3928],
+    url: "https://at4.contraentrega.at",
+    info: "In den Alpen. Wintersaison: 7:30-20:00"
   }
 ];
 
@@ -49,16 +49,16 @@ async function handleRequest(request) {
       }
     });
   }
-  return new Response('Not Found', { status: 404 });
+  return new Response('Nicht gefunden', { status: 404 });
 }
 
 function generateHTML() {
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Delivery Points in Australia</title>
+  <title>Lieferstellen in Österreich</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
@@ -195,78 +195,78 @@ function generateHTML() {
 <body>
   <div id="map"></div>
   <div id="search-box">
-    <input type="text" id="search-input" placeholder="Search points... (name, location, hours)">
+    <input type="text" id="search-input" placeholder="Standorte suchen... (Name, Adresse, Öffnungszeiten)">
     <div id="search-results"></div>
   </div>
   <div id="controls">
-    <button id="redirect-btn" class="control-btn" title="Go to main site">📍</button>
+    <button id="redirect-btn" class="control-btn" title="Zur Hauptseite">📍</button>
   </div>
   <div class="zoom-controls">
-    <button id="zoom-in" class="zoom-btn" title="Zoom in">+</button>
-    <button id="zoom-out" class="zoom-btn" title="Zoom out">−</button>
+    <button id="zoom-in" class="zoom-btn" title="Vergrößern">+</button>
+    <button id="zoom-out" class="zoom-btn" title="Verkleinern">−</button>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
   <script>
-    // Global variables
+    // Globale Variablen
     let map;
     let markerCluster;
     let allMarkers = [];
     let searchTimeout;
 
-    // Australia geographical bounds
-    const australiaBounds = L.latLngBounds(
-      L.latLng(-44, 112), // SW
-      L.latLng(-10, 154)  // NE
+    // Geografische Grenzen Österreichs
+    const austriaBounds = L.latLngBounds(
+      L.latLng(46.3723, 9.5307),  // SW
+      L.latLng(49.0205, 17.1607)   // NE
     );
 
-    // Initialize map
+    // Karte initialisieren
     function initMap() {
       map = L.map('map', {
         zoomControl: false,
-        maxBounds: australiaBounds,
+        maxBounds: austriaBounds,
         maxBoundsViscosity: 0.75
-      }).setView([-25.2744, 133.7751], 4); // Centered on Australia
+      }).setView([47.5162, 14.5501], 7);  // Zentriert auf Österreich
 
-      // Keep map within bounds
+      // Karte innerhalb der Grenzen halten
       map.on('drag', function() {
-        if (!australiaBounds.contains(map.getCenter())) {
-          map.panInsideBounds(australiaBounds, { animate: true });
+        if (!austriaBounds.contains(map.getCenter())) {
+          map.panInsideBounds(austriaBounds, { animate: true });
         }
       });
 
-      // Limit zoom
+      // Zoom begrenzen
       map.on('zoomend', function() {
-        if (map.getZoom() < 4) {
-          map.setZoom(4);
+        if (map.getZoom() < 7) {
+          map.setZoom(7);
         }
       });
 
-      // Base map layer
+      // Basiskarte
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
+        attribution: '© OpenStreetMap Mitwirkende',
         noWrap: true
       }).addTo(map);
 
-      // Initialize marker cluster
+      // Marker-Cluster initialisieren
       markerCluster = L.markerClusterGroup();
       map.addLayer(markerCluster);
 
-      // Load markers
+      // Marker laden
       loadMarkers();
 
-      // Setup search
+      // Suche einrichten
       setupSearch();
 
-      // Setup controls
+      // Steuerelemente einrichten
       setupControls();
 
-      // Setup custom zoom controls
+      // Zoom-Steuerelemente einrichten
       setupZoomControls();
     }
 
-    // Custom zoom controls
+    // Zoom-Steuerelemente
     function setupZoomControls() {
       document.getElementById('zoom-in').addEventListener('click', () => {
         if (map.getZoom() < 18) {
@@ -274,30 +274,30 @@ function generateHTML() {
         }
       });
       document.getElementById('zoom-out').addEventListener('click', () => {
-        if (map.getZoom() > 4) {
+        if (map.getZoom() > 7) {
           map.zoomOut();
         }
       });
     }
 
-    // Load markers
+    // Marker laden
     async function loadMarkers() {
       try {
         const response = await fetch('/api/markers');
         const markers = await response.json();
         markers.forEach(markerData => {
-          // Verify coordinates are within bounds
-          if (australiaBounds.contains(markerData.latlng)) {
+          // Koordinaten innerhalb der Grenzen überprüfen
+          if (austriaBounds.contains(markerData.latlng)) {
             const marker = L.marker(markerData.latlng)
               .bindPopup(\`
                 <div style="max-width:250px">
                   <h3 style="margin:0 0 5px 0">\${markerData.name}</h3>
                   <p style="margin:0 0 10px 0">\${markerData.info}</p>
-                  <a href="\${markerData.url}" target="_blank" style="color:#0066cc">View details →</a>
+                  <a href="\${markerData.url}" target="_blank" style="color:#0066cc">Details anzeigen →</a>
                 </div>
               \`);
 
-            // Store data for search
+            // Daten für Suche speichern
             marker.searchData = \`\${markerData.name} \${markerData.info} \${markerData.url}\`.toLowerCase();
             marker.data = markerData;
             allMarkers.push(marker);
@@ -305,11 +305,11 @@ function generateHTML() {
           }
         });
       } catch (error) {
-        console.error('Error loading markers:', error);
+        console.error('Fehler beim Laden der Marker:', error);
       }
     }
 
-    // Setup search
+    // Suche einrichten
     function setupSearch() {
       const searchInput = document.getElementById('search-input');
       const searchResults = document.getElementById('search-results');
@@ -332,7 +332,7 @@ function generateHTML() {
         }, 300);
       });
 
-      // Close results when clicking outside
+      // Ergebnisse schließen bei Klick außerhalb
       document.addEventListener('click', function(e) {
         if (!e.target.closest('#search-box') && 
             !e.target.closest('.zoom-controls') && 
@@ -343,13 +343,13 @@ function generateHTML() {
       });
     }
 
-    // Display search results
+    // Suchergebnisse anzeigen
     function displaySearchResults(results) {
       const searchResults = document.getElementById('search-results');
       searchResults.innerHTML = '';
 
       if (results.length === 0) {
-        searchResults.innerHTML = '<div class="search-result">No results found</div>';
+        searchResults.innerHTML = '<div class="search-result">Keine Ergebnisse gefunden</div>';
       } else {
         results.forEach(marker => {
           const resultItem = document.createElement('div');
@@ -369,12 +369,12 @@ function generateHTML() {
       searchResults.style.display = 'block';
     }
 
-    // Update visible markers
+    // Sichtbare Marker aktualisieren
     function updateVisibleMarkers(results) {
       markerCluster.clearLayers();
       if (results.length > 0) {
         markerCluster.addLayers(results);
-        // Adjust view to show results
+        // Ansicht anpassen für Ergebnisse
         if (results.length === 1) {
           map.setView(results[0].getLatLng(), 14);
         } else {
@@ -384,27 +384,27 @@ function generateHTML() {
       }
     }
 
-    // Reset all markers
+    // Alle Marker zurücksetzen
     function resetMarkers() {
       markerCluster.clearLayers();
       markerCluster.addLayers(allMarkers);
-      map.setView([-25.2744, 133.7751], 4);
+      map.setView([47.5162, 14.5501], 7);
     }
 
-    // Setup controls
+    // Steuerelemente einrichten
     function setupControls() {
-      // Redirect button
+      // Weiterleitungs-Button
       document.getElementById('redirect-btn').addEventListener('click', function() {
         window.open('https://fz.contraentregaco.com', '_blank');
       });
     }
 
-    // Resize map on window resize
+    // Karte bei Fensteränderung anpassen
     window.addEventListener('resize', () => {
       map.invalidateSize();
     });
 
-    // Initialize app
+    // App initialisieren
     document.addEventListener('DOMContentLoaded', initMap);
   </script>
 </body>
