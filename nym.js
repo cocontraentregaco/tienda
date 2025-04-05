@@ -7,7 +7,7 @@ const API_KEY = 'TU_API_KEY'
 const SHEET_NAME = 'Productos'
 const SHEETS_API = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORMSPREE_ID'
-const MAPS_LOCATION = 'https://maps.google.com/?q=3.561702,-76.452599'
+const MAPS_LOCATION = 'https://maps.google.com/?q=3.4842,-76.5445'
 const MAPS_IMAGE = 'https://maps.googleapis.com/maps/api/staticmap?center=3.4842,-76.5445&zoom=15&size=600x300&maptype=roadmap&markers=color:red%7C3.4842,-76.5445'
 
 async function fetchProductsFromSheets() {
@@ -34,7 +34,7 @@ async function fetchProductsFromSheets() {
     return [
       {
         id: 1,
-        sku: "fz1-1",
+        sku: "fz2-1",
         name: "Producto Ejemplo 1",
         price: 15000,
         inventory: 50,
@@ -42,7 +42,7 @@ async function fetchProductsFromSheets() {
       },
       {
         id: 2,
-        sku: "fz1-2",
+        sku: "fz2-2",
         name: "Producto Ejemplo 2",
         price: 25000,
         inventory: 30,
@@ -50,7 +50,7 @@ async function fetchProductsFromSheets() {
       }, 
       {
         id: 3,
-        sku: "fz1-3",
+        sku: "fz2-3",
         name: "Producto Ejemplo 2",
         price: 25000,
         inventory: 30,
@@ -349,7 +349,7 @@ function generateRechargeHTML() {
   <div class="container">
     <div class="header">
       <a href="/" class="back-btn">←</a>
-      <div class="logo">Contraentrega CO</div>
+      <div class="logo">YoxBox (FZ2)</div>
     </div>
 
     <div class="alert alert-warning">
@@ -1038,7 +1038,7 @@ async function generateHTML() {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contraentrega CO</title>
+  <title>YoxBox (FZ2)</title>
   <style>
     body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #f8f9fa; }
     .container { background: white; width: 90%; max-width: 1200px; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); margin: 20px auto; }
@@ -1102,15 +1102,15 @@ async function generateHTML() {
 <body>
   <div class="container">
     <header>
-      <h1>18TRAP & CO (FZ1)</h1>
+      <h1>YoxBox (FZ2)</h1>
       <div class="location-info">
         <a href="${MAPS_LOCATION}" target="_blank" class="clickable">📍 Zona Franca Del Pacifico, Palmira, Valle Del Cauca, Colombia</a>
         <span class="clickable" onclick="openImageModal('${MAPS_IMAGE}')">📷 (ver imagen)</span>
       </div>
       <div class="datetime" id="currentDateTime"></div>
       <div class="contact-buttons">
-        <a href="https://chat.whatsapp.com/FX9mlbTeEbZ95z906o75Ik" style="background: #25D366;">Grupo WhatsApp</a>
-        <a href="https://t.me/+hYXk_hZziSkzNGVh" style="background: #34B7F1;">Grupo Telegram</a>
+        <a href="https://chat.whatsapp.com/IM1z0W45URAHmgbA3gZtBJ" style="background: #25D366;">Grupo WhatsApp</a>
+        <a href="https://t.me/+LGOirBtV34szOWFh" style="background: #34B7F1;">Grupo Telegram</a>
       </div>
     </header>
 
