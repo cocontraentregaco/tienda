@@ -246,7 +246,7 @@ function generateHTML() {
     <div id="search-results"></div>
   </div>
   <div id="controls">
-    <button id="redirect-btn" class="control-btn" title="Ir a contraentrega">🚚</button>
+    <button id="redirect-btn" class="control-btn" title="Ir a contraentrega">💬</button>
   </div>
   <div class="zoom-controls">
     <button id="zoom-in" class="zoom-btn" title="Acercar">+</button>
@@ -442,7 +442,7 @@ function generateHTML() {
     function setupControls() {
       // Botón de redirección
       document.getElementById('redirect-btn').addEventListener('click', function() {
-        window.open('https://fz.contraentregaco.com', '_blank');
+        window.open('https://www.facebook.com/groups/546919484352344/?ref=share&mibextid=NSMWBT', '_blank');
       });
     }
 
