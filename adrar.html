@@ -1,106 +1,500 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa Interactivo de Colombia</title>
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <style>
-        /* Reset básico */
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: Arial, sans-serif;
-        }
-        /* Contenedor del mapa */
-        #map {
-            width: 100%;
-            height: 100vh; /* Ocupa toda la altura de la pantalla */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contraentrega CO</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #f8f9fa; }
+    .container { background: white; width: 90%; max-width: 1200px; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); margin: 20px auto; }
+    .table-container { overflow-x: auto; margin: 20px 0; }
+    .product-table { width: 100%; border-collapse: collapse; }
+    .product-table th, .product-table td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
+    .product-table th { background: #2c3e50; color: white; }
+    .quantity-controls { display: flex; align-items: center; gap: 8px; }
+    .checkout-section { background: #f8f9fa; padding: 20px; margin-top: 20px; border-radius: 8px; }
+    .search-container { margin: 15px 0; }
+    #searchInput { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 25px; }
+    .delivery-form input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; }
+    .payment-instructions { background: #e3f2fd; padding: 15px; margin: 15px 0; border-radius: 8px; }
+    .contact-buttons { display: flex; gap: 10px; margin-top: 10px; }
+    .contact-buttons a { text-decoration: none; color: white; padding: 10px 20px; border-radius: 5px; flex: 1; text-align: center; }
+    .success-message { background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-top: 15px; display: none; }
+    .cop-details { background: #d4edda; padding: 20px; margin: 15px 0; border-radius: 8px; border: 1px solid #155724; display: none; }
+    .cop-details strong { color: #155724; }
+    footer { text-align: center; margin-top: 30px; padding: 20px; color: #666; }
+    .datetime { text-align: center; margin: 10px 0; font-size: 0.9em; color: #666; }
+    .clickable { color: #007bff; cursor: pointer; text-decoration: underline; }
+    .clickable:hover { color: #0056b3; }
+    .loading-spinner {
+      display: none;
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid #3498db;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 10px auto;
+    }
+    .error-message {
+      display: none;
+      background: #f8d7da;
+      color: #721c24;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 15px;
+    }
+    .location-info { 
+      text-align: center; 
+      margin: 10px 0; 
+      font-size: 1.1em;
+    }
+    .recharge-button { 
+      background: #007bff; 
+      color: white; 
+      padding: 8px 15px; 
+      border-radius: 5px; 
+      text-decoration: none; 
+      display: inline-block; 
+      margin: 5px; 
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-    <!-- Contenedor del mapa -->
-    <div id="map"></div>
+  <div class="container">
+    <header>
+      <h1>18TRAP & CO (FZ1)</h1>
+      <div class="location-info">
+        <a href="https://maps.google.com/?q=3.561702,-76.452599" target="_blank" class="clickable">📍 Zona Franca Del Pacifico, Palmira, Valle Del Cauca, Colombia</a>
+        <span class="clickable" onclick="openImageModal('https://maps.googleapis.com/maps/api/staticmap?center=3.4842,-76.5445&zoom=15&size=600x300&maptype=roadmap&markers=color:red%7C3.4842,-76.5445')">📷 (ver imagen)</span>
+      </div>
+      <div class="datetime" id="currentDateTime"></div>
+      <div class="contact-buttons">
+        <a href="https://chat.whatsapp.com/FX9mlbTeEbZ95z906o75Ik" style="background: #25D366;">Grupo WhatsApp</a>
+        <a href="https://t.me/+hYXk_hZziSkzNGVh" style="background: #34B7F1;">Grupo Telegram</a>
+      </div>
+    </header>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script>
-        // Coordenadas de Colombia
-        const colombiaCenter = [4.5709, -74.2973]; // Centro de Colombia (Bogotá)
-        const colombiaBounds = L.latLngBounds(
-            L.latLng(-4.23, -81.85), // Esquina inferior izquierda (límite sur y oeste)
-            L.latLng(13.38, -66.85)  // Esquina superior derecha (límite norte y este)
-        );
+    <div class="checkout-section">
+      <div id="orderSummary"></div>
+      <div class="delivery-options">
+        <label><input type="radio" name="delivery" value="pickup" checked onclick="toggleAddressField()"> Recoger en el punto</label>
+        <label><input type="radio" name="delivery" value="delivery" onclick="toggleAddressField()">Servicio a domicilio</label>
+      </div>
+      <form id="deliveryForm" class="delivery-form">
+        <input type="text" id="name" name="name" placeholder="Nombre completo" required>
+        <input type="tel" id="phone" name="phone" placeholder="Teléfono" required>
+        <input type="email" id="email" name="email" placeholder="Correo electrónico" required>
+        <div id="addressField" style="display: none;">
+          <input type="text" id="address" name="address" placeholder="Dirección completa" required>
+        </div>
+        <div style="margin-top: 15px; text-align: center;">
+          <button type="button" onclick="handlePaymentCOP()" style="background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Pagar con COP</button>
+          <button type="button" onclick="handlePaymentLightning()" style="background: #FFD700; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Pagar con Lightning</button>
+          <div id="loadingSpinner" class="loading-spinner"></div>
+        </div>
+      </form>
+      <div id="successMessage" class="success-message">¡Pedido realizado con éxito! Nos comunicaremos contigo pronto.</div>
+      <div id="errorMessage" class="error-message"></div>
+      <div id="paymentInstructions" class="payment-instructions" style="display: none;">
+        <h3>Instrucciones para pago Lightning</h3>
+        <p>✅ Total a pagar: <strong id="totalCOP"></strong> COP</p>
+        <p>🔗 Dirección Lightning: <strong>contraentregaco@coinos.io</strong></p>
+        <p>📝 Referencia de pago: <strong id="orderRef"></strong></p>
+        <div id="qrCode" style="margin: 15px 0;"></div>
+        <p>Escanea el código QR o copia la dirección manualmente</p>
+      </div>
+      <div id="copPaymentDetails" class="cop-details">
+        <h3>Detalles de Pago con COP</h3>
+        <p>✅ Total a pagar: <strong id="copTotal"></strong> COP</p>
+        <p>📝 Número de pedido: <strong id="copOrderRef"></strong></p>
+        <p>💰 Por favor prepara el monto exacto en efectivo o nequi</p>
+        <p>📦 Tu pedido será procesado inmediatamente</p>
+      </div>
+    </div>
 
-        // Inicializar el mapa centrado en Colombia
-        const map = L.map('map').setView(colombiaCenter, 6); // Zoom inicial 6
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Buscar productos...">
+    </div>
 
-        // Añadir capa de OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+    <div class="table-container">
+      <table class="product-table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Inventario</th>
+          </tr>
+        </thead>
+        <tbody id="productsBody">
+          <tr>
+            <td><span class="clickable" onclick="showDescriptionModal(1, 'fz1-1')">fz1-1</span></td>
+            <td><span class="clickable" onclick="openImageModal('https://via.placeholder.com/300')">Producto Ejemplo 1</span></td>
+            <td>$15,000</td>
+            <td>
+              <div class="quantity-controls">
+                <button onclick="adjustQuantity(1, -1)" style="padding: 5px 10px; cursor: pointer;">-</button>
+                <span>0</span>
+                <button onclick="adjustQuantity(1, 1)" style="padding: 5px 10px; cursor: pointer;">+</button>
+              </div>
+            </td>
+            <td>50</td>
+          </tr>
+          <tr>
+            <td><span class="clickable" onclick="showDescriptionModal(2, 'fz1-2')">fz1-2</span></td>
+            <td><span class="clickable" onclick="openImageModal('https://via.placeholder.com/300')">Producto Ejemplo 2</span></td>
+            <td>$25,000</td>
+            <td>
+              <div class="quantity-controls">
+                <button onclick="adjustQuantity(2, -1)" style="padding: 5px 10px; cursor: pointer;">-</button>
+                <span>0</span>
+                <button onclick="adjustQuantity(2, 1)" style="padding: 5px 10px; cursor: pointer;">+</button>
+              </div>
+            </td>
+            <td>30</td>
+          </tr>
+          <tr>
+            <td><span class="clickable" onclick="showDescriptionModal(3, 'fz1-3')">fz1-3</span></td>
+            <td><span class="clickable" onclick="openImageModal('https://via.placeholder.com/300')">Producto Ejemplo 3</span></td>
+            <td>$25,000</td>
+            <td>
+              <div class="quantity-controls">
+                <button onclick="adjustQuantity(3, -1)" style="padding: 5px 10px; cursor: pointer;">-</button>
+                <span>0</span>
+                <button onclick="adjustQuantity(3, 1)" style="padding: 5px 10px; cursor: pointer;">+</button>
+              </div>
+            </td>
+            <td>30</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-        // Establecer límites del mapa para Colombia
-        map.setMaxBounds(colombiaBounds); // Limita el desplazamiento a Colombia
-        map.on('drag', () => {
-            if (!colombiaBounds.contains(map.getCenter())) {
-                map.panInsideBounds(colombiaBounds, { animate: true });
-            }
-        });
+    <footer>
+      <div>
+        <a href="/acuerdo.html" style="color: #007bff;">Acuerdo de Términos</a>
+        <a href="/inventario.html" class="recharge-button">Ajustar Inventario</a>
+        <a href="/recargar.html" class="recharge-button">Recargar Saldo Lightning</a>
+      </div>
+      <p>Contraentrega © Todos los derechos reservados</p>
+      <div class="datetime" id="currentDateTimeFooter"></div>
+    </footer>
+  </div>
 
-        // Ejemplo de marcadores en Colombia
-        const markers = [
-            {
-                name: "Bogotá",
-                latlng: [4.7110, -74.0721], // Coordenadas de Bogotá
-                url: "https://www.example.com/bogota" // Enlace de redirección
-            },
-            {
-                name: "Medellín",
-                latlng: [6.2442, -75.5812], // Coordenadas de Medellín
-                url: "https://www.example.com/medellin" // Enlace de redirección
-            },
-            {
-                name: "Cali",
-                latlng: [3.4516, -76.5320], // Coordenadas de Cali
-                url: "https://www.example.com/cali" // Enlace de redirección
-            },
-            {
-                name: "San Andrés",
-                latlng: [12.5847, -81.7006], // Coordenadas de San Andrés
-                url: "https://www.example.com/sanandres" // Enlace de redirección
-            },
-            {
-                name: "Leticia",
-                latlng: [-4.2153, -69.9406], // Coordenadas de Leticia
-                url: "https://www.example.com/leticia" // Enlace de redirección
-            },
-            {
-                name: "Amazonas",
-                latlng: [-1.4429, -71.5724], // Coordenadas de Amazonas
-                url: "https://www.example.com/amazonas" // Enlace de redirección
-            }
-            // Añade más marcadores aquí
-        ];
+  <script>
+    let cart = {}
+    let currentOrderId = ''
+    const products = [
+      {
+        id: 1,
+        sku: "fz1-1",
+        name: "Producto Ejemplo 1",
+        price: 15000,
+        inventory: 50,
+        image: "https://via.placeholder.com/300"
+      },
+      {
+        id: 2,
+        sku: "fz1-2",
+        name: "Producto Ejemplo 2",
+        price: 25000,
+        inventory: 30,
+        image: "https://via.placeholder.com/300"
+      }, 
+      {
+        id: 3,
+        sku: "fz1-3",
+        name: "Producto Ejemplo 3",
+        price: 25000,
+        inventory: 30,
+        image: "https://via.placeholder.com/300"
+      }
+    ]
 
-        // Añadir marcadores al mapa
-        markers.forEach(marker => {
-            const { name, latlng, url } = marker;
-            L.marker(latlng)
-                .addTo(map)
-                .bindPopup(`<b>${name}</b><br><a href="${url}" target="_blank">Más información</a>`)
-                .on('click', () => {
-                    window.open(url, '_blank'); // Abrir enlace en una nueva pestaña
-                });
-        });
+    function renderProducts() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase()
+      const filteredProducts = products.filter(p => 
+        p.name.toLowerCase().includes(searchTerm) || 
+        p.sku.toLowerCase().includes(searchTerm)
+      )
+      
+      document.getElementById('productsBody').innerHTML = filteredProducts.map(product => `
+        <tr>
+          <td><span class="clickable" onclick="showDescriptionModal(${product.id}, '${product.sku}')">${product.sku}</span></td>
+          <td><span class="clickable" onclick="openImageModal('${product.image}')">${product.name}</span></td>
+          <td>$${product.price.toLocaleString()}</td>
+          <td>
+            <div class="quantity-controls">
+              <button onclick="adjustQuantity(${product.id}, -1)" style="padding: 5px 10px; cursor: pointer;">-</button>
+              <span>${cart[product.id] || 0}</span>
+              <button onclick="adjustQuantity(${product.id}, 1)" style="padding: 5px 10px; cursor: pointer;">+</button>
+            </div>
+          </td>
+          <td>${product.inventory}</td>
+        </tr>
+      `).join('')
+    }
 
-        // Asegurar que el mapa se redimensione correctamente
-        window.addEventListener('resize', () => {
-            map.invalidateSize();
-        });
-    </script>
+    function adjustQuantity(id, delta) {
+      const product = products.find(p => p.id === id)
+      if(!product) return
+      cart[id] = Math.max(0, Math.min((cart[id] || 0) + delta, product.inventory))
+      renderProducts()
+      updateSummary()
+    }
+
+    function updateSummary() {
+      let total = 0
+      let deliveryFee = document.querySelector('input[name="delivery"]:checked').value === 'delivery' ? 5000 : 0
+      let html = '<h3>Resumen del Pedido</h3><div class="order-items">'
+      
+      Object.entries(cart).forEach(([id, qty]) => {
+        if(qty > 0) {
+          const product = products.find(p => p.id == id)
+          if(product) {
+            const subtotal = product.price * qty
+            total += subtotal
+            html += `
+              <div style="margin: 10px 0; padding: 5px; border-bottom: 1px solid #eee;">
+                <b>${product.name}</b><br>
+                Cantidad: ${qty}<br>
+                Subtotal: $${subtotal.toLocaleString()} COP
+              </div>`
+          }
+        }
+      })
+      
+      if(deliveryFee > 0) {
+        html += `<div style="color: #dc3545;">Costo domicilio: $${deliveryFee.toLocaleString()} COP</div>`
+      }
+      
+      html += `</div><div class="total-summary" style="margin-top:15px;font-size:1.2em;">
+        <strong>Total: $${(total + deliveryFee).toLocaleString()} COP</strong>
+      </div>`
+      
+      document.getElementById('orderSummary').innerHTML = html
+    }
+
+    function calculateTotal() {
+      const deliveryFee = document.querySelector('input[name="delivery"]:checked').value === 'delivery' ? 5000 : 0
+      const subtotal = Object.entries(cart).reduce((total, [id, qty]) => {
+        const product = products.find(p => p.id == id)
+        return total + (product ? product.price * qty : 0)
+      }, 0)
+      return subtotal + deliveryFee
+    }
+
+    function toggleAddressField() {
+      const addressField = document.getElementById('addressField')
+      if(document.querySelector('input[name="delivery"]:checked').value === 'delivery') {
+        addressField.style.display = 'block'
+      } else {
+        addressField.style.display = 'none'
+      }
+      updateSummary()
+    }
+
+    async function handlePaymentCOP() {
+      await submitForm(false)
+    }
+
+    async function handlePaymentLightning() {
+      await submitForm(true)
+    }
+
+    async function submitForm(isLightning) {
+      const form = document.getElementById('deliveryForm')
+      if(!form.checkValidity()) {
+        form.reportValidity()
+        return
+      }
+
+      if(document.querySelector('input[name="delivery"]:checked').value === 'delivery' && 
+        !document.getElementById('address').value) {
+        alert('Por favor ingresa una dirección para el domicilio')
+        return
+      }
+
+      const spinner = document.getElementById('loadingSpinner')
+      const errorMsg = document.getElementById('errorMessage')
+      spinner.style.display = 'block'
+      errorMsg.style.display = 'none'
+      document.querySelectorAll('#deliveryForm button').forEach(btn => {
+        btn.disabled = true
+      })
+
+      currentOrderId = 'ORD-' + Date.now().toString().slice(-6)
+      const formData = new FormData(form)
+      const total = calculateTotal()
+
+      try {
+        // Primero enviar el formulario
+        const formspreeResponse = await fetch('https://formspree.io/f/YOUR_FORMSPREE_ID', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/json'
+          },
+          body: new URLSearchParams({
+            '_replyto': formData.get('email'),
+            '_subject': `Nuevo pedido ${currentOrderId}`,
+            'name': formData.get('name'),
+            'phone': formData.get('phone'),
+            'email': formData.get('email'),
+            'address': document.querySelector('input[name="delivery"]:checked').value === 'delivery' ? formData.get('address') : 'Recoger en punto',
+            'paymentMethod': isLightning ? 'Lightning' : 'COP',
+            'total': `$${total.toLocaleString()} COP`,
+            'deliveryFee': `$${(document.querySelector('input[name="delivery"]:checked').value === 'delivery' ? 5000 : 0).toLocaleString()} COP`,
+            'items': JSON.stringify(Object.entries(cart).map(([id, qty]) => {
+              const product = products.find(p => p.id == id)
+              return {
+                nombre: product.name,
+                cantidad: qty,
+                precio: product.price,
+                subtotal: product.price * qty
+              }
+            }),
+            'orderId': currentOrderId
+          })
+        })
+
+        if (!formspreeResponse.ok) {
+          throw new Error('Error al enviar el formulario')
+        }
+
+        // Luego mostrar las instrucciones de pago
+        if(isLightning) {
+          document.getElementById('totalCOP').textContent = total.toLocaleString()
+          document.getElementById('orderRef').textContent = currentOrderId
+          document.getElementById('paymentInstructions').style.display = 'block'
+          
+          // Generar QR code
+          document.getElementById('qrCode').innerHTML = `
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+              `lightning:contraentregaco@coinos.io?amount=${total}&message=Pedido ${currentOrderId}`
+            )}" alt="QR Code">
+          `
+        } else {
+          document.getElementById('copTotal').textContent = total.toLocaleString()
+          document.getElementById('copOrderRef').textContent = currentOrderId
+          document.getElementById('copPaymentDetails').style.display = 'block'
+        }
+        
+        document.getElementById('successMessage').style.display = 'block'
+        cart = {}
+        renderProducts()
+        updateSummary()
+        
+        setTimeout(() => {
+          document.getElementById('successMessage').style.display = 'none'
+        }, 5000)
+      } catch (error) {
+        console.error('Error enviando pedido:', error)
+        errorMsg.textContent = 'Error al enviar el pedido: ' + error.message
+        errorMsg.style.display = 'block'
+      } finally {
+        spinner.style.display = 'none'
+        document.querySelectorAll('#deliveryForm button').forEach(btn => {
+          btn.disabled = false
+        })
+      }
+    }
+
+    function openImageModal(imgSrc) {
+      const modal = document.createElement('div')
+      modal.style.position = 'fixed'
+      modal.style.zIndex = '1000'
+      modal.style.left = '0'
+      modal.style.top = '0'
+      modal.style.width = '100%'
+      modal.style.height = '100%'
+      modal.style.backgroundColor = 'rgba(0,0,0,0.9)'
+      modal.onclick = () => document.body.removeChild(modal)
+      
+      const img = document.createElement('img')
+      img.src = imgSrc
+      img.style.margin = '5% auto'
+      img.style.display = 'block'
+      img.style.width = '80%'
+      img.style.maxWidth = '700px'
+      
+      modal.appendChild(img)
+      document.body.appendChild(modal)
+    }
+
+    function showDescriptionModal(productId, productName) {
+      const modal = document.createElement('div')
+      modal.style.position = 'fixed'
+      modal.style.zIndex = '1000'
+      modal.style.left = '0'
+      modal.style.top = '0'
+      modal.style.width = '100%'
+      modal.style.height = '100%'
+      modal.style.backgroundColor = 'rgba(0,0,0,0.9)'
+      
+      const content = document.createElement('div')
+      content.style.backgroundColor = '#fefefe'
+      content.style.margin = '10% auto'
+      content.style.padding = '20px'
+      content.style.border = '1px solid #888'
+      content.style.width = '80%'
+      content.style.maxWidth = '600px'
+      content.style.borderRadius = '10px'
+      
+      const close = document.createElement('span')
+      close.innerHTML = '&times;'
+      close.style.color = '#aaa'
+      close.style.float = 'right'
+      close.style.fontSize = '28px'
+      close.style.fontWeight = 'bold'
+      close.style.cursor = 'pointer'
+      close.onclick = () => document.body.removeChild(modal)
+      
+      const title = document.createElement('h3')
+      title.id = 'descTitle'
+      title.textContent = `Descripción de ${productName}`
+      
+      const text = document.createElement('div')
+      text.className = 'desc-text'
+      text.textContent = 'Descripción no disponible'
+      
+      content.appendChild(close)
+      content.appendChild(title)
+      content.appendChild(text)
+      modal.appendChild(content)
+      document.body.appendChild(modal)
+    }
+
+    function updateDateTime() {
+      const now = new Date()
+      const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true 
+      }
+      const dateTimeStr = now.toLocaleDateString('es-ES', options)
+      document.getElementById('currentDateTime').textContent = dateTimeStr
+      document.getElementById('currentDateTimeFooter').textContent = dateTimeStr
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProducts()
+      updateDateTime()
+      setInterval(updateDateTime, 1000)
+      toggleAddressField()
+      document.getElementById('searchInput').addEventListener('input', renderProducts)
+    })
+  </script>
 </body>
 </html>
