@@ -1,106 +1,4 @@
-muy bien enviame exactamente este mismo codigo pero que solo sea copiar y pegsr en .html // co.js
-
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request));
-});
-
-const markersData = [
-  // Bogotá
-  {
-    name: "Bogotá - Centro",
-    latlng: [4.6097, -74.0817],
-    url: "https://co1.contraentrega.co",
-    info: "Punto principal en el centro de Bogotá. Abierto Lun-Vie 8am-6pm."
-  },
-  {
-    name: "Bogotá - Chapinero",
-    latlng: [4.6486, -74.0628],
-    url: "https://co2.contraentrega.co",
-    info: "Ubicación en Chapinero. Horario: 9am-7pm."
-  },
-  {
-    name: "Bogotá - Usaquén",
-    latlng: [4.6979, -74.0337],
-    url: "https://co3.contraentrega.co",
-    info: "Punto de recogida en Usaquén. Abierto hasta las 5pm."
-  },
-  
-  // Medellín
-  {
-    name: "Medellín - El Poblado",
-    latlng: [6.2088, -75.5704],
-    url: "https://co4.contraentrega.co",
-    info: "Zona de El Poblado. Abierto todos los días 10am-8pm."
-  },
-  {
-    name: "Medellín - Laureles",
-    latlng: [6.2489, -75.5907],
-    url: "https://co5.contraentrega.co",
-    info: "Ubicación en Laureles. Horario comercial."
-  },
-  
-  // Cali
-  {
-    name: "Cali - Norte",
-    latlng: [3.4516, -76.5320],
-    url: "https://co6.contraentrega.co",
-    info: "Zona norte de Cali. Abierto Lun-Vie 8am-6pm."
-  },
-  
-  // Barranquilla
-  {
-    name: "Barranquilla - Centro",
-    latlng: [10.9639, -74.7964],
-    url: "https://co7.contraentrega.co",
-    info: "Punto principal en el centro. Horario extendido."
-  },
-  
-  // Cartagena
-  {
-    name: "Cartagena - Bocagrande",
-    latlng: [10.3997, -75.5478],
-    url: "https://co8.contraentrega.co",
-    info: "Ubicación en Bocagrande. Abierto 9am-7pm."
-  },
-  
-  // Otras ciudades
-  {
-    name: "Bucaramanga - Cabecera",
-    latlng: [7.1193, -73.1227],
-    url: "https://co9.contraentrega.co",
-    info: "Zona Cabecera. Horario Lun-Vie 9am-5pm."
-  },
-  {
-    name: "Pereira - Centro",
-    latlng: [4.8133, -75.6961],
-    url: "https://co10.contraentrega.co",
-    info: "Punto central en Pereira. Horario comercial."
-  }
-];
-
-async function handleRequest(request) {
-  const url = new URL(request.url);
-  if (url.pathname === '/') {
-    return new Response(generateHTML(), {
-      headers: { 
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'public, max-age=3600'
-      }
-    });
-  }
-  if (url.pathname === '/api/markers') {
-    return new Response(JSON.stringify(markersData), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=86400'
-      }
-    });
-  }
-  return new Response('Not Found', { status: 404 });
-}
-
-function generateHTML() {
-  return `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -330,22 +228,94 @@ function generateHTML() {
     // Cargar marcadores
     async function loadMarkers() {
       try {
-        const response = await fetch('/api/markers');
-        const markers = await response.json();
+        const markers = [
+          // Bogotá
+          {
+            name: "Bogotá - Centro",
+            latlng: [4.6097, -74.0817],
+            url: "https://co1.contraentrega.co",
+            info: "Punto principal en el centro de Bogotá. Abierto Lun-Vie 8am-6pm."
+          },
+          {
+            name: "Bogotá - Chapinero",
+            latlng: [4.6486, -74.0628],
+            url: "https://co2.contraentrega.co",
+            info: "Ubicación en Chapinero. Horario: 9am-7pm."
+          },
+          {
+            name: "Bogotá - Usaquén",
+            latlng: [4.6979, -74.0337],
+            url: "https://co3.contraentrega.co",
+            info: "Punto de recogida en Usaquén. Abierto hasta las 5pm."
+          },
+          
+          // Medellín
+          {
+            name: "Medellín - El Poblado",
+            latlng: [6.2088, -75.5704],
+            url: "https://co4.contraentrega.co",
+            info: "Zona de El Poblado. Abierto todos los días 10am-8pm."
+          },
+          {
+            name: "Medellín - Laureles",
+            latlng: [6.2489, -75.5907],
+            url: "https://co5.contraentrega.co",
+            info: "Ubicación en Laureles. Horario comercial."
+          },
+          
+          // Cali
+          {
+            name: "Cali - Norte",
+            latlng: [3.4516, -76.5320],
+            url: "https://co6.contraentrega.co",
+            info: "Zona norte de Cali. Abierto Lun-Vie 8am-6pm."
+          },
+          
+          // Barranquilla
+          {
+            name: "Barranquilla - Centro",
+            latlng: [10.9639, -74.7964],
+            url: "https://co7.contraentrega.co",
+            info: "Punto principal en el centro. Horario extendido."
+          },
+          
+          // Cartagena
+          {
+            name: "Cartagena - Bocagrande",
+            latlng: [10.3997, -75.5478],
+            url: "https://co8.contraentrega.co",
+            info: "Ubicación en Bocagrande. Abierto 9am-7pm."
+          },
+          
+          // Otras ciudades
+          {
+            name: "Bucaramanga - Cabecera",
+            latlng: [7.1193, -73.1227],
+            url: "https://co9.contraentrega.co",
+            info: "Zona Cabecera. Horario Lun-Vie 9am-5pm."
+          },
+          {
+            name: "Pereira - Centro",
+            latlng: [4.8133, -75.6961],
+            url: "https://co10.contraentrega.co",
+            info: "Punto central en Pereira. Horario comercial."
+          }
+        ];
+        
         markers.forEach(markerData => {
           // Verificar que las coordenadas estén dentro de los límites
           if (colombiaBounds.contains(markerData.latlng)) {
             const marker = L.marker(markerData.latlng)
-              .bindPopup(\`
+              .bindPopup(`
                 <div style="max-width:250px">
-                  <h3 style="margin:0 0 5px 0">\${markerData.name}</h3>
-                  <p style="margin:0 0 10px 0">\${markerData.info}</p>
-                  <a href="\${markerData.url}" target="_blank" style="color:#0066cc">Ver detalles →</a>
+                  <h3 style="margin:0 0 5px 0">${markerData.name}</h3>
+                  <p style="margin:0 0 10px 0">${markerData.info}</p>
+                  <a href="${markerData.url}" target="_blank" style="color:#0066cc">Ver detalles →</a>
                 </div>
-              \`);
+              `);
 
             // Almacenar datos para búsqueda
-            marker.searchData = \`\${markerData.name} \${markerData.info} \${markerData.url}\`.toLowerCase();
+            marker.searchData = `${markerData.name} ${markerData.info} ${markerData.url}`.toLowerCase();
             marker.data = markerData;
             allMarkers.push(marker);
             markerCluster.addLayer(marker);
@@ -401,10 +371,10 @@ function generateHTML() {
         results.forEach(marker => {
           const resultItem = document.createElement('div');
           resultItem.className = 'search-result';
-          resultItem.innerHTML = \`
-            <h3>\${marker.data.name}</h3>
-            <p>\${marker.data.info.substring(0, 60)}\${marker.data.info.length > 60 ? '...' : ''}</p>
-          \`;
+          resultItem.innerHTML = `
+            <h3>${marker.data.name}</h3>
+            <p>${marker.data.info.substring(0, 60)}${marker.data.info.length > 60 ? '...' : ''}</p>
+          `;
           resultItem.addEventListener('click', () => {
             map.setView(marker.getLatLng(), 12);
             marker.openPopup();
@@ -455,5 +425,4 @@ function generateHTML() {
     document.addEventListener('DOMContentLoaded', initMap);
   </script>
 </body>
-</html>`;
-}
+</html>
