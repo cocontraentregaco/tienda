@@ -2,175 +2,34 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
   <title>Contraentregaco FZ</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    
-    body {
-      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-      background-color: #ffffff;
-      color: #333;
-      line-height: 1.6;
-    }
-    
-    #contenedor-mapa {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-    
-    #encabezado {
-      background-color: #000;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    
-    #encabezado h1 {
-      font-size: 1.8rem;
-      margin-bottom: 0.5rem;
-    }
-    
-    #encabezado p {
-      font-size: 1rem;
-      opacity: 0.9;
-    }
-    
-    #barra-superior {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.8rem 1rem;
-      background-color: #f8f8f8;
-      border-bottom: 1px solid #e0e0e0;
-    }
-    
-    #buscador-contenedor {
-      flex-grow: 1;
-      max-width: 600px;
-      margin-right: 1rem;
-    }
-    
-    #buscador {
-      width: 100%;
-      padding: 0.6rem 1rem;
-      border-radius: 24px;
-      border: 1px solid #ddd;
-      outline: none;
-      font-size: 0.95rem;
-      transition: all 0.3s;
-    }
-    
-    #buscador:focus {
-      border-color: #666;
-      box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
-    }
-    
-    .btn {
-      padding: 0.6rem 1.2rem;
-      background-color: #000;
-      color: white;
-      border: none;
-      border-radius: 24px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      font-weight: 500;
-      text-decoration: none;
-      transition: all 0.3s;
-      white-space: nowrap;
-    }
-    
-    .btn:hover {
-      background-color: #333;
-    }
-    
-    #mapa {
-      flex: 1;
-      z-index: 1;
-      background-color: #f0f0f0;
-    }
-    
-    .cluster-marcadores {
-      background-color: rgba(100, 100, 100, 0.6);
-      border-radius: 50%;
-    }
-    
-    .cluster-marcadores div {
-      background-color: rgba(50, 50, 50, 0.6);
-      border-radius: 50%;
-      color: white;
-      font-weight: bold;
-    }
-    
-    .leaflet-popup-content {
-      margin: 0.8rem;
-    }
-    
-    .leaflet-popup-content h3 {
-      font-size: 1.1rem;
-      margin-bottom: 0.3rem;
-      color: #000;
-    }
-    
-    .leaflet-popup-content p {
-      margin-bottom: 0.5rem;
-      color: #555;
-    }
-    
-    .leaflet-popup-content a {
-      display: inline-block;
-      margin-top: 0.5rem;
-      color: #0066cc;
-      text-decoration: none;
-      font-weight: 500;
-    }
-    
-    .leaflet-popup-content a:hover {
-      text-decoration: underline;
-    }
-    
-    @media (max-width: 768px) {
-      #barra-superior {
-        flex-direction: column;
-        padding: 0.8rem;
-      }
-      
-      #buscador-contenedor {
-        width: 100%;
-        margin-right: 0;
-        margin-bottom: 0.8rem;
-      }
-      
-      .btn {
-        width: 100%;
-      }
-      
-      #encabezado h1 {
-        font-size: 1.5rem;
-      }
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Roboto, sans-serif; touch-action: manipulation; }
+    #contenedor-mapa { height: 100vh; display: flex; flex-direction: column; }
+    #encabezado { background: #000; color: white; padding: 1rem; text-align: center; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #f8f8f8; }
+    #buscador { flex: 1; padding: 0.6rem 1rem; border: 1px solid #ddd; border-radius: 24px; -webkit-appearance: none; font-size: 16px; }
+    .btn { background: #000; color: white; padding: 0.6rem 1.2rem; border-radius: 24px; text-decoration: none; }
+    #mapa { flex: 1; background: #f0f0f0; }
+    .cluster-marcadores { background: rgba(40,40,40,0.7); border-radius: 50%; }
+    .leaflet-control-layers { background: #fff; padding: 5px; border-radius: 4px; }
+    @media (max-width: 768px) { #barra-superior { flex-direction: column; } }
   </style>
 </head>
 <body>
   <div id="contenedor-mapa">
     <div id="encabezado">
       <h1>Contraentregaco FZ</h1>
-      <p>Worldwide Logistics Services 📍</p>
+      <p>Worldwide Logistics Services</p>
     </div>
     
     <div id="barra-superior">
-      <div id="buscador-contenedor">
-        <input type="text" id="buscador" placeholder="Search...">
-      </div>
+      <input type="search" id="buscador" placeholder="Search..." enterkeyhint="search">
       <a href="https://fz.contraentregaco.com" class="btn" target="_blank">FZ</a>
     </div>
     
@@ -180,9 +39,41 @@
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
   <script>
-    // Datos de los países
-    const datosPaises = [
-      // América (35 países)
+    // CONFIGURACIÓN DE CAPAS
+    const capas = {
+      "Maxar": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Satellite: Maxar WorldView Legion',
+        maxZoom: 18,
+        maxNativeZoom: 18,
+        detectRetina: true
+      }),
+      "OSM": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap',
+        maxZoom: 19
+      })
+    };
+
+    // INICIALIZAR MAPA
+    const mapa = L.map('mapa', {
+      center: [19.4326, -99.1332],
+      zoom: 5,
+      layers: [capas["Maxar"]],
+      zoomControl: false
+    });
+
+    L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+    L.control.layers(capas, null, { position: 'topright' }).addTo(mapa);
+
+    // SISTEMA DE MARCADORES
+    const clusters = L.markerClusterGroup({
+      iconCreateFunction: cluster => L.divIcon({
+        html: `<div>${cluster.getChildCount()}</div>`,
+        className: 'cluster-marcadores',
+        iconSize: [40, 40]
+      })
+    });
+
+    const ubicaciones = [
       { nombre: "Washington D.C.", pais: "Estados Unidos", latlng: [38.9072, -77.0369], url: "https://us.contraentregaco.com" },
       { nombre: "Ottawa", pais: "Canadá", latlng: [45.4215, -75.6972], url: "https://ca.contraentregaco.com" },
       { nombre: "Ciudad de México", pais: "México", latlng: [19.4326, -99.1332], url: "https://mx.contraentregaco.com" },
@@ -216,254 +107,50 @@
       { nombre: "Puerto España", pais: "Trinidad y Tobago", latlng: [10.6549, -61.5019], url: "https://tt.contraentregaco.com" },
       { nombre: "Georgetown", pais: "Guyana", latlng: [6.8013, -58.1551], url: "https://gy.contraentregaco.com" },
       { nombre: "Paramaribo", pais: "Surinam", latlng: [5.8520, -55.2038], url: "https://sr.contraentregaco.com" },
-      { nombre: "Cayena", pais: "Guayana Francesa", latlng: [4.9224, -52.3135], url: "https://gf.contraentregaco.com" },
-
-      // Europa (44 países)
-      { nombre: "Madrid", pais: "España", latlng: [40.4168, -3.7038], url: "https://es.contraentregaco.com" },
-      { nombre: "París", pais: "Francia", latlng: [48.8566, 2.3522], url: "https://fr.contraentregaco.com" },
-      { nombre: "Berlín", pais: "Alemania", latlng: [52.5200, 13.4050], url: "https://de.contraentregaco.com" },
-      { nombre: "Roma", pais: "Italia", latlng: [41.9028, 12.4964], url: "https://it.contraentregaco.com" },
-      { nombre: "Londres", pais: "Reino Unido", latlng: [51.5074, -0.1278], url: "https://uk.contraentregaco.com" },
-      { nombre: "Lisboa", pais: "Portugal", latlng: [38.7223, -9.1393], url: "https://pt.contraentregaco.com" },
-      { nombre: "Bruselas", pais: "Bélgica", latlng: [50.8503, 4.3517], url: "https://be.contraentregaco.com" },
-      { nombre: "Ámsterdam", pais: "Países Bajos", latlng: [52.3676, 4.9041], url: "https://nl.contraentregaco.com" },
-      { nombre: "Viena", pais: "Austria", latlng: [48.2082, 16.3738], url: "https://at.contraentregaco.com" },
-      { nombre: "Berna", pais: "Suiza", latlng: [46.9480, 7.4474], url: "https://ch.contraentregaco.com" },
-      { nombre: "Dublín", pais: "Irlanda", latlng: [53.3498, -6.2603], url: "https://ie.contraentregaco.com" },
-      { nombre: "Estocolmo", pais: "Suecia", latlng: [59.3293, 18.0686], url: "https://se.contraentregaco.com" },
-      { nombre: "Oslo", pais: "Noruega", latlng: [59.9139, 10.7522], url: "https://no.contraentregaco.com" },
-      { nombre: "Copenhague", pais: "Dinamarca", latlng: [55.6761, 12.5683], url: "https://dk.contraentregaco.com" },
-      { nombre: "Helsinki", pais: "Finlandia", latlng: [60.1699, 24.9384], url: "https://fi.contraentregaco.com" },
-      { nombre: "Varsovia", pais: "Polonia", latlng: [52.2297, 21.0122], url: "https://pl.contraentregaco.com" },
-      { nombre: "Praga", pais: "República Checa", latlng: [50.0755, 14.4378], url: "https://cz.contraentregaco.com" },
-      { nombre: "Budapest", pais: "Hungría", latlng: [47.4979, 19.0402], url: "https://hu.contraentregaco.com" },
-      { nombre: "Bratislava", pais: "Eslovaquia", latlng: [48.1486, 17.1077], url: "https://sk.contraentregaco.com" },
-      { nombre: "Liubliana", pais: "Eslovenia", latlng: [46.0569, 14.5058], url: "https://si.contraentregaco.com" },
-      { nombre: "Zagreb", pais: "Croacia", latlng: [45.8150, 15.9819], url: "https://hr.contraentregaco.com" },
-      { nombre: "Sarajevo", pais: "Bosnia y Herzegovina", latlng: [43.8563, 18.4131], url: "https://ba.contraentregaco.com" },
-      { nombre: "Belgrado", pais: "Serbia", latlng: [44.8206, 20.4626], url: "https://rs.contraentregaco.com" },
-      { nombre: "Podgorica", pais: "Montenegro", latlng: [42.4304, 19.2594], url: "https://me.contraentregaco.com" },
-      { nombre: "Pristina", pais: "Kosovo", latlng: [42.6629, 21.1655], url: "https://xk.contraentregaco.com" },
-      { nombre: "Tirana", pais: "Albania", latlng: [41.3275, 19.8187], url: "https://al.contraentregaco.com" },
-      { nombre: "Skopie", pais: "Macedonia del Norte", latlng: [42.0089, 21.5616], url: "https://mk.contraentregaco.com" },
-      { nombre: "Bucarest", pais: "Rumanía", latlng: [44.4268, 26.1025], url: "https://ro.contraentregaco.com" },
-      { nombre: "Sofía", pais: "Bulgaria", latlng: [42.6977, 23.3219], url: "https://bg.contraentregaco.com" },
-      { nombre: "Atenas", pais: "Grecia", latlng: [37.9838, 23.7275], url: "https://gr.contraentregaco.com" },
-      { nombre: "Nicosia", pais: "Chipre", latlng: [35.1856, 33.3823], url: "https://cy.contraentregaco.com" },
-      { nombre: "La Valeta", pais: "Malta", latlng: [35.8989, 14.5146], url: "https://mt.contraentregaco.com" },
-      { nombre: "Reikiavik", pais: "Islandia", latlng: [64.1466, -21.9426], url: "https://is.contraentregaco.com" },
-      { nombre: "Tallin", pais: "Estonia", latlng: [59.4370, 24.7536], url: "https://ee.contraentregaco.com" },
-      { nombre: "Riga", pais: "Letonia", latlng: [56.9496, 24.1052], url: "https://lv.contraentregaco.com" },
-      { nombre: "Vilna", pais: "Lituania", latlng: [54.6872, 25.2797], url: "https://lt.contraentregaco.com" },
-      { nombre: "Minsk", pais: "Bielorrusia", latlng: [53.9045, 27.5615], url: "https://by.contraentregaco.com" },
-      { nombre: "Kiev", pais: "Ucrania", latlng: [50.4501, 30.5234], url: "https://ua.contraentregaco.com" },
-      { nombre: "Chisináu", pais: "Moldavia", latlng: [47.0105, 28.8638], url: "https://md.contraentregaco.com" },
-      { nombre: "Ereván", pais: "Armenia", latlng: [40.1792, 44.4991], url: "https://am.contraentregaco.com" },
-      { nombre: "Tiflis", pais: "Georgia", latlng: [41.7151, 44.8271], url: "https://ge.contraentregaco.com" },
-      { nombre: "Bakú", pais: "Azerbaiyán", latlng: [40.4093, 49.8671], url: "https://az.contraentregaco.com" },
-      { nombre: "Ankara", pais: "Turquía", latlng: [39.9334, 32.8597], url: "https://tr.contraentregaco.com" },
-
-      // Asia (48 países)
-      { nombre: "Tokio", pais: "Japón", latlng: [35.6762, 139.6503], url: "https://jp.contraentregaco.com" },
-      { nombre: "Pekín", pais: "China", latlng: [39.9042, 116.4074], url: "https://cn.contraentregaco.com" },
-      { nombre: "Nueva Delhi", pais: "India", latlng: [28.6139, 77.2090], url: "https://in.contraentregaco.com" },
-      { nombre: "Moscú", pais: "Rusia", latlng: [55.7558, 37.6173], url: "https://ru.contraentregaco.com" },
-      { nombre: "Seúl", pais: "Corea del Sur", latlng: [37.5665, 126.9780], url: "https://kr.contraentregaco.com" },
-      { nombre: "Pionyang", pais: "Corea del Norte", latlng: [39.0392, 125.7625], url: "https://kp.contraentregaco.com" },
-      { nombre: "Bangkok", pais: "Tailandia", latlng: [13.7563, 100.5018], url: "https://th.contraentregaco.com" },
-      { nombre: "Hanói", pais: "Vietnam", latlng: [21.0278, 105.8342], url: "https://vn.contraentregaco.com" },
-      { nombre: "Yakarta", pais: "Indonesia", latlng: [-6.2088, 106.8456], url: "https://id.contraentregaco.com" },
-      { nombre: "Kuala Lumpur", pais: "Malasia", latlng: [3.1390, 101.6869], url: "https://my.contraentregaco.com" },
-      { nombre: "Singapur", pais: "Singapur", latlng: [1.3521, 103.8198], url: "https://sg.contraentregaco.com" },
-      { nombre: "Manila", pais: "Filipinas", latlng: [14.5995, 120.9842], url: "https://ph.contraentregaco.com" },
-      { nombre: "Bandar Seri Begawan", pais: "Brunéi", latlng: [4.9031, 114.9398], url: "https://bn.contraentregaco.com" },
-      { nombre: "Nom Pen", pais: "Camboya", latlng: [11.5564, 104.9282], url: "https://kh.contraentregaco.com" },
-      { nombre: "Vientián", pais: "Laos", latlng: [17.9757, 102.6331], url: "https://la.contraentregaco.com" },
-      { nombre: "Naipyidó", pais: "Myanmar", latlng: [19.7633, 96.0785], url: "https://mm.contraentregaco.com" },
-      { nombre: "Daca", pais: "Bangladesh", latlng: [23.8103, 90.4125], url: "https://bd.contraentregaco.com" },
-      { nombre: "Katmandú", pais: "Nepal", latlng: [27.7172, 85.3240], url: "https://np.contraentregaco.com" },
-      { nombre: "Timbu", pais: "Bután", latlng: [27.4728, 89.6390], url: "https://bt.contraentregaco.com" },
-      { nombre: "Sri Jayawardenapura Kotte", pais: "Sri Lanka", latlng: [6.9271, 79.8612], url: "https://lk.contraentregaco.com" },
-      { nombre: "Malé", pais: "Maldivas", latlng: [4.1755, 73.5093], url: "https://mv.contraentregaco.com" },
-      { nombre: "Islamabad", pais: "Pakistán", latlng: [33.6844, 73.0479], url: "https://pk.contraentregaco.com" },
-      { nombre: "Kabul", pais: "Afganistán", latlng: [34.5553, 69.2075], url: "https://af.contraentregaco.com" },
-      { nombre: "Teherán", pais: "Irán", latlng: [35.6892, 51.3890], url: "https://ir.contraentregaco.com" },
-      { nombre: "Bagdad", pais: "Irak", latlng: [33.3152, 44.3661], url: "https://iq.contraentregaco.com" },
-      { nombre: "Riad", pais: "Arabia Saudita", latlng: [24.7136, 46.6753], url: "https://sa.contraentregaco.com" },
-      { nombre: "Doha", pais: "Catar", latlng: [25.2769, 51.5200], url: "https://qa.contraentregaco.com" },
-      { nombre: "Abu Dabi", pais: "Emiratos Árabes Unidos", latlng: [24.4539, 54.3773], url: "https://ae.contraentregaco.com" },
-      { nombre: "Mascate", pais: "Omán", latlng: [23.5880, 58.3829], url: "https://om.contraentregaco.com" },
-      { nombre: "Saná", pais: "Yemen", latlng: [15.3694, 44.1910], url: "https://ye.contraentregaco.com" },
-      { nombre: "Amán", pais: "Jordania", latlng: [31.9454, 35.9284], url: "https://jo.contraentregaco.com" },
-      { nombre: "Damasco", pais: "Siria", latlng: [33.5138, 36.2765], url: "https://sy.contraentregaco.com" },
-      { nombre: "Beirut", pais: "Líbano", latlng: [33.8938, 35.5018], url: "https://lb.contraentregaco.com" },
-      { nombre: "Jerusalén", pais: "Israel", latlng: [31.7683, 35.2137], url: "https://il.contraentregaco.com" },
-      { nombre: "Ramala", pais: "Palestina", latlng: [31.9074, 35.1884], url: "https://ps.contraentregaco.com" },
-      { nombre: "Taskent", pais: "Uzbekistán", latlng: [41.2995, 69.2401], url: "https://uz.contraentregaco.com" },
-      { nombre: "Nursultán", pais: "Kazajistán", latlng: [51.1605, 71.4704], url: "https://kz.contraentregaco.com" },
-      { nombre: "Biskek", pais: "Kirguistán", latlng: [42.8746, 74.5698], url: "https://kg.contraentregaco.com" },
-      { nombre: "Dusambé", pais: "Tayikistán", latlng: [38.5598, 68.7870], url: "https://tj.contraentregaco.com" },
-      { nombre: "Asjabad", pais: "Turkmenistán", latlng: [37.9601, 58.3261], url: "https://tm.contraentregaco.com" },
-      { nombre: "Taipéi", pais: "Taiwán", latlng: [25.0330, 121.5654], url: "https://tw.contraentregaco.com" },
-      { nombre: "Hong Kong", pais: "Hong Kong", latlng: [22.3193, 114.1694], url: "https://hk.contraentregaco.com" },
-      { nombre: "Macao", pais: "Macao", latlng: [22.1987, 113.5439], url: "https://mo.contraentregaco.com" },
-
-      // África (54 países)
-      { nombre: "El Cairo", pais: "Egipto", latlng: [30.0444, 31.2357], url: "https://eg.contraentregaco.com" },
-      { nombre: "Pretoria", pais: "Sudáfrica", latlng: [-25.7479, 28.2293], url: "https://za.contraentregaco.com" },
-      { nombre: "Nairobi", pais: "Kenia", latlng: [-1.2864, 36.8172], url: "https://ke.contraentregaco.com" },
-      { nombre: "Rabat", pais: "Marruecos", latlng: [34.0209, -6.8416], url: "https://ma.contraentregaco.com" },
-      { nombre: "Abuya", pais: "Nigeria", latlng: [9.0579, 7.4951], url: "https://ng.contraentregaco.com" },
-      { nombre: "Adís Abeba", pais: "Etiopía", latlng: [9.0084, 38.7648], url: "https://et.contraentregaco.com" },
-      { nombre: "Jartum", pais: "Sudán", latlng: [15.5007, 32.5599], url: "https://sd.contraentregaco.com" },
-      { nombre: "Túnez", pais: "Túnez", latlng: [36.8065, 10.1815], url: "https://tn.contraentregaco.com" },
-      { nombre: "Argel", pais: "Argelia", latlng: [36.7538, 3.0588], url: "https://dz.contraentregaco.com" },
-      { nombre: "Trípoli", pais: "Libia", latlng: [32.8872, 13.1913], url: "https://ly.contraentregaco.com" },
-      { nombre: "Dakar", pais: "Senegal", latlng: [14.7167, -17.4677], url: "https://sn.contraentregaco.com" },
-      { nombre: "Bamako", pais: "Mali", latlng: [12.6392, -8.0029], url: "https://ml.contraentregaco.com" },
-      { nombre: "Uagadugú", pais: "Burkina Faso", latlng: [12.3714, -1.5197], url: "https://bf.contraentregaco.com" },
-      { nombre: "Conakri", pais: "Guinea", latlng: [9.6412, -13.5784], url: "https://gn.contraentregaco.com" },
-      { nombre: "Acra", pais: "Ghana", latlng: [5.6037, -0.1870], url: "https://gh.contraentregaco.com" },
-      { nombre: "Yamusukro", pais: "Costa de Marfil", latlng: [5.3599, -4.0083], url: "https://ci.contraentregaco.com" },
-      { nombre: "Monrovia", pais: "Liberia", latlng: [6.2907, -10.7605], url: "https://lr.contraentregaco.com" },
-      { nombre: "Freetown", pais: "Sierra Leona", latlng: [8.4657, -13.2317], url: "https://sl.contraentregaco.com" },
-      { nombre: "Lomé", pais: "Togo", latlng: [6.1725, 1.2314], url: "https://tg.contraentregaco.com" },
-      { nombre: "Porto-Novo", pais: "Benín", latlng: [6.4969, 2.6289], url: "https://bj.contraentregaco.com" },
-      { nombre: "Niamey", pais: "Níger", latlng: [13.5136, 2.1098], url: "https://ne.contraentregaco.com" },
-      { nombre: "Yaundé", pais: "Camerún", latlng: [3.8480, 11.5021], url: "https://cm.contraentregaco.com" },
-      { nombre: "Bangui", pais: "República Centroafricana", latlng: [4.3947, 18.5582], url: "https://cf.contraentregaco.com" },
-      { nombre: "Yamena", pais: "Chad", latlng: [12.1348, 15.0557], url: "https://td.contraentregaco.com" },
-      { nombre: "Kigali", pais: "Ruanda", latlng: [-1.9441, 30.0619], url: "https://rw.contraentregaco.com" },
-      { nombre: "Buyumbura", pais: "Burundi", latlng: [-3.3614, 29.3599], url: "https://bi.contraentregaco.com" },
-      { nombre: "Kampala", pais: "Uganda", latlng: [0.3136, 32.5811], url: "https://ug.contraentregaco.com" },
-      { nombre: "Yibuti", pais: "Yibuti", latlng: [11.5721, 43.1456], url: "https://dj.contraentregaco.com" },
-      { nombre: "Mogadiscio", pais: "Somalia", latlng: [2.0469, 45.3182], url: "https://so.contraentregaco.com" },
-      { nombre: "Dodoma", pais: "Tanzania", latlng: [-6.1629, 35.7516], url: "https://tz.contraentregaco.com" },
-      { nombre: "Lusaka", pais: "Zambia", latlng: [-15.3875, 28.3228], url: "https://zm.contraentregaco.com" },
-      { nombre: "Harare", pais: "Zimbabue", latlng: [-17.8252, 31.0335], url: "https://zw.contraentregaco.com" },
-      { nombre: "Maputo", pais: "Mozambique", latlng: [-25.9653, 32.5892], url: "https://mz.contraentregaco.com" },
-      { nombre: "Antananarivo", pais: "Madagascar", latlng: [-18.8792, 47.5079], url: "https://mg.contraentregaco.com" },
-      { nombre: "Windhoek", pais: "Namibia", latlng: [-22.5609, 17.0658], url: "https://na.contraentregaco.com" },
-      { nombre: "Gaborone", pais: "Botsuana", latlng: [-24.6282, 25.9231], url: "https://bw.contraentregaco.com" },
-      { nombre: "Maseru", pais: "Lesoto", latlng: [-29.3632, 27.5144], url: "https://ls.contraentregaco.com" },
-      { nombre: "Mbabane", pais: "Esuatini", latlng: [-26.3054, 31.1367], url: "https://sz.contraentregaco.com" },
-      { nombre: "Victoria", pais: "Seychelles", latlng: [-4.6203, 55.4513], url: "https://sc.contraentregaco.com" },
-      { nombre: "Port Louis", pais: "Mauricio", latlng: [-20.1609, 57.5012], url: "https://mu.contraentregaco.com" },
-      { nombre: "Santo Tomé", pais: "Santo Tomé y Príncipe", latlng: [0.3302, 6.7333], url: "https://st.contraentregaco.com" },
-      { nombre: "Malabo", pais: "Guinea Ecuatorial", latlng: [3.7504, 8.7371], url: "https://gq.contraentregaco.com" },
-      { nombre: "Banjul", pais: "Gambia", latlng: [13.4549, -16.5790], url: "https://gm.contraentregaco.com" },
-      { nombre: "Yuba", pais: "Sudán del Sur", latlng: [4.8594, 31.5713], url: "https://ss.contraentregaco.com" },
-      { nombre: "Moroni", pais: "Comoras", latlng: [-11.7172, 43.2473], url: "https://km.contraentregaco.com" },
-      { nombre: "Praia", pais: "Cabo Verde", latlng: [14.9330, -23.5133], url: "https://cv.contraentregaco.com" },
-      { nombre: "Bissau", pais: "Guinea-Bisáu", latlng: [11.8636, -15.5846], url: "https://gw.contraentregaco.com" },
-      { nombre: "Nuakchot", pais: "Mauritania", latlng: [18.0731, -15.9582], url: "https://mr.contraentregaco.com" },
-      { nombre: "Libreville", pais: "Gabón", latlng: [0.4162, 9.4673], url: "https://ga.contraentregaco.com" },
-      { nombre: "Brazzaville", pais: "República del Congo", latlng: [-4.2634, 15.2429], url: "https://cg.contraentregaco.com" },
-      { nombre: "Kinsasa", pais: "República Democrática del Congo", latlng: [-4.4419, 15.2663], url: "https://cd.contraentregaco.com" },
-      { nombre: "Luanda", pais: "Angola", latlng: [-8.8383, 13.2344], url: "https://ao.contraentregaco.com" },
-
-      // Oceanía (14 países)
-      { nombre: "Canberra", pais: "Australia", latlng: [-35.2809, 149.1300], url: "https://au.contraentregaco.com" },
-      { nombre: "Wellington", pais: "Nueva Zelanda", latlng: [-41.2865, 174.7762], url: "https://nz.contraentregaco.com" },
-      { nombre: "Suva", pais: "Fiyi", latlng: [-18.1416, 178.4419], url: "https://fj.contraentregaco.com" },
-      { nombre: "Port Moresby", pais: "Papúa Nueva Guinea", latlng: [-9.4438, 147.1803], url: "https://pg.contraentregaco.com" },
-      { nombre: "Honiara", pais: "Islas Salomón", latlng: [-9.4456, 159.9729], url: "https://sb.contraentregaco.com" },
-      { nombre: "Port Vila", pais: "Vanuatu", latlng: [-17.7333, 168.3273], url: "https://vu.contraentregaco.com" },
-      { nombre: "Nukualofa", pais: "Tonga", latlng: [-21.1393, -175.2049], url: "https://to.contraentregaco.com" },
-      { nombre: "Apia", pais: "Samoa", latlng: [-13.8507, -171.7514], url: "https://ws.contraentregaco.com" },
-      { nombre: "Palikir", pais: "Micronesia", latlng: [6.9147, 158.1610], url: "https://fm.contraentregaco.com" },
-      { nombre: "Majuro", pais: "Islas Marshall", latlng: [7.0897, 171.3803], url: "https://mh.contraentregaco.com" },
-      { nombre: "Tarawa", pais: "Kiribati", latlng: [1.3291, 172.9790], url: "https://ki.contraentregaco.com" },
-      { nombre: "Funafuti", pais: "Tuvalu", latlng: [-8.5203, 179.1945], url: "https://tv.contraentregaco.com" },
-      { nombre: "Yaren", pais: "Nauru", latlng: [-0.5467, 166.9211], url: "https://nr.contraentregaco.com" },
-      { nombre: "Pago Pago", pais: "Samoa Americana", latlng: [-14.2756, -170.7020], url: "https://as.contraentregaco.com" }
+      { nombre: "Cayena", pais: "Guayana Francesa", latlng: [4.9224, -52.3135], url: "https://gf.contraentregaco.com" }
     ];
 
-    // Inicializar mapa
-    const mapa = L.map('mapa').setView([20, 0], 2);
-    
-    // Capa de mapa base
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      detectRetina: true
-    }).addTo(mapa);
-
-    // Configurar clusters
-    const clusterMarcadores = L.markerClusterGroup({
-      iconCreateFunction: function (cluster) {
-        return L.divIcon({
-          html: '<div><span>' + cluster.getChildCount() + '</span></div>',
-          className: 'cluster-marcadores',
-          iconSize: L.point(40, 40)
-        });
-      },
-      spiderfyOnMaxZoom: true,
-      showCoverageOnHover: false,
-      zoomToBoundsOnClick: true
-    });
-    
-    mapa.addLayer(clusterMarcadores);
-
-    // Almacenar todos los marcadores para búsqueda
     const todosMarcadores = [];
-    let marcadoresActuales = [];
-
-    // Cargar países
-    function cargarPaises() {
-      datosPaises.forEach(pais => {
-        const marcador = L.marker(pais.latlng)
-          .bindPopup(
-            '<div style="max-width:250px">' +
-            '<h3 style="margin:0 0 5px 0">' + pais.nombre + '</h3>' +
-            '<p style="margin:0 0 5px 0"><b>' + pais.pais + '</b></p>' +
-            '<a href="' + pais.url + '" target="_blank" style="color:#0066cc;text-decoration:none">Contraentrega →</a>' +
-            '</div>'
-          );
-        
-        marcador.datosBusqueda = (pais.nombre + ' ' + pais.pais).toLowerCase();
-        marcador.datos = pais;
-        todosMarcadores.push(marcador);
-        clusterMarcadores.addLayer(marcador);
-      });
-
-      marcadoresActuales = [...todosMarcadores];
-      
-      // Ajustar vista para mostrar todos los marcadores
-      if (datosPaises.length > 0) {
-        const grupo = new L.featureGroup(todosMarcadores);
-        mapa.fitBounds(grupo.getBounds().pad(0.2));
-      }
-    }
-
-    // Función de búsqueda
-    document.getElementById('buscador').addEventListener('input', function(e) {
-      const terminoBusqueda = e.target.value.trim().toLowerCase();
-      
-      if (terminoBusqueda.length < 2) {
-        clusterMarcadores.clearLayers();
-        clusterMarcadores.addLayers(todosMarcadores);
-        marcadoresActuales = [...todosMarcadores];
-        return;
-      }
-
-      const marcadoresFiltrados = todosMarcadores.filter(marcador => 
-        marcador.datosBusqueda.includes(terminoBusqueda)
-      );
-      
-      clusterMarcadores.clearLayers();
-      clusterMarcadores.addLayers(marcadoresFiltrados);
-      marcadoresActuales = marcadoresFiltrados;
-
-      if (marcadoresFiltrados.length > 0) {
-        const grupo = new L.featureGroup(marcadoresFiltrados);
-        mapa.fitBounds(grupo.getBounds().pad(0.2));
-      } else {
-        mapa.setView([20, 0], 2);
-      }
+    ubicaciones.forEach(loc => {
+      const marcador = L.marker(loc.latlng).bindPopup(`
+        <div style="min-width:180px">
+          <h3 style="margin:0 0 5px 0">${loc.nombre}</h3>
+          <p style="margin:0 0 8px 0;color:#666">${loc.pais}</p>
+          <a href="${loc.url}" style="color:#0066cc;text-decoration:none">FZ →</a>
+        </div>
+      `);
+      marcador.datosBusqueda = `${loc.nombre} ${loc.pais}`.toLowerCase();
+      todosMarcadores.push(marcador);
     });
 
-    // Cargar datos al iniciar
-    cargarPaises();
+    clusters.addLayers(todosMarcadores);
+    mapa.addLayer(clusters);
+
+    // BÚSQUEDA MEJORADA
+    const searchInput = document.getElementById('buscador');
+    let searchTimeout;
+
+    const handleSearch = () => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        const termino = searchInput.value.toLowerCase().trim();
+        clusters.clearLayers();
+        const filtrados = todosMarcadores.filter(m => 
+          termino === '' || m.datosBusqueda.includes(termino)
+        );
+        clusters.addLayers(filtrados);
+        
+        if(filtrados.length > 0) {
+          mapa.fitBounds(clusters.getBounds().pad(0.3));
+        }
+      }, 300);
+    };
+
+    searchInput.addEventListener('input', handleSearch);
+    searchInput.addEventListener('search', handleSearch);
+    searchInput.addEventListener('blur', () => mapa.invalidateSize());
+
+    mapa.fitBounds(clusters.getBounds().pad(0.3));
   </script>
 </body>
 </html>
