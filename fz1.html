@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FZ1 - Contraentregaco</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .navbar-brand {
+            font-weight: 700;
+        }
+        .hero-section {
+            background-color: #212529;
+            color: white;
+            padding: 4rem 0;
+        }
+        .product-card {
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .quantity-controls button {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .checkout-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .payment-instructions {
+            background-color: #e3f2fd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .cop-details {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .loading-spinner {
+            display: none;
+            width: 3rem;
+            height: 3rem;
+            margin: 20px auto;
+        }
+        .clickable {
+            cursor: pointer;
+            color: #0d6efd;
+        }
+        .clickable:hover {
+            text-decoration: underline;
+        }
+        #qrCode {
+            text-align: center;
+            margin: 15px 0;
+        }
+        .badge-sale {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.8rem;
+        }
+        .inventory-badge {
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">FZ1</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" href="https://www.facebook.com/share/g/1LeZfR3zJ2/">Facebook</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Whatsapp</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Celular</a></li>
+                </ul>
+                <div class="d-flex">
+                    <button class="btn btn-outline-dark position-relative" onclick="showOrderModal()">
+                        <i class="bi bi-cart-fill"></i>
+                        <span id="cartCounter" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-3">9Guarapo</h1>
+            <p class="lead">Los mejores productos al mejor precio</p>
+        </div>
+    </header>
+
+    <!-- Product Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4" id="productsContainer">
+                <!-- Productos se cargarán aquí -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Modal -->
+    <div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tu Pedido</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="orderSummary"></div>
+                    
+                    <div id="checkoutFormSection">
+                        <div class="checkout-section">
+                            <h5>Método de Entrega</h5>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="deliveryMethod" id="pickup" value="pickup" checked>
+                                <label class="form-check-label" for="pickup">Recoger en tienda</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="deliveryMethod" id="delivery" value="delivery">
+                                <label class="form-check-label" for="delivery">Envío a domicilio (+$5,000)</label>
+                            </div>
+                            
+                            <form id="customerForm" class="mt-3">
+                                <div class="mb-3">
+                                    <label for="customerName" class="form-label">Nombre completo</label>
+                                    <input type="text" class="form-control" id="customerName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="customerPhone" class="form-label">Teléfono</label>
+                                    <input type="tel" class="form-control" id="customerPhone" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="customerEmail" class="form-label">Correo electrónico</label>
+                                    <input type="email" class="form-control" id="customerEmail" required>
+                                </div>
+                                <div class="mb-3" id="addressField" style="display: none;">
+                                    <label for="customerAddress" class="form-label">Dirección completa</label>
+                                    <input type="text" class="form-control" id="customerAddress">
+                                </div>
+                                
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                                    <button type="button" class="btn btn-primary me-md-2" onclick="processPayment('COP')">
+                                        <i class="bi bi-cash-coin"></i> Pagar con COP
+                                    </button>
+                                    <button type="button" class="btn btn-warning" onclick="processPayment('Lightning')">
+                                        <i class="bi bi-lightning-charge-fill"></i> Pagar con Lightning
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <div class="text-center mt-3">
+                                <div id="loadingSpinner" class="spinner-border text-primary loading-spinner" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <div id="errorMessage" class="alert alert-danger mt-3" style="display: none;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- COP Payment Instructions -->
+                    <div id="copPaymentSection" class="cop-details" style="display: none;">
+                        <h4><i class="bi bi-cash-coin"></i> Pago con COP</h4>
+                        <p>✅ Total a pagar: <strong id="copTotalAmount"></strong></p>
+                        <p>📝 Número de pedido: <strong id="copOrderNumber"></strong></p>
+                        <p>💰 Por favor prepara el monto exacto en efectivo</p>
+                        <p>📦 Tu pedido será procesado inmediatamente</p>
+                        
+                        <div class="d-grid mt-3">
+                            <button class="btn btn-success" onclick="completeOrder()">
+                                <i class="bi bi-check-circle"></i> He realizado el pago
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Lightning Payment Instructions -->
+                    <div id="lightningPaymentSection" class="payment-instructions" style="display: none;">
+                        <h4><i class="bi bi-lightning-charge-fill"></i> Pago con Lightning</h4>
+                        <p>✅ Total a pagar: <strong id="lightningTotalAmount"></strong></p>
+                        <p>🔗 Dirección Lightning: <strong>tu@lightningaddress.com</strong></p>
+                        <p>📝 Referencia de pago: <strong id="lightningOrderNumber"></strong></p>
+                        
+                        <div id="qrCode" class="mb-3"></div>
+                        <p>Escanea el código QR o copia la dirección manualmente</p>
+                        
+                        <div class="d-grid mt-3">
+                            <button class="btn btn-success" onclick="completeOrder()">
+                                <i class="bi bi-check-circle"></i> He realizado el pago
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="successMessage" class="alert alert-success mt-3" style="display: none;">
+                        ¡Pedido realizado con éxito! Nos comunicaremos contigo pronto.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">© 2023 Mi Tienda. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- QR Code Generator -->
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    
+    <script>
+        // Datos de productos
+        const products = [
+            {
+                id: 1,
+                name: "Producto Premium",
+                price: 120000,
+                inventory: 15,
+                image: "https://via.placeholder.com/300",
+                description: "Producto de alta calidad con garantía de 1 año.",
+                onSale: true
+            },
+            {
+                id: 2,
+                name: "Producto Estándar",
+                price: 80000,
+                inventory: 30,
+                image: "https://via.placeholder.com/300",
+                description: "Producto confiable para uso diario.",
+                onSale: false
+            },
+            {
+                id: 3,
+                name: "Producto Económico",
+                price: 50000,
+                inventory: 50,
+                image: "https://via.placeholder.com/300",
+                description: "Solución económica sin perder calidad.",
+                onSale: true
+            },
+            {
+                id: 4,
+                name: "Producto Deluxe",
+                price: 150000,
+                inventory: 10,
+                image: "https://via.placeholder.com/300",
+                description: "Edición especial con características exclusivas.",
+                onSale: false
+            },
+            {
+                id: 5,
+                name: "Producto Básico",
+                price: 40000,
+                inventory: 40,
+                image: "https://via.placeholder.com/300",
+                description: "Lo esencial para empezar.",
+                onSale: true
+            },
+            {
+                id: 6,
+                name: "Producto Profesional",
+                price: 180000,
+                inventory: 8,
+                image: "https://via.placeholder.com/300",
+                description: "Para usuarios avanzados y profesionales.",
+                onSale: false
+            }
+        ];
+
+        // Carrito de compras
+        let cart = {};
+        let currentOrderId = "";
+
+        // Inicializar la tienda
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProducts();
+            setupEventListeners();
+        });
+
+        // Renderizar productos
+        function renderProducts() {
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = '';
+            
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'col-md-4 col-lg-3';
+                productCard.innerHTML = `
+                    <div class="card product-card h-100">
+                        ${product.onSale ? '<span class="badge bg-danger badge-sale">SALE</span>' : ''}
+                        <img src="${product.image}" class="card-img-top p-3" alt="${product.name}">
+                        <div class="card-body">
+                            <h5 class="card-title">${product.name}</h5>
+                            <p class="card-text text-muted small">${product.description}</p>
+                            <p class="fw-bold">$${product.price.toLocaleString()}</p>
+                            <div class="quantity-controls">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="adjustQuantity(${product.id}, -1)">-</button>
+                                <span id="quantity-${product.id}">${cart[product.id] || 0}</span>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="adjustQuantity(${product.id}, 1)">+</button>
+                            </div>
+                            <span class="badge bg-secondary inventory-badge mt-2">Disponibles: ${product.inventory}</span>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <button class="btn btn-sm btn-dark w-100" onclick="adjustQuantity(${product.id}, 1)">
+                                Añadir al carrito
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(productCard);
+            });
+            
+            updateCartCounter();
+        }
+
+        // Ajustar cantidades
+        function adjustQuantity(productId, change) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const currentQuantity = cart[productId] || 0;
+            let newQuantity = currentQuantity + change;
+            
+            // Validar que no sea negativo ni exceda el inventario
+            newQuantity = Math.max(0, Math.min(newQuantity, product.inventory));
+            
+            if (newQuantity === 0) {
+                delete cart[productId];
+            } else {
+                cart[productId] = newQuantity;
+            }
+            
+            // Actualizar la vista
+            document.getElementById(`quantity-${productId}`).textContent = cart[productId] || 0;
+            updateCartCounter();
+        }
+
+        // Actualizar contador del carrito
+        function updateCartCounter() {
+            const totalItems = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+            document.getElementById('cartCounter').textContent = totalItems;
+        }
+
+        // Mostrar modal de pedido
+        function showOrderModal() {
+            if (Object.keys(cart).length === 0) {
+                alert('Tu carrito está vacío');
+                return;
+            }
+            
+            const modal = new bootstrap.Modal(document.getElementById('orderModal'));
+            
+            // Resetear el modal
+            document.getElementById('checkoutFormSection').style.display = 'block';
+            document.getElementById('copPaymentSection').style.display = 'none';
+            document.getElementById('lightningPaymentSection').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            updateOrderSummary();
+            modal.show();
+        }
+
+        // Actualizar resumen del pedido
+        function updateOrderSummary() {
+            let html = '<h5 class="mb-3">Resumen de tu pedido</h5>';
+            let subtotal = 0;
+            
+            Object.entries(cart).forEach(([productId, quantity]) => {
+                const product = products.find(p => p.id == productId);
+                if (product) {
+                    const productTotal = product.price * quantity;
+                    subtotal += productTotal;
+                    
+                    html += `
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>${product.name} x${quantity}</span>
+                            <span>$${productTotal.toLocaleString()}</span>
+                        </div>
+                    `;
+                }
+            });
+            
+            const deliveryFee = document.querySelector('input[name="deliveryMethod"]:checked').value === 'delivery' ? 5000 : 0;
+            const total = subtotal + deliveryFee;
+            
+            html += `
+                <hr>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal:</span>
+                    <span>$${subtotal.toLocaleString()}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Costo de envío:</span>
+                    <span>$${deliveryFee.toLocaleString()}</span>
+                </div>
+                <div class="d-flex justify-content-between fw-bold">
+                    <span>Total:</span>
+                    <span>$${total.toLocaleString()}</span>
+                </div>
+            `;
+            
+            document.getElementById('orderSummary').innerHTML = html;
+        }
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            // Cambiar método de entrega
+            document.querySelectorAll('input[name="deliveryMethod"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    document.getElementById('addressField').style.display = 
+                        this.value === 'delivery' ? 'block' : 'none';
+                    updateOrderSummary();
+                });
+            });
+        }
+
+        // Procesar pago
+        async function processPayment(paymentMethod) {
+            // Validar formulario
+            const form = document.getElementById('customerForm');
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                return;
+            }
+            
+            // Validar dirección si es envío
+            const deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked').value;
+            if (deliveryMethod === 'delivery' && !document.getElementById('customerAddress').value) {
+                alert('Por favor ingresa una dirección de envío');
+                return;
+            }
+            
+            // Mostrar spinner
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // Generar ID de pedido
+            currentOrderId = 'ORD-' + Date.now().toString().slice(-8);
+            
+            // Calcular total
+            const subtotal = Object.entries(cart).reduce((sum, [productId, quantity]) => {
+                const product = products.find(p => p.id == productId);
+                return sum + (product ? product.price * quantity : 0);
+            }, 0);
+            
+            const deliveryFee = deliveryMethod === 'delivery' ? 5000 : 0;
+            const total = subtotal + deliveryFee;
+            
+            try {
+                // Enviar datos a Formspree (reemplaza con tu ID real)
+                const formspreeResponse = await fetch('https://formsfz.fz-533.workers.dev', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        _subject: `Nuevo pedido ${currentOrderId}`,
+                        name: document.getElementById('customerName').value,
+                        phone: document.getElementById('customerPhone').value,
+                        email: document.getElementById('customerEmail').value,
+                        address: deliveryMethod === 'delivery' ? document.getElementById('customerAddress').value : 'Recoger en tienda',
+                        paymentMethod: paymentMethod,
+                        items: Object.entries(cart).map(([productId, quantity]) => {
+                            const product = products.find(p => p.id == productId);
+                            return {
+                                id: productId,
+                                name: product.name,
+                                quantity: quantity,
+                                price: product.price,
+                                subtotal: product.price * quantity
+                            };
+                        }),
+                        subtotal: subtotal,
+                        deliveryFee: deliveryFee,
+                        total: total,
+                        orderId: currentOrderId
+                    })
+                });
+                
+                if (!formspreeResponse.ok) {
+                    throw new Error('Error al enviar el pedido');
+                }
+                
+                // Mostrar instrucciones de pago según el método
+                document.getElementById('checkoutFormSection').style.display = 'none';
+                
+                if (paymentMethod === 'COP') {
+                    document.getElementById('copTotalAmount').textContent = `$${total.toLocaleString()}`;
+                    document.getElementById('copOrderNumber').textContent = currentOrderId;
+                    document.getElementById('copPaymentSection').style.display = 'block';
+                } else {
+                    document.getElementById('lightningTotalAmount').textContent = `$${total.toLocaleString()}`;
+                    document.getElementById('lightningOrderNumber').textContent = currentOrderId;
+                    document.getElementById('lightningPaymentSection').style.display = 'block';
+                    
+                    // Generar QR code
+                    document.getElementById('qrCode').innerHTML = '';
+                    new QRCode(document.getElementById('qrCode'), {
+                        text: `lightning:tu@lightningaddress.com?amount=${total}&message=Pedido ${currentOrderId}`,
+                        width: 200,
+                        height: 200
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('errorMessage').textContent = 'Error al procesar el pedido: ' + error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            } finally {
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }
+        }
+
+        // Completar pedido
+        function completeOrder() {
+            // Mostrar mensaje de éxito
+            document.getElementById('copPaymentSection').style.display = 'none';
+            document.getElementById('lightningPaymentSection').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+            
+            // Limpiar carrito
+            cart = {};
+            updateCartCounter();
+            renderProducts();
+            
+            // Cerrar el modal después de 3 segundos
+            setTimeout(() => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('orderModal'));
+                modal.hide();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
