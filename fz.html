@@ -1,358 +1,1595 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Business Frontpage - Start Bootstrap Template</title>
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-        <!-- Bootstrap icons-->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="css/styles.css" rel="stylesheet" />
-    </head>
-    <body>
-        <!-- Responsive navbar-->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container px-5">
-                <a class="navbar-brand" href="#!">Contraentregaco FZ</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Facebook</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">Whatsapp</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">Telegram</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">Wechat</a></li>
-                        <li class="nav-item"><a class="nav-link" href="dash.html">Dashboard</a></li>
-                    </ul>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContraEntrega - Sistema de Logística</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #0066FF;
+            --primary-dark: #0052cc;
+            --secondary: #635bff;
+            --success: #2ed573;
+            --error: #ff4757;
+            --warning: #ffa502;
+            --text: #333;
+            --text-light: #666;
+            --bg: #f5f7fa;
+            --card-bg: #fff;
+            --border: #e0e6ed;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--bg);
+            min-height: 100vh;
+        }
+        
+        .auth-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding-top: 100px;
+        }
+        
+        .custom-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .custom-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-primary-custom {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary-custom:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-secondary-custom {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .custom-form-group {
+            margin-bottom: 15px;
+        }
+        
+        .custom-alert {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        
+        .alert-error-custom {
+            background: #ffebee;
+            color: var(--error);
+            border-left: 3px solid var(--error);
+        }
+        
+        .alert-success-custom {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 3px solid #2e7d32;
+        }
+        
+        .custom-tab-content {
+            display: none;
+        }
+        
+        .custom-tab-content.active {
+            display: block;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .status-pending {
+            background: #fff3e0;
+            color: #ff8f00;
+        }
+        
+        .status-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-scheduled {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .nav-tabs-custom .nav-link {
+            color: var(--text);
+            border: none;
+            padding: 10px 20px;
+        }
+        
+        .nav-tabs-custom .nav-link.active {
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+        
+        .modal-custom .modal-content {
+            border: none;
+            border-radius: 8px;
+        }
+        
+        .tracking-card {
+            border-left: 4px solid var(--primary);
+        }
+        
+        .tracking-step {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .tracking-step:last-child {
+            margin-bottom: 0;
+        }
+        
+        .tracking-step::before {
+            content: '';
+            position: absolute;
+            left: 9px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: var(--border);
+        }
+        
+        .tracking-step.completed::before {
+            background: var(--success);
+        }
+        
+        .tracking-step-icon {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tracking-step.completed .tracking-step-icon {
+            background: var(--success);
+            color: white;
+        }
+        
+        .tracking-step.active .tracking-step-icon {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .tracking-step-date {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        
+        .tracking-step-content {
+            font-size: 14px;
+        }
+        
+        .admin-table th {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="auth-container">
+        <div class="text-center mb-4">
+            <h2 class="mb-1">Contraentregaco FZ</h2>
+            <p class="text-muted">Worldwide Logistics Services</p>
+        </div>
+        
+        <div class="custom-card">
+            <h3 class="h5 mb-4 text-center">Sign in</h3>
+            
+            <div id="loginAlert"></div>
+            
+            <form id="loginForm">
+                <div class="custom-form-group">
+                    <label for="loginEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="loginEmail" required>
                 </div>
+                
+                <div class="custom-form-group">
+                    <label for="loginPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="loginPassword" required>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">Remember Me</label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="custom-btn btn-primary-custom w-100">Sign in</button>
+            </form>
+            
+            <div class="text-center mt-3">
+                <p class="mb-0">Create your fz account <a href="https://checkout.wompi.co/l/omorRM" id="registerLink">Sign up</a></p>
             </div>
-        </nav>
-        <!-- Header-->
-        <header class="bg-dark py-5">
-            <div class="container px-5">
-                <div class="row gx-5 justify-content-center">
-                    <div class="col-lg-6">
-                        <div class="text-center my-5">
-                            <h1 class="display-5 fw-bolder text-white mb-2">Present your business in a whole new way</h1>
-                            <p class="lead text-white-50 mb-4">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit!</p>
-                            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
-                                <a class="btn btn-primary btn-lg px-4 me-sm-3" href="dash.html">Get Started</a>
-                                <a class="btn btn-outline-light btn-lg px-4" href="#!">Learn More</a>
+        </div>
+    </div>
+
+    <!-- Dashboard (hidden by default) -->
+    <div id="dashboardPage" style="display: none;">
+        <div class="container py-4">
+            <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                <h1 class="h3 mb-0">ContraEntrega</h1>
+                <div class="d-flex align-items-center gap-3" id="userMenu">
+                    <span id="usernameDisplay"></span>
+                    <a href="#" class="text-danger text-decoration-none small" id="logoutBtn">
+                        <i class="bi bi-box-arrow-right"></i> Salir
+                    </a>
+                </div>
+            </header>
+            
+            <nav class="mb-4">
+                <ul class="nav nav-tabs nav-tabs-custom border-0" id="mainNav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-tab="dashboard">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-tab="quotes">Mis Cotizaciones</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-tab="pickups">Mis Recogidas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-tab="tracking">Rastreo</a>
+                    </li>
+                    <li class="nav-item" id="adminTab" style="display: none;">
+                        <a class="nav-link" href="#" data-tab="admin">Administración</a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <main>
+                <!-- Alert Container -->
+                <div id="alertContainer"></div>
+                
+                <!-- Dashboard Tab -->
+                <div id="dashboard" class="custom-tab-content active">
+                    <div class="row g-4">
+                        <!-- Quick Actions -->
+                        <div class="col-md-6">
+                            <div class="custom-card">
+                                <h2 class="h5 mb-3">Acciones Rápidas</h2>
+                                <div class="d-flex gap-3">
+                                    <a href="#quote-form" class="custom-btn btn-primary-custom">Nueva Cotización</a>
+                                    <a href="#pickup-form" class="custom-btn btn-secondary-custom">Programar Recogida</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-        <!-- Features section-->
-        <section class="py-5 border-bottom" id="features">
-            <div class="container px-5 my-5">
-                <div class="row gx-5">
-                    <div class="col-lg-4 mb-5 mb-lg-0">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-collection"></i></div>
-                        <h2 class="h4 fw-bolder">Featured title</h2>
-                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
-                        <a class="text-decoration-none" href="#!">
-                            Call to action
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="col-lg-4 mb-5 mb-lg-0">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-building"></i></div>
-                        <h2 class="h4 fw-bolder">Featured title</h2>
-                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
-                        <a class="text-decoration-none" href="#!">
-                            Call to action
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-toggles2"></i></div>
-                        <h2 class="h4 fw-bolder">Featured title</h2>
-                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
-                        <a class="text-decoration-none" href="#!">
-                            Call to action
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Pricing section-->
-        <section class="bg-light py-5 border-bottom">
-            <div class="container px-5 my-5">
-                <div class="text-center mb-5">
-                    <h2 class="fw-bolder">Pay as you grow</h2>
-                    <p class="lead mb-0">With our no hassle pricing plans</p>
-                </div>
-                <div class="row gx-5 justify-content-center">
-                    <!-- Pricing card free-->
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="card mb-5 mb-xl-0">
-                            <div class="card-body p-5">
-                                <div class="small text-uppercase fw-bold text-muted">Free</div>
-                                <div class="mb-3">
-                                    <span class="display-4 fw-bold">$0</span>
-                                    <span class="text-muted">/ mo.</span>
-                                </div>
-                                <ul class="list-unstyled mb-4">
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        <strong>1 users</strong>
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        5GB storage
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Unlimited public projects
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Community access
-                                    </li>
-                                    <li class="mb-2 text-muted">
-                                        <i class="bi bi-x"></i>
-                                        Unlimited private projects
-                                    </li>
-                                    <li class="mb-2 text-muted">
-                                        <i class="bi bi-x"></i>
-                                        Dedicated support
-                                    </li>
-                                    <li class="mb-2 text-muted">
-                                        <i class="bi bi-x"></i>
-                                        Free linked domain
-                                    </li>
-                                    <li class="text-muted">
-                                        <i class="bi bi-x"></i>
-                                        Monthly status reports
-                                    </li>
-                                </ul>
-                                <div class="d-grid"><a class="btn btn-outline-primary" href="#!">Choose plan</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Pricing card pro-->
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="card mb-5 mb-xl-0">
-                            <div class="card-body p-5">
-                                <div class="small text-uppercase fw-bold">
-                                    <i class="bi bi-star-fill text-warning"></i>
-                                    Pro
-                                </div>
-                                <div class="mb-3">
-                                    <span class="display-4 fw-bold">$9</span>
-                                    <span class="text-muted">/ mo.</span>
-                                </div>
-                                <ul class="list-unstyled mb-4">
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        <strong>5 users</strong>
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        5GB storage
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Unlimited public projects
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Community access
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Unlimited private projects
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Dedicated support
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Free linked domain
-                                    </li>
-                                    <li class="text-muted">
-                                        <i class="bi bi-x"></i>
-                                        Monthly status reports
-                                    </li>
-                                </ul>
-                                <div class="d-grid"><a class="btn btn-primary" href="#!">Choose plan</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Pricing card enterprise-->
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="card">
-                            <div class="card-body p-5">
-                                <div class="small text-uppercase fw-bold text-muted">Enterprise</div>
-                                <div class="mb-3">
-                                    <span class="display-4 fw-bold">$49</span>
-                                    <span class="text-muted">/ mo.</span>
-                                </div>
-                                <ul class="list-unstyled mb-4">
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        <strong>Unlimited users</strong>
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        5GB storage
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Unlimited public projects
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Community access
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Unlimited private projects
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Dedicated support
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        <strong>Unlimited</strong>
-                                        linked domains
-                                    </li>
-                                    <li class="text-muted">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Monthly status reports
-                                    </li>
-                                </ul>
-                                <div class="d-grid"><a class="btn btn-outline-primary" href="#!">Choose plan</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Testimonials section-->
-        <section class="py-5 border-bottom">
-            <div class="container px-5 my-5 px-5">
-                <div class="text-center mb-5">
-                    <h2 class="fw-bolder">Customer testimonials</h2>
-                    <p class="lead mb-0">Our customers love working with us</p>
-                </div>
-                <div class="row gx-5 justify-content-center">
-                    <div class="col-lg-6">
-                        <!-- Testimonial 1-->
-                        <div class="card mb-4">
-                            <div class="card-body p-4">
-                                <div class="d-flex">
-                                    <div class="flex-shrink-0"><i class="bi bi-chat-right-quote-fill text-primary fs-1"></i></div>
-                                    <div class="ms-4">
-                                        <p class="mb-1">Thank you for putting together such a great product. We loved working with you and the whole team, and we will be recommending you to others!</p>
-                                        <div class="small text-muted">- Client Name, Location</div>
+                        
+                        <!-- Stats -->
+                        <div class="col-md-6">
+                            <div class="custom-card">
+                                <h2 class="h5 mb-3">Resumen</h2>
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <div class="p-3 bg-light rounded text-center">
+                                            <span class="stat-value" id="quotesCount">0</span>
+                                            <span class="stat-label">Cotizaciones</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-3 bg-light rounded text-center">
+                                            <span class="stat-value" id="pickupsCount">0</span>
+                                            <span class="stat-label">Recogidas</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Testimonial 2-->
-                        <div class="card">
-                            <div class="card-body p-4">
-                                <div class="d-flex">
-                                    <div class="flex-shrink-0"><i class="bi bi-chat-right-quote-fill text-primary fs-1"></i></div>
-                                    <div class="ms-4">
-                                        <p class="mb-1">The whole team was a huge help with putting things together for our company and brand. We will be hiring them again in the near future for additional work!</p>
-                                        <div class="small text-muted">- Client Name, Location</div>
+                        
+                        <!-- Quote Form -->
+                        <div class="col-12" id="quote-form">
+                            <div class="custom-card">
+                                <h2 class="h5 mb-3">Nueva Cotización</h2>
+                                <form id="quoteForm">
+                                    <input type="hidden" name="form_type" value="quote">
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-6 col-lg-3">
+                                            <div class="custom-form-group">
+                                                <label for="q-fecha" class="form-label">Fecha del envío</label>
+                                                <input type="date" class="form-control" id="q-fecha" name="fecha" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6 col-lg-3">
+                                            <div class="custom-form-group">
+                                                <label for="q-desde" class="form-label">Ciudad origen</label>
+                                                <input type="text" class="form-control" id="q-desde" name="desde" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6 col-lg-3">
+                                            <div class="custom-form-group">
+                                                <label for="q-hacia" class="form-label">Ciudad destino</label>
+                                                <input type="text" class="form-control" id="q-hacia" name="hacia" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6 col-lg-3">
+                                            <div class="custom-form-group">
+                                                <label for="q-peso" class="form-label">Peso (kg)</label>
+                                                <input type="number" class="form-control" id="q-peso" name="peso" step="0.1" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-12">
+                                            <div class="custom-form-group">
+                                                <label for="q-direccion" class="form-label">Dirección completa</label>
+                                                <textarea class="form-control" id="q-direccion" name="direccion" rows="2" required></textarea>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <div class="custom-form-group">
+                                                <label for="q-valor" class="form-label">Valor declarado</label>
+                                                <input type="number" class="form-control" id="q-valor" name="valor" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-12">
+                                            <button type="submit" class="custom-btn btn-primary-custom">Solicitar Cotización</button>
+                                        </div>
                                     </div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <!-- Pickup Form -->
+                        <div class="col-12" id="pickup-form">
+                            <div class="custom-card">
+                                <h2 class="h5 mb-3">Programar Recogida</h2>
+                                <form id="pickupForm">
+                                    <input type="hidden" name="form_type" value="pickup">
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="custom-form-group">
+                                                <label for="p-id" class="form-label">Identificación</label>
+                                                <input type="text" class="form-control" id="p-id" name="identificacion" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="custom-form-group">
+                                                <label for="p-celular" class="form-label">Celular</label>
+                                                <input type="tel" class="form-control" id="p-celular" name="celular" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="custom-form-group">
+                                                <label for="p-nombre" class="form-label">Nombre completo</label>
+                                                <input type="text" class="form-control" id="p-nombre" name="nombre" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="custom-form-group">
+                                                <label for="p-email" class="form-label">Email</label>
+                                                <input type="email" class="form-control" id="p-email" name="email" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="custom-form-group">
+                                                <label for="p-ciudad" class="form-label">Ciudad</label>
+                                                <input type="text" class="form-control" id="p-ciudad" name="ciudad" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-12">
+                                            <div class="custom-form-group">
+                                                <label for="p-direccion" class="form-label">Dirección exacta</label>
+                                                <textarea class="form-control" id="p-direccion" name="direccion" rows="2" required></textarea>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6 col-lg-3">
+                                            <div class="custom-form-group">
+                                                <label for="p-fecha" class="form-label">Fecha recogida</label>
+                                                <input type="date" class="form-control" id="p-fecha" name="fecha" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6 col-lg-3">
+                                            <div class="custom-form-group">
+                                                <label for="p-hora" class="form-label">Hora recogida</label>
+                                                <input type="time" class="form-control" id="p-hora" name="hora" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6 col-lg-3">
+                                            <div class="custom-form-group">
+                                                <label for="p-referencia" class="form-label">Persona de referencia</label>
+                                                <input type="text" class="form-control" id="p-referencia" name="referencia" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-12">
+                                            <button type="submit" class="custom-btn btn-primary-custom">Programar Recogida</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quotes Tab -->
+                <div id="quotes" class="custom-tab-content">
+                    <div class="custom-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2 class="h5 mb-0">Mis Cotizaciones</h2>
+                            <a href="#quote-form" class="custom-btn btn-primary-custom btn-sm">
+                                <i class="bi bi-plus"></i> Nueva Cotización
+                            </a>
+                        </div>
+                        
+                        <div id="quotesList">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando...</span>
+                                </div>
+                                <p class="mt-2">Cargando cotizaciones...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pickups Tab -->
+                <div id="pickups" class="custom-tab-content">
+                    <div class="custom-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2 class="h5 mb-0">Mis Recogidas</h2>
+                            <a href="#pickup-form" class="custom-btn btn-primary-custom btn-sm">
+                                <i class="bi bi-plus"></i> Nueva Recogida
+                            </a>
+                        </div>
+                        
+                        <div id="pickupsList">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando...</span>
+                                </div>
+                                <p class="mt-2">Cargando recogidas...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tracking Tab -->
+                <div id="tracking" class="custom-tab-content">
+                    <div class="custom-card">
+                        <h2 class="h5 mb-3">Rastreo de Guías</h2>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="custom-form-group">
+                                    <label for="trackingNumber" class="form-label">Número de guía</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="trackingNumber" placeholder="Ingresa el número de guía">
+                                        <button class="btn btn-primary-custom" type="button" id="trackButton">
+                                            <i class="bi bi-search"></i> Rastrear
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <p class="small text-muted">Ejemplos para probar:</p>
+                                    <ul class="small text-muted">
+                                        <li>GUIA123456 (FedEx)</li>
+                                        <li>ABC789XYZ (DHL)</li>
+                                        <li>1234567890 (Servientrega)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="trackingResult" class="mt-4" style="display: none;">
+                            <div class="custom-card tracking-card">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h3 class="h6 mb-0" id="trackingTitle">Información de envío</h3>
+                                    <span class="badge bg-success" id="trackingStatus">En tránsito</span>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <p class="mb-1"><strong>Origen:</strong> <span id="trackingOrigin">Cali, Colombia</span></p>
+                                        <p class="mb-1"><strong>Destino:</strong> <span id="trackingDestination">Bogotá, Colombia</span></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="mb-1"><strong>Transportadora:</strong> <span id="trackingCarrier">Servientrega</span></p>
+                                        <p class="mb-1"><strong>Fecha estimada:</strong> <span id="trackingEstDate">15 Jul 2023</span></p>
+                                    </div>
+                                </div>
+                                
+                                <h4 class="h6 mb-3">Historial de seguimiento</h4>
+                                
+                                <div id="trackingHistory">
+                                    <!-- Tracking steps will be inserted here -->
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-        <!-- Contact section-->
-        <section class="bg-light py-5">
-            <div class="container px-5 my-5 px-5">
-                <div class="text-center mb-5">
-                    <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-envelope"></i></div>
-                    <h2 class="fw-bolder">Get in touch</h2>
-                    <p class="lead mb-0">We'd love to hear from you</p>
-                </div>
-                <div class="row gx-5 justify-content-center">
-                    <div class="col-lg-6">
-                        <!-- * * * * * * * * * * * * * * *-->
-                        <!-- * * SB Forms Contact Form * *-->
-                        <!-- * * * * * * * * * * * * * * *-->
-                        <!-- This form is pre-integrated with SB Forms.-->
-                        <!-- To make this form functional, sign up at-->
-                        <!-- https://startbootstrap.com/solution/contact-forms-->
-                        <!-- to get an API token!-->
-                        <form id="contactForm" data-sb-form-api-token="API_TOKEN">
-                            <!-- Name input-->
-                            <div class="form-floating mb-3">
-                                <input class="form-control" id="name" type="text" placeholder="Enter your name..." data-sb-validations="required" />
-                                <label for="name">Full name</label>
-                                <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
-                            </div>
-                            <!-- Email address input-->
-                            <div class="form-floating mb-3">
-                                <input class="form-control" id="email" type="email" placeholder="name@example.com" data-sb-validations="required,email" />
-                                <label for="email">Email address</label>
-                                <div class="invalid-feedback" data-sb-feedback="email:required">An email is required.</div>
-                                <div class="invalid-feedback" data-sb-feedback="email:email">Email is not valid.</div>
-                            </div>
-                            <!-- Phone number input-->
-                            <div class="form-floating mb-3">
-                                <input class="form-control" id="phone" type="tel" placeholder="(123) 456-7890" data-sb-validations="required" />
-                                <label for="phone">Phone number</label>
-                                <div class="invalid-feedback" data-sb-feedback="phone:required">A phone number is required.</div>
-                            </div>
-                            <!-- Message input-->
-                            <div class="form-floating mb-3">
-                                <textarea class="form-control" id="message" type="text" placeholder="Enter your message here..." style="height: 10rem" data-sb-validations="required"></textarea>
-                                <label for="message">Message</label>
-                                <div class="invalid-feedback" data-sb-feedback="message:required">A message is required.</div>
-                            </div>
-                            <!-- Submit success message-->
-                            <!---->
-                            <!-- This is what your users will see when the form-->
-                            <!-- has successfully submitted-->
-                            <div class="d-none" id="submitSuccessMessage">
-                                <div class="text-center mb-3">
-                                    <div class="fw-bolder">Form submission successful!</div>
-                                    To activate this form, sign up at
-                                    <br />
-                                    <a href="https://startbootstrap.com/solution/contact-forms">https://startbootstrap.com/solution/contact-forms</a>
+                
+                <!-- Admin Tab -->
+                <div id="admin" class="custom-tab-content">
+                    <div class="custom-card">
+                        <h2 class="h5 mb-3">Administración del Sistema</h2>
+                        
+                        <ul class="nav nav-tabs mb-4" id="adminTabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#usersTab">Usuarios</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#allQuotesTab">Todas las Cotizaciones</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#allPickupsTab">Todas las Recogidas</a>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="usersTab">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h3 class="h6">Gestión de Usuarios</h3>
+                                    <button class="btn btn-primary-custom btn-sm" id="addUserBtn">
+                                        <i class="bi bi-plus"></i> Agregar Usuario
+                                    </button>
+                                </div>
+                                
+                                <div class="table-responsive">
+                                    <table class="table table-hover admin-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Email</th>
+                                                <th>Nombre</th>
+                                                <th>Rol</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="usersTableBody">
+                                            <!-- Users will be loaded here -->
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                            <!-- Submit error message-->
-                            <!---->
-                            <!-- This is what your users will see when there is-->
-                            <!-- an error submitting the form-->
-                            <div class="d-none" id="submitErrorMessage"><div class="text-center text-danger mb-3">Error sending message!</div></div>
-                            <!-- Submit Button-->
-                            <div class="d-grid"><button class="btn btn-primary btn-lg disabled" id="submitButton" type="submit">Submit</button></div>
-                        </form>
+                            
+                            <div class="tab-pane fade" id="allQuotesTab">
+                                <h3 class="h6 mb-3">Todas las Cotizaciones</h3>
+                                <div class="table-responsive">
+                                    <table class="table table-hover admin-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Usuario</th>
+                                                <th>Fecha</th>
+                                                <th>Ruta</th>
+                                                <th>Peso</th>
+                                                <th>Valor</th>
+                                                <th>Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="allQuotesTableBody">
+                                            <!-- All quotes will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="allPickupsTab">
+                                <h3 class="h6 mb-3">Todas las Recogidas</h3>
+                                <div class="table-responsive">
+                                    <table class="table table-hover admin-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Usuario</th>
+                                                <th>Fecha/Hora</th>
+                                                <th>Ubicación</th>
+                                                <th>Contacto</th>
+                                                <th>Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="allPickupsTableBody">
+                                            <!-- All pickups will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </main>
+            
+            <footer class="mt-5 pt-4 border-top text-center text-muted small">
+                <div id="currentTime" class="mb-2"></div>
+                <div class="mb-2">
+                    <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#termsModal">
+                        Términos y condiciones
+                    </a> | 
+                    <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#privacyModal">
+                        Política de privacidad
+                    </a>
+                </div>
+                <div id="copyright"></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal fade modal-custom" id="termsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Términos y Condiciones</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+                    <h6 class="mt-3">1. Uso del Servicio</h6>
+                    <p>El servicio está destinado para uso logístico...</p>
+                    
+                    <h6 class="mt-3">2. Cotizaciones</h6>
+                    <p>Las cotizaciones son estimados no vinculantes...</p>
+                    
+                    <h6 class="mt-3">3. Recogidas</h6>
+                    <p>Las recogidas deben programarse con 24 horas de anticipación...</p>
+                    
+                    <h6 class="mt-3">4. Responsabilidades</h6>
+                    <p>El cliente es responsable de declarar el valor real de los envíos...</p>
+                    
+                    <h6 class="mt-3">5. Política de Privacidad</h6>
+                    <p>No almacenamos información personal sensible...</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="custom-btn btn-primary-custom" data-bs-dismiss="modal">Cerrar</button>
+                </div>
             </div>
-        </section>
-        <!-- Footer-->
-        <footer class="py-5 bg-dark">
-            <div class="container px-5"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2023</p></div>
-        </footer>
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="js/scripts.js"></script>
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <!-- * *                               SB Forms JS                               * *-->
-        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
-    </body>
+        </div>
+    </div>
+
+    <div class="modal fade modal-custom" id="privacyModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Política de Privacidad</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+                    <h6 class="mt-3">1. Información Recopilada</h6>
+                    <p>Solo recopilamos información necesaria para los servicios logísticos...</p>
+                    
+                    <h6 class="mt-3">2. Uso de la Información</h6>
+                    <p>La información se usa exclusivamente para procesar tus solicitudes...</p>
+                    
+                    <h6 class="mt-3">3. Protección de Datos</h6>
+                    <p>Implementamos medidas de seguridad para proteger tu información...</p>
+                    
+                    <h6 class="mt-3">4. Cookies</h6>
+                    <p>Utilizamos cookies solo para mantener tu sesión activa...</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="custom-btn btn-primary-custom" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="modal fade modal-custom" id="addUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar Nuevo Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addUserForm">
+                        <div class="custom-form-group">
+                            <label for="newUserName" class="form-label">Nombre Completo</label>
+                            <input type="text" class="form-control" id="newUserName" required>
+                        </div>
+                        
+                        <div class="custom-form-group">
+                            <label for="newUserEmail" class="form-label">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="newUserEmail" required>
+                        </div>
+                        
+                        <div class="custom-form-group">
+                            <label for="newUserPassword" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="newUserPassword" required>
+                        </div>
+                        
+                        <div class="custom-form-group">
+                            <label for="newUserRole" class="form-label">Rol</label>
+                            <select class="form-control" id="newUserRole" required>
+                                <option value="user">Usuario Normal</option>
+                                <option value="admin">Administrador</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary-custom" id="saveUserBtn">Guardar Usuario</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Configuración
+        const STORAGE_KEY = 'contraentrega_data';
+        const COOKIE_NAME = 'contraentrega_session';
+        const COOKIE_EXPIRY_DAYS = 7;
+        
+        // Estado de la aplicación
+        let currentUser = null;
+        let allUsers = [];
+        let userQuotes = [];
+        let userPickups = [];
+        let allQuotes = [];
+        let allPickups = [];
+        
+        // Elementos del DOM
+        const loginPage = document.getElementById('loginPage');
+        const dashboardPage = document.getElementById('dashboardPage');
+        const loginForm = document.getElementById('loginForm');
+        const loginAlert = document.getElementById('loginAlert');
+        const usernameDisplay = document.getElementById('usernameDisplay');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const alertContainer = document.getElementById('alertContainer');
+        const currentTimeElement = document.getElementById('currentTime');
+        const copyrightElement = document.getElementById('copyright');
+        const quotesCountElement = document.getElementById('quotesCount');
+        const pickupsCountElement = document.getElementById('pickupsCount');
+        const quotesListElement = document.getElementById('quotesList');
+        const pickupsListElement = document.getElementById('pickupsList');
+        const quoteForm = document.getElementById('quoteForm');
+        const pickupForm = document.getElementById('pickupForm');
+        const trackButton = document.getElementById('trackButton');
+        const trackingNumber = document.getElementById('trackingNumber');
+        const trackingResult = document.getElementById('trackingResult');
+        const trackingTitle = document.getElementById('trackingTitle');
+        const trackingStatus = document.getElementById('trackingStatus');
+        const trackingOrigin = document.getElementById('trackingOrigin');
+        const trackingDestination = document.getElementById('trackingDestination');
+        const trackingCarrier = document.getElementById('trackingCarrier');
+        const trackingEstDate = document.getElementById('trackingEstDate');
+        const trackingHistory = document.getElementById('trackingHistory');
+        const adminTab = document.getElementById('adminTab');
+        const usersTableBody = document.getElementById('usersTableBody');
+        const allQuotesTableBody = document.getElementById('allQuotesTableBody');
+        const allPickupsTableBody = document.getElementById('allPickupsTableBody');
+        const addUserBtn = document.getElementById('addUserBtn');
+        const saveUserBtn = document.getElementById('saveUserBtn');
+        
+        // Funciones de utilidad
+        function showAlert(message, type = 'error', container = alertContainer) {
+            const alert = document.createElement('div');
+            alert.className = `custom-alert alert-${type}-custom`;
+            alert.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi ${type === 'error' ? 'bi-exclamation-triangle' : 'bi-check-circle'} me-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            container.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+        
+        function updateClock() {
+            const now = new Date();
+            const options = {
+                timeZone: "America/Bogota",
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            if (currentTimeElement) {
+                currentTimeElement.textContent = now.toLocaleDateString('es-CO', options) + ' | Valle del Cauca, COL';
+            }
+        }
+        
+        function updateCopyright() {
+            if (copyrightElement) {
+                copyrightElement.textContent = `© ${new Date().getFullYear()} ContraEntrega - Todos los derechos reservados`;
+            }
+        }
+        
+        function switchTab(tabId) {
+            // Actualizar navegación
+            document.querySelectorAll('#mainNav .nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Mostrar contenido
+            document.querySelectorAll('.custom-tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+        }
+        
+        // Funciones de cookies
+        function setCookie(name, value, days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = "expires=" + date.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        }
+        
+        function getCookie(name) {
+            const cookieName = name + "=";
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const cookieArray = decodedCookie.split(';');
+            for(let i = 0; i < cookieArray.length; i++) {
+                let cookie = cookieArray[i];
+                while (cookie.charAt(0) === ' ') {
+                    cookie = cookie.substring(1);
+                }
+                if (cookie.indexOf(cookieName) === 0) {
+                    return cookie.substring(cookieName.length, cookie.length);
+                }
+            }
+            return "";
+        }
+        
+        function deleteCookie(name) {
+            document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        }
+        
+        // Funciones de autenticación
+        function checkAuth() {
+            const sessionCookie = getCookie(COOKIE_NAME);
+            if (sessionCookie) {
+                try {
+                    const sessionData = JSON.parse(sessionCookie);
+                    currentUser = sessionData.user;
+                    
+                    // Mostrar dashboard
+                    loginPage.style.display = 'none';
+                    dashboardPage.style.display = 'block';
+                    
+                    // Actualizar interfaz
+                    usernameDisplay.textContent = currentUser.name;
+                    
+                    // Mostrar pestaña de admin si es administrador
+                    if (currentUser.role === 'admin') {
+                        adminTab.style.display = 'block';
+                    }
+                    
+                    // Cargar datos del usuario
+                    loadFromLocalStorage();
+                    
+                    return true;
+                } catch (e) {
+                    console.error('Error parsing session cookie:', e);
+                    return false;
+                }
+            } else {
+                loginPage.style.display = 'block';
+                dashboardPage.style.display = 'none';
+                return false;
+            }
+        }
+        
+        function login(email, password, remember) {
+            // Buscar usuario en la base de datos
+            const user = allUsers.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = {
+                    id: user.id,
+                    email: user.email,
+                    name: user.name,
+                    role: user.role
+                };
+                
+                // Crear sesión en cookie
+                const sessionData = {
+                    user: currentUser,
+                    expires: new Date().getTime() + (remember ? COOKIE_EXPIRY_DAYS : 1) * 24 * 60 * 60 * 1000
+                };
+                
+                setCookie(COOKIE_NAME, JSON.stringify(sessionData), remember ? COOKIE_EXPIRY_DAYS : 1);
+                
+                // Mostrar dashboard
+                loginPage.style.display = 'none';
+                dashboardPage.style.display = 'block';
+                
+                // Actualizar interfaz
+                usernameDisplay.textContent = currentUser.name;
+                
+                // Mostrar pestaña de admin si es administrador
+                if (currentUser.role === 'admin') {
+                    adminTab.style.display = 'block';
+                    loadAdminData();
+                }
+                
+                return true;
+            }
+            return false;
+        }
+        
+        function logout() {
+            deleteCookie(COOKIE_NAME);
+            window.location.reload();
+        }
+        
+        // Funciones de almacenamiento local
+        function loadFromLocalStorage() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (data) {
+                try {
+                    const parsedData = JSON.parse(data);
+                    
+                    // Cargar usuarios si no están cargados
+                    if (!allUsers.length && parsedData.users) {
+                        allUsers = parsedData.users;
+                    }
+                    
+                    // Cargar datos del usuario actual
+                    if (currentUser) {
+                        userQuotes = parsedData.quotes?.filter(q => q.userId === currentUser.id) || [];
+                        userPickups = parsedData.pickups?.filter(p => p.userId === currentUser.id) || [];
+                        
+                        quotesCountElement.textContent = userQuotes.length;
+                        pickupsCountElement.textContent = userPickups.length;
+                        
+                        renderQuotesList();
+                        renderPickupsList();
+                    }
+                    
+                    // Cargar todos los datos para admin
+                    if (currentUser?.role === 'admin') {
+                        allQuotes = parsedData.quotes || [];
+                        allPickups = parsedData.pickups || [];
+                    }
+                    
+                    return true;
+                } catch (e) {
+                    console.error('Error parsing localStorage data:', e);
+                    return false;
+                }
+            }
+            return false;
+        }
+        
+        function saveToLocalStorage() {
+            const data = {
+                users: allUsers,
+                quotes: allQuotes.length ? allQuotes : userQuotes,
+                pickups: allPickups.length ? allPickups : userPickups
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+        
+        function generateId() {
+            return 'id-' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        // Funciones de renderizado
+        function renderQuotesList() {
+            if (userQuotes.length === 0) {
+                quotesListElement.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="bi bi-file-text fs-1 text-muted"></i>
+                        <p class="mt-2">No tienes cotizaciones registradas</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha</th>
+                            <th>Ruta</th>
+                            <th>Peso</th>
+                            <th>Valor</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            userQuotes.forEach(quote => {
+                html += `
+                <tr>
+                    <td>${quote.id}</td>
+                    <td>${new Date(quote.createdAt).toLocaleDateString()}</td>
+                    <td>${quote.desde} → ${quote.hacia}</td>
+                    <td>${quote.peso} kg</td>
+                    <td>$${quote.valor.toLocaleString()}</td>
+                    <td>
+                        <span class="status-badge ${quote.status === 'pending' ? 'status-pending' : 'status-completed'}">
+                            ${quote.status === 'pending' ? 'Pendiente' : 'Completada'}
+                        </span>
+                    </td>
+                </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            </div>
+            `;
+            
+            quotesListElement.innerHTML = html;
+        }
+        
+        function renderPickupsList() {
+            if (userPickups.length === 0) {
+                pickupsListElement.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="bi bi-truck fs-1 text-muted"></i>
+                        <p class="mt-2">No tienes recogidas programadas</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha/Hora</th>
+                            <th>Ubicación</th>
+                            <th>Contacto</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            userPickups.forEach(pickup => {
+                html += `
+                <tr>
+                    <td>${pickup.id}</td>
+                    <td>${pickup.fecha} ${pickup.hora}</td>
+                    <td>${pickup.ciudad}</td>
+                    <td>${pickup.referencia}<br><small>${pickup.celular}</small></td>
+                    <td>
+                        <span class="status-badge ${pickup.status === 'scheduled' ? 'status-scheduled' : 'status-completed'}">
+                            ${pickup.status === 'scheduled' ? 'Programada' : 'Completada'}
+                        </span>
+                    </td>
+                </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            </div>
+            `;
+            
+            pickupsListElement.innerHTML = html;
+        }
+        
+        // Funciones de administración
+        function loadAdminData() {
+            renderUsersTable();
+            renderAllQuotesTable();
+            renderAllPickupsTable();
+        }
+        
+        function renderUsersTable() {
+            let html = '';
+            
+            allUsers.forEach(user => {
+                html += `
+                <tr>
+                    <td>${user.id.substring(0, 8)}</td>
+                    <td>${user.email}</td>
+                    <td>${user.name}</td>
+                    <td>${user.role === 'admin' ? 'Administrador' : 'Usuario'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${user.id}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                `;
+            });
+            
+            usersTableBody.innerHTML = html;
+        }
+        
+        function renderAllQuotesTable() {
+            let html = '';
+            
+            allQuotes.forEach(quote => {
+                const user = allUsers.find(u => u.id === quote.userId);
+                html += `
+                <tr>
+                    <td>${quote.id.substring(0, 8)}</td>
+                    <td>${user?.name || 'Desconocido'}</td>
+                    <td>${new Date(quote.createdAt).toLocaleDateString()}</td>
+                    <td>${quote.desde} → ${quote.hacia}</td>
+                    <td>${quote.peso} kg</td>
+                    <td>$${quote.valor.toLocaleString()}</td>
+                    <td>
+                        <span class="status-badge ${quote.status === 'pending' ? 'status-pending' : 'status-completed'}">
+                            ${quote.status === 'pending' ? 'Pendiente' : 'Completada'}
+                        </span>
+                    </td>
+                </tr>
+                `;
+            });
+            
+            allQuotesTableBody.innerHTML = html;
+        }
+        
+        function renderAllPickupsTable() {
+            let html = '';
+            
+            allPickups.forEach(pickup => {
+                const user = allUsers.find(u => u.id === pickup.userId);
+                html += `
+                <tr>
+                    <td>${pickup.id.substring(0, 8)}</td>
+                    <td>${user?.name || 'Desconocido'}</td>
+                    <td>${pickup.fecha} ${pickup.hora}</td>
+                    <td>${pickup.ciudad}</td>
+                    <td>${pickup.referencia}<br><small>${pickup.celular}</small></td>
+                    <td>
+                        <span class="status-badge ${pickup.status === 'scheduled' ? 'status-scheduled' : 'status-completed'}">
+                            ${pickup.status === 'scheduled' ? 'Programada' : 'Completada'}
+                        </span>
+                    </td>
+                </tr>
+                `;
+            });
+            
+            allPickupsTableBody.innerHTML = html;
+        }
+        
+        function addUser(name, email, password, role) {
+            const newUser = {
+                id: generateId(),
+                name,
+                email,
+                password,
+                role,
+                createdAt: new Date().toISOString()
+            };
+            
+            allUsers.push(newUser);
+            saveToLocalStorage();
+            
+            if (currentUser?.role === 'admin') {
+                renderUsersTable();
+            }
+            
+            showAlert('Usuario creado con éxito', 'success');
+        }
+        
+        function deleteUser(userId) {
+            if (confirm('¿Estás seguro de eliminar este usuario?')) {
+                allUsers = allUsers.filter(user => user.id !== userId);
+                saveToLocalStorage();
+                
+                if (currentUser?.role === 'admin') {
+                    renderUsersTable();
+                }
+                
+                showAlert('Usuario eliminado', 'success');
+            }
+        }
+        
+        // Funciones de rastreo
+        function trackPackage(trackingNumber) {
+            // Simular API de rastreo con datos de ejemplo
+            const carriers = ['FedEx', 'DHL', 'Servientrega', 'UPS', 'TCC'];
+            const statuses = ['En tránsito', 'En reparto', 'Entregado', 'Retenido en aduana'];
+            const cities = ['Cali', 'Bogotá', 'Medellín', 'Barranquilla', 'Cartagena'];
+            
+            const carrier = carriers[Math.floor(Math.random() * carriers.length)];
+            const status = statuses[Math.floor(Math.random() * statuses.length)];
+            const origin = cities[Math.floor(Math.random() * cities.length)];
+            let destination = cities[Math.floor(Math.random() * cities.length)];
+            
+            // Asegurarse de que origen y destino sean diferentes
+            while (destination === origin) {
+                destination = cities[Math.floor(Math.random() * cities.length)];
+            }
+            
+            // Fecha estimada de entrega (1-5 días a partir de hoy)
+            const estDate = new Date();
+            estDate.setDate(estDate.getDate() + Math.floor(Math.random() * 5) + 1);
+            
+            // Actualizar información básica
+            trackingTitle.textContent = `Guía: ${trackingNumber}`;
+            trackingStatus.textContent = status;
+            trackingOrigin.textContent = `${origin}, Colombia`;
+            trackingDestination.textContent = `${destination}, Colombia`;
+            trackingCarrier.textContent = carrier;
+            trackingEstDate.textContent = estDate.toLocaleDateString('es-CO', { 
+                day: 'numeric', 
+                month: 'short', 
+                year: 'numeric' 
+            });
+            
+            // Generar historial de seguimiento
+            let historyHTML = '';
+            const stepsCount = 3 + Math.floor(Math.random() * 4); // Entre 3 y 6 pasos
+            const completedSteps = status === 'Entregado' ? stepsCount : Math.floor(Math.random() * (stepsCount - 1)) + 1;
+            
+            const steps = [
+                `Recibido en las instalaciones de ${origin}`,
+                `En proceso de clasificación`,
+                `En tránsito hacia ${destination}`,
+                `Llegó a la bodega de ${destination}`,
+                `En reparto`,
+                `Entregado al destinatario`
+            ];
+            
+            for (let i = 0; i < stepsCount; i++) {
+                const stepDate = new Date();
+                stepDate.setDate(stepDate.getDate() - (stepsCount - i));
+                
+                const isCompleted = i < completedSteps;
+                const isActive = i === completedSteps - 1 && !(status === 'Entregado');
+                
+                historyHTML += `
+                <div class="tracking-step ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}">
+                    <div class="tracking-step-icon">
+                        <i class="bi ${isCompleted ? 'bi-check' : (isActive ? 'bi-geo-alt' : 'bi-circle')}"></i>
+                    </div>
+                    <div>
+                        <div class="tracking-step-date">
+                            ${stepDate.toLocaleDateString('es-CO', { 
+                                day: 'numeric', 
+                                month: 'short', 
+                                hour: '2-digit', 
+                                minute: '2-digit' 
+                            })}
+                        </div>
+                        <div class="tracking-step-content">
+                            ${steps[i] || steps[steps.length - 1]}
+                        </div>
+                    </div>
+                </div>
+                `;
+            }
+            
+            trackingHistory.innerHTML = historyHTML;
+            trackingResult.style.display = 'block';
+        }
+        
+        // Funciones de formularios
+        function submitQuote(formData) {
+            try {
+                const newQuote = {
+                    id: generateId(),
+                    userId: currentUser.id,
+                    desde: formData.get('desde'),
+                    hacia: formData.get('hacia'),
+                    fecha: formData.get('fecha'),
+                    peso: parseFloat(formData.get('peso')),
+                    valor: parseFloat(formData.get('valor')),
+                    direccion: formData.get('direccion'),
+                    status: 'pending',
+                    createdAt: new Date().toISOString()
+                };
+                
+                userQuotes.unshift(newQuote);
+                allQuotes.unshift(newQuote);
+                quotesCountElement.textContent = userQuotes.length;
+                renderQuotesList();
+                saveToLocalStorage();
+                
+                showAlert('Cotización creada con éxito', 'success');
+                quoteForm.reset();
+                
+            } catch (error) {
+                console.error('Error submitting quote:', error);
+                showAlert('Error al crear la cotización. Intenta nuevamente.');
+            }
+        }
+        
+        function submitPickup(formData) {
+            try {
+                const newPickup = {
+                    id: generateId(),
+                    userId: currentUser.id,
+                    identificacion: formData.get('identificacion'),
+                    celular: formData.get('celular'),
+                    nombre: formData.get('nombre'),
+                    email: formData.get('email'),
+                    ciudad: formData.get('ciudad'),
+                    direccion: formData.get('direccion'),
+                    fecha: formData.get('fecha'),
+                    hora: formData.get('hora'),
+                    referencia: formData.get('referencia'),
+                    status: 'scheduled',
+                    createdAt: new Date().toISOString()
+                };
+                
+                userPickups.unshift(newPickup);
+                allPickups.unshift(newPickup);
+                pickupsCountElement.textContent = userPickups.length;
+                renderPickupsList();
+                saveToLocalStorage();
+                
+                showAlert('Recogida programada con éxito', 'success');
+                pickupForm.reset();
+                
+            } catch (error) {
+                console.error('Error submitting pickup:', error);
+                showAlert('Error al programar la recogida. Intenta nuevamente.');
+            }
+        }
+        
+        // Event Listeners
+        document.querySelectorAll('#mainNav .nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                switchTab(this.getAttribute('data-tab'));
+            });
+        });
+        
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const remember = document.getElementById('rememberMe').checked;
+            
+            if (email && password) {
+                if (login(email, password, remember)) {
+                    showAlert('Inicio de sesión exitoso', 'success', loginAlert);
+                } else {
+                    showAlert('Credenciales incorrectas', 'error', loginAlert);
+                }
+            } else {
+                showAlert('Por favor completa todos los campos', 'error', loginAlert);
+            }
+        });
+        
+        quoteForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            submitQuote(formData);
+        });
+        
+        pickupForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            submitPickup(formData);
+        });
+        
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            logout();
+        });
+        
+        trackButton.addEventListener('click', function() {
+            if (trackingNumber.value.trim()) {
+                trackPackage(trackingNumber.value.trim());
+            } else {
+                showAlert('Por favor ingresa un número de guía');
+            }
+        });
+        
+        trackingNumber.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                trackButton.click();
+            }
+        });
+        
+        addUserBtn.addEventListener('click', function() {
+            // Limpiar formulario
+            document.getElementById('addUserForm').reset();
+            // Mostrar modal
+            const modal = new bootstrap.Modal(document.getElementById('addUserModal'));
+            modal.show();
+        });
+        
+        saveUserBtn.addEventListener('click', function() {
+            const name = document.getElementById('newUserName').value;
+            const email = document.getElementById('newUserEmail').value;
+            const password = document.getElementById('newUserPassword').value;
+            const role = document.getElementById('newUserRole').value;
+            
+            if (name && email && password) {
+                // Verificar si el email ya existe
+                if (allUsers.some(u => u.email === email)) {
+                    showAlert('Este correo electrónico ya está registrado', 'error');
+                    return;
+                }
+                
+                addUser(name, email, password, role);
+                
+                // Cerrar modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+                modal.hide();
+            } else {
+                showAlert('Por favor completa todos los campos', 'error');
+            }
+        });
+        
+        // Inicialización
+        function init() {
+            updateClock();
+            updateCopyright();
+            setInterval(updateClock, 1000);
+            
+            // Datos iniciales (solo si no existen)
+            if (!localStorage.getItem(STORAGE_KEY)) {
+                // Crear usuario admin por defecto
+                allUsers = [
+                    {
+                        id: generateId(),
+                        name: 'Administrador',
+                        email: 'fz@contraentregaco.com',
+                        password: 'admin123',
+                        role: 'admin',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: generateId(),
+                        name: 'Usuario Demo',
+                        email: 'fz1@contraentregaco.com',
+                        password: 'demo123',
+                        role: 'user',
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                
+                // Crear algunas cotizaciones y recogidas de ejemplo
+                userQuotes = [
+                    {
+                        id: generateId(),
+                        userId: allUsers[1].id,
+                        desde: 'Cali',
+                        hacia: 'Bogotá',
+                        fecha: '2023-07-15',
+                        peso: 5.2,
+                        valor: 120000,
+                        direccion: 'Carrera 10 #20-30, Barrio Granada',
+                        status: 'completed',
+                        createdAt: '2023-07-10T09:15:00Z'
+                    },
+                    {
+                        id: generateId(),
+                        userId: allUsers[1].id,
+                        desde: 'Palmira',
+                        hacia: 'Medellín',
+                        fecha: '2023-07-20',
+                        peso: 8.5,
+                        valor: 185000,
+                        direccion: 'Calle 15 #5-67, Centro',
+                        status: 'pending',
+                        createdAt: '2023-07-14T14:30:00Z'
+                    }
+                ];
+                
+                userPickups = [
+                    {
+                        id: generateId(),
+                        userId: allUsers[1].id,
+                        identificacion: '123456789',
+                        celular: '3001234567',
+                        nombre: 'Juan Pérez',
+                        email: 'juan@example.com',
+                        ciudad: 'Cali',
+                        direccion: 'Carrera 10 #20-30, Barrio Granada',
+                        fecha: '2023-07-18',
+                        hora: '14:00',
+                        referencia: 'María Gómez',
+                        status: 'scheduled',
+                        createdAt: '2023-07-12T10:45:00Z'
+                    }
+                ];
+                
+                allQuotes = [...userQuotes];
+                allPickups = [...userPickups];
+                
+                saveToLocalStorage();
+            } else {
+                // Cargar datos existentes
+                const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                allUsers = data.users || [];
+                allQuotes = data.quotes || [];
+                allPickups = data.pickups || [];
+            }
+            
+            // Verificar autenticación
+            checkAuth();
+            
+            // Configurar formularios con fechas mínimas
+            if (quoteForm) {
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('q-fecha').min = today;
+                document.getElementById('p-fecha').min = today;
+                
+                // Configurar hora mínima para recogidas (si es hoy)
+                document.getElementById('p-fecha').addEventListener('change', function() {
+                    const timeInput = document.getElementById('p-hora');
+                    if (this.value === today) {
+                        const now = new Date();
+                        const currentHour = now.getHours().toString().padStart(2, '0');
+                        const currentMinute = now.getMinutes().toString().padStart(2, '0');
+                        timeInput.min = `${currentHour}:${currentMinute}`;
+                    } else {
+                        timeInput.removeAttribute('min');
+                    }
+                });
+            }
+        }
+        
+        // Hacer funciones disponibles globalmente para los botones
+        window.deleteUser = deleteUser;
+        
+        init();
+    </script>
+</body>
 </html>
