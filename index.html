@@ -1,436 +1,156 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contraentregaco FZ - Control Panel</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
-    <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2980b9;
-            --background-color: #f9f9f9;
-            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: var(--background-color);
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--primary-color);
-        }
-
-        p.subtitle {
-            font-size: 1.2rem;
-            color: #666;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .countries-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .country-card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            text-align: center;
-            cursor: pointer;
-        }
-
-        .country-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .flag-container {
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f0f0f0;
-        }
-
-        .flag-icon {
-            font-size: 4rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .country-info {
-            padding: 1.5rem 1rem;
-        }
-
-        .country-name {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
-
-        .country-name-native {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .search-container {
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        #country-search {
-            width: 100%;
-            padding: 12px 20px;
-            border: 1px solid #ddd;
-            border-radius: 50px;
-            font-size: 1rem;
-            outline: none;
-            transition: var(--transition);
-        }
-
-        #country-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid #eee;
-            color: #777;
-        }
-
-        @media (max-width: 768px) {
-            .countries-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            .flag-container {
-                height: 100px;
-            }
-
-            .flag-icon {
-                font-size: 3rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .countries-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-                gap: 1rem;
-            }
-
-            .country-info {
-                padding: 1rem 0.5rem;
-            }
-
-            .country-name {
-                font-size: 1rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <title>Contraentregaco FZ</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Roboto, sans-serif; touch-action: manipulation; }
+    #contenedor-mapa { height: 100vh; display: flex; flex-direction: column; }
+    #encabezado { background: #000; color: white; padding: 1rem; text-align: center; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #f8f8f8; }
+    #buscador { flex: 1; padding: 0.6rem 1rem; border: 1px solid #ddd; border-radius: 24px; -webkit-appearance: none; font-size: 16px; }
+    .btn { background: #000; color: white; padding: 0.6rem 1.2rem; border-radius: 24px; text-decoration: none; }
+    #mapa { flex: 1; background: #f0f0f0; }
+    .cluster-marcadores { background: rgba(40,40,40,0.7); border-radius: 50%; }
+    .leaflet-control-layers { background: #fff; padding: 5px; border-radius: 4px; }
+    @media (max-width: 768px) { #barra-superior { flex-direction: column; } }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Contraentregaco FZ</h1>
-            <p class="subtitle">Select your country</p>
-        </header>
-
-        <div class="search-container">
-            <input type="text" id="country-search" placeholder="Search..." aria-label="Buscar país">
-        </div>
-
-        <div class="countries-grid" id="countries-container">
-            <!-- Los países se cargarán aquí con JavaScript -->
-        </div>
-
-        <footer>
-            <p>bc1q9duznfnqynw2fjex9v826da0x8x3lncwpf8yaa</p>
-        </footer>
+  <div id="contenedor-mapa">
+    <div id="encabezado">
+      <h1>Contraentregaco FZ</h1>
+      <p>Worldwide Logistics Services</p>
     </div>
+    
+    <div id="barra-superior">
+      <input type="search" id="buscador" placeholder="Search..." enterkeyhint="search">
+      <a href="https://fz.contraentregaco.com" class="btn" target="_blank">FZ</a>
+    </div>
+    
+    <div id="mapa"></div>
+  </div>
 
-    <script>
-        // Lista de países con sus códigos, nombres y nombres nativos
-        const countries = [
-    { "code": "af", "name": "Afganistán", "nativeName": "افغانستان", "url": "https://af.contraentregaco.com" },
-    { "code": "al", "name": "Albania", "nativeName": "Shqipëria", "url": "https://al.contraentregaco.com" },
-    { "code": "de", "name": "Alemania", "nativeName": "Deutschland", "url": "https://de.contraentregaco.com" },
-    { "code": "ad", "name": "Andorra", "nativeName": "Andorra", "url": "https://ad.contraentregaco.com" },
-    { "code": "ao", "name": "Angola", "nativeName": "Angola", "url": "https://ao.contraentregaco.com" },
-    { "code": "ag", "name": "Antigua y Barbuda", "nativeName": "Antigua and Barbuda", "url": "https://ag.contraentregaco.com" },
-    { "code": "sa", "name": "Arabia Saudita", "nativeName": "المملكة العربية السعودية", "url": "https://sa.contraentregaco.com" },
-    { "code": "dz", "name": "Argelia", "nativeName": "الجزائر", "url": "https://dz.contraentregaco.com" },
-    { "code": "ar", "name": "Argentina", "nativeName": "Argentina", "url": "https://ar.contraentregaco.com" },
-    { "code": "am", "name": "Armenia", "nativeName": "Հայաստան", "url": "https://am.contraentregaco.com" },
-    { "code": "au", "name": "Australia", "nativeName": "Australia", "url": "https://au.contraentregaco.com" },
-    { "code": "at", "name": "Austria", "nativeName": "Österreich", "url": "https://at.contraentregaco.com" },
-    { "code": "az", "name": "Azerbaiyán", "nativeName": "Azərbaycan", "url": "https://az.contraentregaco.com" },
-    { "code": "bs", "name": "Bahamas", "nativeName": "Bahamas", "url": "https://bs.contraentregaco.com" },
-    { "code": "bd", "name": "Bangladés", "nativeName": "বাংলাদেশ", "url": "https://bd.contraentregaco.com" },
-    { "code": "bb", "name": "Barbados", "nativeName": "Barbados", "url": "https://bb.contraentregaco.com" },
-    { "code": "bh", "name": "Baréin", "nativeName": "البحرين", "url": "https://bh.contraentregaco.com" },
-    { "code": "be", "name": "Bélgica", "nativeName": "België", "url": "https://be.contraentregaco.com" },
-    { "code": "bz", "name": "Belice", "nativeName": "Belize", "url": "https://bz.contraentregaco.com" },
-    { "code": "bj", "name": "Benín", "nativeName": "Bénin", "url": "https://bj.contraentregaco.com" },
-    { "code": "by", "name": "Bielorrusia", "nativeName": "Беларусь", "url": "https://by.contraentregaco.com" },
-    { "code": "mm", "name": "Birmania (Myanmar)", "nativeName": "မြန်မာ", "url": "https://mm.contraentregaco.com" },
-    { "code": "bo", "name": "Bolivia", "nativeName": "Bolivia", "url": "https://bo.contraentregaco.com" },
-    { "code": "ba", "name": "Bosnia y Herzegovina", "nativeName": "Bosna i Hercegovina", "url": "https://ba.contraentregaco.com" },
-    { "code": "bw", "name": "Botsuana", "nativeName": "Botswana", "url": "https://bw.contraentregaco.com" },
-    { "code": "br", "name": "Brasil", "nativeName": "Brasil", "url": "https://br.contraentregaco.com" },
-    { "code": "bn", "name": "Brunéi", "nativeName": "Brunei", "url": "https://bn.contraentregaco.com" },
-    { "code": "bg", "name": "Bulgaria", "nativeName": "България", "url": "https://bg.contraentregaco.com" },
-    { "code": "bf", "name": "Burkina Faso", "nativeName": "Burkina Faso", "url": "https://bf.contraentregaco.com" },
-    { "code": "bi", "name": "Burundi", "nativeName": "Burundi", "url": "https://bi.contraentregaco.com" },
-    { "code": "bt", "name": "Bután", "nativeName": "འབྲུག", "url": "https://bt.contraentregaco.com" },
-    { "code": "cv", "name": "Cabo Verde", "nativeName": "Cabo Verde", "url": "https://cv.contraentregaco.com" },
-    { "code": "kh", "name": "Camboya", "nativeName": "កម្ពុជា", "url": "https://kh.contraentregaco.com" },
-    { "code": "cm", "name": "Camerún", "nativeName": "Cameroun", "url": "https://cm.contraentregaco.com" },
-    { "code": "ca", "name": "Canadá", "nativeName": "Canada", "url": "https://ca.contraentregaco.com" },
-    { "code": "qa", "name": "Catar", "nativeName": "قطر", "url": "https://qa.contraentregaco.com" },
-    { "code": "td", "name": "Chad", "nativeName": "Tchad", "url": "https://td.contraentregaco.com" },
-    { "code": "cl", "name": "Chile", "nativeName": "Chile", "url": "https://cl.contraentregaco.com" },
-    { "code": "cn", "name": "China", "nativeName": "中国", "url": "https://cn.contraentregaco.com" },
-    { "code": "cy", "name": "Chipre", "nativeName": "Κύπρος", "url": "https://cy.contraentregaco.com" },
-    { "code": "co", "name": "Colombia", "nativeName": "Colombia", "url": "https://co.contraentregaco.com" },
-    { "code": "km", "name": "Comoras", "nativeName": "جزر القمر", "url": "https://km.contraentregaco.com" },
-    { "code": "kp", "name": "Corea del Norte", "nativeName": "조선민주주의인민공화국", "url": "https://kp.contraentregaco.com" },
-    { "code": "kr", "name": "Corea del Sur", "nativeName": "대한민국", "url": "https://kr.contraentregaco.com" },
-    { "code": "ci", "name": "Costa de Marfil", "nativeName": "Côte d'Ivoire", "url": "https://ci.contraentregaco.com" },
-    { "code": "cr", "name": "Costa Rica", "nativeName": "Costa Rica", "url": "https://cr.contraentregaco.com" },
-    { "code": "hr", "name": "Croacia", "nativeName": "Hrvatska", "url": "https://hr.contraentregaco.com" },
-    { "code": "cu", "name": "Cuba", "nativeName": "Cuba", "url": "https://cu.contraentregaco.com" },
-    { "code": "dk", "name": "Dinamarca", "nativeName": "Danmark", "url": "https://dk.contraentregaco.com" },
-    { "code": "dm", "name": "Dominica", "nativeName": "Dominica", "url": "https://dm.contraentregaco.com" },
-    { "code": "ec", "name": "Ecuador", "nativeName": "Ecuador", "url": "https://ec.contraentregaco.com" },
-    { "code": "eg", "name": "Egipto", "nativeName": "مصر", "url": "https://eg.contraentregaco.com" },
-    { "code": "sv", "name": "El Salvador", "nativeName": "El Salvador", "url": "https://sv.contraentregaco.com" },
-    { "code": "ae", "name": "Emiratos Árabes Unidos", "nativeName": "الإمارات العربية المتحدة", "url": "https://ae.contraentregaco.com" },
-    { "code": "er", "name": "Eritrea", "nativeName": "ኤርትራ", "url": "https://er.contraentregaco.com" },
-    { "code": "sk", "name": "Eslovaquia", "nativeName": "Slovensko", "url": "https://sk.contraentregaco.com" },
-    { "code": "si", "name": "Eslovenia", "nativeName": "Slovenija", "url": "https://si.contraentregaco.com" },
-    { "code": "es", "name": "España", "nativeName": "España", "url": "https://es.contraentregaco.com" },
-    { "code": "us", "name": "Estados Unidos", "nativeName": "United States", "url": "https://us.contraentregaco.com" },
-    { "code": "ee", "name": "Estonia", "nativeName": "Eesti", "url": "https://ee.contraentregaco.com" },
-    { "code": "sz", "name": "Esuatini (Suazilandia)", "nativeName": "Eswatini", "url": "https://sz.contraentregaco.com" },
-    { "code": "et", "name": "Etiopía", "nativeName": "ኢትዮጵያ", "url": "https://et.contraentregaco.com" },
-    { "code": "fj", "name": "Fiyi", "nativeName": "Fiji", "url": "https://fj.contraentregaco.com" },
-    { "code": "ph", "name": "Filipinas", "nativeName": "Pilipinas", "url": "https://ph.contraentregaco.com" },
-    { "code": "fi", "name": "Finlandia", "nativeName": "Suomi", "url": "https://fi.contraentregaco.com" },
-    { "code": "fr", "name": "Francia", "nativeName": "France", "url": "https://fr.contraentregaco.com" },
-    { "code": "ga", "name": "Gabón", "nativeName": "Gabon", "url": "https://ga.contraentregaco.com" },
-    { "code": "gm", "name": "Gambia", "nativeName": "Gambia", "url": "https://gm.contraentregaco.com" },
-    { "code": "ge", "name": "Georgia", "nativeName": "საქართველო", "url": "https://ge.contraentregaco.com" },
-    { "code": "gh", "name": "Ghana", "nativeName": "Ghana", "url": "https://gh.contraentregaco.com" },
-    { "code": "gd", "name": "Granada", "nativeName": "Grenada", "url": "https://gd.contraentregaco.com" },
-    { "code": "gr", "name": "Grecia", "nativeName": "Ελλάδα", "url": "https://gr.contraentregaco.com" },
-    { "code": "gt", "name": "Guatemala", "nativeName": "Guatemala", "url": "https://gt.contraentregaco.com" },
-    { "code": "gn", "name": "Guinea", "nativeName": "Guinée", "url": "https://gn.contraentregaco.com" },
-    { "code": "gw", "name": "Guinea-Bisáu", "nativeName": "Guiné-Bissau", "url": "https://gw.contraentregaco.com" },
-    { "code": "gq", "name": "Guinea Ecuatorial", "nativeName": "Guinea Ecuatorial", "url": "https://gq.contraentregaco.com" },
-    { "code": "gy", "name": "Guyana", "nativeName": "Guyana", "url": "https://gy.contraentregaco.com" },
-    { "code": "ht", "name": "Haití", "nativeName": "Haïti", "url": "https://ht.contraentregaco.com" },
-    { "code": "hn", "name": "Honduras", "nativeName": "Honduras", "url": "https://hn.contraentregaco.com" },
-    { "code": "hu", "name": "Hungría", "nativeName": "Magyarország", "url": "https://hu.contraentregaco.com" },
-    { "code": "in", "name": "India", "nativeName": "भारत", "url": "https://in.contraentregaco.com" },
-    { "code": "id", "name": "Indonesia", "nativeName": "Indonesia", "url": "https://id.contraentregaco.com" },
-    { "code": "iq", "name": "Irak", "nativeName": "العراق", "url": "https://iq.contraentregaco.com" },
-    { "code": "ir", "name": "Irán", "nativeName": "ایران", "url": "https://ir.contraentregaco.com" },
-    { "code": "ie", "name": "Irlanda", "nativeName": "Éire", "url": "https://ie.contraentregaco.com" },
-    { "code": "is", "name": "Islandia", "nativeName": "Ísland", "url": "https://is.contraentregaco.com" },
-    { "code": "mh", "name": "Islas Marshall", "nativeName": "Marshall Islands", "url": "https://mh.contraentregaco.com" },
-    { "code": "sb", "name": "Islas Salomón", "nativeName": "Solomon Islands", "url": "https://sb.contraentregaco.com" },
-    { "code": "il", "name": "Israel", "nativeName": "ישראל", "url": "https://il.contraentregaco.com" },
-    { "code": "it", "name": "Italia", "nativeName": "Italia", "url": "https://it.contraentregaco.com" },
-    { "code": "jm", "name": "Jamaica", "nativeName": "Jamaica", "url": "https://jm.contraentregaco.com" },
-    { "code": "jp", "name": "Japón", "nativeName": "日本", "url": "https://jp.contraentregaco.com" },
-    { "code": "jo", "name": "Jordania", "nativeName": "الأردن", "url": "https://jo.contraentregaco.com" },
-    { "code": "kz", "name": "Kazajistán", "nativeName": "Қазақстан", "url": "https://kz.contraentregaco.com" },
-    { "code": "ke", "name": "Kenia", "nativeName": "Kenya", "url": "https://ke.contraentregaco.com" },
-    { "code": "kg", "name": "Kirguistán", "nativeName": "Кыргызстан", "url": "https://kg.contraentregaco.com" },
-    { "code": "ki", "name": "Kiribati", "nativeName": "Kiribati", "url": "https://ki.contraentregaco.com" },
-    { "code": "kw", "name": "Kuwait", "nativeName": "الكويت", "url": "https://kw.contraentregaco.com" },
-    { "code": "la", "name": "Laos", "nativeName": "ລາວ", "url": "https://la.contraentregaco.com" },
-    { "code": "ls", "name": "Lesoto", "nativeName": "Lesotho", "url": "https://ls.contraentregaco.com" },
-    { "code": "lv", "name": "Letonia", "nativeName": "Latvija", "url": "https://lv.contraentregaco.com" },
-    { "code": "lb", "name": "Líbano", "nativeName": "لبنان", "url": "https://lb.contraentregaco.com" },
-    { "code": "lr", "name": "Liberia", "nativeName": "Liberia", "url": "https://lr.contraentregaco.com" },
-    { "code": "ly", "name": "Libia", "nativeName": "ليبيا", "url": "https://ly.contraentregaco.com" },
-    { "code": "li", "name": "Liechtenstein", "nativeName": "Liechtenstein", "url": "https://li.contraentregaco.com" },
-    { "code": "lt", "name": "Lituania", "nativeName": "Lietuva", "url": "https://lt.contraentregaco.com" },
-    { "code": "lu", "name": "Luxemburgo", "nativeName": "Luxembourg", "url": "https://lu.contraentregaco.com" },
-    { "code": "mk", "name": "Macedonia del Norte", "nativeName": "Северна Македонија", "url": "https://mk.contraentregaco.com" },
-    { "code": "mg", "name": "Madagascar", "nativeName": "Madagasikara", "url": "https://mg.contraentregaco.com" },
-    { "code": "my", "name": "Malasia", "nativeName": "Malaysia", "url": "https://my.contraentregaco.com" },
-    { "code": "mw", "name": "Malaui", "nativeName": "Malawi", "url": "https://mw.contraentregaco.com" },
-    { "code": "mv", "name": "Maldivas", "nativeName": "ދިވެހިރާއްޖެ", "url": "https://mv.contraentregaco.com" },
-    { "code": "ml", "name": "Malí", "nativeName": "Mali", "url": "https://ml.contraentregaco.com" },
-    { "code": "mt", "name": "Malta", "nativeName": "Malta", "url": "https://mt.contraentregaco.com" },
-    { "code": "ma", "name": "Marruecos", "nativeName": "المغرب", "url": "https://ma.contraentregaco.com" },
-    { "code": "mu", "name": "Mauricio", "nativeName": "Maurice", "url": "https://mu.contraentregaco.com" },
-    { "code": "mr", "name": "Mauritania", "nativeName": "موريتانيا", "url": "https://mr.contraentregaco.com" },
-    { "code": "mx", "name": "México", "nativeName": "México", "url": "https://mx.contraentregaco.com" },
-    { "code": "fm", "name": "Micronesia", "nativeName": "Micronesia", "url": "https://fm.contraentregaco.com" },
-    { "code": "md", "name": "Moldavia", "nativeName": "Moldova", "url": "https://md.contraentregaco.com" },
-    { "code": "mc", "name": "Mónaco", "nativeName": "Monaco", "url": "https://mc.contraentregaco.com" },
-    { "code": "mn", "name": "Mongolia", "nativeName": "Монгол", "url": "https://mn.contraentregaco.com" },
-    { "code": "me", "name": "Montenegro", "nativeName": "Црна Гора", "url": "https://me.contraentregaco.com" },
-    { "code": "mz", "name": "Mozambique", "nativeName": "Moçambique", "url": "https://mz.contraentregaco.com" },
-    { "code": "na", "name": "Namibia", "nativeName": "Namibia", "url": "https://na.contraentregaco.com" },
-    { "code": "nr", "name": "Nauru", "nativeName": "Nauru", "url": "https://nr.contraentregaco.com" },
-    { "code": "np", "name": "Nepal", "nativeName": "नेपाल", "url": "https://np.contraentregaco.com" },
-    { "code": "ni", "name": "Nicaragua", "nativeName": "Nicaragua", "url": "https://ni.contraentregaco.com" },
-    { "code": "ne", "name": "Níger", "nativeName": "Niger", "url": "https://ne.contraentregaco.com" },
-    { "code": "ng", "name": "Nigeria", "nativeName": "Nigeria", "url": "https://ng.contraentregaco.com" },
-    { "code": "no", "name": "Noruega", "nativeName": "Norge", "url": "https://no.contraentregaco.com" },
-    { "code": "nz", "name": "Nueva Zelanda", "nativeName": "New Zealand", "url": "https://nz.contraentregaco.com" },
-    { "code": "om", "name": "Omán", "nativeName": "عمان", "url": "https://om.contraentregaco.com" },
-    { "code": "nl", "name": "Países Bajos", "nativeName": "Nederland", "url": "https://nl.contraentregaco.com" },
-    { "code": "pk", "name": "Pakistán", "nativeName": "پاکستان", "url": "https://pk.contraentregaco.com" },
-    { "code": "pw", "name": "Palaos", "nativeName": "Palau", "url": "https://pw.contraentregaco.com" },
-    { "code": "pa", "name": "Panamá", "nativeName": "Panamá", "url": "https://pa.contraentregaco.com" },
-    { "code": "pg", "name": "Papúa Nueva Guinea", "nativeName": "Papua New Guinea", "url": "https://pg.contraentregaco.com" },
-    { "code": "py", "name": "Paraguay", "nativeName": "Paraguay", "url": "https://py.contraentregaco.com" },
-    { "code": "pe", "name": "Perú", "nativeName": "Perú", "url": "https://pe.contraentregaco.com" },
-    { "code": "pl", "name": "Polonia", "nativeName": "Polska", "url": "https://pl.contraentregaco.com" },
-    { "code": "pt", "name": "Portugal", "nativeName": "Portugal", "url": "https://pt.contraentregaco.com" },
-    { "code": "gb", "name": "Reino Unido", "nativeName": "United Kingdom", "url": "https://gb.contraentregaco.com" },
-    { "code": "cf", "name": "República Centroafricana", "nativeName": "République centrafricaine", "url": "https://cf.contraentregaco.com" },
-    { "code": "cz", "name": "República Checa", "nativeName": "Česko", "url": "https://cz.contraentregaco.com" },
-    { "code": "cg", "name": "República del Congo", "nativeName": "République du Congo", "url": "https://cg.contraentregaco.com" },
-    { "code": "cd", "name": "República Democrática del Congo", "nativeName": "République démocratique du Congo", "url": "https://cd.contraentregaco.com" },
-    { "code": "do", "name": "República Dominicana", "nativeName": "República Dominicana", "url": "https://do.contraentregaco.com" },
-    { "code": "rw", "name": "Ruanda", "nativeName": "Rwanda", "url": "https://rw.contraentregaco.com" },
-    { "code": "ro", "name": "Rumanía", "nativeName": "România", "url": "https://ro.contraentregaco.com" },
-    { "code": "ru", "name": "Rusia", "nativeName": "Россия", "url": "https://ru.contraentregaco.com" },
-    { "code": "ws", "name": "Samoa", "nativeName": "Samoa", "url": "https://ws.contraentregaco.com" },
-    { "code": "kn", "name": "San Cristóbal y Nieves", "nativeName": "Saint Kitts and Nevis", "url": "https://kn.contraentregaco.com" },
-    { "code": "sm", "name": "San Marino", "nativeName": "San Marino", "url": "https://sm.contraentregaco.com" },
-    { "code": "vc", "name": "San Vicente y las Granadinas", "nativeName": "Saint Vincent and the Grenadines", "url": "https://vc.contraentregaco.com" },
-    { "code": "lc", "name": "Santa Lucía", "nativeName": "Saint Lucia", "url": "https://lc.contraentregaco.com" },
-    { "code": "st", "name": "Santo Tomé y Príncipe", "nativeName": "São Tomé e Príncipe", "url": "https://st.contraentregaco.com" },
-    { "code": "sn", "name": "Senegal", "nativeName": "Sénégal", "url": "https://sn.contraentregaco.com" },
-    { "code": "rs", "name": "Serbia", "nativeName": "Србија", "url": "https://rs.contraentregaco.com" },
-    { "code": "sc", "name": "Seychelles", "nativeName": "Seychelles", "url": "https://sc.contraentregaco.com" },
-    { "code": "sl", "name": "Sierra Leona", "nativeName": "Sierra Leone", "url": "https://sl.contraentregaco.com" },
-    { "code": "sg", "name": "Singapur", "nativeName": "Singapore", "url": "https://sg.contraentregaco.com" },
-    { "code": "sy", "name": "Siria", "nativeName": "سوريا", "url": "https://sy.contraentregaco.com" },
-    { "code": "so", "name": "Somalia", "nativeName": "Soomaaliya", "url": "https://so.contraentregaco.com" },
-    { "code": "lk", "name": "Sri Lanka", "nativeName": "ශ්රී ලංකාව", "url": "https://lk.contraentregaco.com" },
-    { "code": "za", "name": "Sudáfrica", "nativeName": "South Africa", "url": "https://za.contraentregaco.com" },
-    { "code": "sd", "name": "Sudán", "nativeName": "السودان", "url": "https://sd.contraentregaco.com" },
-    { "code": "ss", "name": "Sudán del Sur", "nativeName": "South Sudan", "url": "https://ss.contraentregaco.com" },
-    { "code": "se", "name": "Suecia", "nativeName": "Sverige", "url": "https://se.contraentregaco.com" },
-    { "code": "ch", "name": "Suiza", "nativeName": "Schweiz", "url": "https://ch.contraentregaco.com" },
-    { "code": "sr", "name": "Surinam", "nativeName": "Suriname", "url": "https://sr.contraentregaco.com" },
-    { "code": "th", "name": "Tailandia", "nativeName": "ประเทศไทย", "url": "https://th.contraentregaco.com" },
-    { "code": "tz", "name": "Tanzania", "nativeName": "Tanzania", "url": "https://tz.contraentregaco.com" },
-    { "code": "tj", "name": "Tayikistán", "nativeName": "Тоҷикистон", "url": "https://tj.contraentregaco.com" },
-    { "code": "tl", "name": "Timor Oriental", "nativeName": "Timor-Leste", "url": "https://tl.contraentregaco.com" },
-    { "code": "tg", "name": "Togo", "nativeName": "Togo", "url": "https://tg.contraentregaco.com" },
-    { "code": "to", "name": "Tonga", "nativeName": "Tonga", "url": "https://to.contraentregaco.com" },
-    { "code": "tt", "name": "Trinidad y Tobago", "nativeName": "Trinidad and Tobago", "url": "https://tt.contraentregaco.com" },
-    { "code": "tn", "name": "Túnez", "nativeName": "تونس", "url": "https://tn.contraentregaco.com" },
-    { "code": "tm", "name": "Turkmenistán", "nativeName": "Türkmenistan", "url": "https://tm.contraentregaco.com" },
-    { "code": "tr", "name": "Turquía", "nativeName": "Türkiye", "url": "https://tr.contraentregaco.com" },
-    { "code": "tv", "name": "Tuvalu", "nativeName": "Tuvalu", "url": "https://tv.contraentregaco.com" },
-    { "code": "ua", "name": "Ucrania", "nativeName": "Україна", "url": "https://ua.contraentregaco.com" },
-    { "code": "ug", "name": "Uganda", "nativeName": "Uganda", "url": "https://ug.contraentregaco.com" },
-    { "code": "uy", "name": "Uruguay", "nativeName": "Uruguay", "url": "https://uy.contraentregaco.com" },
-    { "code": "uz", "name": "Uzbekistán", "nativeName": "Oʻzbekiston", "url": "https://uz.contraentregaco.com" },
-    { "code": "vu", "name": "Vanuatu", "nativeName": "Vanuatu", "url": "https://vu.contraentregaco.com" },
-    { "code": "va", "name": "Vaticano (Santa Sede)", "nativeName": "Città del Vaticano", "url": "https://va.contraentregaco.com" },
-    { "code": "ve", "name": "Venezuela", "nativeName": "Venezuela", "url": "https://ve.contraentregaco.com" },
-    { "code": "vn", "name": "Vietnam", "nativeName": "Việt Nam", "url": "https://vn.contraentregaco.com" },
-    { "code": "ye", "name": "Yemen", "nativeName": "اليمن", "url": "https://ye.contraentregaco.com" },
-    { "code": "dj", "name": "Yibuti", "nativeName": "جيبوتي", "url": "https://dj.contraentregaco.com" },
-    { "code": "zm", "name": "Zambia", "nativeName": "Zambia", "url": "https://zm.contraentregaco.com" },
-    { "code": "zw", "name": "Zimbabue", "nativeName": "Zimbabwe", "url": "https://zw.contraentregaco.com" }
-];
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    // CONFIGURACIÓN DE CAPAS
+    const capas = {
+      "Maxar": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Satellite: Maxar WorldView Legion',
+        maxZoom: 18,
+        maxNativeZoom: 18,
+        detectRetina: true
+      }),
+      "OSM": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap',
+        maxZoom: 19
+      })
+    };
 
-        // Función para renderizar los países
-        function renderCountries(countryList) {
-            const container = document.getElementById('countries-container');
-            container.innerHTML = '';
+    // INICIALIZAR MAPA
+    const mapa = L.map('mapa', {
+      center: [19.4326, -99.1332],
+      zoom: 5,
+      layers: [capas["Maxar"]],
+      zoomControl: false
+    });
 
-            countryList.forEach(country => {
-                const countryCard = document.createElement('div');
-                countryCard.className = 'country-card';
-                countryCard.innerHTML = `
-                    <div class="flag-container">
-                        <span class="flag-icon flag-icon-${country.code}"></span>
-                    </div>
-                    <div class="country-info">
-                        <div class="country-name">${country.name}</div>
-                        <div class="country-name-native">${country.nativeName}</div>
-                    </div>
-                `;
-                
-                countryCard.addEventListener('click', () => {
-                    window.location.href = country.url;
-                });
+    L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+    L.control.layers(capas, null, { position: 'topright' }).addTo(mapa);
 
-                container.appendChild(countryCard);
-            });
+    // SISTEMA DE MARCADORES
+    const clusters = L.markerClusterGroup({
+      iconCreateFunction: cluster => L.divIcon({
+        html: `<div>${cluster.getChildCount()}</div>`,
+        className: 'cluster-marcadores',
+        iconSize: [40, 40]
+      })
+    });
+
+    const ubicaciones = [
+      { nombre: "Washington D.C.", pais: "Estados Unidos", latlng: [38.9072, -77.0369], url: "https://us.contraentregaco.com" },
+      { nombre: "Ottawa", pais: "Canadá", latlng: [45.4215, -75.6972], url: "https://ca.contraentregaco.com" },
+      { nombre: "Ciudad de México", pais: "México", latlng: [19.4326, -99.1332], url: "https://mx.contraentregaco.com" },
+      { nombre: "Buenos Aires", pais: "Argentina", latlng: [-34.6037, -58.3816], url: "https://ar.contraentregaco.com" },
+      { nombre: "Brasilia", pais: "Brasil", latlng: [-15.8267, -47.9218], url: "https://br.contraentregaco.com" },
+      { nombre: "Bogotá", pais: "Colombia", latlng: [4.7110, -74.0721], url: "https://co.contraentregaco.com" },
+      { nombre: "Lima", pais: "Perú", latlng: [-12.0464, -77.0428], url: "https://pe.contraentregaco.com" },
+      { nombre: "Santiago", pais: "Chile", latlng: [-33.4489, -70.6693], url: "https://cl.contraentregaco.com" },
+      { nombre: "Quito", pais: "Ecuador", latlng: [-0.1807, -78.4678], url: "https://ec.contraentregaco.com" },
+      { nombre: "Caracas", pais: "Venezuela", latlng: [10.4806, -66.9036], url: "https://ve.contraentregaco.com" },
+      { nombre: "La Paz", pais: "Bolivia", latlng: [-16.4897, -68.1193], url: "https://bo.contraentregaco.com" },
+      { nombre: "Asunción", pais: "Paraguay", latlng: [-25.2637, -57.5759], url: "https://py.contraentregaco.com" },
+      { nombre: "Montevideo", pais: "Uruguay", latlng: [-34.9011, -56.1645], url: "https://uy.contraentregaco.com" },
+      { nombre: "San José", pais: "Costa Rica", latlng: [9.9281, -84.0907], url: "https://cr.contraentregaco.com" },
+      { nombre: "Panamá", pais: "Panamá", latlng: [8.9824, -79.5199], url: "https://pa.contraentregaco.com" },
+      { nombre: "Managua", pais: "Nicaragua", latlng: [12.1364, -86.2514], url: "https://ni.contraentregaco.com" },
+      { nombre: "Tegucigalpa", pais: "Honduras", latlng: [14.0723, -87.1921], url: "https://hn.contraentregaco.com" },
+      { nombre: "San Salvador", pais: "El Salvador", latlng: [13.6929, -89.2182], url: "https://sv.contraentregaco.com" },
+      { nombre: "Ciudad de Guatemala", pais: "Guatemala", latlng: [14.6349, -90.5069], url: "https://gt.contraentregaco.com" },
+      { nombre: "Belmopán", pais: "Belice", latlng: [17.2514, -88.7669], url: "https://bz.contraentregaco.com" },
+      { nombre: "Kingston", pais: "Jamaica", latlng: [17.9714, -76.7932], url: "https://jm.contraentregaco.com" },
+      { nombre: "La Habana", pais: "Cuba", latlng: [23.1136, -82.3666], url: "https://cu.contraentregaco.com" },
+      { nombre: "Puerto Príncipe", pais: "Haití", latlng: [18.5944, -72.3074], url: "https://ht.contraentregaco.com" },
+      { nombre: "Santo Domingo", pais: "República Dominicana", latlng: [18.4861, -69.9312], url: "https://do.contraentregaco.com" },
+      { nombre: "Nasáu", pais: "Bahamas", latlng: [25.0443, -77.3504], url: "https://bs.contraentregaco.com" },
+      { nombre: "Bridgetown", pais: "Barbados", latlng: [13.1132, -59.5988], url: "https://bb.contraentregaco.com" },
+      { nombre: "Saint John's", pais: "Antigua y Barbuda", latlng: [17.1175, -61.8456], url: "https://ag.contraentregaco.com" },
+      { nombre: "Roseau", pais: "Dominica", latlng: [15.3092, -61.3790], url: "https://dm.contraentregaco.com" },
+      { nombre: "Castries", pais: "Santa Lucía", latlng: [14.0101, -60.9875], url: "https://lc.contraentregaco.com" },
+      { nombre: "Kingstown", pais: "San Vicente y las Granadinas", latlng: [13.1600, -61.2248], url: "https://vc.contraentregaco.com" },
+      { nombre: "Puerto España", pais: "Trinidad y Tobago", latlng: [10.6549, -61.5019], url: "https://tt.contraentregaco.com" },
+      { nombre: "Georgetown", pais: "Guyana", latlng: [6.8013, -58.1551], url: "https://gy.contraentregaco.com" },
+      { nombre: "Paramaribo", pais: "Surinam", latlng: [5.8520, -55.2038], url: "https://sr.contraentregaco.com" },
+      { nombre: "Cayena", pais: "Guayana Francesa", latlng: [4.9224, -52.3135], url: "https://gf.contraentregaco.com" }
+    ];
+
+    const todosMarcadores = [];
+    ubicaciones.forEach(loc => {
+      const marcador = L.marker(loc.latlng).bindPopup(`
+        <div style="min-width:180px">
+          <h3 style="margin:0 0 5px 0">${loc.nombre}</h3>
+          <p style="margin:0 0 8px 0;color:#666">${loc.pais}</p>
+          <a href="${loc.url}" style="color:#0066cc;text-decoration:none">FZ →</a>
+        </div>
+      `);
+      marcador.datosBusqueda = `${loc.nombre} ${loc.pais}`.toLowerCase();
+      todosMarcadores.push(marcador);
+    });
+
+    clusters.addLayers(todosMarcadores);
+    mapa.addLayer(clusters);
+
+    // BÚSQUEDA MEJORADA
+    const searchInput = document.getElementById('buscador');
+    let searchTimeout;
+
+    const handleSearch = () => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        const termino = searchInput.value.toLowerCase().trim();
+        clusters.clearLayers();
+        const filtrados = todosMarcadores.filter(m => 
+          termino === '' || m.datosBusqueda.includes(termino)
+        );
+        clusters.addLayers(filtrados);
+        
+        if(filtrados.length > 0) {
+          mapa.fitBounds(clusters.getBounds().pad(0.3));
         }
+      }, 300);
+    };
 
-        // Función para buscar países
-        function searchCountries() {
-            const searchTerm = document.getElementById('country-search').value.toLowerCase();
-            const filteredCountries = countries.filter(country => 
-                country.name.toLowerCase().includes(searchTerm) || 
-                country.nativeName.toLowerCase().includes(searchTerm) ||
-                country.code.toLowerCase().includes(searchTerm)
-            );
-            renderCountries(filteredCountries);
-        }
+    searchInput.addEventListener('input', handleSearch);
+    searchInput.addEventListener('search', handleSearch);
+    searchInput.addEventListener('blur', () => mapa.invalidateSize());
 
-        // Event listeners
-        document.getElementById('country-search').addEventListener('input', searchCountries);
-
-        // Renderizar todos los países al cargar la página
-        document.addEventListener('DOMContentLoaded', () => {
-            renderCountries(countries);
-        });
-    </script>
+    mapa.fitBounds(clusters.getBounds().pad(0.3));
+  </script>
 </body>
 </html>
