@@ -18,11 +18,28 @@
     #mapa { flex: 1; background: #f0f0f0; }
     .cluster-marcadores { background: rgba(40,40,40,0.7); border-radius: 50%; }
     .leaflet-control-layers { background: #fff; padding: 5px; border-radius: 4px; }
+    #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+    #login-box { background: white; padding: 2rem; border-radius: 8px; width: 90%; max-width: 350px; text-align: center; }
+    #login-box h2 { margin-bottom: 1.5rem; color: #333; }
+    #password-input { width: 100%; padding: 12px; margin-bottom: 1rem; border: 2px solid #ddd; border-radius: 4px; font-size: 16px; }
+    #login-btn { width: 100%; padding: 12px; background: #000; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+    #login-error { color: red; margin-top: 10px; display: none; }
     @media (max-width: 768px) { #barra-superior { flex-direction: column; } }
   </style>
 </head>
 <body>
-  <div id="contenedor-mapa">
+  <!-- Sistema de Login -->
+  <div id="login-overlay">
+    <div id="login-box">
+      <h2>Acceso Restringido</h2>
+      <input type="password" id="password-input" placeholder="Ingrese la clave de acceso" autocomplete="off">
+      <button id="login-btn">Ingresar</button>
+      <div id="login-error">Clave incorrecta. Intente nuevamente.</div>
+    </div>
+  </div>
+
+  <!-- Contenido Original (oculto inicialmente) -->
+  <div id="contenedor-mapa" style="display: none;">
     <div id="encabezado">
       <h1>Contraentregaco.com</h1>
       <p>Worldwide Logistics Services</p>
@@ -30,7 +47,7 @@
     
     <div id="barra-superior">
       <input type="search" id="buscador" placeholder="Search..." enterkeyhint="search">
-      <a href="https://p2p.contraentregaco.com" class="btn" target="_blank">P2P</a>
+      <a href="https://registro.contraentregaco.com" class="btn" target="_blank">REGISTRO</a>
     </div>
     
     <div id="mapa"></div>
@@ -39,85 +56,120 @@
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
   <script>
-    // CONFIGURACIÓN DE CAPAS
-    const capas = {
-      "Maxar": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Satellite: Maxar WorldView Legion',
-        maxZoom: 18,
-        maxNativeZoom: 18,
-        detectRetina: true
-      }),
-      "OSM": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap',
-        maxZoom: 19
-      })
-    };
-
-    // INICIALIZAR MAPA
-    const mapa = L.map('mapa', {
-      center: [19.4326, -99.1332],
-      zoom: 5,
-      layers: [capas["Maxar"]],
-      zoomControl: false
+    // =============================================
+    // SISTEMA DE AUTENTICACIÓN (MEJORA IMPLEMENTADA)
+    // =============================================
+    const ACCESS_KEY = "18REAL"; // Cambia esta clave por la que desees
+    
+    const loginOverlay = document.getElementById('login-overlay');
+    const passwordInput = document.getElementById('password-input');
+    const loginBtn = document.getElementById('login-btn');
+    const loginError = document.getElementById('login-error');
+    const contenedorMapa = document.getElementById('contenedor-mapa');
+    
+    // Función para verificar el login
+    function checkLogin() {
+      if(passwordInput.value === ACCESS_KEY) {
+        loginOverlay.style.display = 'none';
+        contenedorMapa.style.display = 'flex';
+        initializeMap(); // Inicializa el mapa solo después del login
+      } else {
+        loginError.style.display = 'block';
+        passwordInput.value = '';
+        passwordInput.focus();
+      }
+    }
+    
+    // Event Listeners para el login
+    loginBtn.addEventListener('click', checkLogin);
+    passwordInput.addEventListener('keypress', function(e) {
+      if(e.key === 'Enter') checkLogin();
     });
+    
+    // =============================================
+    // CÓDIGO ORIGINAL (CON MAPA)
+    // =============================================
+    function initializeMap() {
+      // CONFIGURACIÓN DE CAPAS
+      const capas = {
+        "Maxar": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: 'Satellite: Maxar WorldView Legion',
+          maxZoom: 18,
+          maxNativeZoom: 18,
+          detectRetina: true
+        }),
+        "OSM": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap',
+          maxZoom: 19
+        })
+      };
 
-    L.control.zoom({ position: 'bottomright' }).addTo(mapa);
-    L.control.layers(capas, null, { position: 'topright' }).addTo(mapa);
+      // INICIALIZAR MAPA
+      const mapa = L.map('mapa', {
+        center: [19.4326, -99.1332],
+        zoom: 5,
+        layers: [capas["Maxar"]],
+        zoomControl: false
+      });
 
-    // SISTEMA DE MARCADORES
-    const clusters = L.markerClusterGroup({
-      iconCreateFunction: cluster => L.divIcon({
-        html: `<div>${cluster.getChildCount()}</div>`,
-        className: 'cluster-marcadores',
-        iconSize: [40, 40]
-      })
-    });
+      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+      L.control.layers(capas, null, { position: 'topright' }).addTo(mapa);
 
-    const ubicaciones = [
-    { "nombre": "FZ1", "pais": "24/7 Sector Tanques Montebello Cali, Valle Del Cauca, Colombia. ", "latlng": [3.484941, -76.545259], "url": "https://fz1.contraentregaco.com/registro" }
-];
+      // SISTEMA DE MARCADORES
+      const clusters = L.markerClusterGroup({
+        iconCreateFunction: cluster => L.divIcon({
+          html: `<div>${cluster.getChildCount()}</div>`,
+          className: 'cluster-marcadores',
+          iconSize: [40, 40]
+        })
+      });
 
-    const todosMarcadores = [];
-    ubicaciones.forEach(loc => {
-      const marcador = L.marker(loc.latlng).bindPopup(`
-        <div style="min-width:180px">
-          <h3 style="margin:0 0 5px 0">${loc.nombre}</h3>
-          <p style="margin:0 0 8px 0;color:#666">${loc.pais}</p>
-          <a href="${loc.url}" style="color:#0066cc;text-decoration:none">Info →</a>
-        </div>
-      `);
-      marcador.datosBusqueda = `${loc.nombre} ${loc.pais}`.toLowerCase();
-      todosMarcadores.push(marcador);
-    });
+      const ubicaciones = [
+        { "nombre": "FZ1", "pais": "24/7 Sector Tanques Montebello Cali, Valle Del Cauca, Colombia. ", "latlng": [3.484941, -76.545259], "url": "https://fz1.contraentregaco.com/registro" }
+      ];
 
-    clusters.addLayers(todosMarcadores);
-    mapa.addLayer(clusters);
+      const todosMarcadores = [];
+      ubicaciones.forEach(loc => {
+        const marcador = L.marker(loc.latlng).bindPopup(`
+          <div style="min-width:180px">
+            <h3 style="margin:0 0 5px 0">${loc.nombre}</h3>
+            <p style="margin:0 0 8px 0;color:#666">${loc.pais}</p>
+            <a href="${loc.url}" style="color:#0066cc;text-decoration:none">Info →</a>
+          </div>
+        `);
+        marcador.datosBusqueda = `${loc.nombre} ${loc.pais}`.toLowerCase();
+        todosMarcadores.push(marcador);
+      });
 
-    // BÚSQUEDA MEJORADA
-    const searchInput = document.getElementById('buscador');
-    let searchTimeout;
+      clusters.addLayers(todosMarcadores);
+      mapa.addLayer(clusters);
 
-    const handleSearch = () => {
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        const termino = searchInput.value.toLowerCase().trim();
-        clusters.clearLayers();
-        const filtrados = todosMarcadores.filter(m => 
-          termino === '' || m.datosBusqueda.includes(termino)
-        );
-        clusters.addLayers(filtrados);
-        
-        if(filtrados.length > 0) {
-          mapa.fitBounds(clusters.getBounds().pad(0.3));
-        }
-      }, 300);
-    };
+      // BÚSQUEDA MEJORADA
+      const searchInput = document.getElementById('buscador');
+      let searchTimeout;
 
-    searchInput.addEventListener('input', handleSearch);
-    searchInput.addEventListener('search', handleSearch);
-    searchInput.addEventListener('blur', () => mapa.invalidateSize());
+      const handleSearch = () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          const termino = searchInput.value.toLowerCase().trim();
+          clusters.clearLayers();
+          const filtrados = todosMarcadores.filter(m => 
+            termino === '' || m.datosBusqueda.includes(termino)
+          );
+          clusters.addLayers(filtrados);
+          
+          if(filtrados.length > 0) {
+            mapa.fitBounds(clusters.getBounds().pad(0.3));
+          }
+        }, 300);
+      };
 
-    mapa.fitBounds(clusters.getBounds().pad(0.3));
+      searchInput.addEventListener('input', handleSearch);
+      searchInput.addEventListener('search', handleSearch);
+      searchInput.addEventListener('blur', () => mapa.invalidateSize());
+
+      mapa.fitBounds(clusters.getBounds().pad(0.3));
+    }
   </script>
 </body>
 </html>
