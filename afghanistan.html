@@ -1,175 +1,255 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <title>Contraentregaco.com - Worldwide Logistics Services.</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Roboto, sans-serif; touch-action: manipulation; }
-    #contenedor-mapa { height: 100vh; display: flex; flex-direction: column; }
-    #encabezado { background: #000; color: white; padding: 1rem; text-align: center; }
-    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #f8f8f8; }
-    #buscador { flex: 1; padding: 0.6rem 1rem; border: 1px solid #ddd; border-radius: 24px; -webkit-appearance: none; font-size: 16px; }
-    .btn { background: #000; color: white; padding: 0.6rem 1.2rem; border-radius: 24px; text-decoration: none; }
-    #mapa { flex: 1; background: #f0f0f0; }
-    .cluster-marcadores { background: rgba(40,40,40,0.7); border-radius: 50%; }
-    .leaflet-control-layers { background: #fff; padding: 5px; border-radius: 4px; }
-    #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-    #login-box { background: white; padding: 2rem; border-radius: 8px; width: 90%; max-width: 350px; text-align: center; }
-    #login-box h2 { margin-bottom: 1.5rem; color: #333; }
-    #password-input { width: 100%; padding: 12px; margin-bottom: 1rem; border: 2px solid #ddd; border-radius: 4px; font-size: 16px; }
-    #login-btn { width: 100%; padding: 12px; background: #000; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
-    #login-error { color: red; margin-top: 10px; display: none; }
-    @media (max-width: 768px) { #barra-superior { flex-direction: column; } }
-  </style>
-</head>
-<body>
-  <!-- Sistema de Login -->
-  <div id="login-overlay">
-    <div id="login-box">
-      <h2>Contraentregaco.com</h2>
-      <input type="password" id="password-input" placeholder="Enter your Nostr private key (KYC)" autocomplete="off">
-      <button id="login-btn">Login</button>
-      <div id="login-error">Enter your Nostr private key (KYC)</div>
-    </div>
-  </div>
-
-  <!-- Contenido Original (oculto inicialmente) -->
-  <div id="contenedor-mapa" style="display: none;">
-    <div id="encabezado">
-      <h1>Contraentregaco.com</h1>
-      <p>Worldwide Logistics Services</p>
-    </div>
-    
-    <div id="barra-superior">
-      <input type="search" id="buscador" placeholder="Search..." enterkeyhint="search">
-      <a href="https://contraentregaco.com/registro" class="btn" target="_blank">REGISTRO</a>
-    </div>
-    
-    <div id="mapa"></div>
-  </div>
-
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-  <script>
-    // =============================================
-    // SISTEMA DE AUTENTICACIÓN (MEJORA IMPLEMENTADA)
-    // =============================================
-    const ACCESS_KEY = "18REAL"; // Cambia esta clave por la que desees
-    
-    const loginOverlay = document.getElementById('login-overlay');
-    const passwordInput = document.getElementById('password-input');
-    const loginBtn = document.getElementById('login-btn');
-    const loginError = document.getElementById('login-error');
-    const contenedorMapa = document.getElementById('contenedor-mapa');
-    
-    // Función para verificar el login
-    function checkLogin() {
-      if(passwordInput.value === ACCESS_KEY) {
-        loginOverlay.style.display = 'none';
-        contenedorMapa.style.display = 'flex';
-        initializeMap(); // Inicializa el mapa solo después del login
-      } else {
-        loginError.style.display = 'block';
-        passwordInput.value = '';
-        passwordInput.focus();
-      }
-    }
-    
-    // Event Listeners para el login
-    loginBtn.addEventListener('click', checkLogin);
-    passwordInput.addEventListener('keypress', function(e) {
-      if(e.key === 'Enter') checkLogin();
-    });
-    
-    // =============================================
-    // CÓDIGO ORIGINAL (CON MAPA)
-    // =============================================
-    function initializeMap() {
-      // CONFIGURACIÓN DE CAPAS
-      const capas = {
-        "Maxar": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-          attribution: 'Satellite: Maxar WorldView Legion',
-          maxZoom: 18,
-          maxNativeZoom: 18,
-          detectRetina: true
-        }),
-        "OSM": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap',
-          maxZoom: 19
-        })
-      };
-
-      // INICIALIZAR MAPA
-      const mapa = L.map('mapa', {
-        center: [19.4326, -99.1332],
-        zoom: 5,
-        layers: [capas["Maxar"]],
-        zoomControl: false
-      });
-
-      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
-      L.control.layers(capas, null, { position: 'topright' }).addTo(mapa);
-
-      // SISTEMA DE MARCADORES
-      const clusters = L.markerClusterGroup({
-        iconCreateFunction: cluster => L.divIcon({
-          html: `<div>${cluster.getChildCount()}</div>`,
-          className: 'cluster-marcadores',
-          iconSize: [40, 40]
-        })
-      });
-
-      const ubicaciones = [
-        { "nombre": "FZ1", "pais": "24/7 Sector Tanques Montebello Cali, Valle Del Cauca, Colombia. ", "latlng": [3.484941, -76.545259], "url": "https://fz1.contraentregaco.com/registro" }
-      ];
-
-      const todosMarcadores = [];
-      ubicaciones.forEach(loc => {
-        const marcador = L.marker(loc.latlng).bindPopup(`
-          <div style="min-width:180px">
-            <h3 style="margin:0 0 5px 0">${loc.nombre}</h3>
-            <p style="margin:0 0 8px 0;color:#666">${loc.pais}</p>
-            <a href="${loc.url}" style="color:#0066cc;text-decoration:none">Info →</a>
-          </div>
-        `);
-        marcador.datosBusqueda = `${loc.nombre} ${loc.pais}`.toLowerCase();
-        todosMarcadores.push(marcador);
-      });
-
-      clusters.addLayers(todosMarcadores);
-      mapa.addLayer(clusters);
-
-      // BÚSQUEDA MEJORADA
-      const searchInput = document.getElementById('buscador');
-      let searchTimeout;
-
-      const handleSearch = () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-          const termino = searchInput.value.toLowerCase().trim();
-          clusters.clearLayers();
-          const filtrados = todosMarcadores.filter(m => 
-            termino === '' || m.datosBusqueda.includes(termino)
-          );
-          clusters.addLayers(filtrados);
-          
-          if(filtrados.length > 0) {
-            mapa.fitBounds(clusters.getBounds().pad(0.3));
-          }
-        }, 300);
-      };
-
-      searchInput.addEventListener('input', handleSearch);
-      searchInput.addEventListener('search', handleSearch);
-      searchInput.addEventListener('blur', () => mapa.invalidateSize());
-
-      mapa.fitBounds(clusters.getBounds().pad(0.3));
-    }
-  </script>
-</body>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Business Frontpage - Start Bootstrap Template</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container px-5">
+                <a class="navbar-brand" href="index.html">Contraentregaco FZ1</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="s1.html">Sección 1</a></li>
+                        <li class="nav-item"><a class="nav-link" href="s3.html">Sección 3</a></li>
+                        <li class="nav-item"><a class="nav-link" href="s4.html">Sección 4</a></li>
+                        <li class="nav-item"><a class="nav-link" href="s5.html">Sección 5</a></li>
+                        <li class="nav-item"><a class="nav-link" href="s6.html">Sección 6</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.html">Iniciar Sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-5">
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="text-center my-5">
+                            <h1 class="display-5 fw-bolder text-white mb-2">Logística 24/7</h1>
+                            <p class="lead text-white-50 mb-4">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit!</p>
+                            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                                <a class="btn btn-primary btn-lg px-4 me-sm-3" href="index.html">Iniciar Sesión</a>
+                                <a class="btn btn-outline-light btn-lg px-4" href="https://checkout.bold.co/payment/LNK_OXSODTUXBA">Crear Cuenta</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Features section-->
+        <section class="py-5 border-bottom" id="features">
+            <div class="container px-5 my-5">
+                <div class="row gx-5">
+                    <div class="col-lg-4 mb-5 mb-lg-0">
+                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-collection"></i></div>
+                        <h2 class="h4 fw-bolder">Featured title</h2>
+                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+                        <a class="text-decoration-none" href="#!">
+                            Call to action
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="col-lg-4 mb-5 mb-lg-0">
+                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-building"></i></div>
+                        <h2 class="h4 fw-bolder">Featured title</h2>
+                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+                        <a class="text-decoration-none" href="#!">
+                            Call to action
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-toggles2"></i></div>
+                        <h2 class="h4 fw-bolder">Featured title</h2>
+                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+                        <a class="text-decoration-none" href="#!">
+                            Call to action
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Pricing section-->
+        <section class="bg-light py-5 border-bottom">
+            <div class="container px-5 my-5">
+                <div class="text-center mb-5">
+                    <h2 class="fw-bolder">Pay as you grow</h2>
+                    <p class="lead mb-0">With our no hassle pricing plans</p>
+                </div>
+                <div class="row gx-5 justify-content-center">
+                    <!-- Pricing card free-->
+                    <div class="col-lg-6 col-xl-4">
+                        <div class="card mb-5 mb-xl-0">
+                            <div class="card-body p-5">
+                                <div class="small text-uppercase fw-bold text-muted">Gratis</div>
+                                <div class="mb-3">
+                                    <span class="display-4 fw-bold">$0</span>
+                                    <span class="text-muted">/ mo.</span>
+                                </div>
+                                <ul class="list-unstyled mb-4">
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        <strong>1 users</strong>
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        5GB storage
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Unlimited public projects
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Community access
+                                    </li>
+                                    <li class="mb-2 text-muted">
+                                        <i class="bi bi-x"></i>
+                                        Unlimited private projects
+                                    </li>
+                                    <li class="mb-2 text-muted">
+                                        <i class="bi bi-x"></i>
+                                        Dedicated support
+                                    </li>
+                                    <li class="mb-2 text-muted">
+                                        <i class="bi bi-x"></i>
+                                        Free linked domain
+                                    </li>
+                                    <li class="text-muted">
+                                        <i class="bi bi-x"></i>
+                                        Monthly status reports
+                                    </li>
+                                </ul>
+                                <div class="d-grid"><a class="btn btn-outline-primary" href="https://checkout.bold.co/payment/LNK_OXSODTUXBA">Crear Cuenta</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Pricing card pro-->
+                    <div class="col-lg-6 col-xl-4">
+                        <div class="card mb-5 mb-xl-0">
+                            <div class="card-body p-5">
+                                <div class="small text-uppercase fw-bold">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    PRO
+                                </div>
+                                <div class="mb-3">
+                                    <span class="display-4 fw-bold">$9</span>
+                                    <span class="text-muted">/ mo.</span>
+                                </div>
+                                <ul class="list-unstyled mb-4">
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        <strong>5 users</strong>
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        5GB storage
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Unlimited public projects
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Community access
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Unlimited private projects
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Dedicated support
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Free linked domain
+                                    </li>
+                                    <li class="text-muted">
+                                        <i class="bi bi-x"></i>
+                                        Monthly status reports
+                                    </li>
+                                </ul>
+                                <div class="d-grid"><a class="btn btn-primary" href="#!">Mejorar Cuenta a PRO</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Pricing card enterprise-->
+                    <div class="col-lg-6 col-xl-4">
+                        <div class="card">
+                            <div class="card-body p-5">
+                                <div class="small text-uppercase fw-bold text-muted">FZ</div>
+                                <div class="mb-3">
+                                    <span class="display-4 fw-bold">$49</span>
+                                    <span class="text-muted">/ mo.</span>
+                                </div>
+                                <ul class="list-unstyled mb-4">
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        <strong>Unlimited users</strong>
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        5GB storage
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Unlimited public projects
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Community access
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Unlimited private projects
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Dedicated support
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        <strong>Unlimited</strong>
+                                        linked domains
+                                    </li>
+                                    <li class="text-muted">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Monthly status reports
+                                    </li>
+                                </ul>
+                                <div class="d-grid"><a class="btn btn-outline-primary" href="#!">Mejorar Cuenta a FZ</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container px-5"><p class="m-0 text-center text-white">Contraentregaco FZ1</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <!-- * *                               SB Forms JS                               * *-->
+        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+    </body>
 </html>
