@@ -1,412 +1,175 @@
-// worker.js - ANGOLA
-
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request));
-});
-
-const markersData = [
-  {
-    name: "Luanda - Centro",
-    latlng: [-8.8383, 13.2344],
-    url: "https://ao1.contraentrega.ao",
-    info: "Sede principal en Marginal. Horario: 8am-6pm (UTC+1)"
-  },
-  {
-    name: "Luanda - Talatona",
-    latlng: [-8.9914, 13.1845],
-    url: "https://ao2.contraentrega.ao",
-    info: "Zona empresarial. Abierto hasta las 8pm de lunes a viernes"
-  },
-  {
-    name: "Lobito - Puerto",
-    latlng: [-12.3598, 13.5307],
-    url: "https://ao3.contraentrega.ao",
-    info: "Punto logístico portuario. Horario comercial"
-  },
-  {
-    name: "Huambo - Centro",
-    latlng: [-12.7667, 15.7333],
-    url: "https://ao4.contraentrega.ao",
-    info: "Entrega en zona céntrica. Abierto 9am-5pm"
-  }
-];
-
-async function handleRequest(request) {
-  const url = new URL(request.url);
-  if (url.pathname === '/') {
-    return new Response(generateHTML(), {
-      headers: { 
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'public, max-age=3600'
-      }
-    });
-  }
-  if (url.pathname === '/api/markers') {
-    return new Response(JSON.stringify(markersData), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=86400'
-      }
-    });
-  }
-  return new Response('Not Found', { status: 404 });
-}
-
-function generateHTML() {
-  return `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Puntos de Entrega en Angola</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <title>Contraentregaco.com - Worldwide Logistics Services.</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
   <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: Arial, sans-serif;
-    }
-    #map {
-      width: 100%;
-      height: 100vh;
-    }
-    #search-box {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 1000;
-      width: 300px;
-      background: white;
-      padding: 10px;
-      border-radius: 5px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    }
-    #search-input {
-      width: 100%;
-      padding: 10px 15px;
-      border: 2px solid #ddd;
-      border-radius: 20px;
-      font-size: 14px;
-      outline: none;
-    }
-    #search-results {
-      margin-top: 10px;
-      max-height: 300px;
-      overflow-y: auto;
-      display: none;
-      background: white;
-      border-radius: 5px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .search-result {
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-      cursor: pointer;
-    }
-    .search-result:hover {
-      background-color: #f5f5f5;
-    }
-    .search-result h3 {
-      margin: 0 0 5px 0;
-      font-size: 14px;
-      color: #333;
-    }
-    .search-result p {
-      margin: 0;
-      font-size: 12px;
-      color: #666;
-    }
-    #controls {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .control-btn {
-      width: 40px;
-      height: 40px;
-      border: none;
-      border-radius: 50%;
-      background: white;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      cursor: pointer;
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .zoom-controls {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 1000;
-    }
-    .zoom-btn {
-      width: 40px;
-      height: 40px;
-      border: none;
-      border-radius: 50%;
-      background: white;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      cursor: pointer;
-      font-size: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .marker-cluster-small {
-      background-color: rgba(110, 204, 57, 0.6);
-    }
-    .marker-cluster-medium {
-      background-color: rgba(240, 194, 12, 0.6);
-    }
-    .marker-cluster-large {
-      background-color: rgba(241, 128, 23, 0.6);
-    }
-    @media (max-width: 768px) {
-      #search-box {
-        width: calc(100% - 40px);
-        top: 10px;
-        left: 10px;
-      }
-      #controls {
-        top: 70px;
-        right: 10px;
-      }
-      .zoom-controls {
-        bottom: 10px;
-        right: 10px;
-      }
-      .leaflet-popup-content {
-        width: 250px !important;
-      }
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Roboto, sans-serif; touch-action: manipulation; }
+    #contenedor-mapa { height: 100vh; display: flex; flex-direction: column; }
+    #encabezado { background: #000; color: white; padding: 1rem; text-align: center; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #f8f8f8; }
+    #buscador { flex: 1; padding: 0.6rem 1rem; border: 1px solid #ddd; border-radius: 24px; -webkit-appearance: none; font-size: 16px; }
+    .btn { background: #000; color: white; padding: 0.6rem 1.2rem; border-radius: 24px; text-decoration: none; }
+    #mapa { flex: 1; background: #f0f0f0; }
+    .cluster-marcadores { background: rgba(40,40,40,0.7); border-radius: 50%; }
+    .leaflet-control-layers { background: #fff; padding: 5px; border-radius: 4px; }
+    #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+    #login-box { background: white; padding: 2rem; border-radius: 8px; width: 90%; max-width: 350px; text-align: center; }
+    #login-box h2 { margin-bottom: 1.5rem; color: #333; }
+    #password-input { width: 100%; padding: 12px; margin-bottom: 1rem; border: 2px solid #ddd; border-radius: 4px; font-size: 16px; }
+    #login-btn { width: 100%; padding: 12px; background: #000; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+    #login-error { color: red; margin-top: 10px; display: none; }
+    @media (max-width: 768px) { #barra-superior { flex-direction: column; } }
   </style>
 </head>
 <body>
-  <div id="map"></div>
-  <div id="search-box">
-    <input type="text" id="search-input" placeholder="Buscar puntos... (nombre, dirección, horario)">
-    <div id="search-results"></div>
+  <!-- Sistema de Login -->
+  <div id="login-overlay">
+    <div id="login-box">
+      <h2>Acceso Restringido</h2>
+      <input type="password" id="password-input" placeholder="Ingrese la clave de acceso" autocomplete="off">
+      <button id="login-btn">Ingresar</button>
+      <div id="login-error">Clave incorrecta. Intente nuevamente.</div>
+    </div>
   </div>
-  <div id="controls">
-    <button id="redirect-btn" class="control-btn" title="Ir al sitio principal">📍</button>
-  </div>
-  <div class="zoom-controls">
-    <button id="zoom-in" class="zoom-btn" title="Acercar">+</button>
-    <button id="zoom-out" class="zoom-btn" title="Alejar">−</button>
+
+  <!-- Contenido Original (oculto inicialmente) -->
+  <div id="contenedor-mapa" style="display: none;">
+    <div id="encabezado">
+      <h1>Contraentregaco.com</h1>
+      <p>Worldwide Logistics Services</p>
+    </div>
+    
+    <div id="barra-superior">
+      <input type="search" id="buscador" placeholder="Search..." enterkeyhint="search">
+      <a href="https://p2p.contraentregaco.com" class="btn" target="_blank">P2P</a>
+    </div>
+    
+    <div id="mapa"></div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
   <script>
-    // Variables globales
-    let map;
-    let markerCluster;
-    let allMarkers = [];
-    let searchTimeout;
-
-    // Límites geográficos de Angola
-    const angolaBounds = L.latLngBounds(
-      L.latLng(-18.0, 11.0), // SO
-      L.latLng(-4.0, 24.0)   // NE
-    );
-
-    // Inicializar mapa
-    function initMap() {
-      map = L.map('map', {
-        zoomControl: false,
-        maxBounds: angolaBounds,
-        maxBoundsViscosity: 0.75
-      }).setView([-12.3500, 17.3500], 5); // Vista centrada en Angola
-
-      // Forzar el mapa a permanecer dentro de los límites
-      map.on('drag', function() {
-        if (!angolaBounds.contains(map.getCenter())) {
-          map.panInsideBounds(angolaBounds, { animate: true });
-        }
-      });
-
-      // Bloquear zoom fuera de los límites
-      map.on('zoomend', function() {
-        if (map.getZoom() < 4) {
-          map.setZoom(4);
-        }
-      });
-
-      // Capa base del mapa
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        noWrap: true
-      }).addTo(map);
-
-      // Inicializar cluster de marcadores
-      markerCluster = L.markerClusterGroup();
-      map.addLayer(markerCluster);
-
-      // Cargar marcadores
-      loadMarkers();
-
-      // Configurar buscador
-      setupSearch();
-
-      // Configurar controles
-      setupControls();
-
-      // Configurar zoom personalizado
-      setupZoomControls();
-    }
-
-    // Configurar controles de zoom personalizados
-    function setupZoomControls() {
-      document.getElementById('zoom-in').addEventListener('click', () => {
-        if (map.getZoom() < 18) {
-          map.zoomIn();
-        }
-      });
-      document.getElementById('zoom-out').addEventListener('click', () => {
-        if (map.getZoom() > 4) {
-          map.zoomOut();
-        }
-      });
-    }
-
-    // Cargar marcadores
-    async function loadMarkers() {
-      try {
-        const response = await fetch('/api/markers');
-        const markers = await response.json();
-        markers.forEach(markerData => {
-          // Verificar que las coordenadas estén dentro de los límites
-          if (angolaBounds.contains(markerData.latlng)) {
-            const marker = L.marker(markerData.latlng)
-              .bindPopup(\`
-                <div style="max-width:250px">
-                  <h3 style="margin:0 0 5px 0">\${markerData.name}</h3>
-                  <p style="margin:0 0 10px 0">\${markerData.info}</p>
-                  <a href="\${markerData.url}" target="_blank" style="color:#0066cc">Ver detalles →</a>
-                </div>
-              \`);
-
-            // Almacenar datos para búsqueda
-            marker.searchData = \`\${markerData.name} \${markerData.info} \${markerData.url}\`.toLowerCase();
-            marker.data = markerData;
-            allMarkers.push(marker);
-            markerCluster.addLayer(marker);
-          }
-        });
-      } catch (error) {
-        console.error('Error cargando marcadores:', error);
+    // =============================================
+    // SISTEMA DE AUTENTICACIÓN (MEJORA IMPLEMENTADA)
+    // =============================================
+    const ACCESS_KEY = "contra2024"; // Cambia esta clave por la que desees
+    
+    const loginOverlay = document.getElementById('login-overlay');
+    const passwordInput = document.getElementById('password-input');
+    const loginBtn = document.getElementById('login-btn');
+    const loginError = document.getElementById('login-error');
+    const contenedorMapa = document.getElementById('contenedor-mapa');
+    
+    // Función para verificar el login
+    function checkLogin() {
+      if(passwordInput.value === ACCESS_KEY) {
+        loginOverlay.style.display = 'none';
+        contenedorMapa.style.display = 'flex';
+        initializeMap(); // Inicializa el mapa solo después del login
+      } else {
+        loginError.style.display = 'block';
+        passwordInput.value = '';
+        passwordInput.focus();
       }
     }
+    
+    // Event Listeners para el login
+    loginBtn.addEventListener('click', checkLogin);
+    passwordInput.addEventListener('keypress', function(e) {
+      if(e.key === 'Enter') checkLogin();
+    });
+    
+    // =============================================
+    // CÓDIGO ORIGINAL (CON MAPA)
+    // =============================================
+    function initializeMap() {
+      // CONFIGURACIÓN DE CAPAS
+      const capas = {
+        "Maxar": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: 'Satellite: Maxar WorldView Legion',
+          maxZoom: 18,
+          maxNativeZoom: 18,
+          detectRetina: true
+        }),
+        "OSM": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap',
+          maxZoom: 19
+        })
+      };
 
-    // Configurar buscador
-    function setupSearch() {
-      const searchInput = document.getElementById('search-input');
-      const searchResults = document.getElementById('search-results');
-      
-      searchInput.addEventListener('input', function() {
+      // INICIALIZAR MAPA
+      const mapa = L.map('mapa', {
+        center: [19.4326, -99.1332],
+        zoom: 5,
+        layers: [capas["Maxar"]],
+        zoomControl: false
+      });
+
+      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+      L.control.layers(capas, null, { position: 'topright' }).addTo(mapa);
+
+      // SISTEMA DE MARCADORES
+      const clusters = L.markerClusterGroup({
+        iconCreateFunction: cluster => L.divIcon({
+          html: `<div>${cluster.getChildCount()}</div>`,
+          className: 'cluster-marcadores',
+          iconSize: [40, 40]
+        })
+      });
+
+      const ubicaciones = [
+        { "nombre": "FZ1", "pais": "24/7 Sector Tanques Montebello Cali, Valle Del Cauca, Colombia. ", "latlng": [3.484941, -76.545259], "url": "https://fz1.contraentregaco.com/registro" }
+      ];
+
+      const todosMarcadores = [];
+      ubicaciones.forEach(loc => {
+        const marcador = L.marker(loc.latlng).bindPopup(`
+          <div style="min-width:180px">
+            <h3 style="margin:0 0 5px 0">${loc.nombre}</h3>
+            <p style="margin:0 0 8px 0;color:#666">${loc.pais}</p>
+            <a href="${loc.url}" style="color:#0066cc;text-decoration:none">Info →</a>
+          </div>
+        `);
+        marcador.datosBusqueda = `${loc.nombre} ${loc.pais}`.toLowerCase();
+        todosMarcadores.push(marcador);
+      });
+
+      clusters.addLayers(todosMarcadores);
+      mapa.addLayer(clusters);
+
+      // BÚSQUEDA MEJORADA
+      const searchInput = document.getElementById('buscador');
+      let searchTimeout;
+
+      const handleSearch = () => {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
-          const query = this.value.trim().toLowerCase();
-          if (query.length === 0) {
-            searchResults.style.display = 'none';
-            resetMarkers();
-            return;
-          }
-
-          const results = allMarkers.filter(marker => 
-            marker.searchData.includes(query)
+          const termino = searchInput.value.toLowerCase().trim();
+          clusters.clearLayers();
+          const filtrados = todosMarcadores.filter(m => 
+            termino === '' || m.datosBusqueda.includes(termino)
           );
-          displaySearchResults(results);
-          updateVisibleMarkers(results);
+          clusters.addLayers(filtrados);
+          
+          if(filtrados.length > 0) {
+            mapa.fitBounds(clusters.getBounds().pad(0.3));
+          }
         }, 300);
-      });
+      };
 
-      // Cerrar resultados al hacer clic fuera
-      document.addEventListener('click', function(e) {
-        if (!e.target.closest('#search-box') && 
-            !e.target.closest('.zoom-controls') && 
-            e.target.id !== 'zoom-in' && 
-            e.target.id !== 'zoom-out') {
-          searchResults.style.display = 'none';
-        }
-      });
+      searchInput.addEventListener('input', handleSearch);
+      searchInput.addEventListener('search', handleSearch);
+      searchInput.addEventListener('blur', () => mapa.invalidateSize());
+
+      mapa.fitBounds(clusters.getBounds().pad(0.3));
     }
-
-    // Mostrar resultados de búsqueda
-    function displaySearchResults(results) {
-      const searchResults = document.getElementById('search-results');
-      searchResults.innerHTML = '';
-
-      if (results.length === 0) {
-        searchResults.innerHTML = '<div class="search-result">No se encontraron resultados</div>';
-      } else {
-        results.forEach(marker => {
-          const resultItem = document.createElement('div');
-          resultItem.className = 'search-result';
-          resultItem.innerHTML = \`
-            <h3>\${marker.data.name}</h3>
-            <p>\${marker.data.info.substring(0, 60)}\${marker.data.info.length > 60 ? '...' : ''}</p>
-          \`;
-          resultItem.addEventListener('click', () => {
-            map.setView(marker.getLatLng(), 12);
-            marker.openPopup();
-            searchResults.style.display = 'none';
-          });
-          searchResults.appendChild(resultItem);
-        });
-      }
-      searchResults.style.display = 'block';
-    }
-
-    // Actualizar marcadores visibles
-    function updateVisibleMarkers(results) {
-      markerCluster.clearLayers();
-      if (results.length > 0) {
-        markerCluster.addLayers(results);
-        // Ajustar vista para mostrar resultados
-        if (results.length === 1) {
-          map.setView(results[0].getLatLng(), 12);
-        } else {
-          const group = new L.featureGroup(results);
-          map.fitBounds(group.getBounds().pad(0.1));
-        }
-      }
-    }
-
-    // Restablecer todos los marcadores
-    function resetMarkers() {
-      markerCluster.clearLayers();
-      markerCluster.addLayers(allMarkers);
-      map.setView([-12.3500, 17.3500], 5);
-    }
-
-    // Configurar controles
-    function setupControls() {
-      // Botón de redirección
-      document.getElementById('redirect-btn').addEventListener('click', function() {
-        window.open('https://fz.contraentregaco.com', '_blank');
-      });
-    }
-
-    // Redimensionar mapa al cambiar tamaño de ventana
-    window.addEventListener('resize', () => {
-      map.invalidateSize();
-    });
-
-    // Inicializar la aplicación
-    document.addEventListener('DOMContentLoaded', initMap);
   </script>
 </body>
-</html>`;
-}
+</html>
