@@ -1,75 +1,175 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapamundi Interactivo con OpenStreetMap</title>
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <style>
-        /* Reset básico */
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: Arial, sans-serif;
-        }
-        /* Contenedor del mapa */
-        #map {
-            width: 100%;
-            height: 100vh; /* Ocupa toda la altura de la pantalla */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <title>Contraentregaco.com - Worldwide Logistics Services.</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Roboto, sans-serif; touch-action: manipulation; }
+    #contenedor-mapa { height: 100vh; display: flex; flex-direction: column; }
+    #encabezado { background: #000; color: white; padding: 1rem; text-align: center; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #f8f8f8; }
+    #buscador { flex: 1; padding: 0.6rem 1rem; border: 1px solid #ddd; border-radius: 24px; -webkit-appearance: none; font-size: 16px; }
+    .btn { background: #000; color: white; padding: 0.6rem 1.2rem; border-radius: 24px; text-decoration: none; }
+    #mapa { flex: 1; background: #f0f0f0; }
+    .cluster-marcadores { background: rgba(40,40,40,0.7); border-radius: 50%; }
+    .leaflet-control-layers { background: #fff; padding: 5px; border-radius: 4px; }
+    #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+    #login-box { background: white; padding: 2rem; border-radius: 8px; width: 90%; max-width: 350px; text-align: center; }
+    #login-box h2 { margin-bottom: 1.5rem; color: #333; }
+    #password-input { width: 100%; padding: 12px; margin-bottom: 1rem; border: 2px solid #ddd; border-radius: 4px; font-size: 16px; }
+    #login-btn { width: 100%; padding: 12px; background: #000; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+    #login-error { color: red; margin-top: 10px; display: none; }
+    @media (max-width: 768px) { #barra-superior { flex-direction: column; } }
+  </style>
 </head>
 <body>
-    <!-- Contenedor del mapa -->
-    <div id="map"></div>
+  <!-- Sistema de Login -->
+  <div id="login-overlay">
+    <div id="login-box">
+      <h2>Contraentregaco.com</h2>
+      <input type="password" id="password-input" placeholder="Enter your Nostr private key (KYC)" autocomplete="off">
+      <button id="login-btn">Login</button>
+      <div id="login-error">Enter your Nostr private key (KYC)</div>
+    </div>
+  </div>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script>
-        // Inicializar el mapa
-        const map = L.map('map').setView([0, 0], 2); // Centrado en el mundo, zoom 2
+  <!-- Contenido Original (oculto inicialmente) -->
+  <div id="contenedor-mapa" style="display: none;">
+    <div id="encabezado">
+      <h1>Contraentregaco.com</h1>
+      <p>Worldwide Logistics Services</p>
+    </div>
+    
+    <div id="barra-superior">
+      <input type="search" id="buscador" placeholder="Search..." enterkeyhint="search">
+      <a href="https://contraentregaco.com/registro" class="btn" target="_blank">REGISTRO</a>
+    </div>
+    
+    <div id="mapa"></div>
+  </div>
 
-        // Añadir capa de OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    // =============================================
+    // SISTEMA DE AUTENTICACIÓN (MEJORA IMPLEMENTADA)
+    // =============================================
+    const ACCESS_KEY = "18REAL"; // Cambia esta clave por la que desees
+    
+    const loginOverlay = document.getElementById('login-overlay');
+    const passwordInput = document.getElementById('password-input');
+    const loginBtn = document.getElementById('login-btn');
+    const loginError = document.getElementById('login-error');
+    const contenedorMapa = document.getElementById('contenedor-mapa');
+    
+    // Función para verificar el login
+    function checkLogin() {
+      if(passwordInput.value === ACCESS_KEY) {
+        loginOverlay.style.display = 'none';
+        contenedorMapa.style.display = 'flex';
+        initializeMap(); // Inicializa el mapa solo después del login
+      } else {
+        loginError.style.display = 'block';
+        passwordInput.value = '';
+        passwordInput.focus();
+      }
+    }
+    
+    // Event Listeners para el login
+    loginBtn.addEventListener('click', checkLogin);
+    passwordInput.addEventListener('keypress', function(e) {
+      if(e.key === 'Enter') checkLogin();
+    });
+    
+    // =============================================
+    // CÓDIGO ORIGINAL (CON MAPA)
+    // =============================================
+    function initializeMap() {
+      // CONFIGURACIÓN DE CAPAS
+      const capas = {
+        "Maxar": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: 'Satellite: Maxar WorldView Legion',
+          maxZoom: 18,
+          maxNativeZoom: 18,
+          detectRetina: true
+        }),
+        "OSM": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap',
+          maxZoom: 19
+        })
+      };
 
-        // Definir límites del mapa (latitud y longitud)
-        const southWest = L.latLng(-90, -180); // Esquina inferior izquierda
-        const northEast = L.latLng(90, 180);   // Esquina superior derecha
-        const bounds = L.latLngBounds(southWest, northEast);
+      // INICIALIZAR MAPA
+      const mapa = L.map('mapa', {
+        center: [19.4326, -99.1332],
+        zoom: 5,
+        layers: [capas["Maxar"]],
+        zoomControl: false
+      });
 
-        // Establecer límites del mapa
-        map.setMaxBounds(bounds); // Limita el desplazamiento a los límites del mundo
-        map.on('drag', () => {
-            if (!bounds.contains(map.getCenter())) {
-                map.panInsideBounds(bounds, { animate: true });
-            }
-        });
+      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+      L.control.layers(capas, null, { position: 'topright' }).addTo(mapa);
 
-        // Ejemplo de marcadores para algunos países
-        const countries = [
-            { name: "Estados Unidos", latlng: [37.09, -95.71], url: "https://www.example.com/usa" },
-            { name: "México", latlng: [23.63, -102.55], url: "https://www.example.com/mexico" },
-            { name: "España", latlng: [40.46, -3.75], url: "https://www.example.com/spain" },
-            // Añade más países aquí
-        ];
+      // SISTEMA DE MARCADORES
+      const clusters = L.markerClusterGroup({
+        iconCreateFunction: cluster => L.divIcon({
+          html: `<div>${cluster.getChildCount()}</div>`,
+          className: 'cluster-marcadores',
+          iconSize: [40, 40]
+        })
+      });
 
-        // Añadir marcadores y eventos de clic
-        countries.forEach(country => {
-            const marker = L.marker(country.latlng).addTo(map);
-            marker.bindPopup(`<b>${country.name}</b><br><a href="${country.url}" target="_blank">Más información</a>`);
-            marker.on('click', () => {
-                window.open(country.url, '_blank');
-            });
-        });
+      const ubicaciones = [
+        { "nombre": "FZ1", "pais": "24/7 Sector Tanques Montebello Cali, Valle Del Cauca, Colombia. ", "latlng": [3.484941, -76.545259], "url": "https://fz1.contraentregaco.com/registro" }
+      ];
 
-        // Asegurar que el mapa se redimensione correctamente
-        window.addEventListener('resize', () => {
-            map.invalidateSize();
-        });
-    </script>
+      const todosMarcadores = [];
+      ubicaciones.forEach(loc => {
+        const marcador = L.marker(loc.latlng).bindPopup(`
+          <div style="min-width:180px">
+            <h3 style="margin:0 0 5px 0">${loc.nombre}</h3>
+            <p style="margin:0 0 8px 0;color:#666">${loc.pais}</p>
+            <a href="${loc.url}" style="color:#0066cc;text-decoration:none">Info →</a>
+          </div>
+        `);
+        marcador.datosBusqueda = `${loc.nombre} ${loc.pais}`.toLowerCase();
+        todosMarcadores.push(marcador);
+      });
+
+      clusters.addLayers(todosMarcadores);
+      mapa.addLayer(clusters);
+
+      // BÚSQUEDA MEJORADA
+      const searchInput = document.getElementById('buscador');
+      let searchTimeout;
+
+      const handleSearch = () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          const termino = searchInput.value.toLowerCase().trim();
+          clusters.clearLayers();
+          const filtrados = todosMarcadores.filter(m => 
+            termino === '' || m.datosBusqueda.includes(termino)
+          );
+          clusters.addLayers(filtrados);
+          
+          if(filtrados.length > 0) {
+            mapa.fitBounds(clusters.getBounds().pad(0.3));
+          }
+        }, 300);
+      };
+
+      searchInput.addEventListener('input', handleSearch);
+      searchInput.addEventListener('search', handleSearch);
+      searchInput.addEventListener('blur', () => mapa.invalidateSize());
+
+      mapa.fitBounds(clusters.getBounds().pad(0.3));
+    }
+  </script>
 </body>
 </html>
