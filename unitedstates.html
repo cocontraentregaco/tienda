@@ -1,417 +1,833 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Delivery Points in USA</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: Arial, sans-serif;
-    }
-    #map {
-      width: 100%;
-      height: 100vh;
-    }
-    #search-box {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 1000;
-      width: 300px;
-      background: white;
-      padding: 10px;
-      border-radius: 5px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    }
-    #search-input {
-      width: 100%;
-      padding: 10px 15px;
-      border: 2px solid #ddd;
-      border-radius: 20px;
-      font-size: 14px;
-      outline: none;
-    }
-    #search-results {
-      margin-top: 10px;
-      max-height: 300px;
-      overflow-y: auto;
-      display: none;
-      background: white;
-      border-radius: 5px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .search-result {
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-      cursor: pointer;
-    }
-    .search-result:hover {
-      background-color: #f5f5f5;
-    }
-    .search-result h3 {
-      margin: 0 0 5px 0;
-      font-size: 14px;
-      color: #333;
-    }
-    .search-result p {
-      margin: 0;
-      font-size: 12px;
-      color: #666;
-    }
-    #controls {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .control-btn {
-      width: 40px;
-      height: 40px;
-      border: none;
-      border-radius: 50%;
-      background: white;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      cursor: pointer;
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .zoom-controls {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 1000;
-    }
-    .zoom-btn {
-      width: 40px;
-      height: 40px;
-      border: none;
-      border-radius: 50%;
-      background: white;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      cursor: pointer;
-      font-size: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .marker-cluster-small {
-      background-color: rgba(110, 204, 57, 0.6);
-    }
-    .marker-cluster-medium {
-      background-color: rgba(240, 194, 12, 0.6);
-    }
-    .marker-cluster-large {
-      background-color: rgba(241, 128, 23, 0.6);
-    }
-    @media (max-width: 768px) {
-      #search-box {
-        width: calc(100% - 40px);
-        top: 10px;
-        left: 10px;
-      }
-      #controls {
-        top: 70px;
-        right: 10px;
-      }
-      .zoom-controls {
-        bottom: 10px;
-        right: 10px;
-      }
-      .leaflet-popup-content {
-        width: 250px !important;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
-  <div id="search-box">
-    <input type="text" id="search-input" placeholder="Search points... (name, address, schedule)">
-    <div id="search-results"></div>
-  </div>
-  <div id="controls">
-    <button id="redirect-btn" class="control-btn" title="Go to support">💬</button>
-  </div>
-  <div class="zoom-controls">
-    <button id="zoom-in" class="zoom-btn" title="Zoom in">+</button>
-    <button id="zoom-out" class="zoom-btn" title="Zoom out">−</button>
-  </div>
-
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-  <script>
-    // Global variables
-    let map;
-    let markerCluster;
-    let allMarkers = [];
-    let searchTimeout;
-
-    // Geographic bounds of USA
-    const usaBounds = L.latLngBounds(
-      L.latLng(24.396308, -125.0), // Southwest corner
-      L.latLng(49.384358, -66.93457) // Northeast corner
-    );
-
-    // Initialize map
-    function initMap() {
-      map = L.map('map', {
-        zoomControl: false,
-        maxBounds: usaBounds,
-        maxBoundsViscosity: 0.75
-      }).setView([37.0902, -95.7129], 4); // Centered on USA
-
-      // Force map to stay within bounds
-      map.on('drag', function() {
-        if (!usaBounds.contains(map.getCenter())) {
-          map.panInsideBounds(usaBounds, { animate: true });
-        }
-      });
-
-      // Block zoom outside limits
-      map.on('zoomend', function() {
-        if (map.getZoom() < 4) {
-          map.setZoom(4);
-        }
-      });
-
-      // Base map layer
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        noWrap: true
-      }).addTo(map);
-
-      // Initialize marker cluster
-      markerCluster = L.markerClusterGroup();
-      map.addLayer(markerCluster);
-
-      // Load markers
-      loadMarkers();
-
-      // Configure search
-      setupSearch();
-
-      // Configure controls
-      setupControls();
-
-      // Configure custom zoom
-      setupZoomControls();
-    }
-
-    // Configure custom zoom controls
-    function setupZoomControls() {
-      document.getElementById('zoom-in').addEventListener('click', () => {
-        if (map.getZoom() < 18) {
-          map.zoomIn();
-        }
-      });
-      document.getElementById('zoom-out').addEventListener('click', () => {
-        if (map.getZoom() > 4) {
-          map.zoomOut();
-        }
-      });
-    }
-
-    // Load markers
-    async function loadMarkers() {
-      try {
-        const markers = [
-          {
-            name: "New York - Manhattan",
-            latlng: [40.7128, -74.0060],
-            url: "https://us1.deliverypoint.com",
-            info: "Main point in Manhattan. Open Mon-Fri 9am-7pm."
-          },
-          {
-            name: "Los Angeles - Downtown",
-            latlng: [34.0522, -118.2437],
-            url: "https://us2.deliverypoint.com",
-            info: "Downtown LA location. Hours: 8am-6pm."
-          },
-          {
-            name: "Chicago - Loop",
-            latlng: [41.8781, -87.6298],
-            url: "https://us3.deliverypoint.com",
-            info: "Central Chicago point. Open until 5pm."
-          },
-          {
-            name: "Houston - Downtown",
-            latlng: [29.7604, -95.3698],
-            url: "https://us4.deliverypoint.com",
-            info: "Downtown Houston. Open daily 10am-8pm."
-          },
-          {
-            name: "Miami - Brickell",
-            latlng: [25.7617, -80.1918],
-            url: "https://us5.deliverypoint.com",
-            info: "Brickell area. Business hours."
-          },
-          {
-            name: "San Francisco - Downtown",
-            latlng: [37.7749, -122.4194],
-            url: "https://us6.deliverypoint.com",
-            info: "Downtown SF. Open Mon-Fri 8am-6pm."
-          },
-          {
-            name: "Seattle - Downtown",
-            latlng: [47.6062, -122.3321],
-            url: "https://us7.deliverypoint.com",
-            info: "Main downtown point. Extended hours."
-          },
-          {
-            name: "Boston - Downtown",
-            latlng: [42.3601, -71.0589],
-            url: "https://us8.deliverypoint.com",
-            info: "Downtown Boston. Open 9am-7pm."
-          },
-          {
-            name: "Dallas - Uptown",
-            latlng: [32.7767, -96.7970],
-            url: "https://us9.deliverypoint.com",
-            info: "Uptown area. Hours Mon-Fri 9am-5pm."
-          },
-          {
-            name: "Atlanta - Midtown",
-            latlng: [33.7490, -84.3880],
-            url: "https://us10.deliverypoint.com",
-            info: "Midtown location. Business hours."
-          }
-        ];
-        
-        markers.forEach(markerData => {
-          // Verify coordinates are within bounds
-          if (usaBounds.contains(markerData.latlng)) {
-            const marker = L.marker(markerData.latlng)
-              .bindPopup(`
-                <div style="max-width:250px">
-                  <h3 style="margin:0 0 5px 0">${markerData.name}</h3>
-                  <p style="margin:0 0 10px 0">${markerData.info}</p>
-                  <a href="${markerData.url}" target="_blank" style="color:#0066cc">View details →</a>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Business Frontpage - Start Bootstrap Template</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <style>
+            /* Bootstrap core CSS (modified for single file) */
+            :root {
+                --bs-blue: #0d6efd;
+                --bs-indigo: #6610f2;
+                --bs-purple: #6f42c1;
+                --bs-pink: #d63384;
+                --bs-red: #dc3545;
+                --bs-orange: #fd7e14;
+                --bs-yellow: #ffc107;
+                --bs-green: #198754;
+                --bs-teal: #20c997;
+                --bs-cyan: #0dcaf0;
+                --bs-white: #fff;
+                --bs-gray: #6c757d;
+                --bs-gray-dark: #343a40;
+                --bs-primary: #0d6efd;
+                --bs-secondary: #6c757d;
+                --bs-success: #198754;
+                --bs-info: #0dcaf0;
+                --bs-warning: #ffc107;
+                --bs-danger: #dc3545;
+                --bs-light: #f8f9fa;
+                --bs-dark: #212529;
+                --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+                --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+                --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+            }
+            
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+            }
+            
+            @media (prefers-reduced-motion: no-preference) {
+                :root {
+                    scroll-behavior: smooth;
+                }
+            }
+            
+            body {
+                margin: 0;
+                font-family: var(--bs-font-sans-serif);
+                font-size: 1rem;
+                font-weight: 400;
+                line-height: 1.5;
+                color: #212529;
+                background-color: #fff;
+                -webkit-text-size-adjust: 100%;
+                -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            }
+            
+            /* Layout and components */
+            .container,
+            .container-fluid,
+            .container-xxl,
+            .container-xl,
+            .container-lg,
+            .container-md,
+            .container-sm {
+                width: 100%;
+                padding-right: var(--bs-gutter-x, 0.75rem);
+                padding-left: var(--bs-gutter-x, 0.75rem);
+                margin-right: auto;
+                margin-left: auto;
+            }
+            
+            @media (min-width: 576px) {
+                .container-sm, .container {
+                    max-width: 540px;
+                }
+            }
+            @media (min-width: 768px) {
+                .container-md, .container-sm, .container {
+                    max-width: 720px;
+                }
+            }
+            @media (min-width: 992px) {
+                .container-lg, .container-md, .container-sm, .container {
+                    max-width: 960px;
+                }
+            }
+            @media (min-width: 1200px) {
+                .container-xl, .container-lg, .container-md, .container-sm, .container {
+                    max-width: 1140px;
+                }
+            }
+            @media (min-width: 1400px) {
+                .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+                    max-width: 1320px;
+                }
+            }
+            
+            /* Navbar */
+            .navbar {
+                position: relative;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: space-between;
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+            }
+            
+            .navbar-dark .navbar-brand {
+                color: #fff;
+            }
+            
+            .navbar-brand {
+                padding-top: 0.3125rem;
+                padding-bottom: 0.3125rem;
+                margin-right: 1rem;
+                font-size: 1.25rem;
+                text-decoration: none;
+                white-space: nowrap;
+            }
+            
+            .navbar-expand-lg {
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+            }
+            
+            .navbar-dark {
+                --bs-navbar-color: rgba(255, 255, 255, 0.55);
+                --bs-navbar-hover-color: rgba(255, 255, 255, 0.75);
+                --bs-navbar-disabled-color: rgba(255, 255, 255, 0.25);
+                --bs-navbar-active-color: #fff;
+                --bs-navbar-brand-color: #fff;
+                --bs-navbar-brand-hover-color: #fff;
+                --bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.1);
+                --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+            }
+            
+            .bg-dark {
+                background-color: #212529 !important;
+            }
+            
+            .navbar-toggler {
+                padding: 0.25rem 0.75rem;
+                font-size: 1.25rem;
+                line-height: 1;
+                background-color: transparent;
+                border: 1px solid transparent;
+                border-radius: 0.25rem;
+                transition: box-shadow 0.15s ease-in-out;
+            }
+            
+            .navbar-toggler-icon {
+                display: inline-block;
+                width: 1.5em;
+                height: 1.5em;
+                vertical-align: middle;
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: 100%;
+            }
+            
+            .collapse:not(.show) {
+                display: none;
+            }
+            
+            .navbar-collapse {
+                flex-basis: 100%;
+                flex-grow: 1;
+                align-items: center;
+            }
+            
+            .navbar-nav {
+                display: flex;
+                flex-direction: column;
+                padding-left: 0;
+                margin-bottom: 0;
+                list-style: none;
+            }
+            
+            .navbar-nav .nav-link {
+                padding-right: 0;
+                padding-left: 0;
+            }
+            
+            .nav-link {
+                display: block;
+                padding: 0.5rem 1rem;
+                color: #0d6efd;
+                text-decoration: none;
+                transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+            }
+            
+            .navbar-dark .navbar-nav .nav-link {
+                color: rgba(255, 255, 255, 0.55);
+            }
+            
+            .navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus {
+                color: rgba(255, 255, 255, 0.75);
+            }
+            
+            .navbar-dark .navbar-nav .nav-link.active, .navbar-dark .navbar-nav .show > .nav-link {
+                color: #fff;
+            }
+            
+            .ms-auto {
+                margin-left: auto !important;
+            }
+            
+            .mb-2 {
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .mb-lg-0 {
+                margin-bottom: 0 !important;
+            }
+            
+            .px-5 {
+                padding-right: 3rem !important;
+                padding-left: 3rem !important;
+            }
+            
+            .py-5 {
+                padding-top: 3rem !important;
+                padding-bottom: 3rem !important;
+            }
+            
+            .border-bottom {
+                border-bottom: 1px solid #dee2e6 !important;
+            }
+            
+            /* Header */
+            .bg-dark {
+                background-color: #212529 !important;
+            }
+            
+            .py-5 {
+                padding-top: 3rem !important;
+                padding-bottom: 3rem !important;
+            }
+            
+            .text-center {
+                text-align: center !important;
+            }
+            
+            .text-white {
+                color: #fff !important;
+            }
+            
+            .display-5 {
+                font-size: calc(1.425rem + 2.1vw);
+                font-weight: 300;
+                line-height: 1.2;
+            }
+            
+            @media (min-width: 1200px) {
+                .display-5 {
+                    font-size: 3rem;
+                }
+            }
+            
+            .fw-bolder {
+                font-weight: bolder !important;
+            }
+            
+            .mb-2 {
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .lead {
+                font-size: 1.25rem;
+                font-weight: 300;
+            }
+            
+            .d-grid {
+                display: grid !important;
+            }
+            
+            .gap-3 {
+                gap: 1rem !important;
+            }
+            
+            .d-sm-flex {
+                display: flex !important;
+            }
+            
+            .justify-content-sm-center {
+                justify-content: center !important;
+            }
+            
+            .btn {
+                display: inline-block;
+                font-weight: 400;
+                line-height: 1.5;
+                color: #212529;
+                text-align: center;
+                text-decoration: none;
+                vertical-align: middle;
+                cursor: pointer;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                user-select: none;
+                background-color: transparent;
+                border: 1px solid transparent;
+                padding: 0.375rem 0.75rem;
+                font-size: 1rem;
+                border-radius: 0.25rem;
+                transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            }
+            
+            @media (prefers-reduced-motion: reduce) {
+                .btn {
+                    transition: none;
+                }
+            }
+            
+            .btn:hover {
+                color: #212529;
+            }
+            
+            .btn-primary {
+                color: #fff;
+                background-color: #0d6efd;
+                border-color: #0d6efd;
+            }
+            
+            .btn-primary:hover {
+                color: #fff;
+                background-color: #0b5ed7;
+                border-color: #0a58ca;
+            }
+            
+            .btn-lg, .btn-group-lg > .btn {
+                padding: 0.5rem 1rem;
+                font-size: 1.25rem;
+                border-radius: 0.3rem;
+            }
+            
+            .btn-outline-light {
+                color: #f8f9fa;
+                border-color: #f8f9fa;
+            }
+            
+            .btn-outline-light:hover {
+                color: #000;
+                background-color: #f8f9fa;
+                border-color: #f8f9fa;
+            }
+            
+            .px-4 {
+                padding-right: 1.5rem !important;
+                padding-left: 1.5rem !important;
+            }
+            
+            .me-sm-3 {
+                margin-right: 1rem !important;
+            }
+            
+            /* Features section */
+            .feature {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                height: 4rem;
+                width: 4rem;
+                font-size: 2rem;
+            }
+            
+            .bg-primary {
+                background-color: #0d6efd !important;
+            }
+            
+            .bg-gradient {
+                background-image: var(--bs-gradient) !important;
+            }
+            
+            .rounded-3 {
+                border-radius: 0.3rem !important;
+            }
+            
+            .h4, h4 {
+                font-size: calc(1.275rem + 0.3vw);
+            }
+            
+            .text-decoration-none {
+                text-decoration: none !important;
+            }
+            
+            /* Pricing section */
+            .bg-light {
+                background-color: #f8f9fa !important;
+            }
+            
+            .text-uppercase {
+                text-transform: uppercase !important;
+            }
+            
+            .fw-bold {
+                font-weight: 700 !important;
+            }
+            
+            .text-muted {
+                color: #6c757d !important;
+            }
+            
+            .card {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+                word-wrap: break-word;
+                background-color: #fff;
+                background-clip: border-box;
+                border: 1px solid rgba(0, 0, 0, 0.125);
+                border-radius: 0.25rem;
+            }
+            
+            .card-body {
+                flex: 1 1 auto;
+                padding: 1rem 1rem;
+            }
+            
+            .list-unstyled {
+                padding-left: 0;
+                list-style: none;
+            }
+            
+            .text-warning {
+                color: #ffc107 !important;
+            }
+            
+            /* Footer */
+            .m-0 {
+                margin: 0 !important;
+            }
+            
+            /* Grid system */
+            .row {
+                --bs-gutter-x: 1.5rem;
+                --bs-gutter-y: 0;
+                display: flex;
+                flex-wrap: wrap;
+                margin-top: calc(-1 * var(--bs-gutter-y));
+                margin-right: calc(-0.5 * var(--bs-gutter-x));
+                margin-left: calc(-0.5 * var(--bs-gutter-x));
+            }
+            
+            .row > * {
+                flex-shrink: 0;
+                width: 100%;
+                max-width: 100%;
+                padding-right: calc(var(--bs-gutter-x) * 0.5);
+                padding-left: calc(var(--bs-gutter-x) * 0.5);
+                margin-top: var(--bs-gutter-y);
+            }
+            
+            .col-lg-4 {
+                flex: 0 0 auto;
+                width: 33.33333333%;
+            }
+            
+            .col-lg-6 {
+                flex: 0 0 auto;
+                width: 50%;
+            }
+            
+            .col-xl-4 {
+                flex: 0 0 auto;
+                width: 33.33333333%;
+            }
+            
+            @media (min-width: 992px) {
+                .col-lg-4 {
+                    flex: 0 0 auto;
+                    width: 33.33333333%;
+                }
+                .col-lg-6 {
+                    flex: 0 0 auto;
+                    width: 50%;
+                }
+            }
+            
+            @media (min-width: 1200px) {
+                .col-xl-4 {
+                    flex: 0 0 auto;
+                    width: 33.33333333%;
+                }
+            }
+            
+            .justify-content-center {
+                justify-content: center !important;
+            }
+            
+            .gx-5 {
+                --bs-gutter-x: 3rem;
+            }
+            
+            /* Utilities */
+            .mb-3 {
+                margin-bottom: 1rem !important;
+            }
+            
+            .mb-4 {
+                margin-bottom: 1.5rem !important;
+            }
+            
+            .mb-5 {
+                margin-bottom: 3rem !important;
+            }
+            
+            .my-5 {
+                margin-top: 3rem !important;
+                margin-bottom: 3rem !important;
+            }
+            
+            /* Responsive adjustments */
+            @media (max-width: 991.98px) {
+                .navbar-expand-lg > .container {
+                    padding-right: 0;
+                    padding-left: 0;
+                }
+                
+                .col-lg-4, .col-lg-6 {
+                    width: 100%;
+                }
+                
+                .px-5 {
+                    padding-right: 1rem !important;
+                    padding-left: 1rem !important;
+                }
+            }
+            
+            @media (max-width: 767.98px) {
+                .display-5 {
+                    font-size: 2rem;
+                }
+                
+                .lead {
+                    font-size: 1rem;
+                }
+                
+                .btn-lg {
+                    font-size: 1rem;
+                    padding: 0.5rem 1rem;
+                }
+                
+                .feature {
+                    height: 3rem;
+                    width: 3rem;
+                    font-size: 1.5rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container px-5">
+                <a class="navbar-brand" href="index.html">Contraentregaco FZ1</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="s1.html">Sección 1</a></li>
+                        <li class="nav-item"><a class="nav-link" href="s3.html">Sección 3</a></li>
+                        <li class="nav-item"><a class="nav-link" href="s4.html">Sección 4</a></li>
+                        <li class="nav-item"><a class="nav-link" href="s5.html">Sección 5</a></li>
+                        <li class="nav-item"><a class="nav-link" href="s6.html">Sección 6</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.html">Iniciar Sesión</a></li>
+                    </ul>
                 </div>
-              `);
-
-            // Store data for search
-            marker.searchData = `${markerData.name} ${markerData.info} ${markerData.url}`.toLowerCase();
-            marker.data = markerData;
-            allMarkers.push(marker);
-            markerCluster.addLayer(marker);
-          }
-        });
-      } catch (error) {
-        console.error('Error loading markers:', error);
-      }
-    }
-
-    // Configure search
-    function setupSearch() {
-      const searchInput = document.getElementById('search-input');
-      const searchResults = document.getElementById('search-results');
-      
-      searchInput.addEventListener('input', function() {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-          const query = this.value.trim().toLowerCase();
-          if (query.length === 0) {
-            searchResults.style.display = 'none';
-            resetMarkers();
-            return;
-          }
-
-          const results = allMarkers.filter(marker => 
-            marker.searchData.includes(query)
-          );
-          displaySearchResults(results);
-          updateVisibleMarkers(results);
-        }, 300);
-      });
-
-      // Close results when clicking outside
-      document.addEventListener('click', function(e) {
-        if (!e.target.closest('#search-box') && 
-            !e.target.closest('.zoom-controls') && 
-            e.target.id !== 'zoom-in' && 
-            e.target.id !== 'zoom-out') {
-          searchResults.style.display = 'none';
-        }
-      });
-    }
-
-    // Display search results
-    function displaySearchResults(results) {
-      const searchResults = document.getElementById('search-results');
-      searchResults.innerHTML = '';
-
-      if (results.length === 0) {
-        searchResults.innerHTML = '<div class="search-result">No results found</div>';
-      } else {
-        results.forEach(marker => {
-          const resultItem = document.createElement('div');
-          resultItem.className = 'search-result';
-          resultItem.innerHTML = `
-            <h3>${marker.data.name}</h3>
-            <p>${marker.data.info.substring(0, 60)}${marker.data.info.length > 60 ? '...' : ''}</p>
-          `;
-          resultItem.addEventListener('click', () => {
-            map.setView(marker.getLatLng(), 12);
-            marker.openPopup();
-            searchResults.style.display = 'none';
-          });
-          searchResults.appendChild(resultItem);
-        });
-      }
-      searchResults.style.display = 'block';
-    }
-
-    // Update visible markers
-    function updateVisibleMarkers(results) {
-      markerCluster.clearLayers();
-      if (results.length > 0) {
-        markerCluster.addLayers(results);
-        // Adjust view to show results
-        if (results.length === 1) {
-          map.setView(results[0].getLatLng(), 12);
-        } else {
-          const group = new L.featureGroup(results);
-          map.fitBounds(group.getBounds().pad(0.1));
-        }
-      }
-    }
-
-    // Reset all markers
-    function resetMarkers() {
-      markerCluster.clearLayers();
-      markerCluster.addLayers(allMarkers);
-      map.setView([37.0902, -95.7129], 4);
-    }
-
-    // Configure controls
-    function setupControls() {
-      // Redirect button
-      document.getElementById('redirect-btn').addEventListener('click', function() {
-        window.open('https://www.facebook.com/groups/546919484352344/?ref=share&mibextid=NSMWBT', '_blank');
-      });
-    }
-
-    // Resize map on window resize
-    window.addEventListener('resize', () => {
-      map.invalidateSize();
-    });
-
-    // Initialize app
-    document.addEventListener('DOMContentLoaded', initMap);
-  </script>
-</body>
+            </div>
+        </nav>
+        <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-5">
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="text-center my-5">
+                            <h1 class="display-5 fw-bolder text-white mb-2">Logística 24/7</h1>
+                            <p class="lead text-white-50 mb-4">Quickly design and customize responsive mobile-first sites with Bootstrap, the world's most popular front-end open source toolkit!</p>
+                            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                                <a class="btn btn-primary btn-lg px-4 me-sm-3" href="index.html">Iniciar Sesión</a>
+                                <a class="btn btn-outline-light btn-lg px-4" href="https://checkout.bold.co/payment/LNK_OXSODTUXBA">Crear Cuenta</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Features section-->
+        <section class="py-5 border-bottom" id="features">
+            <div class="container px-5 my-5">
+                <div class="row gx-5">
+                    <div class="col-lg-4 mb-5 mb-lg-0">
+                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-collection"></i></div>
+                        <h2 class="h4 fw-bolder">Featured title</h2>
+                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+                        <a class="text-decoration-none" href="#!">
+                            Call to action
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="col-lg-4 mb-5 mb-lg-0">
+                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-building"></i></div>
+                        <h2 class="h4 fw-bolder">Featured title</h2>
+                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+                        <a class="text-decoration-none" href="#!">
+                            Call to action
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-toggles2"></i></div>
+                        <h2 class="h4 fw-bolder">Featured title</h2>
+                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+                        <a class="text-decoration-none" href="#!">
+                            Call to action
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Pricing section-->
+        <section class="bg-light py-5 border-bottom">
+            <div class="container px-5 my-5">
+                <div class="text-center mb-5">
+                    <h2 class="fw-bolder">Pay as you grow</h2>
+                    <p class="lead mb-0">With our no hassle pricing plans</p>
+                </div>
+                <div class="row gx-5 justify-content-center">
+                    <!-- Pricing card free-->
+                    <div class="col-lg-6 col-xl-4">
+                        <div class="card mb-5 mb-xl-0">
+                            <div class="card-body p-5">
+                                <div class="small text-uppercase fw-bold text-muted">Gratis</div>
+                                <div class="mb-3">
+                                    <span class="display-4 fw-bold">$0</span>
+                                    <span class="text-muted">/ mo.</span>
+                                </div>
+                                <ul class="list-unstyled mb-4">
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        <strong>1 users</strong>
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        5GB storage
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Unlimited public projects
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Community access
+                                    </li>
+                                    <li class="mb-2 text-muted">
+                                        <i class="bi bi-x"></i>
+                                        Unlimited private projects
+                                    </li>
+                                    <li class="mb-2 text-muted">
+                                        <i class="bi bi-x"></i>
+                                        Dedicated support
+                                    </li>
+                                    <li class="mb-2 text-muted">
+                                        <i class="bi bi-x"></i>
+                                        Free linked domain
+                                    </li>
+                                    <li class="text-muted">
+                                        <i class="bi bi-x"></i>
+                                        Monthly status reports
+                                    </li>
+                                </ul>
+                                <div class="d-grid"><a class="btn btn-outline-primary" href="https://checkout.bold.co/payment/LNK_OXSODTUXBA">Crear Cuenta</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Pricing card pro-->
+                    <div class="col-lg-6 col-xl-4">
+                        <div class="card mb-5 mb-xl-0">
+                            <div class="card-body p-5">
+                                <div class="small text-uppercase fw-bold">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    PRO
+                                </div>
+                                <div class="mb-3">
+                                    <span class="display-4 fw-bold">$9</span>
+                                    <span class="text-muted">/ mo.</span>
+                                </div>
+                                <ul class="list-unstyled mb-4">
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        <strong>5 users</strong>
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        5GB storage
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Unlimited public projects
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Community access
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Unlimited private projects
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Dedicated support
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Free linked domain
+                                    </li>
+                                    <li class="text-muted">
+                                        <i class="bi bi-x"></i>
+                                        Monthly status reports
+                                    </li>
+                                </ul>
+                                <div class="d-grid"><a class="btn btn-primary" href="#!">Mejorar Cuenta a PRO</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Pricing card enterprise-->
+                    <div class="col-lg-6 col-xl-4">
+                        <div class="card">
+                            <div class="card-body p-5">
+                                <div class="small text-uppercase fw-bold text-muted">FZ</div>
+                                <div class="mb-3">
+                                    <span class="display-4 fw-bold">$49</span>
+                                    <span class="text-muted">/ mo.</span>
+                                </div>
+                                <ul class="list-unstyled mb-4">
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        <strong>Unlimited users</strong>
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        5GB storage
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Unlimited public projects
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Community access
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Unlimited private projects
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Dedicated support
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check text-primary"></i>
+                                        <strong>Unlimited</strong>
+                                        linked domains
+                                    </li>
+                                    <li class="text-muted">
+                                        <i class="bi bi-check text-primary"></i>
+                                        Monthly status reports
+                                    </li>
+                                </ul>
+                                <div class="d-grid"><a class="btn btn-outline-primary" href="#!">Mejorar Cuenta a FZ</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container px-5"><p class="m-0 text-center text-white">Contraentregaco FZ1</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script>
+            // Simple JavaScript for navbar toggle functionality
+            document.addEventListener('DOMContentLoaded', function() {
+                const navbarToggler = document.querySelector('.navbar-toggler');
+                const navbarCollapse = document.querySelector('.navbar-collapse');
+                
+                if (navbarToggler && navbarCollapse) {
+                    navbarToggler.addEventListener('click', function() {
+                        const isExpanded = navbarToggler.getAttribute('aria-expanded') === 'true';
+                        navbarToggler.setAttribute('aria-expanded', !isExpanded);
+                        navbarCollapse.classList.toggle('show');
+                    });
+                }
+                
+                // Smooth scrolling for anchor links
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        
+                        const targetId = this.getAttribute('href');
+                        if (targetId === '#!') return;
+                        
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
+                });
+            });
+        </script>
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <!-- * *                               SB Forms JS                               * *-->
+        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+    </body>
 </html>
