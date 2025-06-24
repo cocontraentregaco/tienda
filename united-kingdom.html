@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - Reino Unido</title>
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #2980b9;
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .municipalities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .municipality-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .municipality-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .municipality-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .municipality-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .municipality-department {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #municipality-search {
+            width: 100%;
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        #municipality-search:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .municipalities-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .flag-container {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .municipalities-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 1rem;
+            }
+
+            .municipality-info {
+                padding: 1rem 0.5rem;
+            }
+
+            .municipality-name {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QRCONTRAENTREGA</h1>
+            <p class="subtitle">Selecciona tu ciudad en Reino Unido</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="municipality-search" placeholder="Buscar ciudad..." aria-label="Buscar ciudad">
+        </div>
+
+        <div class="municipalities-grid" id="municipalities-container">
+            <!-- Las ciudades se cargarán aquí con JavaScript -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. Todos los derechos reservados.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Lista de ciudades del Reino Unido con sus países/regiones
+        const municipalities = [
+            { "name": "Londres", "department": "Inglaterra", "url": "https://qrcontraentrega.com/londres" },
+            { "name": "Birmingham", "department": "Inglaterra", "url": "https://qrcontraentrega.com/birmingham" },
+            { "name": "Manchester", "department": "Inglaterra", "url": "https://qrcontraentrega.com/manchester" },
+            { "name": "Glasgow", "department": "Escocia", "url": "https://qrcontraentrega.com/glasgow" },
+            { "name": "Liverpool", "department": "Inglaterra", "url": "https://qrcontraentrega.com/liverpool" },
+            { "name": "Bristol", "department": "Inglaterra", "url": "https://qrcontraentrega.com/bristol" },
+            { "name": "Sheffield", "department": "Inglaterra", "url": "https://qrcontraentrega.com/sheffield" },
+            { "name": "Leeds", "department": "Inglaterra", "url": "https://qrcontraentrega.com/leeds" },
+            { "name": "Edimburgo", "department": "Escocia", "url": "https://qrcontraentrega.com/edimburgo" },
+            { "name": "Leicester", "department": "Inglaterra", "url": "https://qrcontraentrega.com/leicester" },
+            { "name": "Cardiff", "department": "Gales", "url": "https://qrcontraentrega.com/cardiff" },
+            { "name": "Belfast", "department": "Irlanda del Norte", "url": "https://qrcontraentrega.com/belfast" },
+            { "name": "Nottingham", "department": "Inglaterra", "url": "https://qrcontraentrega.com/nottingham" },
+            { "name": "Newcastle", "department": "Inglaterra", "url": "https://qrcontraentrega.com/newcastle" },
+            { "name": "Brighton", "department": "Inglaterra", "url": "https://qrcontraentrega.com/brighton" },
+            { "name": "Southampton", "department": "Inglaterra", "url": "https://qrcontraentrega.com/southampton" },
+            { "name": "Portsmouth", "department": "Inglaterra", "url": "https://qrcontraentrega.com/portsmouth" },
+            { "name": "Aberdeen", "department": "Escocia", "url": "https://qrcontraentrega.com/aberdeen" },
+            { "name": "Cambridge", "department": "Inglaterra", "url": "https://qrcontraentrega.com/cambridge" },
+            { "name": "Oxford", "department": "Inglaterra", "url": "https://qrcontraentrega.com/oxford" },
+            { "name": "York", "department": "Inglaterra", "url": "https://qrcontraentrega.com/york" },
+            { "name": "Norwich", "department": "Inglaterra", "url": "https://qrcontraentrega.com/norwich" },
+            { "name": "Plymouth", "department": "Inglaterra", "url": "https://qrcontraentrega.com/plymouth" },
+            { "name": "Swansea", "department": "Gales", "url": "https://qrcontraentrega.com/swansea" },
+            { "name": "Derby", "department": "Inglaterra", "url": "https://qrcontraentrega.com/derby" },
+            { "name": "Coventry", "department": "Inglaterra", "url": "https://qrcontraentrega.com/coventry" },
+            { "name": "Reading", "department": "Inglaterra", "url": "https://qrcontraentrega.com/reading" },
+            { "name": "Exeter", "department": "Inglaterra", "url": "https://qrcontraentrega.com/exeter" },
+            { "name": "Dundee", "department": "Escocia", "url": "https://qrcontraentrega.com/dundee" },
+            { "name": "Bath", "department": "Inglaterra", "url": "https://qrcontraentrega.com/bath" },
+            { "name": "Chester", "department": "Inglaterra", "url": "https://qrcontraentrega.com/chester" },
+            { "name": "Canterbury", "department": "Inglaterra", "url": "https://qrcontraentrega.com/canterbury" },
+            { "name": "Stoke-on-Trent", "department": "Inglaterra", "url": "https://qrcontraentrega.com/stoke" },
+            { "name": "Wolverhampton", "department": "Inglaterra", "url": "https://qrcontraentrega.com/wolverhampton" },
+            { "name": "Milton Keynes", "department": "Inglaterra", "url": "https://qrcontraentrega.com/miltonkeynes" },
+            { "name": "Inverness", "department": "Escocia", "url": "https://qrcontraentrega.com/inverness" },
+            { "name": "Newport", "department": "Gales", "url": "https://qrcontraentrega.com/newport" },
+            { "name": "Londonderry", "department": "Irlanda del Norte", "url": "https://qrcontraentrega.com/londonderry" }
+        ];
+
+        // Función para renderizar las ciudades
+        function renderMunicipalities(municipalityList) {
+            const container = document.getElementById('municipalities-container');
+            container.innerHTML = '';
+
+            municipalityList.forEach(municipality => {
+                const municipalityCard = document.createElement('div');
+                municipalityCard.className = 'municipality-card';
+                municipalityCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="img/c.jpg" alt="${municipality.name}" class="flag-image">
+                    </div>
+                    <div class="municipality-info">
+                        <div class="municipality-name">${municipality.name}</div>
+                        <div class="municipality-department">${municipality.department}</div>
+                    </div>
+                `;
+                
+                municipalityCard.addEventListener('click', () => {
+                    window.location.href = municipality.url;
+                });
+
+                container.appendChild(municipalityCard);
+            });
+        }
+
+        // Función para buscar ciudades
+        function searchMunicipalities() {
+            const searchTerm = document.getElementById('municipality-search').value.toLowerCase();
+            const filteredMunicipalities = municipalities.filter(municipality => 
+                municipality.name.toLowerCase().includes(searchTerm) || 
+                municipality.department.toLowerCase().includes(searchTerm)
+            );
+            renderMunicipalities(filteredMunicipalities);
+        }
+
+        // Event listeners
+        document.getElementById('municipality-search').addEventListener('input', searchMunicipalities);
+
+        // Renderizar todas las ciudades al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMunicipalities(municipalities);
+        });
+    </script>
+</body>
+</html>
