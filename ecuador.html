@@ -168,15 +168,15 @@
     <div class="container">
         <header>
             <h1>QRCONTRAENTREGA</h1>
-            <p class="subtitle">Selecciona tu sucursal en Ecuador</p>
+            <p class="subtitle">Selecciona tu ciudad en Ecuador</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="municipality-search" placeholder="Buscar cantón..." aria-label="Buscar cantón">
+            <input type="text" id="municipality-search" placeholder="Buscar ciudad..." aria-label="Buscar ciudad">
         </div>
 
         <div class="municipalities-grid" id="municipalities-container">
-            <!-- Los cantones se cargarán aquí con JavaScript -->
+            <!-- Las ciudades se cargarán aquí con JavaScript -->
         </div>
 
         <footer>
@@ -185,181 +185,46 @@
     </div>
 
     <script>
-        // Lista de cantones de Ecuador con sus provincias
+        // Lista de ciudades de Ecuador con sus provincias
         const municipalities = [
-            { "name": "Quito", "department": "Pichincha", "url": "https://quitopichincha.qrcontraentrega.com" },
-            { "name": "Guayaquil", "department": "Guayas", "url": "https://guayaquilguayas.qrcontraentrega.com" },
-            { "name": "Cuenca", "department": "Azuay", "url": "https://cuencaazuay.qrcontraentrega.com" },
-            { "name": "Santo Domingo", "department": "Santo Domingo de los Tsáchilas", "url": "https://santodomingostsachilas.qrcontraentrega.com" },
-            { "name": "Machala", "department": "El Oro", "url": "https://machalaoro.qrcontraentrega.com" },
-            { "name": "Durán", "department": "Guayas", "url": "https://duranguayas.qrcontraentrega.com" },
-            { "name": "Manta", "department": "Manabí", "url": "https://mantamanabi.qrcontraentrega.com" },
-            { "name": "Portoviejo", "department": "Manabí", "url": "https://portoviejomanabi.qrcontraentrega.com" },
-            { "name": "Ambato", "department": "Tungurahua", "url": "https://ambatotungurahua.qrcontraentrega.com" },
-            { "name": "Riobamba", "department": "Chimborazo", "url": "https://riobambachimborazo.qrcontraentrega.com" },
-            { "name": "Ibarra", "department": "Imbabura", "url": "https://ibarraimbabura.qrcontraentrega.com" },
-            { "name": "Quevedo", "department": "Los Ríos", "url": "https://quevedolosrios.qrcontraentrega.com" },
-            { "name": "Loja", "department": "Loja", "url": "https://lojaloja.qrcontraentrega.com" },
-            { "name": "Milagro", "department": "Guayas", "url": "https://milagroguayas.qrcontraentrega.com" },
-            { "name": "Esmeraldas", "department": "Esmeraldas", "url": "https://esmeraldas.qrcontraentrega.com" },
-            { "name": "La Libertad", "department": "Santa Elena", "url": "https://lalibertadsantaelena.qrcontraentrega.com" },
-            { "name": "Babahoyo", "department": "Los Ríos", "url": "https://babahoyolosrios.qrcontraentrega.com" },
-            { "name": "Daule", "department": "Guayas", "url": "https://dauleguas.qrcontraentrega.com" },
-            { "name": "Latacunga", "department": "Cotopaxi", "url": "https://latacungacotopaxi.qrcontraentrega.com" },
-            { "name": "Tulcán", "department": "Carchi", "url": "https://tulcancarchi.qrcontraentrega.com" },
-            { "name": "Chone", "department": "Manabí", "url": "https://chonemanabi.qrcontraentrega.com" },
-            { "name": "Pasaje", "department": "El Oro", "url": "https://pasajeoro.qrcontraentrega.com" },
-            { "name": "Santa Rosa", "department": "El Oro", "url": "https://santarosaoro.qrcontraentrega.com" },
-            { "name": "El Carmen", "department": "Manabí", "url": "https://elcarmenmanabi.qrcontraentrega.com" },
-            { "name": "Jipijapa", "department": "Manabí", "url": "https://jipijapamanabi.qrcontraentrega.com" },
-            { "name": "Ventanas", "department": "Los Ríos", "url": "https://ventanaslosrios.qrcontraentrega.com" },
-            { "name": "Huaquillas", "department": "El Oro", "url": "https://huaquillasoro.qrcontraentrega.com" },
-            { "name": "Bahía de Caráquez", "department": "Manabí", "url": "https://bahiadecaraquezmanabi.qrcontraentrega.com" },
-            { "name": "La Troncal", "department": "Cañar", "url": "https://latroncalcanar.qrcontraentrega.com" },
-            { "name": "Montecristi", "department": "Manabí", "url": "https://montecristimanabi.qrcontraentrega.com" },
-            { "name": "Atuntaqui", "department": "Imbabura", "url": "https://atuntaquiimbabura.qrcontraentrega.com" },
-            { "name": "Salinas", "department": "Santa Elena", "url": "https://salinas.qrcontraentrega.com" },
-            { "name": "Cayambe", "department": "Pichincha", "url": "https://cayambepichincha.qrcontraentrega.com" },
-            { "name": "Otavalo", "department": "Imbabura", "url": "https://otavaloimbabura.qrcontraentrega.com" },
-            { "name": "El Triunfo", "department": "Guayas", "url": "https://eltriunfoguas.qrcontraentrega.com" },
-            { "name": "Naranjal", "department": "Guayas", "url": "https://naranjalguas.qrcontraentrega.com" },
-            { "name": "Playas", "department": "Guayas", "url": "https://playasguas.qrcontraentrega.com" },
-            { "name": "Yaguachi", "department": "Guayas", "url": "https://yaguachiguas.qrcontraentrega.com" },
-            { "name": "Balzar", "department": "Guayas", "url": "https://balzarguas.qrcontraentrega.com" },
-            { "name": "Pedro Carbo", "department": "Guayas", "url": "https://pedrocarboguas.qrcontraentrega.com" },
-            { "name": "Azogues", "department": "Cañar", "url": "https://azoguescanar.qrcontraentrega.com" },
-            { "name": "Biblian", "department": "Cañar", "url": "https://bibliancanar.qrcontraentrega.com" },
-            { "name": "La Maná", "department": "Cotopaxi", "url": "https://lamanacotopaxi.qrcontraentrega.com" },
-            { "name": "Pujilí", "department": "Cotopaxi", "url": "https://pujilicotopaxi.qrcontraentrega.com" },
-            { "name": "Saquisilí", "department": "Cotopaxi", "url": "https://saquisilicotopaxi.qrcontraentrega.com" },
-            { "name": "Zamora", "department": "Zamora Chinchipe", "url": "https://zamorazamora.qrcontraentrega.com" },
-            { "name": "Macas", "department": "Morona Santiago", "url": "https://macasmorona.qrcontraentrega.com" },
-            { "name": "Puyo", "department": "Pastaza", "url": "https://puyopastaza.qrcontraentrega.com" },
-            { "name": "Tena", "department": "Napo", "url": "https://tenanapo.qrcontraentrega.com" },
-            { "name": "Orellana", "department": "Orellana", "url": "https://orellana.qrcontraentrega.com" },
-            { "name": "Puerto Francisco de Orellana", "department": "Orellana", "url": "https://puertofranciscodeorellana.qrcontraentrega.com" },
-            { "name": "Shushufindi", "department": "Sucumbíos", "url": "https://shushufindisucumbios.qrcontraentrega.com" },
-            { "name": "Lago Agrio", "department": "Sucumbíos", "url": "https://lagoagriosucumbios.qrcontraentrega.com" },
-            { "name": "Nueva Loja", "department": "Sucumbíos", "url": "https://nuevalojasucumbios.qrcontraentrega.com" },
-            { "name": "Santa Cruz", "department": "Galápagos", "url": "https://santacruzgalapagos.qrcontraentrega.com" },
-            { "name": "Puerto Baquerizo Moreno", "department": "Galápagos", "url": "https://puertobaquerizomoreno.qrcontraentrega.com" },
-            { "name": "Puerto Villamil", "department": "Galápagos", "url": "https://puertovillamil.qrcontraentrega.com" },
-            { "name": "Alfredo Baquerizo Moreno", "department": "Guayas", "url": "https://alfredobaquerizomoreno.qrcontraentrega.com" },
-            { "name": "Balao", "department": "Guayas", "url": "https://balao.qrcontraentrega.com" },
-            { "name": "Balzar", "department": "Guayas", "url": "https://balzar.qrcontraentrega.com" },
-            { "name": "Colimes", "department": "Guayas", "url": "https://colimes.qrcontraentrega.com" },
-            { "name": "Coronel Marcelino Maridueña", "department": "Guayas", "url": "https://coronelmarcelinomariduena.qrcontraentrega.com" },
-            { "name": "El Empalme", "department": "Guayas", "url": "https://elempalme.qrcontraentrega.com" },
-            { "name": "El Triunfo", "department": "Guayas", "url": "https://eltriunfo.qrcontraentrega.com" },
-            { "name": "General Antonio Elizalde", "department": "Guayas", "url": "https://generalantonioelizalde.qrcontraentrega.com" },
-            { "name": "Isidro Ayora", "department": "Guayas", "url": "https://isidroayora.qrcontraentrega.com" },
-            { "name": "Lomas de Sargentillo", "department": "Guayas", "url": "https://lomasdesargentillo.qrcontraentrega.com" },
-            { "name": "Nobol", "department": "Guayas", "url": "https://nobol.qrcontraentrega.com" },
-            { "name": "Palestina", "department": "Guayas", "url": "https://palestina.qrcontraentrega.com" },
-            { "name": "Pedro Carbo", "department": "Guayas", "url": "https://pedrocarbo.qrcontraentrega.com" },
-            { "name": "Samborondón", "department": "Guayas", "url": "https://samborondon.qrcontraentrega.com" },
-            { "name": "Santa Lucía", "department": "Guayas", "url": "https://santalucia.qrcontraentrega.com" },
-            { "name": "Simón Bolívar", "department": "Guayas", "url": "https://simonbolivar.qrcontraentrega.com" },
-            { "name": "Urbina Jado", "department": "Guayas", "url": "https://urbinajado.qrcontraentrega.com" },
-            { "name": "Valencia", "department": "Los Ríos", "url": "https://valencia.qrcontraentrega.com" },
-            { "name": "Vinces", "department": "Los Ríos", "url": "https://vinces.qrcontraentrega.com" },
-            { "name": "Palenque", "department": "Los Ríos", "url": "https://palenque.qrcontraentrega.com" },
-            { "name": "Buenavista", "department": "Los Ríos", "url": "https://buenavista.qrcontraentrega.com" },
-            { "name": "Mocache", "department": "Los Ríos", "url": "https://mocache.qrcontraentrega.com" },
-            { "name": "Urdaneta", "department": "Los Ríos", "url": "https://urdaneta.qrcontraentrega.com" },
-            { "name": "Chunchi", "department": "Chimborazo", "url": "https://chunchi.qrcontraentrega.com" },
-            { "name": "Colta", "department": "Chimborazo", "url": "https://colta.qrcontraentrega.com" },
-            { "name": "Cumandá", "department": "Chimborazo", "url": "https://cumanda.qrcontraentrega.com" },
-            { "name": "Guamote", "department": "Chimborazo", "url": "https://guamote.qrcontraentrega.com" },
-            { "name": "Guano", "department": "Chimborazo", "url": "https://guano.qrcontraentrega.com" },
-            { "name": "Pallatanga", "department": "Chimborazo", "url": "https://pallatanga.qrcontraentrega.com" },
-            { "name": "Penipe", "department": "Chimborazo", "url": "https://penipe.qrcontraentrega.com" },
-            { "name": "San Juan", "department": "Chimborazo", "url": "https://sanjuan.qrcontraentrega.com" },
-            { "name": "Alausí", "department": "Chimborazo", "url": "https://alausi.qrcontraentrega.com" },
-            { "name": "Chambo", "department": "Chimborazo", "url": "https://chambo.qrcontraentrega.com" },
-            { "name": "Arenillas", "department": "El Oro", "url": "https://arenillas.qrcontraentrega.com" },
-            { "name": "Atahualpa", "department": "El Oro", "url": "https://atahualpa.qrcontraentrega.com" },
-            { "name": "Balsas", "department": "El Oro", "url": "https://balsas.qrcontraentrega.com" },
-            { "name": "Chilla", "department": "El Oro", "url": "https://chilla.qrcontraentrega.com" },
-            { "name": "El Guabo", "department": "El Oro", "url": "https://elguabo.qrcontraentrega.com" },
-            { "name": "Huaquillas", "department": "El Oro", "url": "https://huaquillas.qrcontraentrega.com" },
-            { "name": "Las Lajas", "department": "El Oro", "url": "https://laslajas.qrcontraentrega.com" },
-            { "name": "Marcabelí", "department": "El Oro", "url": "https://marcabeli.qrcontraentrega.com" },
-            { "name": "Piñas", "department": "El Oro", "url": "https://pinas.qrcontraentrega.com" },
-            { "name": "Portovelo", "department": "El Oro", "url": "https://portovelo.qrcontraentrega.com" },
-            { "name": "Santa Rosa", "department": "El Oro", "url": "https://santarosa.qrcontraentrega.com" },
-            { "name": "Zaruma", "department": "El Oro", "url": "https://zaruma.qrcontraentrega.com" },
-            { "name": "Atacames", "department": "Esmeraldas", "url": "https://atacames.qrcontraentrega.com" },
-            { "name": "Eloy Alfaro", "department": "Esmeraldas", "url": "https://eloyalfaro.qrcontraentrega.com" },
-            { "name": "Muisne", "department": "Esmeraldas", "url": "https://muisne.qrcontraentrega.com" },
-            { "name": "Quinindé", "department": "Esmeraldas", "url": "https://quininde.qrcontraentrega.com" },
-            { "name": "Río Verde", "department": "Esmeraldas", "url": "https://rioverde.qrcontraentrega.com" },
-            { "name": "San Lorenzo", "department": "Esmeraldas", "url": "https://sanlorenzo.qrcontraentrega.com" },
-            { "name": "Valdez", "department": "Esmeraldas", "url": "https://valdez.qrcontraentrega.com" },
-            { "name": "La Concordia", "department": "Santo Domingo de los Tsáchilas", "url": "https://laconcordia.qrcontraentrega.com" },
-            { "name": "Cayambe", "department": "Pichincha", "url": "https://cayambe.qrcontraentrega.com" },
-            { "name": "Mejía", "department": "Pichincha", "url": "https://mejia.qrcontraentrega.com" },
-            { "name": "Pedro Moncayo", "department": "Pichincha", "url": "https://pedromoncayo.qrcontraentrega.com" },
-            { "name": "Pedro Vicente Maldonado", "department": "Pichincha", "url": "https://pedrovicentemaldonado.qrcontraentrega.com" },
-            { "name": "Puerto Quito", "department": "Pichincha", "url": "https://puertoquito.qrcontraentrega.com" },
-            { "name": "Rumiñahui", "department": "Pichincha", "url": "https://ruminahui.qrcontraentrega.com" },
-            { "name": "San Miguel de los Bancos", "department": "Pichincha", "url": "https://sanmigueldelosbancos.qrcontraentrega.com" },
-            { "name": "Antonio Ante", "department": "Imbabura", "url": "https://antonioante.qrcontraentrega.com" },
-            { "name": "Cotacachi", "department": "Imbabura", "url": "https://cotacachi.qrcontraentrega.com" },
-            { "name": "Ibarra", "department": "Imbabura", "url": "https://ibarra.qrcontraentrega.com" },
-            { "name": "Otavalo", "department": "Imbabura", "url": "https://otavalo.qrcontraentrega.com" },
-            { "name": "Pimampiro", "department": "Imbabura", "url": "https://pimampiro.qrcontraentrega.com" },
-            { "name": "San Miguel de Urcuquí", "department": "Imbabura", "url": "https://sanmigueldeurcuqui.qrcontraentrega.com" },
-            { "name": "Arajuno", "department": "Pastaza", "url": "https://arajuno.qrcontraentrega.com" },
-            { "name": "Mera", "department": "Pastaza", "url": "https://mera.qrcontraentrega.com" },
-            { "name": "Santa Clara", "department": "Pastaza", "url": "https://santaclara.qrcontraentrega.com" },
-            { "name": "Archidona", "department": "Napo", "url": "https://archidona.qrcontraentrega.com" },
-            { "name": "Carlos Julio Arosemena Tola", "department": "Napo", "url": "https://carlosjulioarosemenatola.qrcontraentrega.com" },
-            { "name": "El Chaco", "department": "Napo", "url": "https://elchaco.qrcontraentrega.com" },
-            { "name": "Quijos", "department": "Napo", "url": "https://quijos.qrcontraentrega.com" },
-            { "name": "Gonzalo Pizarro", "department": "Sucumbíos", "url": "https://gonzalopizarro.qrcontraentrega.com" },
-            { "name": "Putumayo", "department": "Sucumbíos", "url": "https://putumayo.qrcontraentrega.com" },
-            { "name": "Shushufindi", "department": "Sucumbíos", "url": "https://shushufindi.qrcontraentrega.com" },
-            { "name": "Sucumbíos", "department": "Sucumbíos", "url": "https://sucumbios.qrcontraentrega.com" },
-            { "name": "Cascales", "department": "Sucumbíos", "url": "https://cascales.qrcontraentrega.com" },
-            { "name": "Cuyabeno", "department": "Sucumbíos", "url": "https://cuyabeno.qrcontraentrega.com" },
-            { "name": "Agua Blanca", "department": "Manabí", "url": "https://aguablanca.qrcontraentrega.com" },
-            { "name": "Bolívar", "department": "Manabí", "url": "https://bolivar.qrcontraentrega.com" },
-            { "name": "Flavio Alfaro", "department": "Manabí", "url": "https://flavioalfaro.qrcontraentrega.com" },
-            { "name": "Jama", "department": "Manabí", "url": "https://jama.qrcontraentrega.com" },
-            { "name": "Jaramijó", "department": "Manabí", "url": "https://jaramijo.qrcontraentrega.com" },
-            { "name": "Junín", "department": "Manabí", "url": "https://junin.qrcontraentrega.com" },
-            { "name": "Olmedo", "department": "Manabí", "url": "https://olmedo.qrcontraentrega.com" },
-            { "name": "Paján", "department": "Manabí", "url": "https://pajan.qrcontraentrega.com" },
-            { "name": "Pedernales", "department": "Manabí", "url": "https://pedernales.qrcontraentrega.com" },
-            { "name": "Puerto López", "department": "Manabí", "url": "https://puertolopez.qrcontraentrega.com" },
-            { "name": "Rocafuerte", "department": "Manabí", "url": "https://rocafuerte.qrcontraentrega.com" },
-            { "name": "San Vicente", "department": "Manabí", "url": "https://sanvicente.qrcontraentrega.com" },
-            { "name": "Santa Ana", "department": "Manabí", "url": "https://santana.qrcontraentrega.com" },
-            { "name": "Sucre", "department": "Manabí", "url": "https://sucre.qrcontraentrega.com" },
-            { "name": "Tosagua", "department": "Manabí", "url": "https://tosagua.qrcontraentrega.com" },
-            { "name": "Veinticuatro de Mayo", "department": "Manabí", "url": "https://veinticuatrodemayo.qrcontraentrega.com" },
-            { "name": "Calvas", "department": "Loja", "url": "https://calvas.qrcontraentrega.com" },
-            { "name": "Catamayo", "department": "Loja", "url": "https://catamayo.qrcontraentrega.com" },
-            { "name": "Celica", "department": "Loja", "url": "https://celica.qrcontraentrega.com" },
-            { "name": "Chaguarpamba", "department": "Loja", "url": "https://chaguarpamba.qrcontraentrega.com" },
-            { "name": "Espíndola", "department": "Loja", "url": "https://espindola.qrcontraentrega.com" },
-            { "name": "Gonzanamá", "department": "Loja", "url": "https://gonzanama.qrcontraentrega.com" },
-            { "name": "Macará", "department": "Loja", "url": "https://macara.qrcontraentrega.com" },
-            { "name": "Olmedo", "department": "Loja", "url": "https://olmedo.qrcontraentrega.com" },
-            { "name": "Paltas", "department": "Loja", "url": "https://paltas.qrcontraentrega.com" },
-            { "name": "Pindal", "department": "Loja", "url": "https://pindal.qrcontraentrega.com" },
-            { "name": "Puyango", "department": "Loja", "url": "https://puyango.qrcontraentrega.com" },
-            { "name": "Quilanga", "department": "Loja", "url": "https://quilanga.qrcontraentrega.com" },
-            { "name": "Saraguro", "department": "Loja", "url": "https://saraguro.qrcontraentrega.com" },
-            { "name": "Sozoranga", "department": "Loja", "url": "https://sozoranga.qrcontraentrega.com" },
-            { "name": "Zapotillo", "department": "Loja", "url": "https://zapotillo.qrcontraentrega.com" },
-            { "name": "Isabela", "department": "Galápagos", "url": "https://isabela.qrcontraentrega.com" },
-            { "name": "San Cristóbal", "department": "Galápagos", "url": "https://sancristobal.qrcontraentrega.com" },
-            { "name": "Santa Cruz", "department": "Galápagos", "url": "https://santacruz.qrcontraentrega.com" }
+            { "name": "Quito", "department": "Pichincha", "url": "https://qrcontraentrega.com/quito" },
+            { "name": "Guayaquil", "department": "Guayas", "url": "https://qrcontraentrega.com/guayaquil" },
+            { "name": "Cuenca", "department": "Azuay", "url": "https://qrcontraentrega.com/cuenca" },
+            { "name": "Santo Domingo", "department": "Santo Domingo de los Tsáchilas", "url": "https://qrcontraentrega.com/santodomingo" },
+            { "name": "Machala", "department": "El Oro", "url": "https://qrcontraentrega.com/machala" },
+            { "name": "Durán", "department": "Guayas", "url": "https://qrcontraentrega.com/duran" },
+            { "name": "Manta", "department": "Manabí", "url": "https://qrcontraentrega.com/manta" },
+            { "name": "Portoviejo", "department": "Manabí", "url": "https://qrcontraentrega.com/portoviejo" },
+            { "name": "Ambato", "department": "Tungurahua", "url": "https://qrcontraentrega.com/ambato" },
+            { "name": "Riobamba", "department": "Chimborazo", "url": "https://qrcontraentrega.com/riobamba" },
+            { "name": "Ibarra", "department": "Imbabura", "url": "https://qrcontraentrega.com/ibarra" },
+            { "name": "Quevedo", "department": "Los Ríos", "url": "https://qrcontraentrega.com/quevedo" },
+            { "name": "Loja", "department": "Loja", "url": "https://qrcontraentrega.com/loja" },
+            { "name": "Milagro", "department": "Guayas", "url": "https://qrcontraentrega.com/milagro" },
+            { "name": "Esmeraldas", "department": "Esmeraldas", "url": "https://qrcontraentrega.com/esmeraldas" },
+            { "name": "Latacunga", "department": "Cotopaxi", "url": "https://qrcontraentrega.com/latacunga" },
+            { "name": "Babahoyo", "department": "Los Ríos", "url": "https://qrcontraentrega.com/babahoyo" },
+            { "name": "Tulcán", "department": "Carchi", "url": "https://qrcontraentrega.com/tulcan" },
+            { "name": "Nueva Loja", "department": "Sucumbíos", "url": "https://qrcontraentrega.com/nuevaloja" },
+            { "name": "Huaquillas", "department": "El Oro", "url": "https://qrcontraentrega.com/huaquillas" },
+            { "name": "El Carmen", "department": "Manabí", "url": "https://qrcontraentrega.com/elcarmen" },
+            { "name": "La Libertad", "department": "Santa Elena", "url": "https://qrcontraentrega.com/lalibertad" },
+            { "name": "Salinas", "department": "Santa Elena", "url": "https://qrcontraentrega.com/salinas" },
+            { "name": "Santa Elena", "department": "Santa Elena", "url": "https://qrcontraentrega.com/santaelena" },
+            { "name": "Puerto Francisco de Orellana", "department": "Orellana", "url": "https://qrcontraentrega.com/orellana" },
+            { "name": "Macas", "department": "Morona Santiago", "url": "https://qrcontraentrega.com/macas" },
+            { "name": "Puyo", "department": "Pastaza", "url": "https://qrcontraentrega.com/puyo" },
+            { "name": "Zamora", "department": "Zamora Chinchipe", "url": "https://qrcontraentrega.com/zamora" },
+            { "name": "Tena", "department": "Napo", "url": "https://qrcontraentrega.com/tena" },
+            { "name": "Atuntaqui", "department": "Imbabura", "url": "https://qrcontraentrega.com/atuntaqui" },
+            { "name": "Cayambe", "department": "Pichincha", "url": "https://qrcontraentrega.com/cayambe" },
+            { "name": "Otavalo", "department": "Imbabura", "url": "https://qrcontraentrega.com/otavalo" },
+            { "name": "Sangolquí", "department": "Pichincha", "url": "https://qrcontraentrega.com/sangolqui" },
+            { "name": "Azogues", "department": "Cañar", "url": "https://qrcontraentrega.com/azogues" },
+            { "name": "El Triunfo", "department": "Guayas", "url": "https://qrcontraentrega.com/eltriunfo" }
         ];
 
-        // Función para renderizar los cantones
+        // Función para renderizar las ciudades
         function renderMunicipalities(municipalityList) {
             const container = document.getElementById('municipalities-container');
             container.innerHTML = '';
@@ -385,7 +250,7 @@
             });
         }
 
-        // Función para buscar cantones
+        // Función para buscar ciudades
         function searchMunicipalities() {
             const searchTerm = document.getElementById('municipality-search').value.toLowerCase();
             const filteredMunicipalities = municipalities.filter(municipality => 
@@ -398,7 +263,7 @@
         // Event listeners
         document.getElementById('municipality-search').addEventListener('input', searchMunicipalities);
 
-        // Renderizar todos los cantones al cargar la página
+        // Renderizar todas las ciudades al cargar la página
         document.addEventListener('DOMContentLoaded', () => {
             renderMunicipalities(municipalities);
         });
