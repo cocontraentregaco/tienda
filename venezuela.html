@@ -52,4 +52,226 @@
 
         .municipalities-grid {
             display: grid;
-            grid-template
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .municipality-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .municipality-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .municipality-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .municipality-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .municipality-department {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #municipality-search {
+            width: 100%;
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        #municipality-search:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .municipalities-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .flag-container {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .municipalities-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 1rem;
+            }
+
+            .municipality-info {
+                padding: 1rem 0.5rem;
+            }
+
+            .municipality-name {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QRCONTRAENTREGA</h1>
+            <p class="subtitle">Selecciona tu ciudad en Venezuela</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="municipality-search" placeholder="Buscar ciudad..." aria-label="Buscar ciudad">
+        </div>
+
+        <div class="municipalities-grid" id="municipalities-container">
+            <!-- Las ciudades se cargarán aquí con JavaScript -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. Todos los derechos reservados.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Lista de ciudades de Venezuela con sus estados
+        const municipalities = [
+            { "name": "Caracas", "department": "Distrito Capital", "url": "https://qrcontraentrega.com/caracas" },
+            { "name": "Maracaibo", "department": "Zulia", "url": "https://qrcontraentrega.com/maracaibo" },
+            { "name": "Valencia", "department": "Carabobo", "url": "https://qrcontraentrega.com/valencia" },
+            { "name": "Barquisimeto", "department": "Lara", "url": "https://qrcontraentrega.com/barquisimeto" },
+            { "name": "Maracay", "department": "Aragua", "url": "https://qrcontraentrega.com/maracay" },
+            { "name": "Ciudad Guayana", "department": "Bolívar", "url": "https://qrcontraentrega.com/ciudadguayana" },
+            { "name": "Maturín", "department": "Monagas", "url": "https://qrcontraentrega.com/maturin" },
+            { "name": "Barcelona", "department": "Anzoátegui", "url": "https://qrcontraentrega.com/barcelona" },
+            { "name": "Puerto La Cruz", "department": "Anzoátegui", "url": "https://qrcontraentrega.com/puertolacruz" },
+            { "name": "Petare", "department": "Miranda", "url": "https://qrcontraentrega.com/petare" },
+            { "name": "Barinas", "department": "Barinas", "url": "https://qrcontraentrega.com/barinas" },
+            { "name": "Turmero", "department": "Aragua", "url": "https://qrcontraentrega.com/turmero" },
+            { "name": "Ciudad Bolívar", "department": "Bolívar", "url": "https://qrcontraentrega.com/ciudadbolivar" },
+            { "name": "San Cristóbal", "department": "Táchira", "url": "https://qrcontraentrega.com/sancristobal" },
+            { "name": "Cumaná", "department": "Sucre", "url": "https://qrcontraentrega.com/cumana" },
+            { "name": "Los Teques", "department": "Miranda", "url": "https://qrcontraentrega.com/losteques" },
+            { "name": "Punto Fijo", "department": "Falcón", "url": "https://qrcontraentrega.com/puntofijo" },
+            { "name": "Mérida", "department": "Mérida", "url": "https://qrcontraentrega.com/merida" },
+            { "name": "Cabimas", "department": "Zulia", "url": "https://qrcontraentrega.com/cabimas" },
+            { "name": "Guarenas", "department": "Miranda", "url": "https://qrcontraentrega.com/guarenas" },
+            { "name": "Guatire", "department": "Miranda", "url": "https://qrcontraentrega.com/guatire" },
+            { "name": "Puerto Cabello", "department": "Carabobo", "url": "https://qrcontraentrega.com/puertocabello" },
+            { "name": "El Tigre", "department": "Anzoátegui", "url": "https://qrcontraentrega.com/eltigre" },
+            { "name": "La Victoria", "department": "Aragua", "url": "https://qrcontraentrega.com/lavictoria" },
+            { "name": "Valera", "department": "Trujillo", "url": "https://qrcontraentrega.com/valera" },
+            { "name": "Guanare", "department": "Portuguesa", "url": "https://qrcontraentrega.com/guanare" },
+            { "name": "Carúpano", "department": "Sucre", "url": "https://qrcontraentrega.com/carupano" },
+            { "name": "Coro", "department": "Falcón", "url": "https://qrcontraentrega.com/coro" },
+            { "name": "San Fernando", "department": "Apure", "url": "https://qrcontraentrega.com/sanfernando" },
+            { "name": "Ocumare del Tuy", "department": "Miranda", "url": "https://qrcontraentrega.com/ocumaredeltuy" },
+            { "name": "Santa Teresa", "department": "Miranda", "url": "https://qrcontraentrega.com/santateresa" },
+            { "name": "San Juan de los Morros", "department": "Guárico", "url": "https://qrcontraentrega.com/sanjuandelosmorros" },
+            { "name": "Porlamar", "department": "Nueva Esparta", "url": "https://qrcontraentrega.com/porlamar" },
+            { "name": "La Asunción", "department": "Nueva Esparta", "url": "https://qrcontraentrega.com/laasuncion" },
+            { "name": "El Limón", "department": "Aragua", "url": "https://qrcontraentrega.com/ellimon" },
+            { "name": "Táriba", "department": "Táchira", "url": "https://qrcontraentrega.com/tariba" },
+            { "name": "Rubio", "department": "Táchira", "url": "https://qrcontraentrega.com/rubio" },
+            { "name": "San Antonio del Táchira", "department": "Táchira", "url": "https://qrcontraentrega.com/sanantoniodeltachira" },
+            { "name": "San Felipe", "department": "Yaracuy", "url": "https://qrcontraentrega.com/sanfelipe" },
+            { "name": "Tucupita", "department": "Delta Amacuro", "url": "https://qrcontraentrega.com/tucupita" }
+        ];
+
+        // Función para renderizar las ciudades
+        function renderMunicipalities(municipalityList) {
+            const container = document.getElementById('municipalities-container');
+            container.innerHTML = '';
+
+            municipalityList.forEach(municipality => {
+                const municipalityCard = document.createElement('div');
+                municipalityCard.className = 'municipality-card';
+                municipalityCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="img/c.jpg" alt="${municipality.name}" class="flag-image">
+                    </div>
+                    <div class="municipality-info">
+                        <div class="municipality-name">${municipality.name}</div>
+                        <div class="municipality-department">${municipality.department}</div>
+                    </div>
+                `;
+                
+                municipalityCard.addEventListener('click', () => {
+                    window.location.href = municipality.url;
+                });
+
+                container.appendChild(municipalityCard);
+            });
+        }
+
+        // Función para buscar ciudades
+        function searchMunicipalities() {
+            const searchTerm = document.getElementById('municipality-search').value.toLowerCase();
+            const filteredMunicipalities = municipalities.filter(municipality => 
+                municipality.name.toLowerCase().includes(searchTerm) || 
+                municipality.department.toLowerCase().includes(searchTerm)
+            );
+            renderMunicipalities(filteredMunicipalities);
+        }
+
+        // Event listeners
+        document.getElementById('municipality-search').addEventListener('input', searchMunicipalities);
+
+        // Renderizar todas las ciudades al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMunicipalities(municipalities);
+        });
+    </script>
+</body>
+</html>
