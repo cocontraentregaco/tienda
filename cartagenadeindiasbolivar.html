@@ -1,142 +1,268 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Compra y venta en Armenia Quindío, Colombia. Publica tus productos en Contraentrega.">
-    <meta name="keywords" content="armenia quindio, compra, venta, clasificados, productos, Colombia, Contraentrega">
-    <meta name="robots" content="index, follow">
-    <meta name="author" content="Contraentrega">
-    <meta property="og:title" content="@armeniaquindio - Compra y venta en Armenia Quindío">
-    <meta property="og:description" content="Compra y venta en Armenia Quindío, Colombia. Publica tus productos en Contraentrega.">
-    <meta property="og:image" content="URL-de-tu-imagen">
-    <meta property="og:url" content="https://www.tusitio.com">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="@armeniaquindio - Compra y venta en Armenia Quindío">
-    <meta name="twitter:description" content="Compra y venta en Armenia Quindío, Colombia. Publica tus productos en Contraentrega.">
-    <meta name="twitter:image" content="URL-de-tu-imagen">
-    <meta name="twitter:url" content="https://www.tusitio.com">
-    <meta name="google-site-verification" content="your-verification-code" />
-
-<!-- Facebook Pixel -->
-  <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', 'your-pixel-id');
-    fbq('track', 'PageView');
-  </script>
-  <noscript>
-    <img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=your-pixel-id&ev=PageView&noscript=1"/>
-  </noscript>
-  <!-- End Facebook Pixel -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QRContraentrega - Cartagena, Bolívar, Colombia</title>
+  <style>
+    :root {
+      --primary-color: #1a1a1a;
+      --secondary-color: #333;
+      --accent-color: #0066cc;
+      --text-color: #333;
+      --light-text: #fff;
+      --bg-light: #f8f8f8;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    body { 
+      font-family: 'Roboto', sans-serif; 
+      color: var(--text-color); 
+      line-height: 1.6; 
+      touch-action: manipulation;
+      overflow-x: hidden;
+    }
+    
+    #contenedor-mapa { 
+      height: 100vh; 
+      display: flex; 
+      flex-direction: column; 
+    }
+    
+    #barra-superior { 
+      display: flex; 
+      gap: 0.8rem; 
+      padding: 0.8rem; 
+      background: var(--bg-light); 
+      width: 100%;
+    }
+    
+    #buscador { 
+      flex: 1; 
+      padding: 0.6rem 1.2rem; 
+      border: 1px solid #ddd; 
+      border-radius: 24px; 
+      appearance: none; 
+      font-size: 16px;
+      transition: var(--transition);
+    }
+    
+    #buscador:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+    }
+    
+    .btn { 
+      background: var(--primary-color); 
+      color: var(--light-text); 
+      padding: 0.6rem 1.2rem; 
+      border-radius: 24px; 
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    
+    .btn:hover {
+      background: var(--secondary-color);
+      transform: translateY(-1px);
+    }
+    
+    #mapa { 
+      flex: 1; 
+      background: #f0f0f0; 
+    }
+    
+    .cluster-marcadores { 
+      background: rgba(40,40,40,0.7); 
+      border-radius: 50%; 
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    .leaflet-control-layers { 
+      background: #fff; 
+      padding: 5px; 
+      border-radius: var(--border-radius); 
+      box-shadow: var(--box-shadow);
+    }
+    
+    @media (max-width: 768px) { 
+      #barra-superior { 
+        flex-direction: column; 
+        gap: 0.6rem;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
 </head>
-
 <body>
-
-    <div class="container">
-        <header>
-            <h1>@armeniaquindio</h1>
-            <p>Contraentrega Armenia Quindío, Colombia</p>
-        </header>
-
-        <!-- Enlaces -->
-        <div class="buttons">
-            <a href="https://co.contraentregaco.com/collections/armeniaquindio" target="_blank" rel="noopener noreferrer">CLASIFICADOS</a>
-            <a href="https://t.me/+B3aF0Cu0mUJhMDhh" target="_blank" rel="noopener noreferrer">GRUPO TELEGRAM</a>
-            <a href="https://chat.whatsapp.com/IyB25mGYFtSFVnCDOcLfoX" target="_blank" rel="noopener noreferrer">GRUPO WHATSAPP</a>
-            <a href="https://www.facebook.com/groups/912495177441287/?ref=share&mibextid=NSMWBT" target="_blank" rel="noopener noreferrer">GRUPO FACEBOOK</a>
-        </div>
-
-        <section>
-            <p>¿Qué vendes?</p>
-
-            <!-- Formulario -->
-            <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" enctype="multipart/form-data" id="product-form">
-                <label for="titulo">Título:</label>
-                <input type="text" id="titulo" name="titulo" required>
-
-                <label for="precio">Precio:</label>
-                <input type="number" id="precio" name="precio" required>
-                
-                <label for="celular">Celular:</label>
-                <input type="number" id="celular" name="celular" required>
-
-                <label for="ubicacion">Ubicación:</label>
-                <input type="text" id="ubicacion" name="ubicacion" required>
-
-                <label for="descripcion">Descripción:</label>
-                <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
-
-                <label for="archivo">Agregar foto:</label>
-                <input type="file" id="archivo" name="archivo" required>
-
-                <button type="submit">Enviar</button>
-            </form>
-        </section>
-
-        <!-- Buscador de productos -->
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Buscar productos...">
-            <button onclick="searchProducts()">Buscar</button>
-        </div>
-
-        <!-- Producto 1 -->
-        <div class="product">
-            <div class="video-container">
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/EXyzhaakdVg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-            <h2>Producto 1</h2>
-            <p class="sku">SKU: 123456</p>
-            <button onclick="window.location.href='https://wa.me/573XXXXXXXXX?text=Me%20interesa%20el%20producto%201'">Comprar ahora</button>
-        </div>
-
-        <!-- Producto 2 -->
-        <div class="product">
-            <div class="video-container">
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/ygUWdGUgcXVpZXJvIG1hcyBxdWUgYXllcg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-            <h2>Producto 2</h2>
-            <p class="sku">SKU: 654321</p>
-            <button onclick="window.location.href='https://wa.me/573XXXXXXXXX?text=Me%20interesa%20el%20producto%202'">Comprar ahora</button>
-        </div>
-
-        <!-- Pie de página -->
-        <footer class="footer">
-            <p>&copy; <span id="year"></span> Contraentrega. Todos los derechos reservados.</p>
-        </footer>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <input type="search" id="buscador" placeholder="Buscar Productos y Servicios en Cartagena..." enterkeyhint="search">
+      <button class="btn" id="b2b-btn">VER TODO</button>
     </div>
+    <div id="mapa"></div>
+  </div>
 
-    <script>
-        // Función de búsqueda
-        function searchProducts() {
-            var input, filter, products, title, i;
-            input = document.getElementById('searchInput');
-            filter = input.value.toLowerCase();
-            products = document.getElementsByClassName('product'); 
-            
-            for (i = 0; i < products.length; i++) {
-                title = products[i].getElementsByTagName('h2')[0];
-                if (title.innerText.toLowerCase().indexOf(filter) > -1) {
-                    products[i].style.display = ''; // Mostrar el producto si coincide
-                } else {
-                    products[i].style.display = 'none'; // Ocultar el producto si no coincide
-                }
-            }
-        }
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    function initializeMap() {
+      // Configuración de capas
+      const capas = {
+        "Maxar": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: 'Satellite: Maxar WorldView Legion',
+          maxZoom: 18,
+          maxNativeZoom: 18,
+          detectRetina: true
+        }),
+        "OSM": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors',
+          maxZoom: 19
+        })
+      };
 
-        // Obtener el año actual
-        const year = new Date().getFullYear();
-        // Actualizar el contenido del elemento con id "year"
-        document.getElementById('year').textContent = year;
-    </script>
+      // Inicializar mapa
+      const mapa = L.map('mapa', {
+        center: [10.3910, -75.4794], // Coordenadas de Cartagena
+        zoom: 13,
+        layers: [capas["Maxar"]],
+        zoomControl: false
+      });
 
+      // Controles del mapa
+      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+      L.control.layers(capas, null, { 
+        position: 'topright',
+        collapsed: false
+      }).addTo(mapa);
+
+      // Sistema de marcadores
+      const clusters = L.markerClusterGroup({
+        iconCreateFunction: cluster => L.divIcon({
+          html: `<div>${cluster.getChildCount()}</div>`,
+          className: 'cluster-marcadores',
+          iconSize: [40, 40]
+        }),
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true
+      });
+
+      // Datos de ubicaciones en Cartagena
+      const ubicaciones = [
+        { 
+          "nombre": "@nanostore", 
+          "direccion": "Calle 30 #9B-50, Cartagena, Bolívar", 
+          "latlng": [10.3960, -75.4724], 
+          "url": "https://nanostore.contraentregaco.com/",
+          "telefono": "+57 3041146297",
+          "horario": "L - V 09:00 a 17:00",
+          "servicios": "Tienda para mascotas"
+        }, 
+        { 
+          "nombre": "@isolinatienda", 
+          "direccion": "Av. Pedro de Heredia #36-50, Cartagena", 
+          "latlng": [10.4010, -75.4764], 
+          "url": "https://isolinatienda.contraentregaco.com/",
+          "telefono": "+57 3041146297",
+          "horario": "L - V 09:00 a 17:00",
+          "servicios": "Tienda para el hogar"
+        },
+        { 
+          "nombre": "@hermanosdreams", 
+          "direccion": "Cra 21 #34-56, Cartagena, Bolívar", 
+          "latlng": [10.3910, -75.4794], 
+          "url": "https://hermanosdreams.qrcontraentrega.com/",
+          "telefono": "+57 3041146297",
+          "horario": "L - V 09:00 a 17:00",
+          "servicios": "Tienda de productos nutricionales"
+        },
+      ];
+
+      // Crear marcadores
+      const todosMarcadores = [];
+      ubicaciones.forEach(loc => {
+        const marcador = L.marker(loc.latlng).bindPopup(`
+          <div style="min-width:220px">
+            <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
+            <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
+            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><i class="fas fa-phone" style="margin-right:5px"></i> ${loc.telefono}</p>` : ''}
+            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><i class="fas fa-clock" style="margin-right:5px"></i> ${loc.horario}</p>` : ''}
+            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><i class="fas fa-boxes" style="margin-right:5px"></i> ${loc.servicios}</p>` : ''}
+            <a href="${loc.url}" style="display:inline-block;background:var(--accent-color);color:white;padding:6px 12px;border-radius:4px;text-decoration:none;margin-top:5px;font-size:0.9em">Más información</a>
+          </div>
+        `);
+        
+        marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
+        todosMarcadores.push(marcador);
+      });
+
+      // Añadir marcadores al mapa
+      clusters.addLayers(todosMarcadores);
+      mapa.addLayer(clusters);
+
+      // Búsqueda
+      const searchInput = document.getElementById('buscador');
+      let searchTimeout;
+
+      const handleSearch = () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          const termino = searchInput.value.toLowerCase().trim();
+          clusters.clearLayers();
+          
+          if(termino === '') {
+            clusters.addLayers(todosMarcadores);
+            return;
+          }
+          
+          const filtrados = todosMarcadores.filter(m => 
+            m.datosBusqueda.includes(termino)
+          );
+          
+          clusters.addLayers(filtrados);
+          
+          if(filtrados.length > 0) {
+            mapa.fitBounds(clusters.getBounds().pad(0.3));
+          }
+        }, 300);
+      };
+
+      searchInput.addEventListener('input', handleSearch);
+      searchInput.addEventListener('search', handleSearch);
+
+      // Ajustar vista a los marcadores
+      if(todosMarcadores.length > 0) {
+        mapa.fitBounds(clusters.getBounds().pad(0.3));
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeMap();
+      
+      // Redirección al hacer clic en el botón B2B
+      document.getElementById('b2b-btn').addEventListener('click', function() {
+        window.location.href = "https://co.qrcontraentrega.com/sucursal/cartagenabolivar/";
+      });
+    });
+  </script>
 </body>
 </html>
