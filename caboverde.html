@@ -1,833 +1,283 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Business Frontpage - Start Bootstrap Template</title>
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-        <!-- Bootstrap icons-->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
-        <style>
-            /* Bootstrap core CSS (modified for single file) */
-            :root {
-                --bs-blue: #0d6efd;
-                --bs-indigo: #6610f2;
-                --bs-purple: #6f42c1;
-                --bs-pink: #d63384;
-                --bs-red: #dc3545;
-                --bs-orange: #fd7e14;
-                --bs-yellow: #ffc107;
-                --bs-green: #198754;
-                --bs-teal: #20c997;
-                --bs-cyan: #0dcaf0;
-                --bs-white: #fff;
-                --bs-gray: #6c757d;
-                --bs-gray-dark: #343a40;
-                --bs-primary: #0d6efd;
-                --bs-secondary: #6c757d;
-                --bs-success: #198754;
-                --bs-info: #0dcaf0;
-                --bs-warning: #ffc107;
-                --bs-danger: #dc3545;
-                --bs-light: #f8f9fa;
-                --bs-dark: #212529;
-                --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-                --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+<html lang="pt" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - Cabo Verde | Cape Verde</title>
+    <style>
+        :root {
+            --primary-color: #003893; /* Cabo Verde blue */
+            --secondary-color: #CF2027; /* Cabo Verde red */
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(0, 56, 147, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .state-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+            border-top: 4px solid var(--secondary-color);
+        }
+
+        .state-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-color);
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .state-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .state-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
+
+        .state-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        #state-search {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
+        }
+
+        #state-search:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 56, 147, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
-            
-            *,
-            *::before,
-            *::after {
-                box-sizing: border-box;
-            }
-            
-            @media (prefers-reduced-motion: no-preference) {
-                :root {
-                    scroll-behavior: smooth;
-                }
-            }
-            
-            body {
-                margin: 0;
-                font-family: var(--bs-font-sans-serif);
-                font-size: 1rem;
-                font-weight: 400;
-                line-height: 1.5;
-                color: #212529;
-                background-color: #fff;
-                -webkit-text-size-adjust: 100%;
-                -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-            }
-            
-            /* Layout and components */
-            .container,
-            .container-fluid,
-            .container-xxl,
-            .container-xl,
-            .container-lg,
-            .container-md,
-            .container-sm {
-                width: 100%;
-                padding-right: var(--bs-gutter-x, 0.75rem);
-                padding-left: var(--bs-gutter-x, 0.75rem);
-                margin-right: auto;
-                margin-left: auto;
-            }
-            
-            @media (min-width: 576px) {
-                .container-sm, .container {
-                    max-width: 540px;
-                }
-            }
-            @media (min-width: 768px) {
-                .container-md, .container-sm, .container {
-                    max-width: 720px;
-                }
-            }
-            @media (min-width: 992px) {
-                .container-lg, .container-md, .container-sm, .container {
-                    max-width: 960px;
-                }
-            }
-            @media (min-width: 1200px) {
-                .container-xl, .container-lg, .container-md, .container-sm, .container {
-                    max-width: 1140px;
-                }
-            }
-            @media (min-width: 1400px) {
-                .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
-                    max-width: 1320px;
-                }
-            }
-            
-            /* Navbar */
-            .navbar {
-                position: relative;
-                display: flex;
-                flex-wrap: wrap;
-                align-items: center;
-                justify-content: space-between;
-                padding-top: 0.5rem;
-                padding-bottom: 0.5rem;
-            }
-            
-            .navbar-dark .navbar-brand {
-                color: #fff;
-            }
-            
-            .navbar-brand {
-                padding-top: 0.3125rem;
-                padding-bottom: 0.3125rem;
-                margin-right: 1rem;
-                font-size: 1.25rem;
-                text-decoration: none;
-                white-space: nowrap;
-            }
-            
-            .navbar-expand-lg {
-                flex-wrap: nowrap;
-                justify-content: flex-start;
-            }
-            
-            .navbar-dark {
-                --bs-navbar-color: rgba(255, 255, 255, 0.55);
-                --bs-navbar-hover-color: rgba(255, 255, 255, 0.75);
-                --bs-navbar-disabled-color: rgba(255, 255, 255, 0.25);
-                --bs-navbar-active-color: #fff;
-                --bs-navbar-brand-color: #fff;
-                --bs-navbar-brand-hover-color: #fff;
-                --bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.1);
-                --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-            }
-            
-            .bg-dark {
-                background-color: #212529 !important;
-            }
-            
-            .navbar-toggler {
-                padding: 0.25rem 0.75rem;
-                font-size: 1.25rem;
-                line-height: 1;
-                background-color: transparent;
-                border: 1px solid transparent;
-                border-radius: 0.25rem;
-                transition: box-shadow 0.15s ease-in-out;
-            }
-            
-            .navbar-toggler-icon {
-                display: inline-block;
-                width: 1.5em;
-                height: 1.5em;
-                vertical-align: middle;
-                background-repeat: no-repeat;
-                background-position: center;
-                background-size: 100%;
-            }
-            
-            .collapse:not(.show) {
-                display: none;
-            }
-            
-            .navbar-collapse {
-                flex-basis: 100%;
-                flex-grow: 1;
-                align-items: center;
-            }
-            
-            .navbar-nav {
-                display: flex;
-                flex-direction: column;
-                padding-left: 0;
-                margin-bottom: 0;
-                list-style: none;
-            }
-            
-            .navbar-nav .nav-link {
-                padding-right: 0;
-                padding-left: 0;
-            }
-            
-            .nav-link {
-                display: block;
-                padding: 0.5rem 1rem;
-                color: #0d6efd;
-                text-decoration: none;
-                transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
-            }
-            
-            .navbar-dark .navbar-nav .nav-link {
-                color: rgba(255, 255, 255, 0.55);
-            }
-            
-            .navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus {
-                color: rgba(255, 255, 255, 0.75);
-            }
-            
-            .navbar-dark .navbar-nav .nav-link.active, .navbar-dark .navbar-nav .show > .nav-link {
-                color: #fff;
-            }
-            
-            .ms-auto {
-                margin-left: auto !important;
-            }
-            
-            .mb-2 {
-                margin-bottom: 0.5rem !important;
-            }
-            
-            .mb-lg-0 {
-                margin-bottom: 0 !important;
-            }
-            
-            .px-5 {
-                padding-right: 3rem !important;
-                padding-left: 3rem !important;
-            }
-            
-            .py-5 {
-                padding-top: 3rem !important;
-                padding-bottom: 3rem !important;
-            }
-            
-            .border-bottom {
-                border-bottom: 1px solid #dee2e6 !important;
-            }
-            
-            /* Header */
-            .bg-dark {
-                background-color: #212529 !important;
-            }
-            
-            .py-5 {
-                padding-top: 3rem !important;
-                padding-bottom: 3rem !important;
-            }
-            
-            .text-center {
-                text-align: center !important;
-            }
-            
-            .text-white {
-                color: #fff !important;
-            }
-            
-            .display-5 {
-                font-size: calc(1.425rem + 2.1vw);
-                font-weight: 300;
-                line-height: 1.2;
-            }
-            
-            @media (min-width: 1200px) {
-                .display-5 {
-                    font-size: 3rem;
-                }
-            }
-            
-            .fw-bolder {
-                font-weight: bolder !important;
-            }
-            
-            .mb-2 {
-                margin-bottom: 0.5rem !important;
-            }
-            
-            .lead {
-                font-size: 1.25rem;
-                font-weight: 300;
-            }
-            
-            .d-grid {
-                display: grid !important;
-            }
-            
-            .gap-3 {
-                gap: 1rem !important;
-            }
-            
-            .d-sm-flex {
-                display: flex !important;
-            }
-            
-            .justify-content-sm-center {
-                justify-content: center !important;
-            }
-            
-            .btn {
-                display: inline-block;
-                font-weight: 400;
-                line-height: 1.5;
-                color: #212529;
-                text-align: center;
-                text-decoration: none;
-                vertical-align: middle;
-                cursor: pointer;
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                user-select: none;
-                background-color: transparent;
-                border: 1px solid transparent;
-                padding: 0.375rem 0.75rem;
-                font-size: 1rem;
-                border-radius: 0.25rem;
-                transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-            }
-            
-            @media (prefers-reduced-motion: reduce) {
-                .btn {
-                    transition: none;
-                }
-            }
-            
-            .btn:hover {
-                color: #212529;
-            }
-            
-            .btn-primary {
-                color: #fff;
-                background-color: #0d6efd;
-                border-color: #0d6efd;
-            }
-            
-            .btn-primary:hover {
-                color: #fff;
-                background-color: #0b5ed7;
-                border-color: #0a58ca;
-            }
-            
-            .btn-lg, .btn-group-lg > .btn {
-                padding: 0.5rem 1rem;
-                font-size: 1.25rem;
-                border-radius: 0.3rem;
-            }
-            
-            .btn-outline-light {
-                color: #f8f9fa;
-                border-color: #f8f9fa;
-            }
-            
-            .btn-outline-light:hover {
-                color: #000;
-                background-color: #f8f9fa;
-                border-color: #f8f9fa;
-            }
-            
-            .px-4 {
-                padding-right: 1.5rem !important;
-                padding-left: 1.5rem !important;
-            }
-            
-            .me-sm-3 {
-                margin-right: 1rem !important;
-            }
-            
-            /* Features section */
-            .feature {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                height: 4rem;
-                width: 4rem;
+
+            h1 {
                 font-size: 2rem;
             }
-            
-            .bg-primary {
-                background-color: #0d6efd !important;
+
+            .flag-container {
+                height: 100px;
             }
-            
-            .bg-gradient {
-                background-image: var(--bs-gradient) !important;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
             }
-            
-            .rounded-3 {
-                border-radius: 0.3rem !important;
+
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
             }
-            
-            .h4, h4 {
-                font-size: calc(1.275rem + 0.3vw);
+
+            .state-info {
+                padding: 1rem 0.5rem;
             }
-            
-            .text-decoration-none {
-                text-decoration: none !important;
+
+            .state-name {
+                font-size: 1rem;
             }
-            
-            /* Pricing section */
-            .bg-light {
-                background-color: #f8f9fa !important;
-            }
-            
-            .text-uppercase {
-                text-transform: uppercase !important;
-            }
-            
-            .fw-bold {
-                font-weight: 700 !important;
-            }
-            
-            .text-muted {
-                color: #6c757d !important;
-            }
-            
-            .card {
-                position: relative;
-                display: flex;
-                flex-direction: column;
-                min-width: 0;
-                word-wrap: break-word;
-                background-color: #fff;
-                background-clip: border-box;
-                border: 1px solid rgba(0, 0, 0, 0.125);
-                border-radius: 0.25rem;
-            }
-            
-            .card-body {
-                flex: 1 1 auto;
-                padding: 1rem 1rem;
-            }
-            
-            .list-unstyled {
-                padding-left: 0;
-                list-style: none;
-            }
-            
-            .text-warning {
-                color: #ffc107 !important;
-            }
-            
-            /* Footer */
-            .m-0 {
-                margin: 0 !important;
-            }
-            
-            /* Grid system */
-            .row {
-                --bs-gutter-x: 1.5rem;
-                --bs-gutter-y: 0;
-                display: flex;
-                flex-wrap: wrap;
-                margin-top: calc(-1 * var(--bs-gutter-y));
-                margin-right: calc(-0.5 * var(--bs-gutter-x));
-                margin-left: calc(-0.5 * var(--bs-gutter-x));
-            }
-            
-            .row > * {
-                flex-shrink: 0;
-                width: 100%;
-                max-width: 100%;
-                padding-right: calc(var(--bs-gutter-x) * 0.5);
-                padding-left: calc(var(--bs-gutter-x) * 0.5);
-                margin-top: var(--bs-gutter-y);
-            }
-            
-            .col-lg-4 {
-                flex: 0 0 auto;
-                width: 33.33333333%;
-            }
-            
-            .col-lg-6 {
-                flex: 0 0 auto;
-                width: 50%;
-            }
-            
-            .col-xl-4 {
-                flex: 0 0 auto;
-                width: 33.33333333%;
-            }
-            
-            @media (min-width: 992px) {
-                .col-lg-4 {
-                    flex: 0 0 auto;
-                    width: 33.33333333%;
-                }
-                .col-lg-6 {
-                    flex: 0 0 auto;
-                    width: 50%;
-                }
-            }
-            
-            @media (min-width: 1200px) {
-                .col-xl-4 {
-                    flex: 0 0 auto;
-                    width: 33.33333333%;
-                }
-            }
-            
-            .justify-content-center {
-                justify-content: center !important;
-            }
-            
-            .gx-5 {
-                --bs-gutter-x: 3rem;
-            }
-            
-            /* Utilities */
-            .mb-3 {
-                margin-bottom: 1rem !important;
-            }
-            
-            .mb-4 {
-                margin-bottom: 1.5rem !important;
-            }
-            
-            .mb-5 {
-                margin-bottom: 3rem !important;
-            }
-            
-            .my-5 {
-                margin-top: 3rem !important;
-                margin-bottom: 3rem !important;
-            }
-            
-            /* Responsive adjustments */
-            @media (max-width: 991.98px) {
-                .navbar-expand-lg > .container {
-                    padding-right: 0;
-                    padding-left: 0;
-                }
-                
-                .col-lg-4, .col-lg-6 {
-                    width: 100%;
-                }
-                
-                .px-5 {
-                    padding-right: 1rem !important;
-                    padding-left: 1rem !important;
-                }
-            }
-            
-            @media (max-width: 767.98px) {
-                .display-5 {
-                    font-size: 2rem;
-                }
-                
-                .lead {
-                    font-size: 1rem;
-                }
-                
-                .btn-lg {
-                    font-size: 1rem;
-                    padding: 0.5rem 1rem;
-                }
-                
-                .feature {
-                    height: 3rem;
-                    width: 3rem;
-                    font-size: 1.5rem;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <!-- Responsive navbar-->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container px-5">
-                <a class="navbar-brand" href="index.html">Contraentregaco FZ1</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="s1.html">Sección 1</a></li>
-                        <li class="nav-item"><a class="nav-link" href="s3.html">Sección 3</a></li>
-                        <li class="nav-item"><a class="nav-link" href="s4.html">Sección 4</a></li>
-                        <li class="nav-item"><a class="nav-link" href="s5.html">Sección 5</a></li>
-                        <li class="nav-item"><a class="nav-link" href="s6.html">Sección 6</a></li>
-                        <li class="nav-item"><a class="nav-link" href="index.html">Iniciar Sesión</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        <!-- Header-->
-        <header class="bg-dark py-5">
-            <div class="container px-5">
-                <div class="row gx-5 justify-content-center">
-                    <div class="col-lg-6">
-                        <div class="text-center my-5">
-                            <h1 class="display-5 fw-bolder text-white mb-2">Logística 24/7</h1>
-                            <p class="lead text-white-50 mb-4">Quickly design and customize responsive mobile-first sites with Bootstrap, the world's most popular front-end open source toolkit!</p>
-                            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
-                                <a class="btn btn-primary btn-lg px-4 me-sm-3" href="index.html">Iniciar Sesión</a>
-                                <a class="btn btn-outline-light btn-lg px-4" href="https://checkout.bold.co/payment/LNK_OXSODTUXBA">Crear Cuenta</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QRContraentrega - Cabo Verde | Cape Verde</h1>
+            <p class="subtitle">Selecione sua ilha/município | Select your island/municipality</p>
         </header>
-        <!-- Features section-->
-        <section class="py-5 border-bottom" id="features">
-            <div class="container px-5 my-5">
-                <div class="row gx-5">
-                    <div class="col-lg-4 mb-5 mb-lg-0">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-collection"></i></div>
-                        <h2 class="h4 fw-bolder">Featured title</h2>
-                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
-                        <a class="text-decoration-none" href="#!">
-                            Call to action
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="col-lg-4 mb-5 mb-lg-0">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-building"></i></div>
-                        <h2 class="h4 fw-bolder">Featured title</h2>
-                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
-                        <a class="text-decoration-none" href="#!">
-                            Call to action
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-toggles2"></i></div>
-                        <h2 class="h4 fw-bolder">Featured title</h2>
-                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
-                        <a class="text-decoration-none" href="#!">
-                            Call to action
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Pricing section-->
-        <section class="bg-light py-5 border-bottom">
-            <div class="container px-5 my-5">
-                <div class="text-center mb-5">
-                    <h2 class="fw-bolder">Pay as you grow</h2>
-                    <p class="lead mb-0">With our no hassle pricing plans</p>
-                </div>
-                <div class="row gx-5 justify-content-center">
-                    <!-- Pricing card free-->
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="card mb-5 mb-xl-0">
-                            <div class="card-body p-5">
-                                <div class="small text-uppercase fw-bold text-muted">Gratis</div>
-                                <div class="mb-3">
-                                    <span class="display-4 fw-bold">$0</span>
-                                    <span class="text-muted">/ mo.</span>
-                                </div>
-                                <ul class="list-unstyled mb-4">
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        <strong>1 users</strong>
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        5GB storage
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Unlimited public projects
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Community access
-                                    </li>
-                                    <li class="mb-2 text-muted">
-                                        <i class="bi bi-x"></i>
-                                        Unlimited private projects
-                                    </li>
-                                    <li class="mb-2 text-muted">
-                                        <i class="bi bi-x"></i>
-                                        Dedicated support
-                                    </li>
-                                    <li class="mb-2 text-muted">
-                                        <i class="bi bi-x"></i>
-                                        Free linked domain
-                                    </li>
-                                    <li class="text-muted">
-                                        <i class="bi bi-x"></i>
-                                        Monthly status reports
-                                    </li>
-                                </ul>
-                                <div class="d-grid"><a class="btn btn-outline-primary" href="https://checkout.bold.co/payment/LNK_OXSODTUXBA">Crear Cuenta</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Pricing card pro-->
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="card mb-5 mb-xl-0">
-                            <div class="card-body p-5">
-                                <div class="small text-uppercase fw-bold">
-                                    <i class="bi bi-star-fill text-warning"></i>
-                                    PRO
-                                </div>
-                                <div class="mb-3">
-                                    <span class="display-4 fw-bold">$9</span>
-                                    <span class="text-muted">/ mo.</span>
-                                </div>
-                                <ul class="list-unstyled mb-4">
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        <strong>5 users</strong>
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        5GB storage
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Unlimited public projects
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Community access
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Unlimited private projects
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Dedicated support
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Free linked domain
-                                    </li>
-                                    <li class="text-muted">
-                                        <i class="bi bi-x"></i>
-                                        Monthly status reports
-                                    </li>
-                                </ul>
-                                <div class="d-grid"><a class="btn btn-primary" href="#!">Mejorar Cuenta a PRO</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Pricing card enterprise-->
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="card">
-                            <div class="card-body p-5">
-                                <div class="small text-uppercase fw-bold text-muted">FZ</div>
-                                <div class="mb-3">
-                                    <span class="display-4 fw-bold">$49</span>
-                                    <span class="text-muted">/ mo.</span>
-                                </div>
-                                <ul class="list-unstyled mb-4">
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        <strong>Unlimited users</strong>
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        5GB storage
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Unlimited public projects
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Community access
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Unlimited private projects
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Dedicated support
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        <strong>Unlimited</strong>
-                                        linked domains
-                                    </li>
-                                    <li class="text-muted">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Monthly status reports
-                                    </li>
-                                </ul>
-                                <div class="d-grid"><a class="btn btn-outline-primary" href="#!">Mejorar Cuenta a FZ</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Footer-->
-        <footer class="py-5 bg-dark">
-            <div class="container px-5"><p class="m-0 text-center text-white">Contraentregaco FZ1</p></div>
+
+        <div class="search-container">
+            <input type="text" id="state-search" placeholder="Pesquisar ilha... | Search island..." aria-label="Search island">
+        </div>
+
+        <div class="states-grid" id="states-container">
+            <!-- Islands/Municipalities will appear here -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. Todos os direitos reservados. | All rights reserved.</p>
         </footer>
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script>
-            // Simple JavaScript for navbar toggle functionality
-            document.addEventListener('DOMContentLoaded', function() {
-                const navbarToggler = document.querySelector('.navbar-toggler');
-                const navbarCollapse = document.querySelector('.navbar-collapse');
+    </div>
+
+    <script>
+        // List of Cabo Verde islands and municipalities
+        const states = [
+            // Islands
+            { "name": "Santiago", "namePt": "Santiago", "type": "Ilha", "typeEn": "Island", "url": "https://qrcontraentrega.com/santiago" },
+            { "name": "Santo Antão", "namePt": "Santo Antão", "type": "Ilha", "typeEn": "Island", "url": "https://qrcontraentrega.com/santo-antao" },
+            { "name": "São Vicente", "namePt": "São Vicente", "type": "Ilha", "typeEn": "Island", "url": "https://qrcontraentrega.com/sao-vicente" },
+            { "name": "Fogo", "namePt": "Fogo", "type": "Ilha", "typeEn": "Island", "url": "https://qrcontraentrega.com/fogo" },
+            { "name": "Maio", "namePt": "Maio", "type": "Ilha", "typeEn": "Island", "url": "https://qrcontraentrega.com/maio" },
+            { "name": "Brava", "namePt": "Brava", "type": "Ilha", "typeEn": "Island", "url": "https://qrcontraentrega.com/brava" },
+            { "name": "Sal", "namePt": "Sal", "type": "Ilha", "typeEn": "Island", "url": "https://qrcontraentrega.com/sal" },
+            { "name": "Boa Vista", "namePt": "Boa Vista", "type": "Ilha", "typeEn": "Island", "url": "https://qrcontraentrega.com/boa-vista" },
+            { "name": "São Nicolau", "namePt": "São Nicolau", "type": "Ilha", "typeEn": "Island", "url": "https://qrcontraentrega.com/sao-nicolau" },
+            
+            // Major municipalities
+            { "name": "Praia", "namePt": "Praia", "type": "Município", "typeEn": "Municipality", "url": "https://qrcontraentrega.com/praia" },
+            { "name": "Mindelo", "namePt": "Mindelo", "type": "Município", "typeEn": "Municipality", "url": "https://qrcontraentrega.com/mindelo" },
+            { "name": "Santa Maria", "namePt": "Santa Maria", "type": "Município", "typeEn": "Municipality", "url": "https://qrcontraentrega.com/santa-maria" },
+            { "name": "Assomada", "namePt": "Assomada", "type": "Município", "typeEn": "Municipality", "url": "https://qrcontraentrega.com/assomada" },
+            { "name": "Porto Novo", "namePt": "Porto Novo", "type": "Município", "typeEn": "Municipality", "url": "https://qrcontraentrega.com/porto-novo" },
+            { "name": "São Filipe", "namePt": "São Filipe", "type": "Município", "typeEn": "Municipality", "url": "https://qrcontraentrega.com/sao-filipe" },
+            { "name": "Tarrafal", "namePt": "Tarrafal", "type": "Município", "typeEn": "Municipality", "url": "https://qrcontraentrega.com/tarrafal" },
+            { "name": "Espargos", "namePt": "Espargos", "type": "Município", "typeEn": "Municipality", "url": "https://qrcontraentrega.com/espargos" },
+            { "name": "Vila do Maio", "namePt": "Vila do Maio", "type": "Município", "typeEn": "Municipality", "url": "https://qrcontraentrega.com/vila-do-maio" },
+            { "name": "Nova Sintra", "namePt": "Nova Sintra", "type": "Município", "typeEn": "Municipality", "url": "https://qrcontraentrega.com/nova-sintra" }
+        ];
+
+        // Function to display islands/municipalities
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
+            container.innerHTML = '';
+
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="img/c.jpg" alt="${state.namePt}" class="flag-image">
+                    </div>
+                    <div class="state-info">
+                        <div class="state-name">${state.namePt} | ${state.name}</div>
+                        <div class="state-type">${state.type} | ${state.typeEn}</div>
+                    </div>
+                `;
                 
-                if (navbarToggler && navbarCollapse) {
-                    navbarToggler.addEventListener('click', function() {
-                        const isExpanded = navbarToggler.getAttribute('aria-expanded') === 'true';
-                        navbarToggler.setAttribute('aria-expanded', !isExpanded);
-                        navbarCollapse.classList.toggle('show');
-                    });
-                }
-                
-                // Smooth scrolling for anchor links
-                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                    anchor.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        
-                        const targetId = this.getAttribute('href');
-                        if (targetId === '#!') return;
-                        
-                        const targetElement = document.querySelector(targetId);
-                        if (targetElement) {
-                            targetElement.scrollIntoView({
-                                behavior: 'smooth'
-                            });
-                        }
-                    });
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
                 });
+
+                container.appendChild(stateCard);
             });
-        </script>
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <!-- * *                               SB Forms JS                               * *-->
-        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
-    </body>
+        }
+
+        // Function to search islands/municipalities
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.namePt.toLowerCase().includes(searchTerm) || 
+                state.name.toLowerCase().includes(searchTerm) ||
+                state.type.toLowerCase().includes(searchTerm) ||
+                state.typeEn.toLowerCase().includes(searchTerm)
+            );
+            renderStates(filteredStates);
+        }
+
+        // Event listeners
+        document.getElementById('state-search').addEventListener('input', searchStates);
+
+        // Display all islands/municipalities when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStates(states);
+        });
+    </script>
+</body>
 </html>
