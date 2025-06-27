@@ -1,119 +1,249 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="hy">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QRContraentrega - Armenia, Quindío, Colombia</title>
-  <style>
-    :root {
-      --primary-color: #1a1a1a;
-      --secondary-color: #333;
-      --accent-color: #0066cc;
-      --text-color: #333;
-      --light-text: #fff;
-      --bg-light: #f8f8f8;
-      --border-radius: 8px;
-      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      --transition: all 0.3s ease;
-    }
-    
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-    }
-    
-    body { 
-      font-family: 'Roboto', sans-serif; 
-      color: var(--text-color); 
-      line-height: 1.6; 
-      touch-action: manipulation;
-      overflow-x: hidden;
-    }
-    
-    #contenedor-mapa { 
-      height: 100vh; 
-      display: flex; 
-      flex-direction: column; 
-    }
-    
-    #barra-superior { 
-      display: flex; 
-      gap: 0.8rem; 
-      padding: 0.8rem; 
-      background: var(--bg-light); 
-      width: 100%;
-    }
-    
-    #buscador { 
-      flex: 1; 
-      padding: 0.6rem 1.2rem; 
-      border: 1px solid #ddd; 
-      border-radius: 24px; 
-      appearance: none; 
-      font-size: 16px;
-      transition: var(--transition);
-    }
-    
-    #buscador:focus {
-      outline: none;
-      border-color: var(--accent-color);
-      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
-    }
-    
-    .btn { 
-      background: var(--primary-color); 
-      color: var(--light-text); 
-      padding: 0.6rem 1.2rem; 
-      border-radius: 24px; 
-      text-decoration: none;
-      font-weight: 500;
-      transition: var(--transition);
-      border: none;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    
-    .btn:hover {
-      background: var(--secondary-color);
-      transform: translateY(-1px);
-    }
-    
-    #mapa { 
-      flex: 1; 
-      background: #f0f0f0; 
-    }
-    
-    .cluster-marcadores { 
-      background: rgba(40,40,40,0.7); 
-      border-radius: 50%; 
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
-    
-    .leaflet-control-layers { 
-      background: #fff; 
-      padding: 5px; 
-      border-radius: var(--border-radius); 
-      box-shadow: var(--box-shadow);
-    }
-    
-    @media (max-width: 768px) { 
-      #barra-superior { 
-        flex-direction: column; 
-        gap: 0.6rem;
-      }
-    }
-  </style>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - Հայաստան</title>
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #2980b9;
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+            direction: ltr; /* Left-to-right for Armenian */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .marzes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .marz-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .marz-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .marz-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .marz-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .marz-region {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #marz-search {
+            width: 100%;
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        #marz-search:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .marzes-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .flag-container {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .marzes-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 1rem;
+            }
+
+            .marz-info {
+                padding: 1rem 0.5rem;
+            }
+
+            .marz-name {
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div id="contenedor-mapa">
-    <div id="barra-superior">
-      <input type="search" id="buscador" placeholder="Buscar Productos y Servicios en Armenia..." enterkeyhint="search">
-      <button class="btn" id="b2b-btn">VER TODO
+    <div class="container">
+        <header>
+            <h1>QRContraentrega</h1>
+            <p class="subtitle">Ընտրեք Ձեր մարզը Հայաստանում</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="marz-search" placeholder="Որոնել մարզ..." aria-label="Որոնել մարզ">
+        </div>
+
+        <div class="marzes-grid" id="marzes-container">
+            <!-- Մարզերը կհայտնվեն այստեղ -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. Բոլոր իրավունքները պաշտպանված են:</p>
+        </footer>
+    </div>
+
+    <script>
+        // Հայաստանի մարզերի ցանկ
+        const marzes = [
+            { "name": "Երևան", "region": "Քաղաք", "url": "https://qrcontraentrega.com/yerevan" },
+            { "name": "Արագածոտն", "region": "Մարզ", "url": "https://qrcontraentrega.com/aragatsotn" },
+            { "name": "Արարատ", "region": "Մարզ", "url": "https://qrcontraentrega.com/ararat" },
+            { "name": "Արմավիր", "region": "Մարզ", "url": "https://qrcontraentrega.com/armavir" },
+            { "name": "Գեղարքունիք", "region": "Մարզ", "url": "https://qrcontraentrega.com/gegharkunik" },
+            { "name": "Լոռի", "region": "Մարզ", "url": "https://qrcontraentrega.com/lori" },
+            { "name": "Կոտայք", "region": "Մարզ", "url": "https://qrcontraentrega.com/kotayk" },
+            { "name": "Շիրակ", "region": "Մարզ", "url": "https://qrcontraentrega.com/shirak" },
+            { "name": "Սյունիք", "region": "Մարզ", "url": "https://qrcontraentrega.com/syunik" },
+            { "name": "Վայոց Ձոր", "region": "Մարզ", "url": "https://qrcontraentrega.com/vayotsdzor" },
+            { "name": "Տավուշ", "region": "Մարզ", "url": "https://qrcontraentrega.com/tavush" }
+        ];
+
+        // Ֆունկցիա մարզերը ցուցադրելու համար
+        function renderMarzes(marzList) {
+            const container = document.getElementById('marzes-container');
+            container.innerHTML = '';
+
+            marzList.forEach(marz => {
+                const marzCard = document.createElement('div');
+                marzCard.className = 'marz-card';
+                marzCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="img/c.jpg" alt="${marz.name}" class="flag-image">
+                    </div>
+                    <div class="marz-info">
+                        <div class="marz-name">${marz.name}</div>
+                        <div class="marz-region">${marz.region}</div>
+                    </div>
+                `;
+                
+                marzCard.addEventListener('click', () => {
+                    window.location.href = marz.url;
+                });
+
+                container.appendChild(marzCard);
+            });
+        }
+
+        // Ֆունկցիա մարզեր որոնելու համար
+        function searchMarzes() {
+            const searchTerm = document.getElementById('marz-search').value.toLowerCase();
+            const filteredMarzes = marzes.filter(marz => 
+                marz.name.toLowerCase().includes(searchTerm) || 
+                marz.region.toLowerCase().includes(searchTerm)
+            );
+            renderMarzes(filteredMarzes);
+        }
+
+        // Իվենթ լիստեներներ
+        document.getElementById('marz-search').addEventListener('input', searchMarzes);
+
+        // Բոլոր մարզերը ցուցադրել էջի բեռնման ժամանակ
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMarzes(marzes);
+        });
+    </script>
+</body>
+</html>
