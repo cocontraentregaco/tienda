@@ -1,881 +1,287 @@
 <!DOCTYPE html>
-<html lang="en-CA">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Cash on Delivery Canada - Nationwide COD Service</title>
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-        <!-- Bootstrap icons-->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
-        <style>
-            /* Bootstrap core CSS (modified for single file) */
-            :root {
-                --bs-blue: #0d6efd;
-                --bs-indigo: #6610f2;
-                --bs-purple: #6f42c1;
-                --bs-pink: #d63384;
-                --bs-red: #dc3545;
-                --bs-orange: #fd7e14;
-                --bs-yellow: #ffc107;
-                --bs-green: #198754;
-                --bs-teal: #20c997;
-                --bs-cyan: #0dcaf0;
-                --bs-white: #fff;
-                --bs-gray: #6c757d;
-                --bs-gray-dark: #343a40;
-                --bs-primary: #0d6efd;
-                --bs-secondary: #6c757d;
-                --bs-success: #198754;
-                --bs-info: #0dcaf0;
-                --bs-warning: #ffc107;
-                --bs-danger: #dc3545;
-                --bs-light: #f8f9fa;
-                --bs-dark: #212529;
-                --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-                --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - Canada | Canada</title>
+    <style>
+        :root {
+            --primary-color: #D52B1E; /* Canada red */
+            --secondary-color: #FFFFFF; /* Canada white */
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(213, 43, 30, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .state-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+            border-top: 4px solid var(--primary-color);
+        }
+
+        .state-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--secondary-color);
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .state-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .state-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
+
+        .state-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        #state-search {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
+        }
+
+        #state-search:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(213, 43, 30, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
-            
-            *,
-            *::before,
-            *::after {
-                box-sizing: border-box;
-            }
-            
-            @media (prefers-reduced-motion: no-preference) {
-                :root {
-                    scroll-behavior: smooth;
-                }
-            }
-            
-            body {
-                margin: 0;
-                font-family: var(--bs-font-sans-serif);
-                font-size: 1rem;
-                font-weight: 400;
-                line-height: 1.5;
-                color: #000000;
-                background-color: #FFFFFF;
-                -webkit-text-size-adjust: 100%;
-                -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-            }
-            
-            /* Layout and components */
-            .container,
-            .container-fluid,
-            .container-xxl,
-            .container-xl,
-            .container-lg,
-            .container-md,
-            .container-sm {
-                width: 100%;
-                padding-right: var(--bs-gutter-x, 0.75rem);
-                padding-left: var(--bs-gutter-x, 0.75rem);
-                margin-right: auto;
-                margin-left: auto;
-            }
-            
-            @media (min-width: 576px) {
-                .container-sm, .container {
-                    max-width: 540px;
-                }
-            }
-            @media (min-width: 768px) {
-                .container-md, .container-sm, .container {
-                    max-width: 720px;
-                }
-            }
-            @media (min-width: 992px) {
-                .container-lg, .container-md, .container-sm, .container {
-                    max-width: 960px;
-                }
-            }
-            @media (min-width: 1200px) {
-                .container-xl, .container-lg, .container-md, .container-sm, .container {
-                    max-width: 1140px;
-                }
-            }
-            @media (min-width: 1400px) {
-                .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
-                    max-width: 1320px;
-                }
-            }
-            
-            /* Navbar */
-            .navbar {
-                position: relative;
-                display: flex;
-                flex-wrap: wrap;
-                align-items: center;
-                justify-content: space-between;
-                padding-top: 0.5rem;
-                padding-bottom: 0.5rem;
-            }
-            
-            .navbar-dark .navbar-brand {
-                color: #FFFFFF;
-            }
-            
-            .navbar-brand {
-                padding-top: 0.3125rem;
-                padding-bottom: 0.3125rem;
-                margin-right: 1rem;
-                font-size: 1.25rem;
-                text-decoration: none;
-                white-space: nowrap;
-            }
-            
-            .navbar-expand-lg {
-                flex-wrap: nowrap;
-                justify-content: flex-start;
-            }
-            
-            .navbar-dark {
-                --bs-navbar-color: rgba(255, 255, 255, 0.55);
-                --bs-navbar-hover-color: rgba(255, 255, 255, 0.75);
-                --bs-navbar-disabled-color: rgba(255, 255, 255, 0.25);
-                --bs-navbar-active-color: #FFFFFF;
-                --bs-navbar-brand-color: #FFFFFF;
-                --bs-navbar-brand-hover-color: #FFFFFF;
-                --bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.1);
-                --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-            }
-            
-            .bg-dark {
-                background-color: #000000 !important;
-            }
-            
-            .navbar-toggler {
-                padding: 0.25rem 0.75rem;
-                font-size: 1.25rem;
-                line-height: 1;
-                background-color: transparent;
-                border: 1px solid transparent;
-                border-radius: 0.25rem;
-                transition: box-shadow 0.15s ease-in-out;
-            }
-            
-            .navbar-toggler-icon {
-                display: inline-block;
-                width: 1.5em;
-                height: 1.5em;
-                vertical-align: middle;
-                background-repeat: no-repeat;
-                background-position: center;
-                background-size: 100%;
-            }
-            
-            .collapse:not(.show) {
-                display: none;
-            }
-            
-            .navbar-collapse {
-                flex-basis: 100%;
-                flex-grow: 1;
-                align-items: center;
-            }
-            
-            .navbar-nav {
-                display: flex;
-                flex-direction: column;
-                padding-left: 0;
-                margin-bottom: 0;
-                list-style: none;
-            }
-            
-            .navbar-nav .nav-link {
-                padding-right: 0;
-                padding-left: 0;
-            }
-            
-            .nav-link {
-                display: block;
-                padding: 0.5rem 1rem;
-                color: #0d6efd;
-                text-decoration: none;
-                transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
-            }
-            
-            .navbar-dark .navbar-nav .nav-link {
-                color: rgba(255, 255, 255, 0.55);
-            }
-            
-            .navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus {
-                color: rgba(255, 255, 255, 0.75);
-            }
-            
-            .navbar-dark .navbar-nav .nav-link.active, .navbar-dark .navbar-nav .show > .nav-link {
-                color: #FFFFFF;
-            }
-            
-            .ms-auto {
-                margin-left: auto !important;
-            }
-            
-            .mb-2 {
-                margin-bottom: 0.5rem !important;
-            }
-            
-            .mb-lg-0 {
-                margin-bottom: 0 !important;
-            }
-            
-            .px-5 {
-                padding-right: 3rem !important;
-                padding-left: 3rem !important;
-            }
-            
-            .py-5 {
-                padding-top: 3rem !important;
-                padding-bottom: 3rem !important;
-            }
-            
-            .border-bottom {
-                border-bottom: 1px solid #FFFFFF !important;
-            }
-            
-            /* Header */
-            .bg-dark {
-                background-color: #000000 !important;
-            }
-            
-            .py-5 {
-                padding-top: 3rem !important;
-                padding-bottom: 3rem !important;
-            }
-            
-            .text-center {
-                text-align: center !important;
-            }
-            
-            .text-white {
-                color: #FFFFFF !important;
-            }
-            
-            .display-5 {
-                font-size: calc(1.425rem + 2.1vw);
-                font-weight: 300;
-                line-height: 1.2;
-            }
-            
-            @media (min-width: 1200px) {
-                .display-5 {
-                    font-size: 3rem;
-                }
-            }
-            
-            .fw-bolder {
-                font-weight: bolder !important;
-            }
-            
-            .mb-2 {
-                margin-bottom: 0.5rem !important;
-            }
-            
-            .lead {
-                font-size: 1.25rem;
-                font-weight: 300;
-            }
-            
-            .d-grid {
-                display: grid !important;
-            }
-            
-            .gap-3 {
-                gap: 1rem !important;
-            }
-            
-            .d-sm-flex {
-                display: flex !important;
-            }
-            
-            .justify-content-sm-center {
-                justify-content: center !important;
-            }
-            
-            .btn {
-                display: inline-block;
-                font-weight: 400;
-                line-height: 1.5;
-                color: #000000;
-                text-align: center;
-                text-decoration: none;
-                vertical-align: middle;
-                cursor: pointer;
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                user-select: none;
-                background-color: transparent;
-                border: 1px solid transparent;
-                padding: 0.375rem 0.75rem;
-                font-size: 1rem;
-                border-radius: 0.25rem;
-                transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-            }
-            
-            @media (prefers-reduced-motion: reduce) {
-                .btn {
-                    transition: none;
-                }
-            }
-            
-            .btn:hover {
-                color: #000000;
-            }
-            
-            .btn-primary {
-                color: #FFFFFF;
-                background-color: #0d6efd;
-                border-color: #0d6efd;
-            }
-            
-            .btn-primary:hover {
-                color: #fff;
-                background-color: #0b5ed7;
-                border-color: #0a58ca;
-            }
-            
-            .btn-lg, .btn-group-lg > .btn {
-                padding: 0.5rem 1rem;
-                font-size: 1.25rem;
-                border-radius: 0.3rem;
-            }
-            
-            .btn-outline-light {
-                color: #f8f9fa;
-                border-color: #f8f9fa;
-            }
-            
-            .btn-outline-light:hover {
-                color: #000;
-                background-color: #f8f9fa;
-                border-color: #f8f9fa;
-            }
-            
-            .px-4 {
-                padding-right: 1.5rem !important;
-                padding-left: 1.5rem !important;
-            }
-            
-            .me-sm-3 {
-                margin-right: 1rem !important;
-            }
-            
-            /* Features section */
-            .feature {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                height: 4rem;
-                width: 4rem;
+
+            h1 {
                 font-size: 2rem;
             }
-            
-            .bg-primary {
-                background-color: #0d6efd !important;
+
+            .flag-container {
+                height: 100px;
             }
-            
-            .bg-gradient {
-                background-image: var(--bs-gradient) !important;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
             }
-            
-            .rounded-3 {
-                border-radius: 0.3rem !important;
+
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
             }
-            
-            .h4, h4 {
-                font-size: calc(1.275rem + 0.3vw);
+
+            .state-info {
+                padding: 1rem 0.5rem;
             }
-            
-            .text-decoration-none {
-                text-decoration: none !important;
+
+            .state-name {
+                font-size: 1rem;
             }
-            
-            /* Pricing section */
-            .bg-light {
-                background-color: #f8f9fa !important;
-            }
-            
-            .text-uppercase {
-                text-transform: uppercase !important;
-            }
-            
-            .fw-bold {
-                font-weight: 700 !important;
-            }
-            
-            .text-muted {
-                color: #6c757d !important;
-            }
-            
-            .card {
-                position: relative;
-                display: flex;
-                flex-direction: column;
-                min-width: 0;
-                word-wrap: break-word;
-                background-color: #fff;
-                background-clip: border-box;
-                border: 1px solid rgba(0, 0, 0, 0.125);
-                border-radius: 0.25rem;
-            }
-            
-            .card-body {
-                flex: 1 1 auto;
-                padding: 1rem 1rem;
-            }
-            
-            .list-unstyled {
-                padding-left: 0;
-                list-style: none;
-            }
-            
-            .text-warning {
-                color: #ffc107 !important;
-            }
-            
-            /* Footer */
-            .m-0 {
-                margin: 0 !important;
-            }
-            
-            /* Grid system */
-            .row {
-                --bs-gutter-x: 1.5rem;
-                --bs-gutter-y: 0;
-                display: flex;
-                flex-wrap: wrap;
-                margin-top: calc(-1 * var(--bs-gutter-y));
-                margin-right: calc(-0.5 * var(--bs-gutter-x));
-                margin-left: calc(-0.5 * var(--bs-gutter-x));
-            }
-            
-            .row > * {
-                flex-shrink: 0;
-                width: 100%;
-                max-width: 100%;
-                padding-right: calc(var(--bs-gutter-x) * 0.5);
-                padding-left: calc(var(--bs-gutter-x) * 0.5);
-                margin-top: var(--bs-gutter-y);
-            }
-            
-            .col-lg-4 {
-                flex: 0 0 auto;
-                width: 33.33333333%;
-            }
-            
-            .col-lg-6 {
-                flex: 0 0 auto;
-                width: 50%;
-            }
-            
-            .col-xl-4 {
-                flex: 0 0 auto;
-                width: 33.33333333%;
-            }
-            
-            @media (min-width: 992px) {
-                .col-lg-4 {
-                    flex: 0 0 auto;
-                    width: 33.33333333%;
-                }
-                .col-lg-6 {
-                    flex: 0 0 auto;
-                    width: 50%;
-                }
-            }
-            
-            @media (min-width: 1200px) {
-                .col-xl-4 {
-                    flex: 0 0 auto;
-                    width: 33.33333333%;
-                }
-            }
-            
-            .justify-content-center {
-                justify-content: center !important;
-            }
-            
-            .gx-5 {
-                --bs-gutter-x: 3rem;
-            }
-            
-            /* Utilities */
-            .mb-3 {
-                margin-bottom: 1rem !important;
-            }
-            
-            .mb-4 {
-                margin-bottom: 1.5rem !important;
-            }
-            
-            .mb-5 {
-                margin-bottom: 3rem !important;
-            }
-            
-            .my-5 {
-                margin-top: 3rem !important;
-                margin-bottom: 3rem !important;
-            }
-            
-            /* Responsive adjustments */
-            @media (max-width: 991.98px) {
-                .navbar-expand-lg > .container {
-                    padding-right: 0;
-                    padding-left: 0;
-                }
-                
-                .col-lg-4, .col-lg-6 {
-                    width: 100%;
-                }
-                
-                .px-5 {
-                    padding-right: 1rem !important;
-                    padding-left: 1rem !important;
-                }
-            }
-            
-            @media (max-width: 767.98px) {
-                .display-5 {
-                    font-size: 2rem;
-                }
-                
-                .lead {
-                    font-size: 1rem;
-                }
-                
-                .btn-lg {
-                    font-size: 1rem;
-                    padding: 0.5rem 1rem;
-                }
-                
-                .feature {
-                    height: 3rem;
-                    width: 3rem;
-                    font-size: 1.5rem;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <!-- Responsive navbar-->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container px-5">
-                <a class="navbar-brand" href="index.html">Cash on Delivery Canada</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="s1.html">Section 1</a></li>
-                        <li class="nav-item"><a class="nav-link" href="s3.html">Section 3</a></li>
-                        <li class="nav-item"><a class="nav-link" href="s4.html">Section 4</a></li>
-                        <li class="nav-item"><a class="nav-link" href="s5.html">Section 5</a></li>
-                        <li class="nav-item"><a class="nav-link" href="s6.html">Section 6</a></li>
-                        <li class="nav-item"><a class="nav-link" href="index.html">Sign In</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        <!-- Header-->
-        <header class="bg-dark py-5">
-            <div class="container px-5">
-                <div class="row gx-5 justify-content-center">
-                    <div class="col-lg-6">
-                        <div class="text-center my-5">
-                            <h1 class="display-5 fw-bolder text-white mb-2">24/7 Logistics</h1>
-                            <p class="lead text-white-50 mb-4"></p>
-                            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
-                                <a class="btn btn-primary btn-lg px-4 me-sm-3" href="https://www.cashondelivery.ca">Sign In</a>
-                                <a class="btn btn-outline-light btn-lg px-4" href="https://www.cashondelivery.ca/register">Create Account</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QRContraentrega - Canada | Canada</h1>
+            <p class="subtitle">Select your province/territory | Sélectionnez votre province/territoire</p>
         </header>
-        <!-- Features section-->
-        <section class="py-5 border-bottom" id="features">
-            <div class="container px-5 my-5">
-                <div class="row gx-5">
-                    <div class="col-lg-4 mb-5 mb-lg-0">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-collection"></i></div>
-                        <h2 class="h4 fw-bolder">Finance</h2>
-                        <p>Control your entire financial flow with invoices, purchase/sales orders, POS sales, quotes, advances and automated receipts (validating legal date ranges), while managing tax data (BN, GST/HST) and mass communications via SMS or other channels for marketing, collections, orders or alerts. Additionally, integrate decentralized finance: execute Bitcoin transactions (signatures, staking, collateralized loans using BTC with Taproot smart contracts), perform express exchange (Lightning/on-chain to fiat in linked accounts) and operate with full regulatory compliance. All on a flexible platform where each area operates autonomously but synchronized, with no irregular practices, even in DeFi environments.</p>
-                        <a class="text-decoration-none" href="https://www.cashondelivery.ca/finance">
-                            Go to Finance
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="col-lg-4 mb-5 mb-lg-0">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-building"></i></div>
-                        <h2 class="h4 fw-bolder">Inventory</h2>
-                        <p>Our inventory module operates in a decentralized manner, allowing you to manage stock, adjust prices and update descriptions or meta tags from any location or device. Each point of sale, warehouse or work team can update information in real time without depending on a central core, including autonomous management of your online store, publication of campaigns on multiple platforms and localized management of suppliers or customers. Data is dynamically synchronized between all nodes, maintaining traceability of materials, equipment and finished products while adapting to the specific needs of each operation.</p>
-                        <a class="text-decoration-none" href="https://www.cashondelivery.ca/inventory">
-                            Go to Inventory
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-toggles2"></i></div>
-                        <h2 class="h4 fw-bolder">Logistics</h2>
-                        <p>At Cash on Delivery (C) we've redefined logistics with a unique model where our Shipping Insurance acts as a neutral guarantor (2 of 3) in each transaction, standardizing and ensuring exact compliance between all parties. We've automated the entire cycle: intelligent waybill generation, integration with partner carriers (Canada Post, Purolator, etc.) and live tracking with automatic notifications. But our true differentiator is the cash on delivery system with 100% certified effectiveness, where our insurance company intervenes 24/7 as a technical mediator - validating conditions, resolving PQR in real time and applying proactive security protocols for high-value goods. More than a module, it's a secure ecosystem where each shipment operates with the precision of a smart contract: executable, auditable and backed by our compliance guarantee.</p>
-                        <a class="text-decoration-none" href="https://www.cashondelivery.ca/logistics">
-                            Go to Logistics
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Pricing section-->
-        <section class="bg-light py-5 border-bottom">
-            <div class="container px-5 my-5">
-                <div class="text-center mb-5">
-                    <h2 class="fw-bolder">ALL-IN-ONE SYSTEM</h2>
-                    <p class="lead mb-0">Intuitive graphical interface to streamline all your processes</p>
-                </div>
-                <div class="row gx-5 justify-content-center">
-                    <!-- Pricing card free-->
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="card mb-5 mb-xl-0">
-                            <div class="card-body p-5">
-                                <div class="small text-uppercase fw-bold text-muted">Free</div>
-                                <div class="mb-3">
-                                    <span class="display-4 fw-bold">$0</span>
-                                    <span class="text-muted">/ mo</span>
-                                </div>
-                                <ul class="list-unstyled mb-4">
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        <strong>1 access key</strong>
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        24/7 Support
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Global Cash on Delivery Insurance (All-In-One)
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Full Software Access
-                                    </li>
-                                    <li class="mb-2 text-muted">
-                                        <i class="bi bi-x"></i>
-                                        Landing Page (Online Store)
-                                    </li>
-                                    <li class="mb-2 text-muted">
-                                        <i class="bi bi-x"></i>
-                                        Domain + Hosting + Corporate Email
-                                    </li>
-                                    <li class="mb-2 text-muted">
-                                        <i class="bi bi-x"></i>
-                                        Partner Account Registration
-                                    </li>
-                                    <li class="text-muted">
-                                        <i class="bi bi-x"></i>
-                                        B2B Pricing and Resources
-                                    </li>
-                                </ul>
-                                <div class="d-grid"><a class="btn btn-outline-primary" href="https://www.cashondelivery.ca/register">Create Account</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Pricing card pro-->
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="card mb-5 mb-xl-0">
-                            <div class="card-body p-5">
-                                <div class="small text-uppercase fw-bold">
-                                    <i class="bi bi-star-fill text-warning"></i>
-                                    P2P
-                                </div>
-                                <div class="mb-3">
-                                    <span class="display-4 fw-bold">$25</span>
-                                    <span class="text-muted">/ mo</span>
-                                </div>
-                                <ul class="list-unstyled mb-4">
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        <strong>2 access keys</strong>
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        24/7 Support 
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Global Cash on Delivery Insurance (All-In-One)
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Full Software Access
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Landing Page (Online Store) 
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Domain + Hosting + Corporate Email
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Partner Account Registration
-                                    </li>
-                                    <li class="text-muted">
-                                        <i class="bi bi-x"></i>
-                                        B2B Pricing and Resources
-                                    </li>
-                                </ul>
-                                <div class="d-grid"><a class="btn btn-primary" href="https://www.cashondelivery.ca/p2p">Upgrade to P2P</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Pricing card enterprise-->
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="card">
-                            <div class="card-body p-5">
-                                <div class="small text-uppercase fw-bold text-muted">B2B</div>
-                                <div class="mb-3">
-                                    <span class="display-4 fw-bold">$250</span>
-                                    <span class="text-muted">/ mo</span>
-                                </div>
-                                <ul class="list-unstyled mb-4">
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        <strong>Unlimited access keys</strong>
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        24/7 Support
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Global Cash on Delivery Insurance (All-In-One)
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Full Software Access
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Landing Page (Online Store)
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        Domain + Hosting + Corporate Email
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        <strong>B2B</strong>
-                                        - Partner Account Registration
-                                    </li>
-                                    <li class="text-muted">
-                                        <i class="bi bi-check text-primary"></i>
-                                        B2B Pricing and Resources
-                                    </li>
-                                </ul>
-                                <div class="d-grid"><a class="btn btn-outline-primary" href="https://www.cashondelivery.ca/b2b">Upgrade to B2B</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <footer style="background: #000000; color: white; padding: 20px 0; margin-top: 40px; font-family: Arial, sans-serif;">
-    <div style="width: 90%; max-width: 1200px; margin: 0 auto;">
-        <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 250px; margin-bottom: 20px;">
-                <h3 style="color: #FFFFFF;">Address</h3>
-                <p>100 King Street West</p>
-                <p>Toronto, ON M5X 1A9</p>
-                <p>Canada</p>
-            </div>
-            <div style="flex: 1; min-width: 250px; margin-bottom: 20px;">
-                <h3 style="color: #FFFFFF;">Date and Time</h3>
-                <p id="currentDateTime"></p>
-                <p id="timeZone">GMT-5 (Eastern Time)</p>
-            </div>
-            <div style="flex: 1; min-width: 250px; margin-bottom: 20px;">
-                <h3 style="color: #FFFFFF;">Links</h3>
-                <p><a href="https://www.cashondelivery.ca/" style="color: #FFFFFF; text-decoration: none;">Map</a></p>
-                <p><a href="https://www.cashondelivery.ca/register" style="color: #FFFFFF; text-decoration: none;">Register</a></p>
-                <p><a href="https://www.cashondelivery.ca/finance" style="color: #FFFFFF; text-decoration: none;">Finance</a></p>
-                <p><a href="https://www.cashondelivery.ca/inventory" style="color: #FFFFFF; text-decoration: none;">Inventory</a></p>
-                <p><a href="https://www.cashondelivery.ca/logistics" style="color: #FFFFFF; text-decoration: none;">Logistics</a></p>
-                <p><a href="https://www.cashondelivery.ca/p2p" style="color: #FFFFFF; text-decoration: none;">P2P</a></p>
-                <p><a href="https://www.cashondelivery.ca/b2b" style="color: #FFFFFF; text-decoration: none;">B2B</a></p>
-                <p><a href="https://www.cashondelivery.ca/support" style="color: #FFFFFF; text-decoration: none;">24/7 Support</a></p>
-                <p><a href="https://www.cashondelivery.ca/terms" style="color: #FFFFFF; text-decoration: none;">Terms and Conditions</a></p>
-            </div>
+
+        <div class="search-container">
+            <input type="text" id="state-search" placeholder="Search province... | Rechercher une province..." aria-label="Search province">
         </div>
+
+        <div class="states-grid" id="states-container">
+            <!-- Provinces/Territories will appear here -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. All rights reserved. | Tous droits réservés.</p>
+        </footer>
     </div>
-</footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        // List of Canadian provinces and territories
+        const states = [
+            // Provinces
+            { "name": "Alberta", "nameFr": "Alberta", "type": "Province", "typeFr": "Province", "url": "https://qrcontraentrega.com/alberta" },
+            { "name": "British Columbia", "nameFr": "Colombie-Britannique", "type": "Province", "typeFr": "Province", "url": "https://qrcontraentrega.com/british-columbia" },
+            { "name": "Manitoba", "nameFr": "Manitoba", "type": "Province", "typeFr": "Province", "url": "https://qrcontraentrega.com/manitoba" },
+            { "name": "New Brunswick", "nameFr": "Nouveau-Brunswick", "type": "Province", "typeFr": "Province", "url": "https://qrcontraentrega.com/new-brunswick" },
+            { "name": "Newfoundland and Labrador", "nameFr": "Terre-Neuve-et-Labrador", "type": "Province", "typeFr": "Province", "url": "https://qrcontraentrega.com/newfoundland" },
+            { "name": "Nova Scotia", "nameFr": "Nouvelle-Écosse", "type": "Province", "typeFr": "Province", "url": "https://qrcontraentrega.com/nova-scotia" },
+            { "name": "Ontario", "nameFr": "Ontario", "type": "Province", "typeFr": "Province", "url": "https://qrcontraentrega.com/ontario" },
+            { "name": "Prince Edward Island", "nameFr": "Île-du-Prince-Édouard", "type": "Province", "typeFr": "Province", "url": "https://qrcontraentrega.com/pei" },
+            { "name": "Quebec", "nameFr": "Québec", "type": "Province", "typeFr": "Province", "url": "https://qrcontraentrega.com/quebec" },
+            { "name": "Saskatchewan", "nameFr": "Saskatchewan", "type": "Province", "typeFr": "Province", "url": "https://qrcontraentrega.com/saskatchewan" },
+            
+            // Territories
+            { "name": "Northwest Territories", "nameFr": "Territoires du Nord-Ouest", "type": "Territory", "typeFr": "Territoire", "url": "https://qrcontraentrega.com/nwt" },
+            { "name": "Nunavut", "nameFr": "Nunavut", "type": "Territory", "typeFr": "Territoire", "url": "https://qrcontraentrega.com/nunavut" },
+            { "name": "Yukon", "nameFr": "Yukon", "type": "Territory", "typeFr": "Territoire", "url": "https://qrcontraentrega.com/yukon" },
+            
+            // Major cities
+            { "name": "Ottawa", "nameFr": "Ottawa", "type": "Capital", "typeFr": "Capitale", "url": "https://qrcontraentrega.com/ottawa" },
+            { "name": "Toronto", "nameFr": "Toronto", "type": "City", "typeFr": "Ville", "url": "https://qrcontraentrega.com/toronto" },
+            { "name": "Montreal", "nameFr": "Montréal", "type": "City", "typeFr": "Ville", "url": "https://qrcontraentrega.com/montreal" },
+            { "name": "Vancouver", "nameFr": "Vancouver", "type": "City", "typeFr": "Ville", "url": "https://qrcontraentrega.com/vancouver" },
+            { "name": "Calgary", "nameFr": "Calgary", "type": "City", "typeFr": "Ville", "url": "https://qrcontraentrega.com/calgary" },
+            { "name": "Edmonton", "nameFr": "Edmonton", "type": "City", "typeFr": "Ville", "url": "https://qrcontraentrega.com/edmonton" },
+            { "name": "Quebec City", "nameFr": "Ville de Québec", "type": "City", "typeFr": "Ville", "url": "https://qrcontraentrega.com/quebec-city" },
+            { "name": "Winnipeg", "nameFr": "Winnipeg", "type": "City", "typeFr": "Ville", "url": "https://qrcontraentrega.com/winnipeg" }
+        ];
 
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script>
-   
-    function updateDateTime() {
-        const now = new Date();
-        const options = { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            timeZone: 'America/Toronto',
-            timeZoneName: 'short'
-        };
-        document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-CA', options);
-    }
-    updateDateTime();
-    setInterval(updateDateTime, 1000);
+        // Function to display provinces/territories
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
+            container.innerHTML = '';
 
-        
-            // Simple JavaScript for navbar toggle functionality
-            document.addEventListener('DOMContentLoaded', function() {
-                const navbarToggler = document.querySelector('.navbar-toggler');
-                const navbarCollapse = document.querySelector('.navbar-collapse');
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="img/c.jpg" alt="${state.name}" class="flag-image">
+                    </div>
+                    <div class="state-info">
+                        <div class="state-name">${state.name} | ${state.nameFr}</div>
+                        <div class="state-type">${state.type} | ${state.typeFr}</div>
+                    </div>
+                `;
                 
-                if (navbarToggler && navbarCollapse) {
-                    navbarToggler.addEventListener('click', function() {
-                        const isExpanded = navbarToggler.getAttribute('aria-expanded') === 'true';
-                        navbarToggler.setAttribute('aria-expanded', !isExpanded);
-                        navbarCollapse.classList.toggle('show');
-                    });
-                }
-                
-                // Smooth scrolling for anchor links
-                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                    anchor.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        
-                        const targetId = this.getAttribute('href');
-                        if (targetId === '#!') return;
-                        
-                        const targetElement = document.querySelector(targetId);
-                        if (targetElement) {
-                            targetElement.scrollIntoView({
-                                behavior: 'smooth'
-                            });
-                        }
-                    });
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
                 });
+
+                container.appendChild(stateCard);
             });
-        </script>
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <!-- * *                               SB Forms JS                               * *-->
-        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
-    </body>
+        }
+
+        // Function to search provinces/territories
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.toLowerCase().includes(searchTerm) || 
+                state.nameFr.toLowerCase().includes(searchTerm) ||
+                state.type.toLowerCase().includes(searchTerm) ||
+                state.typeFr.toLowerCase().includes(searchTerm)
+            );
+            renderStates(filteredStates);
+        }
+
+        // Event listeners
+        document.getElementById('state-search').addEventListener('input', searchStates);
+
+        // Display all provinces/territories when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStates(states);
+        });
+    </script>
+</body>
 </html>
