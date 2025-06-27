@@ -1,406 +1,255 @@
-// worker.js - ANTIGUA Y BARBUDA
-
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request));
-});
-
-const markersData = [
-  {
-    name: "Saint John's - Centro",
-    latlng: [17.1175, -61.8456],
-    url: "https://ag1.contraentrega.ag",
-    info: "Oficina principal en Redcliffe Street. Horario: 8am-5pm (UTC-4)"
-  },
-  {
-    name: "English Harbour - Marina",
-    latlng: [17.0167, -61.7667],
-    url: "https://ag2.contraentrega.ag",
-    info: "Punto turístico en Nelson's Dockyard. Abierto hasta las 6pm"
-  },
-  {
-    name: "Barbuda - Codrington",
-    latlng: [17.6333, -61.8333],
-    url: "https://ag3.contraentrega.ag",
-    info: "Entrega semanal. Miércoles y viernes 10am-2pm"
-  }
-];
-
-async function handleRequest(request) {
-  const url = new URL(request.url);
-  if (url.pathname === '/') {
-    return new Response(generateHTML(), {
-      headers: { 
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'public, max-age=3600'
-      }
-    });
-  }
-  if (url.pathname === '/api/markers') {
-    return new Response(JSON.stringify(markersData), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=86400'
-      }
-    });
-  }
-  return new Response('Not Found', { status: 404 });
-}
-
-function generateHTML() {
-  return `<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Puntos de Entrega en Antigua y Barbuda</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: Arial, sans-serif;
-    }
-    #map {
-      width: 100%;
-      height: 100vh;
-    }
-    #search-box {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 1000;
-      width: 300px;
-      background: white;
-      padding: 10px;
-      border-radius: 5px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    }
-    #search-input {
-      width: 100%;
-      padding: 10px 15px;
-      border: 2px solid #ddd;
-      border-radius: 20px;
-      font-size: 14px;
-      outline: none;
-    }
-    #search-results {
-      margin-top: 10px;
-      max-height: 300px;
-      overflow-y: auto;
-      display: none;
-      background: white;
-      border-radius: 5px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .search-result {
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-      cursor: pointer;
-    }
-    .search-result:hover {
-      background-color: #f5f5f5;
-    }
-    .search-result h3 {
-      margin: 0 0 5px 0;
-      font-size: 14px;
-      color: #333;
-    }
-    .search-result p {
-      margin: 0;
-      font-size: 12px;
-      color: #666;
-    }
-    #controls {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .control-btn {
-      width: 40px;
-      height: 40px;
-      border: none;
-      border-radius: 50%;
-      background: white;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      cursor: pointer;
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .zoom-controls {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 1000;
-    }
-    .zoom-btn {
-      width: 40px;
-      height: 40px;
-      border: none;
-      border-radius: 50%;
-      background: white;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      cursor: pointer;
-      font-size: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .marker-cluster-small {
-      background-color: rgba(110, 204, 57, 0.6);
-    }
-    .marker-cluster-medium {
-      background-color: rgba(240, 194, 12, 0.6);
-    }
-    .marker-cluster-large {
-      background-color: rgba(241, 128, 23, 0.6);
-    }
-    @media (max-width: 768px) {
-      #search-box {
-        width: calc(100% - 40px);
-        top: 10px;
-        left: 10px;
-      }
-      #controls {
-        top: 70px;
-        right: 10px;
-      }
-      .zoom-controls {
-        bottom: 10px;
-        right: 10px;
-      }
-      .leaflet-popup-content {
-        width: 250px !important;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - Antigua and Barbuda</title>
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #2980b9;
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .parishes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .parish-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .parish-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .parish-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .parish-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .parish-island {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #parish-search {
+            width: 100%;
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        #parish-search:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .parishes-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .flag-container {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .parishes-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 1rem;
+            }
+
+            .parish-info {
+                padding: 1rem 0.5rem;
+            }
+
+            .parish-name {
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div id="map"></div>
-  <div id="search-box">
-    <input type="text" id="search-input" placeholder="Buscar puntos... (nombre, dirección, horario)">
-    <div id="search-results"></div>
-  </div>
-  <div id="controls">
-    <button id="redirect-btn" class="control-btn" title="Ir al sitio principal">📍</button>
-  </div>
-  <div class="zoom-controls">
-    <button id="zoom-in" class="zoom-btn" title="Acercar">+</button>
-    <button id="zoom-out" class="zoom-btn" title="Alejar">−</button>
-  </div>
+    <div class="container">
+        <header>
+            <h1>QRContraentrega</h1>
+            <p class="subtitle">Select your parish in Antigua and Barbuda</p>
+        </header>
 
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-  <script>
-    // Variables globales
-    let map;
-    let markerCluster;
-    let allMarkers = [];
-    let searchTimeout;
+        <div class="search-container">
+            <input type="text" id="parish-search" placeholder="Search parish..." aria-label="Search parish">
+        </div>
 
-    // Límites geográficos de Antigua y Barbuda
-    const antiguaBounds = L.latLngBounds(
-      L.latLng(16.9, -62.2), // SO
-      L.latLng(17.7, -61.7)  // NE
-    );
+        <div class="parishes-grid" id="parishes-container">
+            <!-- Parishes will appear here -->
+        </div>
 
-    // Inicializar mapa
-    function initMap() {
-      map = L.map('map', {
-        zoomControl: false,
-        maxBounds: antiguaBounds,
-        maxBoundsViscosity: 0.75
-      }).setView([17.1167, -61.85], 10); // Vista centrada en las islas
+        <footer>
+            <p>© QRContraentrega. All rights reserved.</p>
+        </footer>
+    </div>
 
-      // Forzar el mapa a permanecer dentro de los límites
-      map.on('drag', function() {
-        if (!antiguaBounds.contains(map.getCenter())) {
-          map.panInsideBounds(antiguaBounds, { animate: true });
+    <script>
+        // List of parishes in Antigua and Barbuda
+        const parishes = [
+            { "name": "Saint John's", "island": "Antigua", "url": "https://qrcontraentrega.com/stjohns" },
+            { "name": "Saint George", "island": "Antigua", "url": "https://qrcontraentrega.com/stgeorge" },
+            { "name": "Saint Peter", "island": "Antigua", "url": "https://qrcontraentrega.com/stpeter" },
+            { "name": "Saint Philip", "island": "Antigua", "url": "https://qrcontraentrega.com/stphilip" },
+            { "name": "Saint Mary", "island": "Antigua", "url": "https://qrcontraentrega.com/stmary" },
+            { "name": "Saint Paul", "island": "Antigua", "url": "https://qrcontraentrega.com/stpaul" },
+            { "name": "Saint John", "island": "Barbuda", "url": "https://qrcontraentrega.com/stjohnbarbuda" },
+            { "name": "Codrington", "island": "Barbuda", "url": "https://qrcontraentrega.com/codrington" },
+            { "name": "English Harbour", "island": "Antigua", "url": "https://qrcontraentrega.com/englishharbour" },
+            { "name": "Falmouth", "island": "Antigua", "url": "https://qrcontraentrega.com/falmouth" },
+            { "name": "Liberta", "island": "Antigua", "url": "https://qrcontraentrega.com/liberta" },
+            { "name": "All Saints", "island": "Antigua", "url": "https://qrcontraentrega.com/allsaints" },
+            { "name": "Piggotts", "island": "Antigua", "url": "https://qrcontraentrega.com/piggotts" },
+            { "name": "Bolans", "island": "Antigua", "url": "https://qrcontraentrega.com/bolans" },
+            { "name": "Carlisle", "island": "Antigua", "url": "https://qrcontraentrega.com/carlisle" },
+            { "name": "Old Road", "island": "Antigua", "url": "https://qrcontraentrega.com/oldroad" },
+            { "name": "Parham", "island": "Antigua", "url": "https://qrcontraentrega.com/parham" },
+            { "name": "Willikies", "island": "Antigua", "url": "https://qrcontraentrega.com/willikies" }
+        ];
+
+        // Function to display parishes
+        function renderParishes(parishList) {
+            const container = document.getElementById('parishes-container');
+            container.innerHTML = '';
+
+            parishList.forEach(parish => {
+                const parishCard = document.createElement('div');
+                parishCard.className = 'parish-card';
+                parishCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="img/c.jpg" alt="${parish.name}" class="flag-image">
+                    </div>
+                    <div class="parish-info">
+                        <div class="parish-name">${parish.name}</div>
+                        <div class="parish-island">${parish.island}</div>
+                    </div>
+                `;
+                
+                parishCard.addEventListener('click', () => {
+                    window.location.href = parish.url;
+                });
+
+                container.appendChild(parishCard);
+            });
         }
-      });
 
-      // Bloquear zoom fuera de los límites
-      map.on('zoomend', function() {
-        if (map.getZoom() < 9) {
-          map.setZoom(9);
+        // Function to search parishes
+        function searchParishes() {
+            const searchTerm = document.getElementById('parish-search').value.toLowerCase();
+            const filteredParishes = parishes.filter(parish => 
+                parish.name.toLowerCase().includes(searchTerm) || 
+                parish.island.toLowerCase().includes(searchTerm)
+            );
+            renderParishes(filteredParishes);
         }
-      });
 
-      // Capa base del mapa
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        noWrap: true
-      }).addTo(map);
+        // Event listeners
+        document.getElementById('parish-search').addEventListener('input', searchParishes);
 
-      // Inicializar cluster de marcadores
-      markerCluster = L.markerClusterGroup();
-      map.addLayer(markerCluster);
-
-      // Cargar marcadores
-      loadMarkers();
-
-      // Configurar buscador
-      setupSearch();
-
-      // Configurar controles
-      setupControls();
-
-      // Configurar zoom personalizado
-      setupZoomControls();
-    }
-
-    // Configurar controles de zoom personalizados
-    function setupZoomControls() {
-      document.getElementById('zoom-in').addEventListener('click', () => {
-        if (map.getZoom() < 18) {
-          map.zoomIn();
-        }
-      });
-      document.getElementById('zoom-out').addEventListener('click', () => {
-        if (map.getZoom() > 9) {
-          map.zoomOut();
-        }
-      });
-    }
-
-    // Cargar marcadores
-    async function loadMarkers() {
-      try {
-        const response = await fetch('/api/markers');
-        const markers = await response.json();
-        markers.forEach(markerData => {
-          // Verificar que las coordenadas estén dentro de los límites
-          if (antiguaBounds.contains(markerData.latlng)) {
-            const marker = L.marker(markerData.latlng)
-              .bindPopup(\`
-                <div style="max-width:250px">
-                  <h3 style="margin:0 0 5px 0">\${markerData.name}</h3>
-                  <p style="margin:0 0 10px 0">\${markerData.info}</p>
-                  <a href="\${markerData.url}" target="_blank" style="color:#0066cc">Ver detalles →</a>
-                </div>
-              \`);
-
-            // Almacenar datos para búsqueda
-            marker.searchData = \`\${markerData.name} \${markerData.info} \${markerData.url}\`.toLowerCase();
-            marker.data = markerData;
-            allMarkers.push(marker);
-            markerCluster.addLayer(marker);
-          }
+        // Display all parishes when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderParishes(parishes);
         });
-      } catch (error) {
-        console.error('Error cargando marcadores:', error);
-      }
-    }
-
-    // Configurar buscador
-    function setupSearch() {
-      const searchInput = document.getElementById('search-input');
-      const searchResults = document.getElementById('search-results');
-      
-      searchInput.addEventListener('input', function() {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-          const query = this.value.trim().toLowerCase();
-          if (query.length === 0) {
-            searchResults.style.display = 'none';
-            resetMarkers();
-            return;
-          }
-
-          const results = allMarkers.filter(marker => 
-            marker.searchData.includes(query)
-          );
-          displaySearchResults(results);
-          updateVisibleMarkers(results);
-        }, 300);
-      });
-
-      // Cerrar resultados al hacer clic fuera
-      document.addEventListener('click', function(e) {
-        if (!e.target.closest('#search-box') && 
-            !e.target.closest('.zoom-controls') && 
-            e.target.id !== 'zoom-in' && 
-            e.target.id !== 'zoom-out') {
-          searchResults.style.display = 'none';
-        }
-      });
-    }
-
-    // Mostrar resultados de búsqueda
-    function displaySearchResults(results) {
-      const searchResults = document.getElementById('search-results');
-      searchResults.innerHTML = '';
-
-      if (results.length === 0) {
-        searchResults.innerHTML = '<div class="search-result">No se encontraron resultados</div>';
-      } else {
-        results.forEach(marker => {
-          const resultItem = document.createElement('div');
-          resultItem.className = 'search-result';
-          resultItem.innerHTML = \`
-            <h3>\${marker.data.name}</h3>
-            <p>\${marker.data.info.substring(0, 60)}\${marker.data.info.length > 60 ? '...' : ''}</p>
-          \`;
-          resultItem.addEventListener('click', () => {
-            map.setView(marker.getLatLng(), 14);
-            marker.openPopup();
-            searchResults.style.display = 'none';
-          });
-          searchResults.appendChild(resultItem);
-        });
-      }
-      searchResults.style.display = 'block';
-    }
-
-    // Actualizar marcadores visibles
-    function updateVisibleMarkers(results) {
-      markerCluster.clearLayers();
-      if (results.length > 0) {
-        markerCluster.addLayers(results);
-        // Ajustar vista para mostrar resultados
-        if (results.length === 1) {
-          map.setView(results[0].getLatLng(), 14);
-        } else {
-          const group = new L.featureGroup(results);
-          map.fitBounds(group.getBounds().pad(0.1));
-        }
-      }
-    }
-
-    // Restablecer todos los marcadores
-    function resetMarkers() {
-      markerCluster.clearLayers();
-      markerCluster.addLayers(allMarkers);
-      map.setView([17.1167, -61.85], 10);
-    }
-
-    // Configurar controles
-    function setupControls() {
-      // Botón de redirección
-      document.getElementById('redirect-btn').addEventListener('click', function() {
-        window.open('https://fz.contraentregaco.com', '_blank');
-      });
-    }
-
-    // Redimensionar mapa al cambiar tamaño de ventana
-    window.addEventListener('resize', () => {
-      map.invalidateSize();
-    });
-
-    // Inicializar la aplicación
-    document.addEventListener('DOMContentLoaded', initMap);
-  </script>
+    </script>
 </body>
-</html>`;
-}
+</html>
