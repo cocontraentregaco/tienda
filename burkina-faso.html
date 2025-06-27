@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - Burkina Faso</title>
+    <style>
+        :root {
+            --primary-color: #EF3340; /* Burkina Faso red */
+            --secondary-color: #009739; /* Burkina Faso green */
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(239, 51, 64, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .state-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+            border-top: 4px solid var(--secondary-color);
+        }
+
+        .state-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-color);
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .state-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .state-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
+
+        .state-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        #state-search {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
+        }
+
+        #state-search:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(239, 51, 64, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .flag-container {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+
+            .state-info {
+                padding: 1rem 0.5rem;
+            }
+
+            .state-name {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QRContraentrega - Burkina Faso</h1>
+            <p class="subtitle">Sélectionnez votre région | Select your region</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="state-search" placeholder="Rechercher une région... | Search region..." aria-label="Search region">
+        </div>
+
+        <div class="states-grid" id="states-container">
+            <!-- Regions will appear here -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. Tous droits réservés. | All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // List of Burkina Faso regions and major cities
+        const states = [
+            // Regions
+            { "name": "Boucle du Mouhoun", "nameFr": "Boucle du Mouhoun", "type": "Région", "typeEn": "Region", "url": "https://qrcontraentrega.com/boucle-du-mouhoun" },
+            { "name": "Cascades", "nameFr": "Cascades", "type": "Région", "typeEn": "Region", "url": "https://qrcontraentrega.com/cascades" },
+            { "name": "Centre", "nameFr": "Centre", "type": "Région", "typeEn": "Region", "url": "https://qrcontraentrega.com/centre" },
+            { "name": "Centre-Est", "nameFr": "Centre-Est", "type": "Région", "typeEn": "Region", "url": "https://qrcontraentrega.com/centre-est" },
+            { "name": "Centre-Nord", "nameFr": "Centre-Nord", "type": "Région", "typeEn": "Region", "url": "https://qrcontraentrega.com/centre-nord" },
+            { "name": "Centre-Ouest", "nameFr": "Centre-Ouest", "type": "Région", "typeEn": "Region", "url": "https://qrcontraentrega.com/centre-ouest" },
+            { "name": "Centre-Sud", "nameFr": "Centre-Sud", "type": "Région", "typeEn": "Region", "url": "https://qrcontraentrega.com/centre-sud" },
+            { "name": "Est", "nameFr": "Est", "type": "Région", "typeEn": "Region", "url": "https://qrcontraentrega.com/est" },
+            { "name": "Hauts-Bassins", "nameFr": "Hauts-Bassins", "type": "Région", "typeEn": "Region", "url": "https://qrcontraentrega.com/hauts-bassins" },
+            { "name": "Nord", "nameFr": "Nord", "type": "Région", "typeEn": "Region", "url": "https://qrcontraentrega.com/nord" },
+            { "name": "Plateau-Central", "nameFr": "Plateau-Central", "type": "Région", "typeEn": "Region", "url": "https://qrcontraentrega.com/plateau-central" },
+            { "name": "Sahel", "nameFr": "Sahel", "type": "Région", "typeEn": "Region", "url": "https://qrcontraentrega.com/sahel" },
+            { "name": "Sud-Ouest", "nameFr": "Sud-Ouest", "type": "Région", "typeEn": "Region", "url": "https://qrcontraentrega.com/sud-ouest" },
+            
+            // Major cities
+            { "name": "Ouagadougou", "nameFr": "Ouagadougou", "type": "Capitale", "typeEn": "Capital", "url": "https://qrcontraentrega.com/ouagadougou" },
+            { "name": "Bobo-Dioulasso", "nameFr": "Bobo-Dioulasso", "type": "Ville", "typeEn": "City", "url": "https://qrcontraentrega.com/bobo-dioulasso" },
+            { "name": "Koudougou", "nameFr": "Koudougou", "type": "Ville", "typeEn": "City", "url": "https://qrcontraentrega.com/koudougou" },
+            { "name": "Ouahigouya", "nameFr": "Ouahigouya", "type": "Ville", "typeEn": "City", "url": "https://qrcontraentrega.com/ouahigouya" },
+            { "name": "Banfora", "nameFr": "Banfora", "type": "Ville", "typeEn": "City", "url": "https://qrcontraentrega.com/banfora" },
+            { "name": "Dédougou", "nameFr": "Dédougou", "type": "Ville", "typeEn": "City", "url": "https://qrcontraentrega.com/dedougou" },
+            { "name": "Kaya", "nameFr": "Kaya", "type": "Ville", "typeEn": "City", "url": "https://qrcontraentrega.com/kaya" },
+            { "name": "Tenkodogo", "nameFr": "Tenkodogo", "type": "Ville", "typeEn": "City", "url": "https://qrcontraentrega.com/tenkodogo" },
+            { "name": "Réo", "nameFr": "Réo", "type": "Ville", "typeEn": "City", "url": "https://qrcontraentrega.com/reo" },
+            { "name": "Houndé", "nameFr": "Houndé", "type": "Ville", "typeEn": "City", "url": "https://qrcontraentrega.com/hounde" }
+        ];
+
+        // Function to display regions
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
+            container.innerHTML = '';
+
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="img/c.jpg" alt="${state.nameFr}" class="flag-image">
+                    </div>
+                    <div class="state-info">
+                        <div class="state-name">${state.nameFr} | ${state.name}</div>
+                        <div class="state-type">${state.type} | ${state.typeEn}</div>
+                    </div>
+                `;
+                
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
+                });
+
+                container.appendChild(stateCard);
+            });
+        }
+
+        // Function to search regions
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.nameFr.toLowerCase().includes(searchTerm) || 
+                state.name.toLowerCase().includes(searchTerm) ||
+                state.type.toLowerCase().includes(searchTerm) ||
+                state.typeEn.toLowerCase().includes(searchTerm)
+            );
+            renderStates(filteredStates);
+        }
+
+        // Event listeners
+        document.getElementById('state-search').addEventListener('input', searchStates);
+
+        // Display all regions when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStates(states);
+        });
+    </script>
+</body>
+</html>
