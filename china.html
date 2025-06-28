@@ -1,881 +1,298 @@
 <!DOCTYPE html>
-<html lang="zh">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>货到付款中国 - 全国货到付款服务</title>
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-        <!-- Bootstrap icons-->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
-        <style>
-            /* Bootstrap core CSS (modified for single file) */
-            :root {
-                --bs-blue: #0d6efd;
-                --bs-indigo: #6610f2;
-                --bs-purple: #6f42c1;
-                --bs-pink: #d63384;
-                --bs-red: #dc3545;
-                --bs-orange: #fd7e14;
-                --bs-yellow: #ffc107;
-                --bs-green: #198754;
-                --bs-teal: #20c997;
-                --bs-cyan: #0dcaf0;
-                --bs-white: #fff;
-                --bs-gray: #6c757d;
-                --bs-gray-dark: #343a40;
-                --bs-primary: #0d6efd;
-                --bs-secondary: #6c757d;
-                --bs-success: #198754;
-                --bs-info: #0dcaf0;
-                --bs-warning: #ffc107;
-                --bs-danger: #dc3545;
-                --bs-light: #f8f9fa;
-                --bs-dark: #212529;
-                --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-                --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+<html lang="zh-CN" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - 中国</title>
+    <style>
+        :root {
+            --primary-color: #DE2910; /* China red */
+            --secondary-color: #FFDE00; /* China yellow */
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(222, 41, 16, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .state-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+            border-top: 4px solid var(--secondary-color);
+        }
+
+        .state-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-color);
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .state-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .state-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
+
+        .state-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        #state-search {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
+        }
+
+        #state-search:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(222, 41, 16, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
-            
-            *,
-            *::before,
-            *::after {
-                box-sizing: border-box;
-            }
-            
-            @media (prefers-reduced-motion: no-preference) {
-                :root {
-                    scroll-behavior: smooth;
-                }
-            }
-            
-            body {
-                margin: 0;
-                font-family: var(--bs-font-sans-serif);
-                font-size: 1rem;
-                font-weight: 400;
-                line-height: 1.5;
-                color: #000000;
-                background-color: #FFFFFF;
-                -webkit-text-size-adjust: 100%;
-                -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-            }
-            
-            /* Layout and components */
-            .container,
-            .container-fluid,
-            .container-xxl,
-            .container-xl,
-            .container-lg,
-            .container-md,
-            .container-sm {
-                width: 100%;
-                padding-right: var(--bs-gutter-x, 0.75rem);
-                padding-left: var(--bs-gutter-x, 0.75rem);
-                margin-right: auto;
-                margin-left: auto;
-            }
-            
-            @media (min-width: 576px) {
-                .container-sm, .container {
-                    max-width: 540px;
-                }
-            }
-            @media (min-width: 768px) {
-                .container-md, .container-sm, .container {
-                    max-width: 720px;
-                }
-            }
-            @media (min-width: 992px) {
-                .container-lg, .container-md, .container-sm, .container {
-                    max-width: 960px;
-                }
-            }
-            @media (min-width: 1200px) {
-                .container-xl, .container-lg, .container-md, .container-sm, .container {
-                    max-width: 1140px;
-                }
-            }
-            @media (min-width: 1400px) {
-                .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
-                    max-width: 1320px;
-                }
-            }
-            
-            /* Navbar */
-            .navbar {
-                position: relative;
-                display: flex;
-                flex-wrap: wrap;
-                align-items: center;
-                justify-content: space-between;
-                padding-top: 0.5rem;
-                padding-bottom: 0.5rem;
-            }
-            
-            .navbar-dark .navbar-brand {
-                color: #FFFFFF;
-            }
-            
-            .navbar-brand {
-                padding-top: 0.3125rem;
-                padding-bottom: 0.3125rem;
-                margin-right: 1rem;
-                font-size: 1.25rem;
-                text-decoration: none;
-                white-space: nowrap;
-            }
-            
-            .navbar-expand-lg {
-                flex-wrap: nowrap;
-                justify-content: flex-start;
-            }
-            
-            .navbar-dark {
-                --bs-navbar-color: rgba(255, 255, 255, 0.55);
-                --bs-navbar-hover-color: rgba(255, 255, 255, 0.75);
-                --bs-navbar-disabled-color: rgba(255, 255, 255, 0.25);
-                --bs-navbar-active-color: #FFFFFF;
-                --bs-navbar-brand-color: #FFFFFF;
-                --bs-navbar-brand-hover-color: #FFFFFF;
-                --bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.1);
-                --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-            }
-            
-            .bg-dark {
-                background-color: #000000 !important;
-            }
-            
-            .navbar-toggler {
-                padding: 0.25rem 0.75rem;
-                font-size: 1.25rem;
-                line-height: 1;
-                background-color: transparent;
-                border: 1px solid transparent;
-                border-radius: 0.25rem;
-                transition: box-shadow 0.15s ease-in-out;
-            }
-            
-            .navbar-toggler-icon {
-                display: inline-block;
-                width: 1.5em;
-                height: 1.5em;
-                vertical-align: middle;
-                background-repeat: no-repeat;
-                background-position: center;
-                background-size: 100%;
-            }
-            
-            .collapse:not(.show) {
-                display: none;
-            }
-            
-            .navbar-collapse {
-                flex-basis: 100%;
-                flex-grow: 1;
-                align-items: center;
-            }
-            
-            .navbar-nav {
-                display: flex;
-                flex-direction: column;
-                padding-left: 0;
-                margin-bottom: 0;
-                list-style: none;
-            }
-            
-            .navbar-nav .nav-link {
-                padding-right: 0;
-                padding-left: 0;
-            }
-            
-            .nav-link {
-                display: block;
-                padding: 0.5rem 1rem;
-                color: #0d6efd;
-                text-decoration: none;
-                transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
-            }
-            
-            .navbar-dark .navbar-nav .nav-link {
-                color: rgba(255, 255, 255, 0.55);
-            }
-            
-            .navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus {
-                color: rgba(255, 255, 255, 0.75);
-            }
-            
-            .navbar-dark .navbar-nav .nav-link.active, .navbar-dark .navbar-nav .show > .nav-link {
-                color: #FFFFFF;
-            }
-            
-            .ms-auto {
-                margin-left: auto !important;
-            }
-            
-            .mb-2 {
-                margin-bottom: 0.5rem !important;
-            }
-            
-            .mb-lg-0 {
-                margin-bottom: 0 !important;
-            }
-            
-            .px-5 {
-                padding-right: 3rem !important;
-                padding-left: 3rem !important;
-            }
-            
-            .py-5 {
-                padding-top: 3rem !important;
-                padding-bottom: 3rem !important;
-            }
-            
-            .border-bottom {
-                border-bottom: 1px solid #FFFFFF !important;
-            }
-            
-            /* Header */
-            .bg-dark {
-                background-color: #000000 !important;
-            }
-            
-            .py-5 {
-                padding-top: 3rem !important;
-                padding-bottom: 3rem !important;
-            }
-            
-            .text-center {
-                text-align: center !important;
-            }
-            
-            .text-white {
-                color: #FFFFFF !important;
-            }
-            
-            .display-5 {
-                font-size: calc(1.425rem + 2.1vw);
-                font-weight: 300;
-                line-height: 1.2;
-            }
-            
-            @media (min-width: 1200px) {
-                .display-5 {
-                    font-size: 3rem;
-                }
-            }
-            
-            .fw-bolder {
-                font-weight: bolder !important;
-            }
-            
-            .mb-2 {
-                margin-bottom: 0.5rem !important;
-            }
-            
-            .lead {
-                font-size: 1.25rem;
-                font-weight: 300;
-            }
-            
-            .d-grid {
-                display: grid !important;
-            }
-            
-            .gap-3 {
-                gap: 1rem !important;
-            }
-            
-            .d-sm-flex {
-                display: flex !important;
-            }
-            
-            .justify-content-sm-center {
-                justify-content: center !important;
-            }
-            
-            .btn {
-                display: inline-block;
-                font-weight: 400;
-                line-height: 1.5;
-                color: #000000;
-                text-align: center;
-                text-decoration: none;
-                vertical-align: middle;
-                cursor: pointer;
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                user-select: none;
-                background-color: transparent;
-                border: 1px solid transparent;
-                padding: 0.375rem 0.75rem;
-                font-size: 1rem;
-                border-radius: 0.25rem;
-                transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-            }
-            
-            @media (prefers-reduced-motion: reduce) {
-                .btn {
-                    transition: none;
-                }
-            }
-            
-            .btn:hover {
-                color: #000000;
-            }
-            
-            .btn-primary {
-                color: #FFFFFF;
-                background-color: #0d6efd;
-                border-color: #0d6efd;
-            }
-            
-            .btn-primary:hover {
-                color: #fff;
-                background-color: #0b5ed7;
-                border-color: #0a58ca;
-            }
-            
-            .btn-lg, .btn-group-lg > .btn {
-                padding: 0.5rem 1rem;
-                font-size: 1.25rem;
-                border-radius: 0.3rem;
-            }
-            
-            .btn-outline-light {
-                color: #f8f9fa;
-                border-color: #f8f9fa;
-            }
-            
-            .btn-outline-light:hover {
-                color: #000;
-                background-color: #f8f9fa;
-                border-color: #f8f9fa;
-            }
-            
-            .px-4 {
-                padding-right: 1.5rem !important;
-                padding-left: 1.5rem !important;
-            }
-            
-            .me-sm-3 {
-                margin-right: 1rem !important;
-            }
-            
-            /* Features section */
-            .feature {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                height: 4rem;
-                width: 4rem;
+
+            h1 {
                 font-size: 2rem;
             }
-            
-            .bg-primary {
-                background-color: #0d6efd !important;
+
+            .flag-container {
+                height: 100px;
             }
-            
-            .bg-gradient {
-                background-image: var(--bs-gradient) !important;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
             }
-            
-            .rounded-3 {
-                border-radius: 0.3rem !important;
+
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
             }
-            
-            .h4, h4 {
-                font-size: calc(1.275rem + 0.3vw);
+
+            .state-info {
+                padding: 1rem 0.5rem;
             }
-            
-            .text-decoration-none {
-                text-decoration: none !important;
+
+            .state-name {
+                font-size: 1rem;
             }
-            
-            /* Pricing section */
-            .bg-light {
-                background-color: #f8f9fa !important;
-            }
-            
-            .text-uppercase {
-                text-transform: uppercase !important;
-            }
-            
-            .fw-bold {
-                font-weight: 700 !important;
-            }
-            
-            .text-muted {
-                color: #6c757d !important;
-            }
-            
-            .card {
-                position: relative;
-                display: flex;
-                flex-direction: column;
-                min-width: 0;
-                word-wrap: break-word;
-                background-color: #fff;
-                background-clip: border-box;
-                border: 1px solid rgba(0, 0, 0, 0.125);
-                border-radius: 0.25rem;
-            }
-            
-            .card-body {
-                flex: 1 1 auto;
-                padding: 1rem 1rem;
-            }
-            
-            .list-unstyled {
-                padding-left: 0;
-                list-style: none;
-            }
-            
-            .text-warning {
-                color: #ffc107 !important;
-            }
-            
-            /* Footer */
-            .m-0 {
-                margin: 0 !important;
-            }
-            
-            /* Grid system */
-            .row {
-                --bs-gutter-x: 1.5rem;
-                --bs-gutter-y: 0;
-                display: flex;
-                flex-wrap: wrap;
-                margin-top: calc(-1 * var(--bs-gutter-y));
-                margin-right: calc(-0.5 * var(--bs-gutter-x));
-                margin-left: calc(-0.5 * var(--bs-gutter-x));
-            }
-            
-            .row > * {
-                flex-shrink: 0;
-                width: 100%;
-                max-width: 100%;
-                padding-right: calc(var(--bs-gutter-x) * 0.5);
-                padding-left: calc(var(--bs-gutter-x) * 0.5);
-                margin-top: var(--bs-gutter-y);
-            }
-            
-            .col-lg-4 {
-                flex: 0 0 auto;
-                width: 33.33333333%;
-            }
-            
-            .col-lg-6 {
-                flex: 0 0 auto;
-                width: 50%;
-            }
-            
-            .col-xl-4 {
-                flex: 0 0 auto;
-                width: 33.33333333%;
-            }
-            
-            @media (min-width: 992px) {
-                .col-lg-4 {
-                    flex: 0 0 auto;
-                    width: 33.33333333%;
-                }
-                .col-lg-6 {
-                    flex: 0 0 auto;
-                    width: 50%;
-                }
-            }
-            
-            @media (min-width: 1200px) {
-                .col-xl-4 {
-                    flex: 0 0 auto;
-                    width: 33.33333333%;
-                }
-            }
-            
-            .justify-content-center {
-                justify-content: center !important;
-            }
-            
-            .gx-5 {
-                --bs-gutter-x: 3rem;
-            }
-            
-            /* Utilities */
-            .mb-3 {
-                margin-bottom: 1rem !important;
-            }
-            
-            .mb-4 {
-                margin-bottom: 1.5rem !important;
-            }
-            
-            .mb-5 {
-                margin-bottom: 3rem !important;
-            }
-            
-            .my-5 {
-                margin-top: 3rem !important;
-                margin-bottom: 3rem !important;
-            }
-            
-            /* Responsive adjustments */
-            @media (max-width: 991.98px) {
-                .navbar-expand-lg > .container {
-                    padding-right: 0;
-                    padding-left: 0;
-                }
-                
-                .col-lg-4, .col-lg-6 {
-                    width: 100%;
-                }
-                
-                .px-5 {
-                    padding-right: 1rem !important;
-                    padding-left: 1rem !important;
-                }
-            }
-            
-            @media (max-width: 767.98px) {
-                .display-5 {
-                    font-size: 2rem;
-                }
-                
-                .lead {
-                    font-size: 1rem;
-                }
-                
-                .btn-lg {
-                    font-size: 1rem;
-                    padding: 0.5rem 1rem;
-                }
-                
-                .feature {
-                    height: 3rem;
-                    width: 3rem;
-                    font-size: 1.5rem;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <!-- Responsive navbar-->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container px-5">
-                <a class="navbar-brand" href="index.html">货到付款中国</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="s1.html">第一部分</a></li>
-                        <li class="nav-item"><a class="nav-link" href="s3.html">第三部分</a></li>
-                        <li class="nav-item"><a class="nav-link" href="s4.html">第四部分</a></li>
-                        <li class="nav-item"><a class="nav-link" href="s5.html">第五部分</a></li>
-                        <li class="nav-item"><a class="nav-link" href="s6.html">第六部分</a></li>
-                        <li class="nav-item"><a class="nav-link" href="index.html">登录</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        <!-- Header-->
-        <header class="bg-dark py-5">
-            <div class="container px-5">
-                <div class="row gx-5 justify-content-center">
-                    <div class="col-lg-6">
-                        <div class="text-center my-5">
-                            <h1 class="display-5 fw-bolder text-white mb-2">24/7 物流服务</h1>
-                            <p class="lead text-white-50 mb-4"></p>
-                            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
-                                <a class="btn btn-primary btn-lg px-4 me-sm-3" href="https://cn.huodaofukuan.com">登录</a>
-                                <a class="btn btn-outline-light btn-lg px-4" href="https://cn.huodaofukuan.com/zhuce">创建账户</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QRContraentrega - 中国</h1>
+            <p class="subtitle">选择您的省份 | Select your province</p>
         </header>
-        <!-- Features section-->
-        <section class="py-5 border-bottom" id="features">
-            <div class="container px-5 my-5">
-                <div class="row gx-5">
-                    <div class="col-lg-4 mb-5 mb-lg-0">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-collection"></i></div>
-                        <h2 class="h4 fw-bolder">财务</h2>
-                        <p>通过发票、采购/销售订单、POS销售、报价单、预付款和自动化凭证（验证法定日期范围）控制您的整个财务流程，同时管理税务数据（税号、增值税制度）和通过短信或其他渠道进行批量通信以进行营销、收款、订单或警报。此外，集成去中心化金融：执行比特币交易（签名、质押、使用Taproot智能合约的BTC抵押贷款），进行快速兑换（闪电网络/链上到关联账户的法币），并在完全合规的情况下运营。所有功能都在一个灵活的平台上，每个区域自主运作但同步协调，即使在DeFi环境中也没有违规行为。</p>
-                        <a class="text-decoration-none" href="https://cn.huodaofukuan.com/caiwu">
-                            前往财务
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="col-lg-4 mb-5 mb-lg-0">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-building"></i></div>
-                        <h2 class="h4 fw-bolder">库存</h2>
-                        <p>我们的库存模块以去中心化方式运行，允许您从任何位置或设备管理库存、调整价格和更新描述或元标签。每个销售点、仓库或工作团队可以实时更新信息，而不依赖于中央核心，包括自主管理您的在线商店、在多个平台上发布活动以及本地化管理供应商或客户。数据在所有节点之间动态同步，保持原材料、设备和成品的可追溯性，同时适应每个特定操作的需求。</p>
-                        <a class="text-decoration-none" href="https://cn.huodaofukuan.com/kucun">
-                            前往库存
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-toggles2"></i></div>
-                        <h2 class="h4 fw-bolder">物流</h2>
-                        <p>在货到付款(C)中，我们以独特的模式重新定义了物流，我们的运输保险公司作为中立的担保人(2/3)在每笔交易中运作，验证并确保各方之间的精确合规。我们自动化整个周期：智能生成运单，与合作伙伴运输公司（如顺丰、中通等）集成，以及实时跟踪和自动通知。但我们真正的区别在于100%认证有效的货到付款系统，我们的保险公司作为技术调解人24/7介入 - 验证条件，实时解决PQR，并为高价值货物应用主动安全协议。不仅仅是一个模块，它是一个安全的生态系统，每个运输都像智能合约一样精确运作：可执行、可审计并由我们的合规保证支持。</p>
-                        <a class="text-decoration-none" href="https://cn.huodaofukuan.com/wuliu">
-                            前往物流
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Pricing section-->
-        <section class="bg-light py-5 border-bottom">
-            <div class="container px-5 my-5">
-                <div class="text-center mb-5">
-                    <h2 class="fw-bolder">一体化系统</h2>
-                    <p class="lead mb-0">直观的图形界面，简化所有流程</p>
-                </div>
-                <div class="row gx-5 justify-content-center">
-                    <!-- Pricing card free-->
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="card mb-5 mb-xl-0">
-                            <div class="card-body p-5">
-                                <div class="small text-uppercase fw-bold text-muted">免费</div>
-                                <div class="mb-3">
-                                    <span class="display-4 fw-bold">¥0</span>
-                                    <span class="text-muted">/ 月</span>
-                                </div>
-                                <ul class="list-unstyled mb-4">
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        <strong>1个访问密钥</strong>
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        24/7支持
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        货到付款全球保险 (All-In-One)
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        完全访问软件
-                                    </li>
-                                    <li class="mb-2 text-muted">
-                                        <i class="bi bi-x"></i>
-                                        落地页 (在线商店)
-                                    </li>
-                                    <li class="mb-2 text-muted">
-                                        <i class="bi bi-x"></i>
-                                        域名 + 托管 + 企业邮箱
-                                    </li>
-                                    <li class="mb-2 text-muted">
-                                        <i class="bi bi-x"></i>
-                                        合作伙伴账户注册
-                                    </li>
-                                    <li class="text-muted">
-                                        <i class="bi bi-x"></i>
-                                        B2B价格和资源
-                                    </li>
-                                </ul>
-                                <div class="d-grid"><a class="btn btn-outline-primary" href="https://cn.huodaofukuan.com/zhuce">创建账户</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Pricing card pro-->
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="card mb-5 mb-xl-0">
-                            <div class="card-body p-5">
-                                <div class="small text-uppercase fw-bold">
-                                    <i class="bi bi-star-fill text-warning"></i>
-                                    P2P
-                                </div>
-                                <div class="mb-3">
-                                    <span class="display-4 fw-bold">¥50</span>
-                                    <span class="text-muted">/ 月</span>
-                                </div>
-                                <ul class="list-unstyled mb-4">
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        <strong>2个访问密钥</strong>
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        24/7支持 
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        货到付款全球保险 (All-In-One)
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        完全访问软件
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        落地页 (在线商店) 
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        域名 + 托管 + 企业邮箱
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        合作伙伴账户注册
-                                    </li>
-                                    <li class="text-muted">
-                                        <i class="bi bi-x"></i>
-                                        B2B价格和资源
-                                    </li>
-                                </ul>
-                                <div class="d-grid"><a class="btn btn-primary" href="https://cn.huodaofukuan.com/p2p">升级到P2P账户</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Pricing card enterprise-->
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="card">
-                            <div class="card-body p-5">
-                                <div class="small text-uppercase fw-bold text-muted">B2B</div>
-                                <div class="mb-3">
-                                    <span class="display-4 fw-bold">¥500</span>
-                                    <span class="text-muted">/ 月</span>
-                                </div>
-                                <ul class="list-unstyled mb-4">
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        <strong>无限访问密钥</strong>
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        24/7支持
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        货到付款全球保险 (All-In-One)
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        完全访问软件
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        落地页 (在线商店)
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        域名 + 托管 + 企业邮箱
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check text-primary"></i>
-                                        <strong>B2B</strong>
-                                        - 合作伙伴账户注册
-                                    </li>
-                                    <li class="text-muted">
-                                        <i class="bi bi-check text-primary"></i>
-                                        B2B价格和资源
-                                    </li>
-                                </ul>
-                                <div class="d-grid"><a class="btn btn-outline-primary" href="https://cn.huodaofukuan.com/b2b">升级到B2B账户</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <footer style="background: #000000; color: white; padding: 20px 0; margin-top: 40px; font-family: Arial, sans-serif;">
-    <div style="width: 90%; max-width: 1200px; margin: 0 auto;">
-        <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 250px; margin-bottom: 20px;">
-                <h3 style="color: #FFFFFF;">地址</h3>
-                <p>中国上海市浦东新区</p>
-                <p>自由贸易试验区</p>
-                <p>中国</p>
-            </div>
-            <div style="flex: 1; min-width: 250px; margin-bottom: 20px;">
-                <h3 style="color: #FFFFFF;">日期和时间</h3>
-                <p id="currentDateTime"></p>
-                <p id="timeZone">GMT+8 (中国标准时间)</p>
-            </div>
-            <div style="flex: 1; min-width: 250px; margin-bottom: 20px;">
-                <h3 style="color: #FFFFFF;">链接</h3>
-                <p><a href="https://cn.huodaofukuan.com/" style="color: #FFFFFF; text-decoration: none;">地图</a></p>
-                <p><a href="https://cn.huodaofukuan.com/zhuce" style="color: #FFFFFF; text-decoration: none;">注册</a></p>
-                <p><a href="https://cn.huodaofukuan.com/caiwu" style="color: #FFFFFF; text-decoration: none;">财务</a></p>
-                <p><a href="https://cn.huodaofukuan.com/kucun" style="color: #FFFFFF; text-decoration: none;">库存</a></p>
-                <p><a href="https://cn.huodaofukuan.com/wuliu" style="color: #FFFFFF; text-decoration: none;">物流</a></p>
-                <p><a href="https://cn.huodaofukuan.com/p2p" style="color: #FFFFFF; text-decoration: none;">P2P</a></p>
-                <p><a href="https://cn.huodaofukuan.com/b2b" style="color: #FFFFFF; text-decoration: none;">B2B</a></p>
-                <p><a href="https://cn.huodaofukuan.com/zhichi" style="color: #FFFFFF; text-decoration: none;">24/7支持</a></p>
-                <p><a href="https://cn.huodaofukuan.com/tiaokuan" style="color: #FFFFFF; text-decoration: none;">条款和条件</a></p>
-            </div>
+
+        <div class="search-container">
+            <input type="text" id="state-search" placeholder="搜索省份... | Search province..." aria-label="Search province">
         </div>
+
+        <div class="states-grid" id="states-container">
+            <!-- Provinces will appear here -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. 版权所有。 | All rights reserved.</p>
+        </footer>
     </div>
-</footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        // List of Chinese provinces and major cities
+        const states = [
+            // Provinces
+            { "name": "Beijing", "nameZh": "北京", "type": "直辖市", "typeEn": "Municipality", "url": "https://qrcontraentrega.com/beijing" },
+            { "name": "Shanghai", "nameZh": "上海", "type": "直辖市", "typeEn": "Municipality", "url": "https://qrcontraentrega.com/shanghai" },
+            { "name": "Tianjin", "nameZh": "天津", "type": "直辖市", "typeEn": "Municipality", "url": "https://qrcontraentrega.com/tianjin" },
+            { "name": "Chongqing", "nameZh": "重庆", "type": "直辖市", "typeEn": "Municipality", "url": "https://qrcontraentrega.com/chongqing" },
+            { "name": "Guangdong", "nameZh": "广东", "type": "省", "typeEn": "Province", "url": "https://qrcontraentrega.com/guangdong" },
+            { "name": "Jiangsu", "nameZh": "江苏", "type": "省", "typeEn": "Province", "url": "https://qrcontraentrega.com/jiangsu" },
+            { "name": "Zhejiang", "nameZh": "浙江", "type": "省", "typeEn": "Province", "url": "https://qrcontraentrega.com/zhejiang" },
+            { "name": "Shandong", "nameZh": "山东", "type": "省", "typeEn": "Province", "url": "https://qrcontraentrega.com/shandong" },
+            { "name": "Sichuan", "nameZh": "四川", "type": "省", "typeEn": "Province", "url": "https://qrcontraentrega.com/sichuan" },
+            { "name": "Fujian", "nameZh": "福建", "type": "省", "typeEn": "Province", "url": "https://qrcontraentrega.com/fujian" },
+            { "name": "Hubei", "nameZh": "湖北", "type": "省", "typeEn": "Province", "url": "https://qrcontraentrega.com/hubei" },
+            { "name": "Henan", "nameZh": "河南", "type": "省", "typeEn": "Province", "url": "https://qrcontraentrega.com/henan" },
+            { "name": "Hunan", "nameZh": "湖南", "type": "省", "typeEn": "Province", "url": "https://qrcontraentrega.com/hunan" },
+            { "name": "Hebei", "nameZh": "河北", "type": "省", "typeEn": "Province", "url": "https://qrcontraentrega.com/hebei" },
+            { "name": "Anhui", "nameZh": "安徽", "type": "省", "typeEn": "Province", "url": "https://qrcontraentrega.com/anhui" },
+            { "name": "Liaoning", "nameZh": "辽宁", "type": "省", "typeEn": "Province", "url": "https://qrcontraentrega.com/liaoning" },
+            { "name": "Shaanxi", "nameZh": "陕西", "type": "省", "typeEn": "Province", "url": "https://qrcontraentrega.com/shaanxi" },
+            { "name": "Jiangxi", "nameZh": "江西", "type": "省", "typeEn": "Province", "url": "https://qrcontraentrega.com/jiangxi" },
+            { "name": "Yunnan", "nameZh": "云南", "type": "省", "typeEn": "Province", "url": "https://qrcontraentrega.com/yunnan" },
+            { "name": "Guangxi", "nameZh": "广西", "type": "自治区", "typeEn": "Autonomous Region", "url": "https://qrcontraentrega.com/guangxi" },
+            { "name": "Xinjiang", "nameZh": "新疆", "type": "自治区", "typeEn": "Autonomous Region", "url": "https://qrcontraentrega.com/xinjiang" },
+            { "name": "Inner Mongolia", "nameZh": "内蒙古", "type": "自治区", "typeEn": "Autonomous Region", "url": "https://qrcontraentrega.com/inner-mongolia" },
+            { "name": "Tibet", "nameZh": "西藏", "type": "自治区", "typeEn": "Autonomous Region", "url": "https://qrcontraentrega.com/tibet" },
+            { "name": "Ningxia", "nameZh": "宁夏", "type": "自治区", "typeEn": "Autonomous Region", "url": "https://qrcontraentrega.com/ningxia" },
+            { "name": "Hong Kong", "nameZh": "香港", "type": "特别行政区", "typeEn": "SAR", "url": "https://qrcontraentrega.com/hong-kong" },
+            { "name": "Macau", "nameZh": "澳门", "type": "特别行政区", "typeEn": "SAR", "url": "https://qrcontraentrega.com/macau" },
+            
+            // Major cities
+            { "name": "Guangzhou", "nameZh": "广州", "type": "城市", "typeEn": "City", "url": "https://qrcontraentrega.com/guangzhou" },
+            { "name": "Shenzhen", "nameZh": "深圳", "type": "城市", "typeEn": "City", "url": "https://qrcontraentrega.com/shenzhen" },
+            { "name": "Chengdu", "nameZh": "成都", "type": "城市", "typeEn": "City", "url": "https://qrcontraentrega.com/chengdu" },
+            { "name": "Hangzhou", "nameZh": "杭州", "type": "城市", "typeEn": "City", "url": "https://qrcontraentrega.com/hangzhou" },
+            { "name": "Wuhan", "nameZh": "武汉", "type": "城市", "typeEn": "City", "url": "https://qrcontraentrega.com/wuhan" },
+            { "name": "Xi'an", "nameZh": "西安", "type": "城市", "typeEn": "City", "url": "https://qrcontraentrega.com/xian" },
+            { "name": "Nanjing", "nameZh": "南京", "type": "城市", "typeEn": "City", "url": "https://qrcontraentrega.com/nanjing" },
+            { "name": "Qingdao", "nameZh": "青岛", "type": "城市", "typeEn": "City", "url": "https://qrcontraentrega.com/qingdao" }
+        ];
 
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script>
-   
-    function updateDateTime() {
-        const now = new Date();
-        const options = { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            timeZone: 'Asia/Shanghai',
-            timeZoneName: 'short'
-        };
-        document.getElementById('currentDateTime').textContent = now.toLocaleDateString('zh-CN', options);
-    }
-    updateDateTime();
-    setInterval(updateDateTime, 1000);
+        // Function to display provinces
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
+            container.innerHTML = '';
 
-        
-            // Simple JavaScript for navbar toggle functionality
-            document.addEventListener('DOMContentLoaded', function() {
-                const navbarToggler = document.querySelector('.navbar-toggler');
-                const navbarCollapse = document.querySelector('.navbar-collapse');
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="img/c.jpg" alt="${state.nameZh}" class="flag-image">
+                    </div>
+                    <div class="state-info">
+                        <div class="state-name">${state.nameZh} | ${state.name}</div>
+                        <div class="state-type">${state.type} | ${state.typeEn}</div>
+                    </div>
+                `;
                 
-                if (navbarToggler && navbarCollapse) {
-                    navbarToggler.addEventListener('click', function() {
-                        const isExpanded = navbarToggler.getAttribute('aria-expanded') === 'true';
-                        navbarToggler.setAttribute('aria-expanded', !isExpanded);
-                        navbarCollapse.classList.toggle('show');
-                    });
-                }
-                
-                // Smooth scrolling for anchor links
-                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                    anchor.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        
-                        const targetId = this.getAttribute('href');
-                        if (targetId === '#!') return;
-                        
-                        const targetElement = document.querySelector(targetId);
-                        if (targetElement) {
-                            targetElement.scrollIntoView({
-                                behavior: 'smooth'
-                            });
-                        }
-                    });
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
                 });
+
+                container.appendChild(stateCard);
             });
-        </script>
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <!-- * *                               SB Forms JS                               * *-->
-        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
-    </body>
+        }
+
+        // Function to search provinces
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.nameZh.toLowerCase().includes(searchTerm) || 
+                state.name.toLowerCase().includes(searchTerm) ||
+                state.type.toLowerCase().includes(searchTerm) ||
+                state.typeEn.toLowerCase().includes(searchTerm)
+            );
+            renderStates(filteredStates);
+        }
+
+        // Event listeners
+        document.getElementById('state-search').addEventListener('input', searchStates);
+
+        // Display all provinces when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStates(states);
+        });
+    </script>
+</body>
 </html>
