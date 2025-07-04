@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - Magyarország</title>
+    <title>QRContraentrega - Magyarország / Hungary</title>
     <style>
         :root {
             --primary-color: #436F4D; /* Hungary green */
@@ -43,6 +43,16 @@
             margin-bottom: 1rem;
             color: var(--primary-color);
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .language-title {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .language-title span {
+            display: block;
         }
 
         p.subtitle {
@@ -152,6 +162,25 @@
             color: #777;
         }
 
+        .language-switcher {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .language-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            padding: 5px 10px;
+            font-size: 0.9rem;
+        }
+
+        .language-btn.active {
+            font-weight: bold;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
         @media (max-width: 768px) {
             .states-grid {
                 grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -189,12 +218,14 @@
 <body>
     <div class="container">
         <header>
-            <h1>QRContraentrega - Magyarország</h1>
-            <p class="subtitle">Válassza ki megyéjét vagy városát</p>
+            <div class="language-title">
+                <h1>QRContraentrega - <span>Magyarország</span> <span>Hungary</span></h1>
+            </div>
+            <p class="subtitle">Válassza ki megyéjét vagy városát / Select your county or city</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="state-search" placeholder="Keresés megye vagy város..." aria-label="Keresés megye vagy város">
+            <input type="text" id="state-search" placeholder="Keresés megye vagy város... / Search for county or city..." aria-label="Keresés megye vagy város / Search for county or city">
         </div>
 
         <div class="states-grid" id="states-container">
@@ -202,46 +233,193 @@
         </div>
 
         <footer>
-            <p>© QRContraentrega. Minden jog fenntartva.</p>
+            <p>© QRContraentrega. Minden jog fenntartva. / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // List of Hungarian counties and major cities
+        // List of Hungarian counties and major cities with both languages
         const states = [
             // Counties
-            { "name": "Bács-Kiskun", "type": "Megye", "url": "https://qrcontraentrega.com/bacs-kiskun", "image": "img/c.jpg" },
-            { "name": "Baranya", "type": "Megye", "url": "https://qrcontraentrega.com/baranya", "image": "img/c.jpg" },
-            { "name": "Békés", "type": "Megye", "url": "https://qrcontraentrega.com/bekes", "image": "img/c.jpg" },
-            { "name": "Borsod-Abaúj-Zemplén", "type": "Megye", "url": "https://qrcontraentrega.com/borsod", "image": "img/c.jpg" },
-            { "name": "Csongrád-Csanád", "type": "Megye", "url": "https://qrcontraentrega.com/csongrad", "image": "img/c.jpg" },
-            { "name": "Fejér", "type": "Megye", "url": "https://qrcontraentrega.com/fejer", "image": "img/c.jpg" },
-            { "name": "Győr-Moson-Sopron", "type": "Megye", "url": "https://qrcontraentrega.com/gyor", "image": "img/c.jpg" },
-            { "name": "Hajdú-Bihar", "type": "Megye", "url": "https://qrcontraentrega.com/hajdu-bihar", "image": "img/c.jpg" },
-            { "name": "Heves", "type": "Megye", "url": "https://qrcontraentrega.com/heves", "image": "img/c.jpg" },
-            { "name": "Jász-Nagykun-Szolnok", "type": "Megye", "url": "https://qrcontraentrega.com/jasz", "image": "img/c.jpg" },
-            { "name": "Komárom-Esztergom", "type": "Megye", "url": "https://qrcontraentrega.com/komarom", "image": "img/c.jpg" },
-            { "name": "Nógrád", "type": "Megye", "url": "https://qrcontraentrega.com/nograd", "image": "img/c.jpg" },
-            { "name": "Pest", "type": "Megye", "url": "https://qrcontraentrega.com/pest", "image": "img/c.jpg" },
-            { "name": "Somogy", "type": "Megye", "url": "https://qrcontraentrega.com/somogy", "image": "img/c.jpg" },
-            { "name": "Szabolcs-Szatmár-Bereg", "type": "Megye", "url": "https://qrcontraentrega.com/szabolcs", "image": "img/c.jpg" },
-            { "name": "Tolna", "type": "Megye", "url": "https://qrcontraentrega.com/tolna", "image": "img/c.jpg" },
-            { "name": "Vas", "type": "Megye", "url": "https://qrcontraentrega.com/vas", "image": "img/c.jpg" },
-            { "name": "Veszprém", "type": "Megye", "url": "https://qrcontraentrega.com/veszprem", "image": "img/c.jpg" },
-            { "name": "Zala", "type": "Megye", "url": "https://qrcontraentrega.com/zala", "image": "img/c.jpg" },
+            { 
+                "name": { "hu": "Bács-Kiskun", "en": "Bács-Kiskun" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/bacs-kiskun", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Baranya", "en": "Baranya" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/baranya", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Békés", "en": "Békés" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/bekes", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Borsod-Abaúj-Zemplén", "en": "Borsod-Abaúj-Zemplén" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/borsod", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Csongrád-Csanád", "en": "Csongrád-Csanád" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/csongrad", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Fejér", "en": "Fejér" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/fejer", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Győr-Moson-Sopron", "en": "Győr-Moson-Sopron" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/gyor", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Hajdú-Bihar", "en": "Hajdú-Bihar" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/hajdu-bihar", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Heves", "en": "Heves" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/heves", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Jász-Nagykun-Szolnok", "en": "Jász-Nagykun-Szolnok" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/jasz", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Komárom-Esztergom", "en": "Komárom-Esztergom" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/komarom", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Nógrád", "en": "Nógrád" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/nograd", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Pest", "en": "Pest" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/pest", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Somogy", "en": "Somogy" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/somogy", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Szabolcs-Szatmár-Bereg", "en": "Szabolcs-Szatmár-Bereg" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/szabolcs", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Tolna", "en": "Tolna" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/tolna", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Vas", "en": "Vas" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/vas", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Veszprém", "en": "Veszprém" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/veszprem", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Zala", "en": "Zala" }, 
+                "type": { "hu": "Megye", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/zala", 
+                "image": "img/c.jpg" 
+            },
             
             // Major cities
-            { "name": "Budapest", "type": "Főváros", "url": "https://qrcontraentrega.com/budapest", "image": "img/c.jpg" },
-            { "name": "Debrecen", "type": "Város", "url": "https://qrcontraentrega.com/debrecen", "image": "img/c.jpg" },
-            { "name": "Szeged", "type": "Város", "url": "https://qrcontraentrega.com/szeged", "image": "img/c.jpg" },
-            { "name": "Miskolc", "type": "Város", "url": "https://qrcontraentrega.com/miskolc", "image": "img/c.jpg" },
-            { "name": "Pécs", "type": "Város", "url": "https://qrcontraentrega.com/pecs", "image": "img/c.jpg" },
-            { "name": "Győr", "type": "Város", "url": "https://qrcontraentrega.com/gyor-city", "image": "img/c.jpg" },
-            { "name": "Nyíregyháza", "type": "Város", "url": "https://qrcontraentrega.com/nyiregyhaza", "image": "img/c.jpg" },
-            { "name": "Kecskemét", "type": "Város", "url": "https://qrcontraentrega.com/kecskemet", "image": "img/c.jpg" },
-            { "name": "Székesfehérvár", "type": "Város", "url": "https://qrcontraentrega.com/szekesfehervar", "image": "img/c.jpg" },
-            { "name": "Szombathely", "type": "Város", "url": "https://qrcontraentrega.com/szombathely", "image": "img/c.jpg" }
+            { 
+                "name": { "hu": "Budapest", "en": "Budapest" }, 
+                "type": { "hu": "Főváros", "en": "Capital" }, 
+                "url": "https://qrcontraentrega.com/budapest", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Debrecen", "en": "Debrecen" }, 
+                "type": { "hu": "Város", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/debrecen", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Szeged", "en": "Szeged" }, 
+                "type": { "hu": "Város", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/szeged", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Miskolc", "en": "Miskolc" }, 
+                "type": { "hu": "Város", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/miskolc", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Pécs", "en": "Pécs" }, 
+                "type": { "hu": "Város", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/pecs", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Győr", "en": "Győr" }, 
+                "type": { "hu": "Város", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/gyor-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Nyíregyháza", "en": "Nyíregyháza" }, 
+                "type": { "hu": "Város", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/nyiregyhaza", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Kecskemét", "en": "Kecskemét" }, 
+                "type": { "hu": "Város", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/kecskemet", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Székesfehérvár", "en": "Székesfehérvár" }, 
+                "type": { "hu": "Város", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/szekesfehervar", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hu": "Szombathely", "en": "Szombathely" }, 
+                "type": { "hu": "Város", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/szombathely", 
+                "image": "img/c.jpg" 
+            }
         ];
+
+        let currentLanguage = 'hu'; // Default to Hungarian
 
         // Function to display counties and cities
         function renderStates(stateList) {
@@ -253,11 +431,11 @@
                 stateCard.className = 'state-card';
                 stateCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${state.name}" class="flag-image">
+                        <img src="img/c.jpg" alt="${state.name[currentLanguage]}" class="flag-image">
                     </div>
                     <div class="state-info">
-                        <div class="state-name">${state.name}</div>
-                        <div class="state-type">${state.type}</div>
+                        <div class="state-name">${state.name[currentLanguage]}</div>
+                        <div class="state-type">${state.type[currentLanguage]}</div>
                     </div>
                 `;
                 
@@ -273,10 +451,27 @@
         function searchStates() {
             const searchTerm = document.getElementById('state-search').value.toLowerCase();
             const filteredStates = states.filter(state => 
-                state.name.toLowerCase().includes(searchTerm) || 
-                state.type.toLowerCase().includes(searchTerm)
+                state.name.hu.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.hu.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
             );
             renderStates(filteredStates);
+        }
+
+        // Function to update UI language
+        function updateLanguage(lang) {
+            currentLanguage = lang;
+            document.querySelector('html').lang = lang === 'hu' ? 'hu' : 'en';
+            
+            // Update search placeholder
+            document.getElementById('state-search').placeholder = 
+                lang === 'hu' ? 
+                "Keresés megye vagy város... / Search for county or city..." : 
+                "Search for county or city... / Keresés megye vagy város...";
+            
+            // Re-render states with new language
+            searchStates();
         }
 
         // Event listeners
