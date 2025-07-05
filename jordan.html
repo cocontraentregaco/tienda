@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - الأردن</title>
+    <title>QRContraentrega - الأردن / Jordan</title>
     <style>
         :root {
-            --green: #007a3d; /* Jordanian green */
-            --gold: #ce1126; /* Jordanian red */
-            --black: #000000; 
+            --red: #CE1126; /* Jordanian red */
+            --green: #007A3D; /* Jordanian green */
+            --white: #FFFFFF;
+            --black: #000000;
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -18,14 +19,14 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Arial', 'Tahoma', Geneva, Verdana, sans-serif;
         }
 
         body {
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
-            background-image: linear-gradient(to bottom, rgba(0, 122, 61, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
+            background-image: linear-gradient(to bottom, rgba(206, 17, 38, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -37,7 +38,7 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
-            background: linear-gradient(135deg, var(--green) 0%, var(--gold) 100%);
+            background: linear-gradient(135deg, var(--red) 0%, #E31B23 100%);
             padding: 2rem;
             border-radius: 10px;
             color: white;
@@ -48,6 +49,12 @@
             margin-bottom: 1rem;
             color: white;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .arabic-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         p.subtitle {
@@ -71,13 +78,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
-            border-top: 4px solid var(--green);
+            border-top: 4px solid var(--red);
         }
 
         .state-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            border-color: var(--gold);
+            border-color: #E31B23;
         }
 
         .flag-container {
@@ -97,7 +104,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--green) 0%, var(--gold) 100%);
+            background: linear-gradient(90deg, var(--red) 0%, #E31B23 100%);
         }
 
         .flag-image {
@@ -114,7 +121,13 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
-            color: var(--green);
+            color: var(--red);
+        }
+
+        .arabic-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
         }
 
         .state-type {
@@ -145,8 +158,8 @@
         }
 
         #state-search:focus {
-            border-color: var(--green);
-            box-shadow: 0 0 0 3px rgba(0, 122, 61, 0.2);
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(206, 17, 38, 0.2);
         }
 
         footer {
@@ -164,6 +177,10 @@
 
             h1 {
                 font-size: 2rem;
+            }
+
+            .arabic-title {
+                font-size: 1.8rem;
             }
 
             .flag-container {
@@ -188,18 +205,24 @@
             .state-name {
                 font-size: 1rem;
             }
+            
+            .arabic-name {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>QRContraentrega - الأردن</h1>
-            <p class="subtitle">اختر محافظتك أو مدينتك</p>
+            <h1>QRContraentrega</h1>
+            <div class="arabic-title">الأردن</div>
+            <div>Jordan</div>
+            <p class="subtitle">اختر المحافظة أو المدينة / Select your governorate or city</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="state-search" placeholder="ابحث عن محافظة أو مدينة..." aria-label="ابحث عن محافظة أو مدينة">
+            <input type="text" id="state-search" placeholder="ابحث عن المحافظة أو المدينة... / Search for governorate or city..." aria-label="ابحث عن المحافظة أو المدينة">
         </div>
 
         <div class="states-grid" id="states-container">
@@ -207,134 +230,104 @@
         </div>
 
         <footer>
-            <p>© QRContraentrega. جميع الحقوق محفوظة.</p>
+            <p>© QRContraentrega. جميع الحقوق محفوظة / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // List of Jordanian governorates and major cities
+        // List of Jordanian governorates and major cities with both languages
         const states = [
             // Governorates
             { 
-                "name": "عمان", 
-                "type": "محافظة", 
+                "name": { "ar": "عمان", "en": "Amman" }, 
+                "type": { "ar": "محافظة", "en": "Governorate" }, 
                 "url": "https://qrcontraentrega.com/amman", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "إربد", 
-                "type": "محافظة", 
+                "name": { "ar": "إربد", "en": "Irbid" }, 
+                "type": { "ar": "محافظة", "en": "Governorate" }, 
                 "url": "https://qrcontraentrega.com/irbid", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "الزرقاء", 
-                "type": "محافظة", 
+                "name": { "ar": "الزرقاء", "en": "Zarqa" }, 
+                "type": { "ar": "محافظة", "en": "Governorate" }, 
                 "url": "https://qrcontraentrega.com/zarqa", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "المفرق", 
-                "type": "محافظة", 
-                "url": "https://qrcontraentrega.com/mafraq", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": "البلقاء", 
-                "type": "محافظة", 
+                "name": { "ar": "البقعة", "en": "Balqa" }, 
+                "type": { "ar": "محافظة", "en": "Governorate" }, 
                 "url": "https://qrcontraentrega.com/balqa", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "الكرك", 
-                "type": "محافظة", 
-                "url": "https://qrcontraentrega.com/karak", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": "الطفيلة", 
-                "type": "محافظة", 
-                "url": "https://qrcontraentrega.com/tafilah", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": "معان", 
-                "type": "محافظة", 
-                "url": "https://qrcontraentrega.com/maan", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": "العقبة", 
-                "type": "محافظة", 
-                "url": "https://qrcontraentrega.com/aqaba", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": "مادبا", 
-                "type": "محافظة", 
+                "name": { "ar": "مادبا", "en": "Madaba" }, 
+                "type": { "ar": "محافظة", "en": "Governorate" }, 
                 "url": "https://qrcontraentrega.com/madaba", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "جرش", 
-                "type": "محافظة", 
-                "url": "https://qrcontraentrega.com/jerash", 
+                "name": { "ar": "الكرك", "en": "Karak" }, 
+                "type": { "ar": "محافظة", "en": "Governorate" }, 
+                "url": "https://qrcontraentrega.com/karak", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "عجلون", 
-                "type": "محافظة", 
-                "url": "https://qrcontraentrega.com/ajloun", 
+                "name": { "ar": "معان", "en": "Ma'an" }, 
+                "type": { "ar": "محافظة", "en": "Governorate" }, 
+                "url": "https://qrcontraentrega.com/maan", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "العقبة", "en": "Aqaba" }, 
+                "type": { "ar": "محافظة", "en": "Governorate" }, 
+                "url": "https://qrcontraentrega.com/aqaba", 
                 "image": "img/c.jpg" 
             },
             
             // Major cities
             { 
-                "name": "عمان", 
-                "type": "مدينة", 
+                "name": { "ar": "عمان", "en": "Amman" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
                 "url": "https://qrcontraentrega.com/amman-city", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "الزرقاء", 
-                "type": "مدينة", 
+                "name": { "ar": "الزرقاء", "en": "Zarqa" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
                 "url": "https://qrcontraentrega.com/zarqa-city", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "إربد", 
-                "type": "مدينة", 
+                "name": { "ar": "إربد", "en": "Irbid" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
                 "url": "https://qrcontraentrega.com/irbid-city", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "العقبة", 
-                "type": "مدينة", 
-                "url": "https://qrcontraentrega.com/aqaba-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": "الرمثا", 
-                "type": "مدينة", 
+                "name": { "ar": "الرمثا", "en": "Ramtha" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
                 "url": "https://qrcontraentrega.com/ramtha", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "السلط", 
-                "type": "مدينة", 
+                "name": { "ar": "العقبة", "en": "Aqaba" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/aqaba-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "السلط", "en": "Salt" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
                 "url": "https://qrcontraentrega.com/salt", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "مادبا", 
-                "type": "مدينة", 
+                "name": { "ar": "مادبا", "en": "Madaba" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
                 "url": "https://qrcontraentrega.com/madaba-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": "الكرك", 
-                "type": "مدينة", 
-                "url": "https://qrcontraentrega.com/karak-city", 
                 "image": "img/c.jpg" 
             }
         ];
@@ -349,11 +342,12 @@
                 stateCard.className = 'state-card';
                 stateCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="${state.image}" alt="${state.name}" class="flag-image">
+                        <img src="${state.image}" alt="${state.name.ar}" class="flag-image">
                     </div>
                     <div class="state-info">
-                        <div class="state-name">${state.name}</div>
-                        <div class="state-type">${state.type}</div>
+                        <div class="arabic-name">${state.name.ar}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.ar} • ${state.type.en}</div>
                     </div>
                 `;
                 
@@ -369,8 +363,10 @@
         function searchStates() {
             const searchTerm = document.getElementById('state-search').value.toLowerCase();
             const filteredStates = states.filter(state => 
-                state.name.toLowerCase().includes(searchTerm) || 
-                state.type.toLowerCase().includes(searchTerm)
+                state.name.ar.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.ar.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
             );
             renderStates(filteredStates);
         }
