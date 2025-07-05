@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="sw" dir="ltr">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - Kenya | Kenya</title>
+    <title>QRContraentrega - Kenya</title>
     <style>
         :root {
+            --black: #000000; /* Kenyan black */
+            --red: #BB0000; /* Kenyan red */
             --green: #006600; /* Kenyan green */
-            --gold: #BB0000; /* Kenyan red */
-            --black: #000000; 
-            --black: #000000;
+            --white: #FFFFFF;
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -19,7 +19,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Arial', 'Tahoma', Geneva, Verdana, sans-serif;
         }
 
         body {
@@ -38,7 +38,7 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
-            background: linear-gradient(135deg, var(--green) 0%, var(--gold) 100%);
+            background: linear-gradient(135deg, var(--black) 0%, #333333 100%);
             padding: 2rem;
             border-radius: 10px;
             color: white;
@@ -51,24 +51,10 @@
             text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
         }
 
-        .language-toggle {
-            margin-bottom: 1rem;
-        }
-
-        .language-toggle button {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            padding: 5px 10px;
-            margin: 0 5px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .language-toggle button.active {
-            background: white;
-            color: var(--green);
+        .swahili-title {
+            font-size: 2.2rem;
             font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         p.subtitle {
@@ -98,7 +84,7 @@
         .state-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            border-color: var(--gold);
+            border-color: var(--red);
         }
 
         .flag-container {
@@ -118,7 +104,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--green) 0%, var(--gold) 100%);
+            background: linear-gradient(90deg, var(--black) 0%, var(--green) 50%, var(--red) 100%);
         }
 
         .flag-image {
@@ -136,6 +122,12 @@
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
             color: var(--green);
+        }
+
+        .swahili-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
         }
 
         .state-type {
@@ -187,6 +179,10 @@
                 font-size: 2rem;
             }
 
+            .swahili-title {
+                font-size: 1.8rem;
+            }
+
             .flag-container {
                 height: 100px;
             }
@@ -209,27 +205,24 @@
             .state-name {
                 font-size: 1rem;
             }
+            
+            .swahili-name {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1 class="swahili">QRContraentrega - Kenya</h1>
-            <h1 class="english" style="display:none">QRContraentrega - Kenya</h1>
-            
-            <div class="language-toggle">
-                <button class="swahili-btn active">Kiswahili</button>
-                <button class="english-btn">English</button>
-            </div>
-            
-            <p class="subtitle swahili">Chagua kaunti au mji wako</p>
-            <p class="subtitle english" style="display:none">Select your county or city</p>
+            <h1>QRContraentrega</h1>
+            <div class="swahili-title">Kenya</div>
+            <div>Kenya</div>
+            <p class="subtitle">Chagua kaunti au mji / Select your county or city</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="state-search" class="swahili" placeholder="Tafuta kaunti au mji..." aria-label="Tafuta kaunti au mji">
-            <input type="text" id="state-search-en" class="english" style="display:none" placeholder="Search for county or city..." aria-label="Search for county or city">
+            <input type="text" id="state-search" placeholder="Tafuta kaunti au mji... / Search for county or city..." aria-label="Search for county or city">
         </div>
 
         <div class="states-grid" id="states-container">
@@ -237,164 +230,107 @@
         </div>
 
         <footer>
-            <p class="swahili">© QRContraentrega. Haki zote zimehifadhiwa.</p>
-            <p class="english" style="display:none">© QRContraentrega. All rights reserved.</p>
+            <p>© QRContraentrega. Haki zote zimehifadhiwa / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // List of Kenyan counties and major cities in both languages
+        // List of Kenyan counties and major cities with both languages
         const states = [
             // Counties
             { 
-                "name": "Nairobi", 
-                "name_sw": "Nairobi", 
-                "type": "County", 
-                "type_sw": "Kaunti", 
+                "name": { "sw": "Nairobi", "en": "Nairobi" }, 
+                "type": { "sw": "Kaunti", "en": "County" }, 
                 "url": "https://qrcontraentrega.com/nairobi", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "Mombasa", 
-                "name_sw": "Mombasa", 
-                "type": "County", 
-                "type_sw": "Kaunti", 
+                "name": { "sw": "Mombasa", "en": "Mombasa" }, 
+                "type": { "sw": "Kaunti", "en": "County" }, 
                 "url": "https://qrcontraentrega.com/mombasa", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "Kisumu", 
-                "name_sw": "Kisumu", 
-                "type": "County", 
-                "type_sw": "Kaunti", 
+                "name": { "sw": "Kisumu", "en": "Kisumu" }, 
+                "type": { "sw": "Kaunti", "en": "County" }, 
                 "url": "https://qrcontraentrega.com/kisumu", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "Nakuru", 
-                "name_sw": "Nakuru", 
-                "type": "County", 
-                "type_sw": "Kaunti", 
+                "name": { "sw": "Nakuru", "en": "Nakuru" }, 
+                "type": { "sw": "Kaunti", "en": "County" }, 
                 "url": "https://qrcontraentrega.com/nakuru", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "Uasin Gishu", 
-                "name_sw": "Uasin Gishu", 
-                "type": "County", 
-                "type_sw": "Kaunti", 
+                "name": { "sw": "Eldoret", "en": "Uasin Gishu" }, 
+                "type": { "sw": "Kaunti", "en": "County" }, 
                 "url": "https://qrcontraentrega.com/uasin-gishu", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "Kakamega", 
-                "name_sw": "Kakamega", 
-                "type": "County", 
-                "type_sw": "Kaunti", 
+                "name": { "sw": "Kakamega", "en": "Kakamega" }, 
+                "type": { "sw": "Kaunti", "en": "County" }, 
                 "url": "https://qrcontraentrega.com/kakamega", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "Bungoma", 
-                "name_sw": "Bungoma", 
-                "type": "County", 
-                "type_sw": "Kaunti", 
-                "url": "https://qrcontraentrega.com/bungoma", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": "Kiambu", 
-                "name_sw": "Kiambu", 
-                "type": "County", 
-                "type_sw": "Kaunti", 
-                "url": "https://qrcontraentrega.com/kiambu", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": "Meru", 
-                "name_sw": "Meru", 
-                "type": "County", 
-                "type_sw": "Kaunti", 
-                "url": "https://qrcontraentrega.com/meru", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": "Kilifi", 
-                "name_sw": "Kilifi", 
-                "type": "County", 
-                "type_sw": "Kaunti", 
-                "url": "https://qrcontraentrega.com/kilifi", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": "Kisii", 
-                "name_sw": "Kisii", 
-                "type": "County", 
-                "type_sw": "Kaunti", 
+                "name": { "sw": "Kisii", "en": "Kisii" }, 
+                "type": { "sw": "Kaunti", "en": "County" }, 
                 "url": "https://qrcontraentrega.com/kisii", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "Machakos", 
-                "name_sw": "Machakos", 
-                "type": "County", 
-                "type_sw": "Kaunti", 
-                "url": "https://qrcontraentrega.com/machakos", 
+                "name": { "sw": "Meru", "en": "Meru" }, 
+                "type": { "sw": "Kaunti", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/meru", 
                 "image": "img/c.jpg" 
             },
-            { 
-                "name": "Turkana", 
-                "name_sw": "Turkana", 
-                "type": "County", 
-                "type_sw": "Kaunti", 
-                "url": "https://qrcontraentrega.com/turkana", 
-                "image": "img/c.jpg" 
-            },
+            
             // Major cities
             { 
-                "name": "Nairobi City", 
-                "name_sw": "Jiji la Nairobi", 
-                "type": "City", 
-                "type_sw": "Jiji", 
+                "name": { "sw": "Nairobi", "en": "Nairobi" }, 
+                "type": { "sw": "Mji", "en": "City" }, 
                 "url": "https://qrcontraentrega.com/nairobi-city", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "Mombasa City", 
-                "name_sw": "Jiji la Mombasa", 
-                "type": "City", 
-                "type_sw": "Jiji", 
+                "name": { "sw": "Mombasa", "en": "Mombasa" }, 
+                "type": { "sw": "Mji", "en": "City" }, 
                 "url": "https://qrcontraentrega.com/mombasa-city", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "Kisumu City", 
-                "name_sw": "Jiji la Kisumu", 
-                "type": "City", 
-                "type_sw": "Jiji", 
+                "name": { "sw": "Kisumu", "en": "Kisumu" }, 
+                "type": { "sw": "Mji", "en": "City" }, 
                 "url": "https://qrcontraentrega.com/kisumu-city", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "Nakuru Town", 
-                "name_sw": "Mji wa Nakuru", 
-                "type": "Town", 
-                "type_sw": "Mji", 
-                "url": "https://qrcontraentrega.com/nakuru-town", 
+                "name": { "sw": "Nakuru", "en": "Nakuru" }, 
+                "type": { "sw": "Mji", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/nakuru-city", 
                 "image": "img/c.jpg" 
             },
             { 
-                "name": "Eldoret", 
-                "name_sw": "Eldoret", 
-                "type": "Town", 
-                "type_sw": "Mji", 
+                "name": { "sw": "Eldoret", "en": "Eldoret" }, 
+                "type": { "sw": "Mji", "en": "City" }, 
                 "url": "https://qrcontraentrega.com/eldoret", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "sw": "Thika", "en": "Thika" }, 
+                "type": { "sw": "Mji", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/thika", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "sw": "Malindi", "en": "Malindi" }, 
+                "type": { "sw": "Mji", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/malindi", 
                 "image": "img/c.jpg" 
             }
         ];
-
-        // Current language
-        let currentLanguage = 'swahili';
 
         // Function to display counties and cities
         function renderStates(stateList) {
@@ -406,11 +342,12 @@
                 stateCard.className = 'state-card';
                 stateCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="${state.image}" alt="${currentLanguage === 'swahili' ? state.name_sw : state.name}" class="flag-image">
+                        <img src="${state.image}" alt="${state.name.en}" class="flag-image">
                     </div>
                     <div class="state-info">
-                        <div class="state-name">${currentLanguage === 'swahili' ? state.name_sw : state.name}</div>
-                        <div class="state-type">${currentLanguage === 'swahili' ? state.type_sw : state.type}</div>
+                        <div class="swahili-name">${state.name.sw}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.sw} • ${state.type.en}</div>
                     </div>
                 `;
                 
@@ -424,47 +361,18 @@
 
         // Function to search counties and cities
         function searchStates() {
-            const searchTerm = (currentLanguage === 'swahili' ? 
-                document.getElementById('state-search') : 
-                document.getElementById('state-search-en')).value.toLowerCase();
-            
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
             const filteredStates = states.filter(state => 
-                (currentLanguage === 'swahili' ? 
-                    (state.name_sw.toLowerCase().includes(searchTerm) || 
-                    (state.type_sw.toLowerCase().includes(searchTerm)) :
-                    (state.name.toLowerCase().includes(searchTerm) || 
-                    (state.type.toLowerCase().includes(searchTerm)))
+                state.name.sw.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.sw.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
             );
             renderStates(filteredStates);
         }
 
-        // Function to toggle language
-        function toggleLanguage(lang) {
-            currentLanguage = lang;
-            
-            // Toggle visibility of elements
-            document.querySelectorAll('.swahili').forEach(el => {
-                el.style.display = lang === 'swahili' ? 'block' : 'none';
-            });
-            document.querySelectorAll('.english').forEach(el => {
-                el.style.display = lang === 'english' ? 'block' : 'none';
-            });
-            
-            // Update button states
-            document.querySelector('.swahili-btn').classList.toggle('active', lang === 'swahili');
-            document.querySelector('.english-btn').classList.toggle('active', lang === 'english');
-            
-            // Re-render and re-search
-            renderStates(states);
-            searchStates();
-        }
-
         // Event listeners
         document.getElementById('state-search').addEventListener('input', searchStates);
-        document.getElementById('state-search-en').addEventListener('input', searchStates);
-        
-        document.querySelector('.swahili-btn').addEventListener('click', () => toggleLanguage('swahili'));
-        document.querySelector('.english-btn').addEventListener('click', () => toggleLanguage('english'));
 
         // Display all counties and cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
