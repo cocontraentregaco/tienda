@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="hy">
+<html lang="hy" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - Հայաստան</title>
+    <title>QRContraentrega - Հայաստան / Armenia</title>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2980b9;
+            --red: #D90012; /* Armenian red */
+            --blue: #0033A0; /* Armenian blue */
+            --orange: #F2A800; /* Armenian orange */
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -17,14 +18,14 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Arial', 'DejaVu Sans', sans-serif;
         }
 
         body {
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
-            direction: ltr; /* Left-to-right for Armenian */
+            background-image: linear-gradient(to bottom, rgba(217, 0, 18, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -36,28 +37,39 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--red) 0%, var(--blue) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .armenian-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
         }
 
-        .marzes-grid {
+        .states-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
-        .marz-card {
+        .state-card {
             background: white;
             border-radius: 8px;
             overflow: hidden;
@@ -65,11 +77,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
+            border-top: 4px solid var(--red);
         }
 
-        .marz-card:hover {
+        .state-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--blue);
         }
 
         .flag-container {
@@ -78,6 +92,18 @@
             align-items: center;
             justify-content: center;
             background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--red) 0%, var(--blue) 50%, var(--orange) 100%);
         }
 
         .flag-image {
@@ -86,17 +112,24 @@
             object-fit: contain;
         }
 
-        .marz-info {
+        .state-info {
             padding: 1.5rem 1rem;
         }
 
-        .marz-name {
+        .state-name {
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--red);
         }
 
-        .marz-region {
+        .armenian-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .state-type {
             color: #666;
             font-size: 0.9rem;
         }
@@ -106,21 +139,26 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
 
-        #marz-search {
+        #state-search {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 20px 12px 45px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
         }
 
-        #marz-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        #state-search:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(217, 0, 18, 0.2);
         }
 
         footer {
@@ -132,12 +170,16 @@
         }
 
         @media (max-width: 768px) {
-            .marzes-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
                 font-size: 2rem;
+            }
+
+            .armenian-title {
+                font-size: 1.8rem;
             }
 
             .flag-container {
@@ -150,17 +192,21 @@
                 padding: 1rem;
             }
 
-            .marzes-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
-            .marz-info {
+            .state-info {
                 padding: 1rem 0.5rem;
             }
 
-            .marz-name {
+            .state-name {
                 font-size: 1rem;
+            }
+            
+            .armenian-name {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -169,80 +215,173 @@
     <div class="container">
         <header>
             <h1>QRContraentrega</h1>
-            <p class="subtitle">Ընտրեք Ձեր մարզը Հայաստանում</p>
+            <div class="armenian-title">Հայաստան</div>
+            <div>Armenia</div>
+            <p class="subtitle">Մարզ կամ քաղաք ընտրել / Select your province or city</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="marz-search" placeholder="Որոնել մարզ..." aria-label="Որոնել մարզ">
+            <input type="text" id="state-search" placeholder="Որոնել մարզ կամ քաղաք... / Search for province or city..." aria-label="Որոնել մարզ կամ քաղաք">
         </div>
 
-        <div class="marzes-grid" id="marzes-container">
-            <!-- Մարզերը կհայտնվեն այստեղ -->
+        <div class="states-grid" id="states-container">
+            <!-- Provinces and cities will appear here -->
         </div>
 
         <footer>
-            <p>© QRContraentrega. Բոլոր իրավունքները պաշտպանված են:</p>
+            <p>© QRContraentrega. Բոլոր իրավունքները պաշտպանված են / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // Հայաստանի մարզերի ցանկ
-        const marzes = [
-            { "name": "Երևան", "region": "Քաղաք", "url": "https://qrcontraentrega.com/yerevan" },
-            { "name": "Արագածոտն", "region": "Մարզ", "url": "https://qrcontraentrega.com/aragatsotn" },
-            { "name": "Արարատ", "region": "Մարզ", "url": "https://qrcontraentrega.com/ararat" },
-            { "name": "Արմավիր", "region": "Մարզ", "url": "https://qrcontraentrega.com/armavir" },
-            { "name": "Գեղարքունիք", "region": "Մարզ", "url": "https://qrcontraentrega.com/gegharkunik" },
-            { "name": "Լոռի", "region": "Մարզ", "url": "https://qrcontraentrega.com/lori" },
-            { "name": "Կոտայք", "region": "Մարզ", "url": "https://qrcontraentrega.com/kotayk" },
-            { "name": "Շիրակ", "region": "Մարզ", "url": "https://qrcontraentrega.com/shirak" },
-            { "name": "Սյունիք", "region": "Մարզ", "url": "https://qrcontraentrega.com/syunik" },
-            { "name": "Վայոց Ձոր", "region": "Մարզ", "url": "https://qrcontraentrega.com/vayotsdzor" },
-            { "name": "Տավուշ", "region": "Մարզ", "url": "https://qrcontraentrega.com/tavush" }
+        // List of Armenian provinces and major cities with both languages
+        const states = [
+            // Provinces (Marzer)
+            { 
+                "name": { "hy": "Երևան", "en": "Yerevan" }, 
+                "type": { "hy": "Քաղաք", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/yerevan", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hy": "Արագածոտն", "en": "Aragatsotn" }, 
+                "type": { "hy": "Մարզ", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/aragatsotn", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hy": "Արարատ", "en": "Ararat" }, 
+                "type": { "hy": "Մարզ", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/ararat", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hy": "Արմավիր", "en": "Armavir" }, 
+                "type": { "hy": "Մարզ", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/armavir", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hy": "Գեղարքունիք", "en": "Gegharkunik" }, 
+                "type": { "hy": "Մարզ", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/gegharkunik", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hy": "Կոտայք", "en": "Kotayk" }, 
+                "type": { "hy": "Մարզ", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/kotayk", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hy": "Լոռի", "en": "Lori" }, 
+                "type": { "hy": "Մարզ", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/lori", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hy": "Շիրակ", "en": "Shirak" }, 
+                "type": { "hy": "Մարզ", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/shirak", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hy": "Սյունիք", "en": "Syunik" }, 
+                "type": { "hy": "Մարզ", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/syunik", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hy": "Վայոց Ձոր", "en": "Vayots Dzor" }, 
+                "type": { "hy": "Մարզ", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/vayotsdzor", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hy": "Տավուշ", "en": "Tavush" }, 
+                "type": { "hy": "Մարզ", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/tavush", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major cities
+            { 
+                "name": { "hy": "Գյումրի", "en": "Gyumri" }, 
+                "type": { "hy": "Քաղաք", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/gyumri", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hy": "Վանաձոր", "en": "Vanadzor" }, 
+                "type": { "hy": "Քաղաք", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/vanadzor", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hy": "Էջմիածին", "en": "Vagharshapat" }, 
+                "type": { "hy": "Քաղաք", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/vagharshapat", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hy": "Հրազդան", "en": "Hrazdan" }, 
+                "type": { "hy": "Քաղաք", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/hrazdan", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "hy": "Աբովյան", "en": "Abovyan" }, 
+                "type": { "hy": "Քաղաք", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/abovyan", 
+                "image": "img/c.jpg" 
+            }
         ];
 
-        // Ֆունկցիա մարզերը ցուցադրելու համար
-        function renderMarzes(marzList) {
-            const container = document.getElementById('marzes-container');
+        // Function to display provinces and cities
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
             container.innerHTML = '';
 
-            marzList.forEach(marz => {
-                const marzCard = document.createElement('div');
-                marzCard.className = 'marz-card';
-                marzCard.innerHTML = `
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${marz.name}" class="flag-image">
+                        <img src="${state.image}" alt="${state.name.hy}" class="flag-image">
                     </div>
-                    <div class="marz-info">
-                        <div class="marz-name">${marz.name}</div>
-                        <div class="marz-region">${marz.region}</div>
+                    <div class="state-info">
+                        <div class="armenian-name">${state.name.hy}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.hy} • ${state.type.en}</div>
                     </div>
                 `;
                 
-                marzCard.addEventListener('click', () => {
-                    window.location.href = marz.url;
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
                 });
 
-                container.appendChild(marzCard);
+                container.appendChild(stateCard);
             });
         }
 
-        // Ֆունկցիա մարզեր որոնելու համար
-        function searchMarzes() {
-            const searchTerm = document.getElementById('marz-search').value.toLowerCase();
-            const filteredMarzes = marzes.filter(marz => 
-                marz.name.toLowerCase().includes(searchTerm) || 
-                marz.region.toLowerCase().includes(searchTerm)
+        // Function to search provinces and cities
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.hy.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.hy.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
             );
-            renderMarzes(filteredMarzes);
+            renderStates(filteredStates);
         }
 
-        // Իվենթ լիստեներներ
-        document.getElementById('marz-search').addEventListener('input', searchMarzes);
+        // Event listeners
+        document.getElementById('state-search').addEventListener('input', searchStates);
 
-        // Բոլոր մարզերը ցուցադրել էջի բեռնման ժամանակ
+        // Display all provinces and cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            renderMarzes(marzes);
+            renderStates(states);
         });
     </script>
 </body>
