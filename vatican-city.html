@@ -6,8 +6,8 @@
     <title>QRContraentrega - Città del Vaticano</title>
     <style>
         :root {
-            --yellow: #FFD700; /* Vatican gold */
-            --white: #FFFFFF;
+            --yellow: #FFD700; /* Vatican yellow */
+            --white: #FFFFFF; /* Vatican white */
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -28,24 +28,25 @@
         }
 
         .container {
-            max-width: 800px; /* Smaller container for city-state */
+            max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
         }
 
         header {
             text-align: center;
-            margin-bottom: 2rem;
-            background: linear-gradient(135deg, #FFD700 0%, #FFC000 100%);
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--yellow) 0%, #FFE44D 100%);
             padding: 2rem;
             border-radius: 10px;
-            color: #000;
+            color: #333;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: #000;
+            color: #333;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
         }
 
         .italian-title {
@@ -57,17 +58,17 @@
         p.subtitle {
             font-size: 1.2rem;
             color: rgba(0,0,0,0.8);
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
         }
 
-        .landmarks-grid {
+        .states-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
-        .landmark-card {
+        .state-card {
             background: white;
             border-radius: 8px;
             overflow: hidden;
@@ -78,14 +79,14 @@
             border-top: 4px solid var(--yellow);
         }
 
-        .landmark-card:hover {
+        .state-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            border-color: #D4AF37;
+            border-color: #FFE44D;
         }
 
-        .image-container {
-            height: 160px;
+        .flag-container {
+            height: 120px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -94,30 +95,31 @@
             overflow: hidden;
         }
 
-        .image-container::after {
+        .flag-container::after {
             content: "";
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--yellow) 0%, #D4AF37 100%);
+            background: linear-gradient(90deg, var(--yellow) 0%, #FFE44D 100%);
         }
 
-        .landmark-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
         }
 
-        .landmark-info {
+        .state-info {
             padding: 1.5rem 1rem;
         }
 
-        .landmark-name {
+        .state-name {
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--yellow);
         }
 
         .italian-name {
@@ -126,20 +128,20 @@
             font-weight: bold;
         }
 
-        .landmark-type {
+        .state-type {
             color: #666;
             font-size: 0.9rem;
         }
 
         .search-container {
             margin-bottom: 2rem;
-            max-width: 500px;
+            max-width: 600px;
             margin-left: auto;
             margin-right: auto;
             position: relative;
         }
 
-        #landmark-search {
+        #state-search {
             width: 100%;
             padding: 12px 20px 12px 45px;
             border: 1px solid #ddd;
@@ -153,7 +155,7 @@
             background-size: 20px;
         }
 
-        #landmark-search:focus {
+        #state-search:focus {
             border-color: var(--yellow);
             box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
         }
@@ -167,8 +169,8 @@
         }
 
         @media (max-width: 768px) {
-            .landmarks-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
@@ -179,8 +181,8 @@
                 font-size: 1.8rem;
             }
 
-            .image-container {
-                height: 120px;
+            .flag-container {
+                height: 100px;
             }
         }
 
@@ -189,16 +191,16 @@
                 padding: 1rem;
             }
 
-            .landmarks-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
-            .landmark-info {
+            .state-info {
                 padding: 1rem 0.5rem;
             }
 
-            .landmark-name {
+            .state-name {
                 font-size: 1rem;
             }
             
@@ -214,15 +216,15 @@
             <h1>QRContraentrega</h1>
             <div class="italian-title">Città del Vaticano</div>
             <div>Vatican City</div>
-            <p class="subtitle">Seleziona un luogo di interesse / Select a landmark</p>
+            <p class="subtitle">Seleziona un'area o edificio / Select an area or building</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="landmark-search" placeholder="Cerca un luogo... / Search for a landmark..." aria-label="Search for a landmark">
+            <input type="text" id="state-search" placeholder="Cerca un'area o edificio... / Search for an area or building..." aria-label="Cerca un'area o edificio">
         </div>
 
-        <div class="landmarks-grid" id="landmarks-container">
-            <!-- Landmarks will appear here -->
+        <div class="states-grid" id="states-container">
+            <!-- Vatican areas and buildings will appear here -->
         </div>
 
         <footer>
@@ -231,103 +233,130 @@
     </div>
 
     <script>
-        // List of Vatican landmarks with both languages
-        const landmarks = [
-            { 
-                "name": { "it": "Basilica di San Pietro", "en": "St. Peter's Basilica" }, 
-                "type": { "it": "Basilica Papale", "en": "Papal Basilica" }, 
-                "url": "https://qrcontraentrega.com/san-pietro", 
-                "image": "img/vatican-basilica.jpg" 
-            },
+        // List of Vatican areas and buildings with both languages
+        const states = [
+            // Main Areas
             { 
                 "name": { "it": "Piazza San Pietro", "en": "St. Peter's Square" }, 
                 "type": { "it": "Piazza", "en": "Square" }, 
                 "url": "https://qrcontraentrega.com/piazza-san-pietro", 
-                "image": "img/vatican-square.jpg" 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "it": "Basilica di San Pietro", "en": "St. Peter's Basilica" }, 
+                "type": { "it": "Basilica", "en": "Basilica" }, 
+                "url": "https://qrcontraentrega.com/basilica-san-pietro", 
+                "image": "img/c.jpg" 
             },
             { 
                 "name": { "it": "Musei Vaticani", "en": "Vatican Museums" }, 
-                "type": { "it": "Museo", "en": "Museum" }, 
+                "type": { "it": "Musei", "en": "Museums" }, 
                 "url": "https://qrcontraentrega.com/musei-vaticani", 
-                "image": "img/vatican-museum.jpg" 
+                "image": "img/c.jpg" 
             },
             { 
                 "name": { "it": "Cappella Sistina", "en": "Sistine Chapel" }, 
                 "type": { "it": "Cappella", "en": "Chapel" }, 
                 "url": "https://qrcontraentrega.com/cappella-sistina", 
-                "image": "img/sistine-chapel.jpg" 
+                "image": "img/c.jpg" 
             },
             { 
                 "name": { "it": "Giardini Vaticani", "en": "Vatican Gardens" }, 
                 "type": { "it": "Giardini", "en": "Gardens" }, 
                 "url": "https://qrcontraentrega.com/giardini-vaticani", 
-                "image": "img/vatican-gardens.jpg" 
+                "image": "img/c.jpg" 
             },
+            
+            // Important Buildings
             { 
                 "name": { "it": "Palazzo Apostolico", "en": "Apostolic Palace" }, 
-                "type": { "it": "Residenza Papale", "en": "Papal Residence" }, 
+                "type": { "it": "Palazzo", "en": "Palace" }, 
                 "url": "https://qrcontraentrega.com/palazzo-apostolico", 
-                "image": "img/apostolic-palace.jpg" 
+                "image": "img/c.jpg" 
             },
             { 
                 "name": { "it": "Biblioteca Apostolica Vaticana", "en": "Vatican Library" }, 
                 "type": { "it": "Biblioteca", "en": "Library" }, 
                 "url": "https://qrcontraentrega.com/biblioteca-vaticana", 
-                "image": "img/vatican-library.jpg" 
+                "image": "img/c.jpg" 
             },
             { 
-                "name": { "it": "Necropoli Vaticana", "en": "Vatican Necropolis" }, 
-                "type": { "it": "Sito Archeologico", "en": "Archaeological Site" }, 
-                "url": "https://qrcontraentrega.com/necropoli-vaticana", 
-                "image": "img/vatican-necropolis.jpg" 
+                "name": { "it": "Archivio Segreto Vaticano", "en": "Vatican Secret Archives" }, 
+                "type": { "it": "Archivio", "en": "Archives" }, 
+                "url": "https://qrcontraentrega.com/archivio-vaticano", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "it": "Casina Pio IV", "en": "Casina Pio IV" }, 
+                "type": { "it": "Villa", "en": "Villa" }, 
+                "url": "https://qrcontraentrega.com/casina-pio-iv", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "it": "Governatorato", "en": "Governorate" }, 
+                "type": { "it": "Edificio", "en": "Building" }, 
+                "url": "https://qrcontraentrega.com/governatorato", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "it": "Osservatorio Vaticano", "en": "Vatican Observatory" }, 
+                "type": { "it": "Osservatorio", "en": "Observatory" }, 
+                "url": "https://qrcontraentrega.com/osservatorio-vaticano", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "it": "Radio Vaticana", "en": "Vatican Radio" }, 
+                "type": { "it": "Stazione Radio", "en": "Radio Station" }, 
+                "url": "https://qrcontraentrega.com/radio-vaticana", 
+                "image": "img/c.jpg" 
             }
         ];
 
-        // Function to display landmarks
-        function renderLandmarks(landmarkList) {
-            const container = document.getElementById('landmarks-container');
+        // Function to display Vatican areas and buildings
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
             container.innerHTML = '';
 
-            landmarkList.forEach(landmark => {
-                const landmarkCard = document.createElement('div');
-                landmarkCard.className = 'landmark-card';
-                landmarkCard.innerHTML = `
-                    <div class="image-container">
-                        <img src="${landmark.image}" alt="${landmark.name.it}" class="landmark-image">
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="${state.image}" alt="${state.name.it}" class="flag-image">
                     </div>
-                    <div class="landmark-info">
-                        <div class="italian-name">${landmark.name.it}</div>
-                        <div class="landmark-name">${landmark.name.en}</div>
-                        <div class="landmark-type">${landmark.type.it} • ${landmark.type.en}</div>
+                    <div class="state-info">
+                        <div class="italian-name">${state.name.it}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.it} • ${state.type.en}</div>
                     </div>
                 `;
                 
-                landmarkCard.addEventListener('click', () => {
-                    window.location.href = landmark.url;
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
                 });
 
-                container.appendChild(landmarkCard);
+                container.appendChild(stateCard);
             });
         }
 
-        // Function to search landmarks
-        function searchLandmarks() {
-            const searchTerm = document.getElementById('landmark-search').value.toLowerCase();
-            const filteredLandmarks = landmarks.filter(landmark => 
-                landmark.name.it.toLowerCase().includes(searchTerm) || 
-                landmark.name.en.toLowerCase().includes(searchTerm) ||
-                landmark.type.it.toLowerCase().includes(searchTerm) ||
-                landmark.type.en.toLowerCase().includes(searchTerm)
+        // Function to search Vatican areas and buildings
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.it.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.it.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
             );
-            renderLandmarks(filteredLandmarks);
+            renderStates(filteredStates);
         }
 
         // Event listeners
-        document.getElementById('landmark-search').addEventListener('input', searchLandmarks);
+        document.getElementById('state-search').addEventListener('input', searchStates);
 
-        // Display all landmarks when page loads
+        // Display all Vatican areas and buildings when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            renderLandmarks(landmarks);
+            renderStates(states);
         });
     </script>
 </body>
