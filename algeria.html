@@ -6,8 +6,9 @@
     <title>QRContraentrega - الجزائر</title>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2980b9;
+            --green: #007A3D; /* Algerian green */
+            --white: #FFFFFF; 
+            --red: #D2101A; /* Algerian red */
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -17,13 +18,14 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, 'Arial', sans-serif;
         }
 
         body {
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(0, 122, 61, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -35,24 +37,35 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--green) 0%, #008B45 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .arabic-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
         }
 
         .wilayas-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
@@ -64,11 +77,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
+            border-top: 4px solid var(--green);
         }
 
         .wilaya-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: #008B45;
         }
 
         .flag-container {
@@ -77,6 +92,18 @@
             align-items: center;
             justify-content: center;
             background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--green) 0%, #008B45 100%);
         }
 
         .flag-image {
@@ -93,9 +120,16 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--green);
         }
 
-        .wilaya-region {
+        .arabic-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .wilaya-type {
             color: #666;
             font-size: 0.9rem;
         }
@@ -105,21 +139,26 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
 
         #wilaya-search {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 45px 12px 20px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
         }
 
         #wilaya-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(0, 122, 61, 0.2);
         }
 
         footer {
@@ -132,10 +171,14 @@
 
         @media (max-width: 768px) {
             .wilayas-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
+                font-size: 2rem;
+            }
+
+            .arabic-title {
                 font-size: 2rem;
             }
 
@@ -150,7 +193,7 @@
             }
 
             .wilayas-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
@@ -161,6 +204,10 @@
             .wilaya-name {
                 font-size: 1rem;
             }
+            
+            .arabic-name {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
@@ -168,79 +215,123 @@
     <div class="container">
         <header>
             <h1>QRContraentrega</h1>
-            <p class="subtitle">اختر ولايتك في الجزائر</p>
+            <div class="arabic-title">الجزائر</div>
+            <div>Algeria</div>
+            <p class="subtitle">اختر ولايتك أو مدينتك / Select your wilaya or city</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="wilaya-search" placeholder="ابحث عن ولاية..." aria-label="ابحث عن ولاية">
+            <input type="text" id="wilaya-search" placeholder="ابحث عن ولاية أو مدينة... / Search for wilaya or city..." aria-label="ابحث عن ولاية أو مدينة">
         </div>
 
         <div class="wilayas-grid" id="wilayas-container">
-            <!-- الولايات ستظهر هنا -->
+            <!-- Wilayas and cities will appear here -->
         </div>
 
         <footer>
-            <p>© QRContraentrega. جميع الحقوق محفوظة.</p>
+            <p>© QRContraentrega. جميع الحقوق محفوظة / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // قائمة ولايات الجزائر
+        // List of Algerian wilayas and major cities with both languages
         const wilayas = [
-            { "name": "الجزائر", "region": "وسط", "url": "https://qrcontraentrega.com/alger" },
-            { "name": "وهران", "region": "غرب", "url": "https://qrcontraentrega.com/oran" },
-            { "name": "قسنطينة", "region": "شرق", "url": "https://qrcontraentrega.com/constantine" },
-            { "name": "عنابة", "region": "شرق", "url": "https://qrcontraentrega.com/annaba" },
-            { "name": "باتنة", "region": "شرق", "url": "https://qrcontraentrega.com/batna" },
-            { "name": "بليدة", "region": "وسط", "url": "https://qrcontraentrega.com/blida" },
-            { "name": "سطيف", "region": "شرق", "url": "https://qrcontraentrega.com/setif" },
-            { "name": "الشلف", "region": "غرب", "url": "https://qrcontraentrega.com/chlef" },
-            { "name": "تيزي وزو", "region": "وسط", "url": "https://qrcontraentrega.com/tiziouzou" },
-            { "name": "بجاية", "region": "شرق", "url": "https://qrcontraentrega.com/bejaia" },
-            { "name": "سكيكدة", "region": "شرق", "url": "https://qrcontraentrega.com/skikda" },
-            { "name": "البليدة", "region": "وسط", "url": "https://qrcontraentrega.com/blida" },
-            { "name": "تيارت", "region": "غرب", "url": "https://qrcontraentrega.com/tiaret" },
-            { "name": "الجلفة", "region": "جنوب", "url": "https://qrcontraentrega.com/djelfa" },
-            { "name": "بشار", "region": "جنوب", "url": "https://qrcontraentrega.com/bechar" },
-            { "name": "البويرة", "region": "وسط", "url": "https://qrcontraentrega.com/bouira" },
-            { "name": "تمنراست", "region": "جنوب", "url": "https://qrcontraentrega.com/tamanrasset" },
-            { "name": "أدرار", "region": "جنوب", "url": "https://qrcontraentrega.com/adrar" },
-            { "name": "غرداية", "region": "جنوب", "url": "https://qrcontraentrega.com/ghardaia" },
-            { "name": "الطارف", "region": "شرق", "url": "https://qrcontraentrega.com/el tarf" },
-            { "name": "سيدي بلعباس", "region": "غرب", "url": "https://qrcontraentrega.com/sidi bel abbes" },
-            { "name": "جيجل", "region": "شرق", "url": "https://qrcontraentrega.com/jijel" },
-            { "name": "مستغانم", "region": "غرب", "url": "https://qrcontraentrega.com/mostaganem" },
-            { "name": "المسيلة", "region": "وسط", "url": "https://qrcontraentrega.com/msila" },
-            { "name": "معسكر", "region": "غرب", "url": "https://qrcontraentrega.com/mascara" },
-            { "name": "ورقلة", "region": "جنوب", "url": "https://qrcontraentrega.com/ouargla" },
-            { "name": "تلمسان", "region": "غرب", "url": "https://qrcontraentrega.com/tlemcen" },
-            { "name": "الوادي", "region": "جنوب", "url": "https://qrcontraentrega.com/el oued" },
-            { "name": "خنشلة", "region": "شرق", "url": "https://qrcontraentrega.com/khenchela" },
-            { "name": "سوق أهراس", "region": "شرق", "url": "https://qrcontraentrega.com/souk ahras" },
-            { "name": "تبسة", "region": "شرق", "url": "https://qrcontraentrega.com/tebessa" },
-            { "name": "الاغواط", "region": "جنوب", "url": "https://qrcontraentrega.com/laghouat" },
-            { "name": "ميلة", "region": "شرق", "url": "https://qrcontraentrega.com/mila" },
-            { "name": "عين الدفلى", "region": "وسط", "url": "https://qrcontraentrega.com/ain defla" },
-            { "name": "النعامة", "region": "غرب", "url": "https://qrcontraentrega.com/naama" },
-            { "name": "عين تموشنت", "region": "غرب", "url": "https://qrcontraentrega.com/ain temouchent" },
-            { "name": "غليزان", "region": "غرب", "url": "https://qrcontraentrega.com/relizane" },
-            { "name": "برج بوعريريج", "region": "شرق", "url": "https://qrcontraentrega.com/bordj bou arreridj" },
-            { "name": "بومرداس", "region": "وسط", "url": "https://qrcontraentrega.com/boumerdes" },
-            { "name": "الطارف", "region": "شرق", "url": "https://qrcontraentrega.com/el tarf" },
-            { "name": "تندوف", "region": "جنوب", "url": "https://qrcontraentrega.com/tindouf" },
-            { "name": "إيليزي", "region": "جنوب", "url": "https://qrcontraentrega.com/illizi" },
-            { "name": "برج باجي مختار", "region": "جنوب", "url": "https://qrcontraentrega.com/bordj badji mokhtar" },
-            { "name": "أولاد جلال", "region": "جنوب", "url": "https://qrcontraentrega.com/ouled djellal" },
-            { "name": "بني عباس", "region": "جنوب", "url": "https://qrcontraentrega.com/beni abbes" },
-            { "name": "إن أميناس", "region": "جنوب", "url": "https://qrcontraentrega.com/in amenas" },
-            { "name": "عين صالح", "region": "جنوب", "url": "https://qrcontraentrega.com/ain salah" },
-            { "name": "عين قزام", "region": "جنوب", "url": "https://qrcontraentrega.com/ain guezzam" },
-            { "name": "تقرت", "region": "جنوب", "url": "https://qrcontraentrega.com/touggourt" },
-            { "name": "جانت", "region": "جنوب", "url": "https://qrcontraentrega.com/djanet" },
-            { "name": "المغير", "region": "جنوب", "url": "https://qrcontraentrega.com/el meghaier" }
+            // Wilayas
+            { 
+                "name": { "ar": "الجزائر", "en": "Algiers" }, 
+                "type": { "ar": "ولاية", "en": "Wilaya" }, 
+                "url": "https://qrcontraentrega.com/algiers", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "وهران", "en": "Oran" }, 
+                "type": { "ar": "ولاية", "en": "Wilaya" }, 
+                "url": "https://qrcontraentrega.com/oran", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "قسنطينة", "en": "Constantine" }, 
+                "type": { "ar": "ولاية", "en": "Wilaya" }, 
+                "url": "https://qrcontraentrega.com/constantine", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "عنابة", "en": "Annaba" }, 
+                "type": { "ar": "ولاية", "en": "Wilaya" }, 
+                "url": "https://qrcontraentrega.com/annaba", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "باتنة", "en": "Batna" }, 
+                "type": { "ar": "ولاية", "en": "Wilaya" }, 
+                "url": "https://qrcontraentrega.com/batna", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "بجاية", "en": "Bejaia" }, 
+                "type": { "ar": "ولاية", "en": "Wilaya" }, 
+                "url": "https://qrcontraentrega.com/bejaia", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "تلمسان", "en": "Tlemcen" }, 
+                "type": { "ar": "ولاية", "en": "Wilaya" }, 
+                "url": "https://qrcontraentrega.com/tlemcen", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "سطيف", "en": "Setif" }, 
+                "type": { "ar": "ولاية", "en": "Wilaya" }, 
+                "url": "https://qrcontraentrega.com/setif", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major cities
+            { 
+                "name": { "ar": "الجزائر العاصمة", "en": "Algiers" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/algiers-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "وهران", "en": "Oran" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/oran-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "قسنطينة", "en": "Constantine" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/constantine-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "عنابة", "en": "Annaba" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/annaba-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "بسكرة", "en": "Biskra" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/biskra", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "تيزي وزو", "en": "Tizi Ouzou" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/tizi-ouzou", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "غرداية", "en": "Ghardaia" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/ghardaia", 
+                "image": "img/c.jpg" 
+            }
         ];
 
-        // دالة لعرض الولايات
+        // Function to display wilayas and cities
         function renderWilayas(wilayaList) {
             const container = document.getElementById('wilayas-container');
             container.innerHTML = '';
@@ -250,11 +341,12 @@
                 wilayaCard.className = 'wilaya-card';
                 wilayaCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${wilaya.name}" class="flag-image">
+                        <img src="${wilaya.image}" alt="${wilaya.name.ar}" class="flag-image">
                     </div>
                     <div class="wilaya-info">
-                        <div class="wilaya-name">${wilaya.name}</div>
-                        <div class="wilaya-region">${wilaya.region}</div>
+                        <div class="arabic-name">${wilaya.name.ar}</div>
+                        <div class="wilaya-name">${wilaya.name.en}</div>
+                        <div class="wilaya-type">${wilaya.type.ar} • ${wilaya.type.en}</div>
                     </div>
                 `;
                 
@@ -266,20 +358,22 @@
             });
         }
 
-        // دالة للبحث عن ولايات
+        // Function to search wilayas and cities
         function searchWilayas() {
             const searchTerm = document.getElementById('wilaya-search').value.toLowerCase();
             const filteredWilayas = wilayas.filter(wilaya => 
-                wilaya.name.toLowerCase().includes(searchTerm) || 
-                wilaya.region.toLowerCase().includes(searchTerm)
+                wilaya.name.ar.toLowerCase().includes(searchTerm) || 
+                wilaya.name.en.toLowerCase().includes(searchTerm) ||
+                wilaya.type.ar.toLowerCase().includes(searchTerm) ||
+                wilaya.type.en.toLowerCase().includes(searchTerm)
             );
             renderWilayas(filteredWilayas);
         }
 
-        // مستمعي الأحداث
+        // Event listeners
         document.getElementById('wilaya-search').addEventListener('input', searchWilayas);
 
-        // عرض جميع الولايات عند تحميل الصفحة
+        // Display all wilayas and cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
             renderWilayas(wilayas);
         });
