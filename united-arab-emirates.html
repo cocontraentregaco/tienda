@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - United Arab Emirates</title>
+    <title>QRContraentrega - الإمارات العربية المتحدة / UAE</title>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2980b9;
+            --red: #CE1126; /* UAE red */
+            --green: #00732F; /* UAE green */
+            --black: #000000; /* UAE black */
+            --white: #FFFFFF;
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -17,13 +19,14 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, 'Arabic Typesetting', sans-serif;
         }
 
         body {
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(0, 115, 47, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -35,28 +38,39 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--red) 0%, #E31B23 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: var(--white);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .arabic-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
         }
 
-        .municipalities-grid {
+        .states-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
-        .municipality-card {
+        .state-card {
             background: white;
             border-radius: 8px;
             overflow: hidden;
@@ -64,11 +78,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
+            border-top: 4px solid var(--green);
         }
 
-        .municipality-card:hover {
+        .state-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--red);
         }
 
         .flag-container {
@@ -77,6 +93,18 @@
             align-items: center;
             justify-content: center;
             background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--green) 0%, var(--red) 100%);
         }
 
         .flag-image {
@@ -85,17 +113,24 @@
             object-fit: contain;
         }
 
-        .municipality-info {
+        .state-info {
             padding: 1.5rem 1rem;
         }
 
-        .municipality-name {
+        .state-name {
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--black);
         }
 
-        .municipality-department {
+        .arabic-name {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .state-type {
             color: #666;
             font-size: 0.9rem;
         }
@@ -105,21 +140,26 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
 
-        #municipality-search {
+        #state-search {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 45px 12px 20px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
         }
 
-        #municipality-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        #state-search:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(0, 115, 47, 0.2);
         }
 
         footer {
@@ -131,11 +171,15 @@
         }
 
         @media (max-width: 768px) {
-            .municipalities-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
+                font-size: 2rem;
+            }
+
+            .arabic-title {
                 font-size: 2rem;
             }
 
@@ -149,17 +193,21 @@
                 padding: 1rem;
             }
 
-            .municipalities-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
-            .municipality-info {
+            .state-info {
                 padding: 1rem 0.5rem;
             }
 
-            .municipality-name {
+            .state-name {
                 font-size: 1rem;
+            }
+            
+            .arabic-name {
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -168,89 +216,161 @@
     <div class="container">
         <header>
             <h1>QRContraentrega</h1>
-            <p class="subtitle">Select your city in United Arab Emirates</p>
+            <div class="arabic-title">الإمارات العربية المتحدة</div>
+            <div>United Arab Emirates</div>
+            <p class="subtitle">اختر إمارة أو مدينة / Select your emirate or city</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="municipality-search" placeholder="Search city..." aria-label="Search city">
+            <input type="text" id="state-search" placeholder="ابحث عن إمارة أو مدينة... / Search for emirate or city..." aria-label="ابحث عن إمارة أو مدينة">
         </div>
 
-        <div class="municipalities-grid" id="municipalities-container">
-            <!-- Cities will be loaded here with JavaScript -->
+        <div class="states-grid" id="states-container">
+            <!-- Emirates and cities will appear here -->
         </div>
 
         <footer>
-            <p>© QRContraentrega. All rights reserved.</p>
+            <p>© QRContraentrega. جميع الحقوق محفوظة / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // List of UAE cities with their emirates
-        const municipalities = [
-            { "name": "Abu Dhabi", "department": "Abu Dhabi", "url": "https://qrcontraentrega.com/abudhabi" },
-            { "name": "Dubai", "department": "Dubai", "url": "https://qrcontraentrega.com/dubai" },
-            { "name": "Sharjah", "department": "Sharjah", "url": "https://qrcontraentrega.com/sharjah" },
-            { "name": "Al Ain", "department": "Abu Dhabi", "url": "https://qrcontraentrega.com/alain" },
-            { "name": "Ajman", "department": "Ajman", "url": "https://qrcontraentrega.com/ajman" },
-            { "name": "Ras Al Khaimah", "department": "Ras Al Khaimah", "url": "https://qrcontraentrega.com/rasalkhaimah" },
-            { "name": "Fujairah", "department": "Fujairah", "url": "https://qrcontraentrega.com/fujairah" },
-            { "name": "Umm Al Quwain", "department": "Umm Al Quwain", "url": "https://qrcontraentrega.com/ummalquwain" },
-            { "name": "Khor Fakkan", "department": "Sharjah", "url": "https://qrcontraentrega.com/khorfakkan" },
-            { "name": "Dibba Al-Fujairah", "department": "Fujairah", "url": "https://qrcontraentrega.com/dibba" },
-            { "name": "Ruwais", "department": "Abu Dhabi", "url": "https://qrcontraentrega.com/ruwais" },
-            { "name": "Ghayathi", "department": "Abu Dhabi", "url": "https://qrcontraentrega.com/ghayathi" },
-            { "name": "Ar-Rams", "department": "Ras Al Khaimah", "url": "https://qrcontraentrega.com/arrams" },
-            { "name": "Dhaid", "department": "Sharjah", "url": "https://qrcontraentrega.com/dhaid" },
-            { "name": "Jebel Ali", "department": "Dubai", "url": "https://qrcontraentrega.com/jebelali" },
-            { "name": "Al Madam", "department": "Sharjah", "url": "https://qrcontraentrega.com/almadam" },
-            { "name": "Hatta", "department": "Dubai", "url": "https://qrcontraentrega.com/hatta" },
-            { "name": "Masafi", "department": "Fujairah", "url": "https://qrcontraentrega.com/masafi" },
-            { "name": "Al Dhaid", "department": "Sharjah", "url": "https://qrcontraentrega.com/aldhaid" },
-            { "name": "Al Sila", "department": "Abu Dhabi", "url": "https://qrcontraentrega.com/alsila" }
+        // List of UAE emirates and major cities with both languages
+        const states = [
+            // Emirates
+            { 
+                "name": { "ar": "أبو ظبي", "en": "Abu Dhabi" }, 
+                "type": { "ar": "إمارة", "en": "Emirate" }, 
+                "url": "https://qrcontraentrega.com/abu-dhabi", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "دبي", "en": "Dubai" }, 
+                "type": { "ar": "إمارة", "en": "Emirate" }, 
+                "url": "https://qrcontraentrega.com/dubai", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "الشارقة", "en": "Sharjah" }, 
+                "type": { "ar": "إمارة", "en": "Emirate" }, 
+                "url": "https://qrcontraentrega.com/sharjah", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "عجمان", "en": "Ajman" }, 
+                "type": { "ar": "إمارة", "en": "Emirate" }, 
+                "url": "https://qrcontraentrega.com/ajman", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "أم القيوين", "en": "Umm Al Quwain" }, 
+                "type": { "ar": "إمارة", "en": "Emirate" }, 
+                "url": "https://qrcontraentrega.com/umm-al-quwain", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "رأس الخيمة", "en": "Ras Al Khaimah" }, 
+                "type": { "ar": "إمارة", "en": "Emirate" }, 
+                "url": "https://qrcontraentrega.com/ras-al-khaimah", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "الفجيرة", "en": "Fujairah" }, 
+                "type": { "ar": "إمارة", "en": "Emirate" }, 
+                "url": "https://qrcontraentrega.com/fujairah", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major cities
+            { 
+                "name": { "ar": "مدينة أبو ظبي", "en": "Abu Dhabi City" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/abu-dhabi-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "دبي", "en": "Dubai" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/dubai-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "الشارقة", "en": "Sharjah" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/sharjah-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "العين", "en": "Al Ain" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/al-ain", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "خليفة مدينة أ", "en": "Khalifa City A" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/khalifa-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "دبي مارينا", "en": "Dubai Marina" }, 
+                "type": { "ar": "منطقة", "en": "Area" }, 
+                "url": "https://qrcontraentrega.com/dubai-marina", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "بر دبي", "en": "Bur Dubai" }, 
+                "type": { "ar": "منطقة", "en": "Area" }, 
+                "url": "https://qrcontraentrega.com/bur-dubai", 
+                "image": "img/c.jpg" 
+            }
         ];
 
-        // Function to render cities
-        function renderMunicipalities(municipalityList) {
-            const container = document.getElementById('municipalities-container');
+        // Function to display emirates and cities
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
             container.innerHTML = '';
 
-            municipalityList.forEach(municipality => {
-                const municipalityCard = document.createElement('div');
-                municipalityCard.className = 'municipality-card';
-                municipalityCard.innerHTML = `
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${municipality.name}" class="flag-image">
+                        <img src="${state.image}" alt="${state.name.ar}" class="flag-image">
                     </div>
-                    <div class="municipality-info">
-                        <div class="municipality-name">${municipality.name}</div>
-                        <div class="municipality-department">${municipality.department}</div>
+                    <div class="state-info">
+                        <div class="arabic-name">${state.name.ar}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.ar} • ${state.type.en}</div>
                     </div>
                 `;
                 
-                municipalityCard.addEventListener('click', () => {
-                    window.location.href = municipality.url;
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
                 });
 
-                container.appendChild(municipalityCard);
+                container.appendChild(stateCard);
             });
         }
 
-        // Function to search cities
-        function searchMunicipalities() {
-            const searchTerm = document.getElementById('municipality-search').value.toLowerCase();
-            const filteredMunicipalities = municipalities.filter(municipality => 
-                municipality.name.toLowerCase().includes(searchTerm) || 
-                municipality.department.toLowerCase().includes(searchTerm)
+        // Function to search emirates and cities
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.ar.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.ar.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
             );
-            renderMunicipalities(filteredMunicipalities);
+            renderStates(filteredStates);
         }
 
         // Event listeners
-        document.getElementById('municipality-search').addEventListener('input', searchMunicipalities);
+        document.getElementById('state-search').addEventListener('input', searchStates);
 
-        // Render all cities when page loads
+        // Display all emirates and cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            renderMunicipalities(municipalities);
+            renderStates(states);
         });
     </script>
 </body>
