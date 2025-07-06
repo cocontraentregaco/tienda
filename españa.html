@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - España</title>
+    <title>QRContraentrega - España / Spain</title>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2980b9;
+            --red: #AA151B; /* Spanish red */
+            --yellow: #F1BF00; /* Spanish yellow */
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -17,13 +17,14 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
         }
 
         body {
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(170, 21, 27, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -35,28 +36,39 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--red) 0%, var(--yellow) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .spanish-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
         }
 
-        .municipalities-grid {
+        .states-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
-        .municipality-card {
+        .state-card {
             background: white;
             border-radius: 8px;
             overflow: hidden;
@@ -64,11 +76,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
+            border-top: 4px solid var(--red);
         }
 
-        .municipality-card:hover {
+        .state-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--yellow);
         }
 
         .flag-container {
@@ -77,6 +91,18 @@
             align-items: center;
             justify-content: center;
             background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--red) 0%, var(--yellow) 100%);
         }
 
         .flag-image {
@@ -85,17 +111,24 @@
             object-fit: contain;
         }
 
-        .municipality-info {
+        .state-info {
             padding: 1.5rem 1rem;
         }
 
-        .municipality-name {
+        .state-name {
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--red);
         }
 
-        .municipality-department {
+        .spanish-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .state-type {
             color: #666;
             font-size: 0.9rem;
         }
@@ -105,21 +138,26 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
 
-        #municipality-search {
+        #state-search {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 20px 12px 45px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
         }
 
-        #municipality-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        #state-search:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(170, 21, 27, 0.2);
         }
 
         footer {
@@ -131,12 +169,16 @@
         }
 
         @media (max-width: 768px) {
-            .municipalities-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
                 font-size: 2rem;
+            }
+
+            .spanish-title {
+                font-size: 1.8rem;
             }
 
             .flag-container {
@@ -149,17 +191,21 @@
                 padding: 1rem;
             }
 
-            .municipalities-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
-            .municipality-info {
+            .state-info {
                 padding: 1rem 0.5rem;
             }
 
-            .municipality-name {
+            .state-name {
                 font-size: 1rem;
+            }
+            
+            .spanish-name {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -167,110 +213,306 @@
 <body>
     <div class="container">
         <header>
-            <h1>QRCONTRAENTREGA</h1>
-            <p class="subtitle">Selecciona tu ciudad en España</p>
+            <h1>QRContraentrega</h1>
+            <div class="spanish-title">España</div>
+            <div>Spain</div>
+            <p class="subtitle">Selecciona tu comunidad autónoma o ciudad / Select your autonomous community or city</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="municipality-search" placeholder="Buscar ciudad..." aria-label="Buscar ciudad">
+            <input type="text" id="state-search" placeholder="Buscar comunidad o ciudad... / Search for community or city..." aria-label="Buscar comunidad o ciudad">
         </div>
 
-        <div class="municipalities-grid" id="municipalities-container">
-            <!-- Las ciudades se cargarán aquí con JavaScript -->
+        <div class="states-grid" id="states-container">
+            <!-- Autonomous communities and cities will appear here -->
         </div>
 
         <footer>
-            <p>© QRContraentrega. Todos los derechos reservados.</p>
+            <p>© QRContraentrega. Todos los derechos reservados / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // Lista de ciudades de España con sus comunidades autónomas
-        const municipalities = [
-            { "name": "Madrid", "department": "Comunidad de Madrid", "url": "https://qrcontraentrega.com/madrid" },
-            { "name": "Barcelona", "department": "Cataluña", "url": "https://qrcontraentrega.com/barcelona" },
-            { "name": "Valencia", "department": "Comunidad Valenciana", "url": "https://qrcontraentrega.com/valencia" },
-            { "name": "Sevilla", "department": "Andalucía", "url": "https://qrcontraentrega.com/sevilla" },
-            { "name": "Zaragoza", "department": "Aragón", "url": "https://qrcontraentrega.com/zaragoza" },
-            { "name": "Málaga", "department": "Andalucía", "url": "https://qrcontraentrega.com/malaga" },
-            { "name": "Murcia", "department": "Región de Murcia", "url": "https://qrcontraentrega.com/murcia" },
-            { "name": "Palma de Mallorca", "department": "Islas Baleares", "url": "https://qrcontraentrega.com/palma" },
-            { "name": "Las Palmas", "department": "Canarias", "url": "https://qrcontraentrega.com/laspalmas" },
-            { "name": "Bilbao", "department": "País Vasco", "url": "https://qrcontraentrega.com/bilbao" },
-            { "name": "Alicante", "department": "Comunidad Valenciana", "url": "https://qrcontraentrega.com/alicante" },
-            { "name": "Córdoba", "department": "Andalucía", "url": "https://qrcontraentrega.com/cordoba" },
-            { "name": "Valladolid", "department": "Castilla y León", "url": "https://qrcontraentrega.com/valladolid" },
-            { "name": "Vigo", "department": "Galicia", "url": "https://qrcontraentrega.com/vigo" },
-            { "name": "Gijón", "department": "Asturias", "url": "https://qrcontraentrega.com/gijon" },
-            { "name": "Hospitalet", "department": "Cataluña", "url": "https://qrcontraentrega.com/hospitalet" },
-            { "name": "La Coruña", "department": "Galicia", "url": "https://qrcontraentrega.com/lacoruna" },
-            { "name": "Granada", "department": "Andalucía", "url": "https://qrcontraentrega.com/granada" },
-            { "name": "Vitoria", "department": "País Vasco", "url": "https://qrcontraentrega.com/vitoria" },
-            { "name": "Elche", "department": "Comunidad Valenciana", "url": "https://qrcontraentrega.com/elche" },
-            { "name": "Oviedo", "department": "Asturias", "url": "https://qrcontraentrega.com/oviedo" },
-            { "name": "Santa Cruz de Tenerife", "department": "Canarias", "url": "https://qrcontraentrega.com/tenerife" },
-            { "name": "Pamplona", "department": "Navarra", "url": "https://qrcontraentrega.com/pamplona" },
-            { "name": "Santander", "department": "Cantabria", "url": "https://qrcontraentrega.com/santander" },
-            { "name": "Salamanca", "department": "Castilla y León", "url": "https://qrcontraentrega.com/salamanca" },
-            { "name": "Albacete", "department": "Castilla-La Mancha", "url": "https://qrcontraentrega.com/albacete" },
-            { "name": "Logroño", "department": "La Rioja", "url": "https://qrcontraentrega.com/logrono" },
-            { "name": "Badajoz", "department": "Extremadura", "url": "https://qrcontraentrega.com/badajoz" },
-            { "name": "San Sebastián", "department": "País Vasco", "url": "https://qrcontraentrega.com/sansebastian" },
-            { "name": "León", "department": "Castilla y León", "url": "https://qrcontraentrega.com/leon" },
-            { "name": "Tarragona", "department": "Cataluña", "url": "https://qrcontraentrega.com/tarragona" },
-            { "name": "Cádiz", "department": "Andalucía", "url": "https://qrcontraentrega.com/cadiz" },
-            { "name": "Lleida", "department": "Cataluña", "url": "https://qrcontraentrega.com/lleida" },
-            { "name": "Marbella", "department": "Andalucía", "url": "https://qrcontraentrega.com/marbella" },
-            { "name": "Jaén", "department": "Andalucía", "url": "https://qrcontraentrega.com/jaen" },
-            { "name": "Almería", "department": "Andalucía", "url": "https://qrcontraentrega.com/almeria" },
-            { "name": "Ourense", "department": "Galicia", "url": "https://qrcontraentrega.com/ourense" },
-            { "name": "Mataró", "department": "Cataluña", "url": "https://qrcontraentrega.com/mataro" },
-            { "name": "Algeciras", "department": "Andalucía", "url": "https://qrcontraentrega.com/algeciras" },
-            { "name": "Burgos", "department": "Castilla y León", "url": "https://qrcontraentrega.com/burgos" }
+        // List of Spanish autonomous communities and major cities with both languages
+        const states = [
+            // Autonomous Communities
+            { 
+                "name": { "es": "Andalucía", "en": "Andalusia" }, 
+                "type": { "es": "Comunidad Autónoma", "en": "Autonomous Community" }, 
+                "url": "https://qrcontraentrega.com/andalucia", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Aragón", "en": "Aragon" }, 
+                "type": { "es": "Comunidad Autónoma", "en": "Autonomous Community" }, 
+                "url": "https://qrcontraentrega.com/aragon", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Asturias", "en": "Asturias" }, 
+                "type": { "es": "Principado", "en": "Principality" }, 
+                "url": "https://qrcontraentrega.com/asturias", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Baleares", "en": "Balearic Islands" }, 
+                "type": { "es": "Comunidad Autónoma", "en": "Autonomous Community" }, 
+                "url": "https://qrcontraentrega.com/baleares", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Canarias", "en": "Canary Islands" }, 
+                "type": { "es": "Comunidad Autónoma", "en": "Autonomous Community" }, 
+                "url": "https://qrcontraentrega.com/canarias", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Cantabria", "en": "Cantabria" }, 
+                "type": { "es": "Comunidad Autónoma", "en": "Autonomous Community" }, 
+                "url": "https://qrcontraentrega.com/cantabria", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Castilla-La Mancha", "en": "Castilla-La Mancha" }, 
+                "type": { "es": "Comunidad Autónoma", "en": "Autonomous Community" }, 
+                "url": "https://qrcontraentrega.com/castilla-la-mancha", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Castilla y León", "en": "Castile and León" }, 
+                "type": { "es": "Comunidad Autónoma", "en": "Autonomous Community" }, 
+                "url": "https://qrcontraentrega.com/castilla-y-leon", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Cataluña", "en": "Catalonia" }, 
+                "type": { "es": "Comunidad Autónoma", "en": "Autonomous Community" }, 
+                "url": "https://qrcontraentrega.com/cataluna", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Comunidad Valenciana", "en": "Valencian Community" }, 
+                "type": { "es": "Comunidad Autónoma", "en": "Autonomous Community" }, 
+                "url": "https://qrcontraentrega.com/comunidad-valenciana", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Extremadura", "en": "Extremadura" }, 
+                "type": { "es": "Comunidad Autónoma", "en": "Autonomous Community" }, 
+                "url": "https://qrcontraentrega.com/extremadura", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Galicia", "en": "Galicia" }, 
+                "type": { "es": "Comunidad Autónoma", "en": "Autonomous Community" }, 
+                "url": "https://qrcontraentrega.com/galicia", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Madrid", "en": "Madrid" }, 
+                "type": { "es": "Comunidad Autónoma", "en": "Autonomous Community" }, 
+                "url": "https://qrcontraentrega.com/madrid", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Murcia", "en": "Murcia" }, 
+                "type": { "es": "Comunidad Autónoma", "en": "Autonomous Community" }, 
+                "url": "https://qrcontraentrega.com/murcia", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Navarra", "en": "Navarre" }, 
+                "type": { "es": "Comunidad Foral", "en": "Chartered Community" }, 
+                "url": "https://qrcontraentrega.com/navarra", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "País Vasco", "en": "Basque Country" }, 
+                "type": { "es": "Comunidad Autónoma", "en": "Autonomous Community" }, 
+                "url": "https://qrcontraentrega.com/pais-vasco", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "La Rioja", "en": "La Rioja" }, 
+                "type": { "es": "Comunidad Autónoma", "en": "Autonomous Community" }, 
+                "url": "https://qrcontraentrega.com/la-rioja", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Ceuta", "en": "Ceuta" }, 
+                "type": { "es": "Ciudad Autónoma", "en": "Autonomous City" }, 
+                "url": "https://qrcontraentrega.com/ceuta", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Melilla", "en": "Melilla" }, 
+                "type": { "es": "Ciudad Autónoma", "en": "Autonomous City" }, 
+                "url": "https://qrcontraentrega.com/melilla", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major Cities
+            { 
+                "name": { "es": "Madrid", "en": "Madrid" }, 
+                "type": { "es": "Capital", "en": "Capital" }, 
+                "url": "https://qrcontraentrega.com/madrid-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Barcelona", "en": "Barcelona" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/barcelona", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Valencia", "en": "Valencia" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/valencia", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Sevilla", "en": "Seville" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/sevilla", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Zaragoza", "en": "Zaragoza" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/zaragoza", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Málaga", "en": "Malaga" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/malaga", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Murcia", "en": "Murcia" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/murcia-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Palma de Mallorca", "en": "Palma de Mallorca" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/palma", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Las Palmas", "en": "Las Palmas" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/las-palmas", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Bilbao", "en": "Bilbao" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/bilbao", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Alicante", "en": "Alicante" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/alicante", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Córdoba", "en": "Cordoba" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/cordoba", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Valladolid", "en": "Valladolid" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/valladolid", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Vigo", "en": "Vigo" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/vigo", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Gijón", "en": "Gijon" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/gijon", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "L'Hospitalet", "en": "L'Hospitalet" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/hospitalet", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Vitoria-Gasteiz", "en": "Vitoria-Gasteiz" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/vitoria", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "A Coruña", "en": "A Coruña" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/a-coruna", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Granada", "en": "Granada" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/granada", 
+                "image": "img/c.jpg" 
+            }
         ];
 
-        // Función para renderizar las ciudades
-        function renderMunicipalities(municipalityList) {
-            const container = document.getElementById('municipalities-container');
+        // Function to display autonomous communities and cities
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
             container.innerHTML = '';
 
-            municipalityList.forEach(municipality => {
-                const municipalityCard = document.createElement('div');
-                municipalityCard.className = 'municipality-card';
-                municipalityCard.innerHTML = `
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${municipality.name}" class="flag-image">
+                        <img src="${state.image}" alt="${state.name.es}" class="flag-image">
                     </div>
-                    <div class="municipality-info">
-                        <div class="municipality-name">${municipality.name}</div>
-                        <div class="municipality-department">${municipality.department}</div>
+                    <div class="state-info">
+                        <div class="spanish-name">${state.name.es}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.es} • ${state.type.en}</div>
                     </div>
                 `;
                 
-                municipalityCard.addEventListener('click', () => {
-                    window.location.href = municipality.url;
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
                 });
 
-                container.appendChild(municipalityCard);
+                container.appendChild(stateCard);
             });
         }
 
-        // Función para buscar ciudades
-        function searchMunicipalities() {
-            const searchTerm = document.getElementById('municipality-search').value.toLowerCase();
-            const filteredMunicipalities = municipalities.filter(municipality => 
-                municipality.name.toLowerCase().includes(searchTerm) || 
-                municipality.department.toLowerCase().includes(searchTerm)
+        // Function to search autonomous communities and cities
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.es.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.es.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
             );
-            renderMunicipalities(filteredMunicipalities);
+            renderStates(filteredStates);
         }
 
         // Event listeners
-        document.getElementById('municipality-search').addEventListener('input', searchMunicipalities);
+        document.getElementById('state-search').addEventListener('input', searchStates);
 
-        // Renderizar todas las ciudades al cargar la página
+        // Display all autonomous communities and cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            renderMunicipalities(municipalities);
+            renderStates(states);
         });
     </script>
 </body>
