@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - المملكة العربية السعودية / Saudi Arabia</title>
+    <style>
+        :root {
+            --green: #245C36; /* Saudi green */
+            --white: #FFFFFF;
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(36, 92, 54, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--green) 0%, #1a4729 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .arabic-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-family: 'Arial', sans-serif;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .state-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+            border-top: 4px solid var(--green);
+        }
+
+        .state-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: #1a4729;
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--green) 0%, #1a4729 100%);
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .state-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .state-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--green);
+        }
+
+        .arabic-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .state-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        #state-search {
+            width: 100%;
+            padding: 12px 45px 12px 20px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
+        }
+
+        #state-search:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(36, 92, 54, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+            font-family: 'Arial', sans-serif;
+        }
+
+        @media (max-width: 768px) {
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .arabic-title {
+                font-size: 2rem;
+            }
+
+            .flag-container {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+
+            .state-info {
+                padding: 1rem 0.5rem;
+            }
+
+            .state-name {
+                font-size: 1rem;
+            }
+            
+            .arabic-name {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QRContraentrega</h1>
+            <div class="arabic-title">المملكة العربية السعودية</div>
+            <div>Saudi Arabia</div>
+            <p class="subtitle">اختر منطقة أو مدينة / Select your region or city</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="state-search" placeholder="ابحث عن منطقة أو مدينة... / Search for region or city..." aria-label="ابحث عن منطقة أو مدينة">
+        </div>
+
+        <div class="states-grid" id="states-container">
+            <!-- Regions and cities will appear here -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. جميع الحقوق محفوظة / All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // List of Saudi regions and major cities with both languages
+        const states = [
+            // Regions
+            { 
+                "name": { "ar": "الرياض", "en": "Riyadh" }, 
+                "type": { "ar": "منطقة", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/riyadh-region", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "مكة المكرمة", "en": "Makkah" }, 
+                "type": { "ar": "منطقة", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/makkah-region", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "المدينة المنورة", "en": "Madinah" }, 
+                "type": { "ar": "منطقة", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/madinah-region", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "الشرقية", "en": "Eastern Province" }, 
+                "type": { "ar": "منطقة", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/eastern-region", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "عسير", "en": "Asir" }, 
+                "type": { "ar": "منطقة", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/asir-region", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "تبوك", "en": "Tabuk" }, 
+                "type": { "ar": "منطقة", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/tabuk-region", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "حائل", "en": "Hail" }, 
+                "type": { "ar": "منطقة", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/hail-region", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "الحدود الشمالية", "en": "Northern Borders" }, 
+                "type": { "ar": "منطقة", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/northern-borders", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "جازان", "en": "Jazan" }, 
+                "type": { "ar": "منطقة", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/jazan-region", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "نجران", "en": "Najran" }, 
+                "type": { "ar": "منطقة", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/najran-region", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "الباحة", "en": "Bahah" }, 
+                "type": { "ar": "منطقة", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/bahah-region", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "الجوف", "en": "Jawf" }, 
+                "type": { "ar": "منطقة", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/jawf-region", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "القصيم", "en": "Qassim" }, 
+                "type": { "ar": "منطقة", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/qassim-region", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major cities
+            { 
+                "name": { "ar": "الرياض", "en": "Riyadh" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/riyadh-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "جدة", "en": "Jeddah" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/jeddah", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "مكة المكرمة", "en": "Makkah" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/makkah-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "المدينة المنورة", "en": "Madinah" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/madinah-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "الدمام", "en": "Dammam" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/dammam", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "الخبر", "en": "Khobar" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/khobar", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "الطائف", "en": "Taif" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/taif", 
+                "image": "img/c.jpg" 
+            }
+        ];
+
+        // Function to display regions and cities
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
+            container.innerHTML = '';
+
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="${state.image}" alt="${state.name.ar}" class="flag-image">
+                    </div>
+                    <div class="state-info">
+                        <div class="arabic-name">${state.name.ar}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.ar} • ${state.type.en}</div>
+                    </div>
+                `;
+                
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
+                });
+
+                container.appendChild(stateCard);
+            });
+        }
+
+        // Function to search regions and cities
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.ar.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.ar.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
+            );
+            renderStates(filteredStates);
+        }
+
+        // Event listeners
+        document.getElementById('state-search').addEventListener('input', searchStates);
+
+        // Display all regions and cities when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStates(states);
+        });
+    </script>
+</body>
+</html>
