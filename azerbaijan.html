@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="az" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - Azərbaycan</title>
+    <title>QRContraentrega - Azərbaycan / Azerbaijan</title>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2980b9;
+            --red: #009F4D; /* Azerbaijani green */
+            --blue: #00B5E2; /* Azerbaijani blue */
+            --white: #FFFFFF; 
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -17,13 +18,14 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Arial', 'Helvetica Neue', sans-serif;
         }
 
         body {
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(0, 159, 77, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -35,24 +37,35 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--red) 0%, var(--blue) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .azerbaijani-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
         }
 
         .states-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
@@ -64,11 +77,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
+            border-top: 4px solid var(--red);
         }
 
         .state-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--blue);
         }
 
         .flag-container {
@@ -77,6 +92,18 @@
             align-items: center;
             justify-content: center;
             background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--red) 0%, var(--blue) 100%);
         }
 
         .flag-image {
@@ -93,6 +120,13 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--red);
+        }
+
+        .azerbaijani-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
         }
 
         .state-type {
@@ -105,21 +139,26 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
 
         #state-search {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 20px 12px 45px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
         }
 
         #state-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(0, 159, 77, 0.2);
         }
 
         footer {
@@ -132,11 +171,15 @@
 
         @media (max-width: 768px) {
             .states-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
                 font-size: 2rem;
+            }
+
+            .azerbaijani-title {
+                font-size: 1.8rem;
             }
 
             .flag-container {
@@ -150,7 +193,7 @@
             }
 
             .states-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
@@ -161,6 +204,10 @@
             .state-name {
                 font-size: 1rem;
             }
+            
+            .azerbaijani-name {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
@@ -168,11 +215,13 @@
     <div class="container">
         <header>
             <h1>QRContraentrega</h1>
-            <p class="subtitle">Azərbaycanın rayon və şəhərlərini seçin</p>
+            <div class="azerbaijani-title">Azərbaycan</div>
+            <div>Azerbaijan</div>
+            <p class="subtitle">Rayon və ya şəhər seçin / Select your region or city</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="state-search" placeholder="Rayon və ya şəhər axtar..." aria-label="Rayon və ya şəhər axtar">
+            <input type="text" id="state-search" placeholder="Rayon və ya şəhər axtar... / Search for region or city..." aria-label="Rayon və ya şəhər axtar">
         </div>
 
         <div class="states-grid" id="states-container">
@@ -180,80 +229,100 @@
         </div>
 
         <footer>
-            <p>© QRContraentrega. Bütün hüquqlar qorunur.</p>
+            <p>© QRContraentrega. Bütün hüquqlar qorunur / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // List of Azerbaijan regions and cities
+        // List of Azerbaijani regions and major cities with both languages
         const states = [
-            { "name": "Bakı", "type": "Şəhər", "url": "https://qrcontraentrega.com/baku" },
-            { "name": "Gəncə", "type": "Şəhər", "url": "https://qrcontraentrega.com/ganja" },
-            { "name": "Sumqayıt", "type": "Şəhər", "url": "https://qrcontraentrega.com/sumgait" },
-            { "name": "Abşeron", "type": "Rayon", "url": "https://qrcontraentrega.com/absh" },
-            { "name": "Ağcabədi", "type": "Rayon", "url": "https://qrcontraentrega.com/agcab" },
-            { "name": "Ağdam", "type": "Rayon", "url": "https://qrcontraentrega.com/agdam" },
-            { "name": "Ağdaş", "type": "Rayon", "url": "https://qrcontraentrega.com/agdas" },
-            { "name": "Ağstafa", "type": "Rayon", "url": "https://qrcontraentrega.com/agstafa" },
-            { "name": "Ağsu", "type": "Rayon", "url": "https://qrcontraentrega.com/agsu" },
-            { "name": "Astara", "type": "Rayon", "url": "https://qrcontraentrega.com/astara" },
-            { "name": "Balakən", "type": "Rayon", "url": "https://qrcontraentrega.com/balaken" },
-            { "name": "Bərdə", "type": "Rayon", "url": "https://qrcontraentrega.com/barda" },
-            { "name": "Beyləqan", "type": "Rayon", "url": "https://qrcontraentrega.com/beylaqan" },
-            { "name": "Biləsuvar", "type": "Rayon", "url": "https://qrcontraentrega.com/bilesuvar" },
-            { "name": "Cəbrayıl", "type": "Rayon", "url": "https://qrcontraentrega.com/jabrail" },
-            { "name": "Cəlilabad", "type": "Rayon", "url": "https://qrcontraentrega.com/jalilabad" },
-            { "name": "Daşkəsən", "type": "Rayon", "url": "https://qrcontraentrega.com/dashkesen" },
-            { "name": "Füzuli", "type": "Rayon", "url": "https://qrcontraentrega.com/fuzuli" },
-            { "name": "Gədəbəy", "type": "Rayon", "url": "https://qrcontraentrega.com/gadabay" },
-            { "name": "Goranboy", "type": "Rayon", "url": "https://qrcontraentrega.com/goranboy" },
-            { "name": "Göyçay", "type": "Rayon", "url": "https://qrcontraentrega.com/goychay" },
-            { "name": "Hacıqabul", "type": "Rayon", "url": "https://qrcontraentrega.com/haciqabul" },
-            { "name": "İmişli", "type": "Rayon", "url": "https://qrcontraentrega.com/imishli" },
-            { "name": "İsmayıllı", "type": "Rayon", "url": "https://qrcontraentrega.com/ismayilli" },
-            { "name": "Kəlbəcər", "type": "Rayon", "url": "https://qrcontraentrega.com/kalbajar" },
-            { "name": "Kürdəmir", "type": "Rayon", "url": "https://qrcontraentrega.com/kurdamir" },
-            { "name": "Laçın", "type": "Rayon", "url": "https://qrcontraentrega.com/lachin" },
-            { "name": "Lənkəran", "type": "Rayon", "url": "https://qrcontraentrega.com/lankaran" },
-            { "name": "Lerik", "type": "Rayon", "url": "https://qrcontraentrega.com/lerik" },
-            { "name": "Masallı", "type": "Rayon", "url": "https://qrcontraentrega.com/masally" },
-            { "name": "Neftçala", "type": "Rayon", "url": "https://qrcontraentrega.com/neftchala" },
-            { "name": "Oğuz", "type": "Rayon", "url": "https://qrcontraentrega.com/oguz" },
-            { "name": "Qəbələ", "type": "Rayon", "url": "https://qrcontraentrega.com/qabala" },
-            { "name": "Qax", "type": "Rayon", "url": "https://qrcontraentrega.com/qax" },
-            { "name": "Qazax", "type": "Rayon", "url": "https://qrcontraentrega.com/qazax" },
-            { "name": "Qobustan", "type": "Rayon", "url": "https://qrcontraentrega.com/qobustan" },
-            { "name": "Quba", "type": "Rayon", "url": "https://qrcontraentrega.com/quba" },
-            { "name": "Qubadlı", "type": "Rayon", "url": "https://qrcontraentrega.com/qubadli" },
-            { "name": "Qusar", "type": "Rayon", "url": "https://qrcontraentrega.com/qusar" },
-            { "name": "Saatlı", "type": "Rayon", "url": "https://qrcontraentrega.com/saatly" },
-            { "name": "Sabirabad", "type": "Rayon", "url": "https://qrcontraentrega.com/sabirabad" },
-            { "name": "Şəki", "type": "Rayon", "url": "https://qrcontraentrega.com/shaki" },
-            { "name": "Salyan", "type": "Rayon", "url": "https://qrcontraentrega.com/salyan" },
-            { "name": "Şamaxı", "type": "Rayon", "url": "https://qrcontraentrega.com/shamakhi" },
-            { "name": "Şəmkir", "type": "Rayon", "url": "https://qrcontraentrega.com/shamkir" },
-            { "name": "Samux", "type": "Rayon", "url": "https://qrcontraentrega.com/samukh" },
-            { "name": "Siyəzən", "type": "Rayon", "url": "https://qrcontraentrega.com/siyazan" },
-            { "name": "Şuşa", "type": "Rayon", "url": "https://qrcontraentrega.com/shusha" },
-            { "name": "Tərtər", "type": "Rayon", "url": "https://qrcontraentrega.com/tartar" },
-            { "name": "Tovuz", "type": "Rayon", "url": "https://qrcontraentrega.com/tovuz" },
-            { "name": "Ucar", "type": "Rayon", "url": "https://qrcontraentrega.com/ucar" },
-            { "name": "Xaçmaz", "type": "Rayon", "url": "https://qrcontraentrega.com/xachmaz" },
-            { "name": "Xızı", "type": "Rayon", "url": "https://qrcontraentrega.com/xizi" },
-            { "name": "Xocalı", "type": "Rayon", "url": "https://qrcontraentrega.com/xocali" },
-            { "name": "Xocavənd", "type": "Rayon", "url": "https://qrcontraentrega.com/xocavend" },
-            { "name": "Yardımlı", "type": "Rayon", "url": "https://qrcontraentrega.com/yardimli" },
-            { "name": "Yevlax", "type": "Rayon", "url": "https://qrcontraentrega.com/yevlax" },
-            { "name": "Zəngilan", "type": "Rayon", "url": "https://qrcontraentrega.com/zangilan" },
-            { "name": "Zaqatala", "type": "Rayon", "url": "https://qrcontraentrega.com/zaqatala" },
-            { "name": "Zərdab", "type": "Rayon", "url": "https://qrcontraentrega.com/zerdab" },
-            { "name": "Naxçıvan", "type": "Muxtar Respublika", "url": "https://qrcontraentrega.com/nakhchivan" },
-            { "name": "Şərur", "type": "Rayon", "url": "https://qrcontraentrega.com/sharur" },
-            { "name": "Babək", "type": "Rayon", "url": "https://qrcontraentrega.com/babek" },
-            { "name": "Culfa", "type": "Rayon", "url": "https://qrcontraentrega.com/julfa" },
-            { "name": "Ordubad", "type": "Rayon", "url": "https://qrcontraentrega.com/ordubad" },
-            { "name": "Sədərək", "type": "Rayon", "url": "https://qrcontraentrega.com/sadarak" },
-            { "name": "Kəngərli", "type": "Rayon", "url": "https://qrcontraentrega.com/kangarli" }
+            // Regions
+            { 
+                "name": { "az": "Bakı", "en": "Baku" }, 
+                "type": { "az": "Şəhər", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/baku", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "az": "Gəncə", "en": "Ganja" }, 
+                "type": { "az": "Şəhər", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/ganja", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "az": "Sumqayıt", "en": "Sumgait" }, 
+                "type": { "az": "Şəhər", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/sumgait", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "az": "Abşeron", "en": "Absheron" }, 
+                "type": { "az": "Rayon", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/absheron", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "az": "Qarabağ", "en": "Karabakh" }, 
+                "type": { "az": "Region", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/karabakh", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "az": "Şəki", "en": "Shaki" }, 
+                "type": { "az": "Şəhər", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/shaki", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "az": "Naxçıvan", "en": "Nakhchivan" }, 
+                "type": { "az": "Muxtar Respublika", "en": "Autonomous Republic" }, 
+                "url": "https://qrcontraentrega.com/nakhchivan", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "az": "Lənkəran", "en": "Lankaran" }, 
+                "type": { "az": "Şəhər", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/lankaran", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Other regions
+            { 
+                "name": { "az": "Quba", "en": "Quba" }, 
+                "type": { "az": "Rayon", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/quba", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "az": "Şirvan", "en": "Shirvan" }, 
+                "type": { "az": "Şəhər", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/shirvan", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "az": "Mingəçevir", "en": "Mingachevir" }, 
+                "type": { "az": "Şəhər", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/mingachevir", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "az": "Xaçmaz", "en": "Khachmaz" }, 
+                "type": { "az": "Rayon", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/khachmaz", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "az": "Şamaxı", "en": "Shamakhi" }, 
+                "type": { "az": "Rayon", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/shamakhi", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "az": "Yevlax", "en": "Yevlakh" }, 
+                "type": { "az": "Şəhər", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/yevlakh", 
+                "image": "img/c.jpg" 
+            }
         ];
 
         // Function to display regions and cities
@@ -266,11 +335,12 @@
                 stateCard.className = 'state-card';
                 stateCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${state.name}" class="flag-image">
+                        <img src="${state.image}" alt="${state.name.az}" class="flag-image">
                     </div>
                     <div class="state-info">
-                        <div class="state-name">${state.name}</div>
-                        <div class="state-type">${state.type}</div>
+                        <div class="azerbaijani-name">${state.name.az}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.az} • ${state.type.en}</div>
                     </div>
                 `;
                 
@@ -286,8 +356,10 @@
         function searchStates() {
             const searchTerm = document.getElementById('state-search').value.toLowerCase();
             const filteredStates = states.filter(state => 
-                state.name.toLowerCase().includes(searchTerm) || 
-                state.type.toLowerCase().includes(searchTerm)
+                state.name.az.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.az.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
             );
             renderStates(filteredStates);
         }
