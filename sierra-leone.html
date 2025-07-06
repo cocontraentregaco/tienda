@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - Sierra Leone</title>
+    <style>
+        :root {
+            --green: #1EB53A; /* Sierra Leone green */
+            --white: #FFFFFF;
+            --blue: #0072C6; /* Sierra Leone blue */
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(30, 181, 58, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--green) 0%, var(--white) 50%, var(--blue) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .country-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #555;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .state-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+            border-top: 4px solid var(--green);
+        }
+
+        .state-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--blue);
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--green) 0%, var(--white) 50%, var(--blue) 100%);
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .state-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .state-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--green);
+        }
+
+        .province-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .state-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        #state-search {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
+        }
+
+        #state-search:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(30, 181, 58, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .country-title {
+                font-size: 1.8rem;
+            }
+
+            .flag-container {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+
+            .state-info {
+                padding: 1rem 0.5rem;
+            }
+
+            .state-name {
+                font-size: 1rem;
+            }
+            
+            .province-name {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QRContraentrega</h1>
+            <div class="country-title">Sierra Leone</div>
+            <p class="subtitle">Select your province or district</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="state-search" placeholder="Search for province or district..." aria-label="Search for province or district">
+        </div>
+
+        <div class="states-grid" id="states-container">
+            <!-- Provinces and districts will appear here -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // List of Sierra Leone provinces and districts
+        const states = [
+            // Provinces
+            { 
+                "name": { "en": "Eastern Province" }, 
+                "type": { "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/eastern-province", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Northern Province" }, 
+                "type": { "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/northern-province", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Southern Province" }, 
+                "type": { "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/southern-province", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Western Area" }, 
+                "type": { "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/western-area", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major districts
+            { 
+                "name": { "en": "Bo District" }, 
+                "type": { "en": "District" }, 
+                "url": "https://qrcontraentrega.com/bo-district", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Bombali District" }, 
+                "type": { "en": "District" }, 
+                "url": "https://qrcontraentrega.com/bombali-district", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Bonthe District" }, 
+                "type": { "en": "District" }, 
+                "url": "https://qrcontraentrega.com/bonthe-district", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Kailahun District" }, 
+                "type": { "en": "District" }, 
+                "url": "https://qrcontraentrega.com/kailahun-district", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Kambia District" }, 
+                "type": { "en": "District" }, 
+                "url": "https://qrcontraentrega.com/kambia-district", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Kenema District" }, 
+                "type": { "en": "District" }, 
+                "url": "https://qrcontraentrega.com/kenema-district", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Koinadugu District" }, 
+                "type": { "en": "District" }, 
+                "url": "https://qrcontraentrega.com/koinadugu-district", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Kono District" }, 
+                "type": { "en": "District" }, 
+                "url": "https://qrcontraentrega.com/kono-district", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Moyamba District" }, 
+                "type": { "en": "District" }, 
+                "url": "https://qrcontraentrega.com/moyamba-district", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Port Loko District" }, 
+                "type": { "en": "District" }, 
+                "url": "https://qrcontraentrega.com/port-loko-district", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Pujehun District" }, 
+                "type": { "en": "District" }, 
+                "url": "https://qrcontraentrega.com/pujehun-district", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Tonkolili District" }, 
+                "type": { "en": "District" }, 
+                "url": "https://qrcontraentrega.com/tonkolili-district", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Western Area Rural" }, 
+                "type": { "en": "District" }, 
+                "url": "https://qrcontraentrega.com/western-area-rural", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Western Area Urban" }, 
+                "type": { "en": "District" }, 
+                "url": "https://qrcontraentrega.com/western-area-urban", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major cities
+            { 
+                "name": { "en": "Freetown" }, 
+                "type": { "en": "Capital City" }, 
+                "url": "https://qrcontraentrega.com/freetown", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Bo" }, 
+                "type": { "en": "City" }, 
+                "url": "https://qrcontraentrega.com/bo-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Kenema" }, 
+                "type": { "en": "City" }, 
+                "url": "https://qrcontraentrega.com/kenema-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Makeni" }, 
+                "type": { "en": "City" }, 
+                "url": "https://qrcontraentrega.com/makeni", 
+                "image": "img/c.jpg" 
+            }
+        ];
+
+        // Function to display provinces and districts
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
+            container.innerHTML = '';
+
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="${state.image}" alt="${state.name.en}" class="flag-image">
+                    </div>
+                    <div class="state-info">
+                        <div class="province-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.en}</div>
+                    </div>
+                `;
+                
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
+                });
+
+                container.appendChild(stateCard);
+            });
+        }
+
+        // Function to search provinces and districts
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.en.toLowerCase().includes(searchTerm) || 
+                state.type.en.toLowerCase().includes(searchTerm)
+            );
+            renderStates(filteredStates);
+        }
+
+        // Event listeners
+        document.getElementById('state-search').addEventListener('input', searchStates);
+
+        // Display all provinces and districts when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStates(states);
+        });
+    </script>
+</body>
+</html>
