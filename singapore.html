@@ -1,1 +1,467 @@
-r
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - Singapore / 新加坡</title>
+    <style>
+        :root {
+            --red: #ED2939; /* Singapore red */
+            --white: #FFFFFF;
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(237, 41, 57, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--red) 0%, #cc2232 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .chinese-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .state-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+            border-top: 4px solid var(--red);
+        }
+
+        .state-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: #cc2232;
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--red) 0%, #cc2232 100%);
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .state-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .state-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--red);
+        }
+
+        .chinese-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+
+        .state-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        #state-search {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
+        }
+
+        #state-search:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(237, 41, 57, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .chinese-title {
+                font-size: 1.8rem;
+            }
+
+            .flag-container {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+
+            .state-info {
+                padding: 1rem 0.5rem;
+            }
+
+            .state-name {
+                font-size: 1rem;
+            }
+            
+            .chinese-name {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QRContraentrega</h1>
+            <div class="chinese-title">新加坡</div>
+            <div>Singapore</div>
+            <p class="subtitle">选择区域或地区 / Select your region or area</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="state-search" placeholder="搜索区域或地区... / Search for region or area..." aria-label="搜索区域或地区">
+        </div>
+
+        <div class="states-grid" id="states-container">
+            <!-- Regions and planning areas will appear here -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. 版权所有 / All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // List of Singapore regions and planning areas with both languages
+        const states = [
+            // Regions
+            { 
+                "name": { "en": "Central Region", "zh": "中部地区" }, 
+                "type": { "en": "Region", "zh": "地区" }, 
+                "url": "https://qrcontraentrega.com/central-region", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "East Region", "zh": "东部地区" }, 
+                "type": { "en": "Region", "zh": "地区" }, 
+                "url": "https://qrcontraentrega.com/east-region", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "North Region", "zh": "北部地区" }, 
+                "type": { "en": "Region", "zh": "地区" }, 
+                "url": "https://qrcontraentrega.com/north-region", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "North-East Region", "zh": "东北地区" }, 
+                "type": { "en": "Region", "zh": "地区" }, 
+                "url": "https://qrcontraentrega.com/north-east-region", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "West Region", "zh": "西部地区" }, 
+                "type": { "en": "Region", "zh": "地区" }, 
+                "url": "https://qrcontraentrega.com/west-region", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major planning areas
+            { 
+                "name": { "en": "Ang Mo Kio", "zh": "宏茂桥" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/ang-mo-kio", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Bedok", "zh": "勿洛" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/bedok", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Bishan", "zh": "碧山" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/bishan", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Bukit Merah", "zh": "红山" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/bukit-merah", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Bukit Timah", "zh": "武吉知马" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/bukit-timah", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Central Area", "zh": "中央区" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/central-area", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Choa Chu Kang", "zh": "蔡厝港" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/choa-chu-kang", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Clementi", "zh": "金文泰" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/clementi", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Geylang", "zh": "芽笼" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/geylang", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Hougang", "zh": "后港" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/hougang", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Jurong East", "zh": "裕廊东" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/jurong-east", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Jurong West", "zh": "裕廊西" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/jurong-west", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Kallang", "zh": "加冷" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/kallang", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Marine Parade", "zh": "马林百列" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/marine-parade", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Pasir Ris", "zh": "巴西立" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/pasir-ris", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Punggol", "zh": "榜鹅" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/punggol", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Queenstown", "zh": "女皇镇" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/queenstown", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Sembawang", "zh": "三巴旺" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/sembawang", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Sengkang", "zh": "盛港" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/sengkang", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Serangoon", "zh": "实龙岗" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/serangoon", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Tampines", "zh": "淡滨尼" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/tampines", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Toa Payoh", "zh": "大巴窑" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/toa-payoh", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Woodlands", "zh": "兀兰" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/woodlands", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Yishun", "zh": "义顺" }, 
+                "type": { "en": "Planning Area", "zh": "规划区" }, 
+                "url": "https://qrcontraentrega.com/yishun", 
+                "image": "img/c.jpg" 
+            }
+        ];
+
+        // Function to display regions and planning areas
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
+            container.innerHTML = '';
+
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="${state.image}" alt="${state.name.en}" class="flag-image">
+                    </div>
+                    <div class="state-info">
+                        <div class="chinese-name">${state.name.zh}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.zh} • ${state.type.en}</div>
+                    </div>
+                `;
+                
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
+                });
+
+                container.appendChild(stateCard);
+            });
+        }
+
+        // Function to search regions and planning areas
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.en.toLowerCase().includes(searchTerm) || 
+                state.name.zh.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm) ||
+                state.type.zh.toLowerCase().includes(searchTerm)
+            );
+            renderStates(filteredStates);
+        }
+
+        // Event listeners
+        document.getElementById('state-search').addEventListener('input', searchStates);
+
+        // Display all regions and planning areas when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStates(states);
+        });
+    </script>
+</body>
+</html>
