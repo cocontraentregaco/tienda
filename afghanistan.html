@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QRContraentrega - افغانستان</title>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2980b9;
+            --black: #000000; /* Afghan black */
+            --red: #D32011; /* Afghan red */
+            --green: #007A36; /* Afghan green */
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -17,14 +18,14 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, 'Arial', sans-serif;
         }
 
         body {
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
-            direction: rtl; /* Right-to-left for Dari/Persian */
+            background-image: linear-gradient(to bottom, rgba(0, 122, 54, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -36,24 +37,35 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--black) 0%, #333333 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .afghan-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
         }
 
         .provinces-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
@@ -65,11 +77,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
+            border-top: 4px solid var(--black);
         }
 
         .province-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: #333333;
         }
 
         .flag-container {
@@ -78,6 +92,18 @@
             align-items: center;
             justify-content: center;
             background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--black) 0%, #333333 100%);
         }
 
         .flag-image {
@@ -94,9 +120,16 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--black);
         }
 
-        .province-region {
+        .dari-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .province-type {
             color: #666;
             font-size: 0.9rem;
         }
@@ -106,22 +139,26 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
 
         #province-search {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 45px 12px 20px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
-            direction: rtl; /* Right-to-left for search input */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
         }
 
         #province-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-color: var(--black);
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
         }
 
         footer {
@@ -134,10 +171,14 @@
 
         @media (max-width: 768px) {
             .provinces-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
+                font-size: 2rem;
+            }
+
+            .afghan-title {
                 font-size: 2rem;
             }
 
@@ -152,7 +193,7 @@
             }
 
             .provinces-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
@@ -163,6 +204,10 @@
             .province-name {
                 font-size: 1rem;
             }
+            
+            .dari-name {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
@@ -170,61 +215,123 @@
     <div class="container">
         <header>
             <h1>QRContraentrega</h1>
-            <p class="subtitle">ولایت خود را در افغانستان انتخاب کنید</p>
+            <div class="afghan-title">افغانستان</div>
+            <div>Afghanistan</div>
+            <p class="subtitle">ولایت یا شهر خود را انتخاب کنید / Select your province or city</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="province-search" placeholder="جستجوی ولایت..." aria-label="جستجوی ولایت">
+            <input type="text" id="province-search" placeholder="جستجوی ولایت یا شهر... / Search for province or city..." aria-label="جستجوی ولایت یا شهر">
         </div>
 
         <div class="provinces-grid" id="provinces-container">
-            <!-- ولایات (استان‌ها) اینجا نمایش داده خواهند شد -->
+            <!-- Provinces and cities will appear here -->
         </div>
 
         <footer>
-            <p>© QRContraentrega. تمام حقوق محفوظ است.</p>
+            <p>© QRContraentrega. تمام حقوق محفوظ است / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // List of provinces of Afghanistan in Dari
+        // List of Afghan provinces and major cities with both languages
         const provinces = [
-            { "name": "کابل", "region": "مرکز", "url": "https://qrcontraentrega.com/kabul" },
-            { "name": "هرات", "region": "غرب", "url": "https://qrcontraentrega.com/herat" },
-            { "name": "بلخ", "region": "شمال", "url": "https://qrcontraentrega.com/balkh" },
-            { "name": "ننگرهار", "region": "شرق", "url": "https://qrcontraentrega.com/nangarhar" },
-            { "name": "قندهار", "region": "جنوب", "url": "https://qrcontraentrega.com/kandahar" },
-            { "name": "بدخشان", "region": "شمال شرق", "url": "https://qrcontraentrega.com/badakhshan" },
-            { "name": "فراه", "region": "غرب", "url": "https://qrcontraentrega.com/farah" },
-            { "name": "هلمند", "region": "جنوب", "url": "https://qrcontraentrega.com/helmand" },
-            { "name": "غزنی", "region": "جنوب شرق", "url": "https://qrcontraentrega.com/ghazni" },
-            { "name": "کندز", "region": "شمال", "url": "https://qrcontraentrega.com/kunduz" },
-            { "name": "پکتیا", "region": "شرق", "url": "https://qrcontraentrega.com/paktia" },
-            { "name": "بامیان", "region": "مرکز", "url": "https://qrcontraentrega.com/bamyan" },
-            { "name": "غور", "region": "غرب", "url": "https://qrcontraentrega.com/ghor" },
-            { "name": "پکتیکا", "region": "جنوب شرق", "url": "https://qrcontraentrega.com/paktika" },
-            { "name": "زابل", "region": "جنوب", "url": "https://qrcontraentrega.com/zabul" },
-            { "name": "سمنگان", "region": "شمال", "url": "https://qrcontraentrega.com/samangan" },
-            { "name": "سرپل", "region": "شمال", "url": "https://qrcontraentrega.com/saripul" },
-            { "name": "دایکندی", "region": "مرکز", "url": "https://qrcontraentrega.com/daykundi" },
-            { "name": "ارزگان", "region": "جنوب", "url": "https://qrcontraentrega.com/uruzgan" },
-            { "name": "نیمروز", "region": "جنوب غرب", "url": "https://qrcontraentrega.com/nimruz" },
-            { "name": "لغمان", "region": "شرق", "url": "https://qrcontraentrega.com/laghman" },
-            { "name": "لوگر", "region": "شرق", "url": "https://qrcontraentrega.com/logar" },
-            { "name": "وردک", "region": "مرکز", "url": "https://qrcontraentrega.com/wardak" },
-            { "name": "کاپیسا", "region": "شرق", "url": "https://qrcontraentrega.com/kapisa" },
-            { "name": "پروان", "region": "شرق", "url": "https://qrcontraentrega.com/parwan" },
-            { "name": "خوست", "region": "شرق", "url": "https://qrcontraentrega.com/khost" },
-            { "name": "نورستان", "region": "شرق", "url": "https://qrcontraentrega.com/nuristan" },
-            { "name": "جوزجان", "region": "شمال", "url": "https://qrcontraentrega.com/jowzjan" },
-            { "name": "فاریاب", "region": "شمال", "url": "https://qrcontraentrega.com/faryab" },
-            { "name": "تخار", "region": "شمال شرق", "url": "https://qrcontraentrega.com/takhar" },
-            { "name": "بادغیس", "region": "غرب", "url": "https://qrcontraentrega.com/badghis" },
-            { "name": "کنر", "region": "شرق", "url": "https://qrcontraentrega.com/kunar" },
-            { "name": "پنجشیر", "region": "شمال شرق", "url": "https://qrcontraentrega.com/panjshir" }
+            // Provinces
+            { 
+                "name": { "fa": "کابل", "en": "Kabul" }, 
+                "type": { "fa": "ولایت", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/kabul", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "fa": "هرات", "en": "Herat" }, 
+                "type": { "fa": "ولایت", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/herat", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "fa": "بلخ", "en": "Balkh" }, 
+                "type": { "fa": "ولایت", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/balkh", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "fa": "ننگرهار", "en": "Nangarhar" }, 
+                "type": { "fa": "ولایت", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/nangarhar", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "fa": "قندهار", "en": "Kandahar" }, 
+                "type": { "fa": "ولایت", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/kandahar", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "fa": "بدخشان", "en": "Badakhshan" }, 
+                "type": { "fa": "ولایت", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/badakhshan", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "fa": "بامیان", "en": "Bamyan" }, 
+                "type": { "fa": "ولایت", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/bamyan", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "fa": "فراه", "en": "Farah" }, 
+                "type": { "fa": "ولایت", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/farah", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major cities
+            { 
+                "name": { "fa": "کابل", "en": "Kabul" }, 
+                "type": { "fa": "شهر", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/kabul-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "fa": "هرات", "en": "Herat" }, 
+                "type": { "fa": "شهر", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/herat-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "fa": "مزارشریف", "en": "Mazar-i-Sharif" }, 
+                "type": { "fa": "شهر", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/mazar", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "fa": "جلال آباد", "en": "Jalalabad" }, 
+                "type": { "fa": "شهر", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/jalalabad", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "fa": "قندهار", "en": "Kandahar" }, 
+                "type": { "fa": "شهر", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/kandahar-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "fa": "غزنی", "en": "Ghazni" }, 
+                "type": { "fa": "شهر", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/ghazni", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "fa": "کندز", "en": "Kunduz" }, 
+                "type": { "fa": "شهر", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/kunduz", 
+                "image": "img/c.jpg" 
+            }
         ];
 
-        // Function to render provinces
+        // Function to display provinces and cities
         function renderProvinces(provinceList) {
             const container = document.getElementById('provinces-container');
             container.innerHTML = '';
@@ -234,11 +341,12 @@
                 provinceCard.className = 'province-card';
                 provinceCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${province.name}" class="flag-image">
+                        <img src="${province.image}" alt="${province.name.fa}" class="flag-image">
                     </div>
                     <div class="province-info">
-                        <div class="province-name">${province.name}</div>
-                        <div class="province-region">${province.region}</div>
+                        <div class="dari-name">${province.name.fa}</div>
+                        <div class="province-name">${province.name.en}</div>
+                        <div class="province-type">${province.type.fa} • ${province.type.en}</div>
                     </div>
                 `;
                 
@@ -250,12 +358,14 @@
             });
         }
 
-        // Function to search provinces
+        // Function to search provinces and cities
         function searchProvinces() {
             const searchTerm = document.getElementById('province-search').value.toLowerCase();
             const filteredProvinces = provinces.filter(province => 
-                province.name.toLowerCase().includes(searchTerm) || 
-                province.region.toLowerCase().includes(searchTerm)
+                province.name.fa.toLowerCase().includes(searchTerm) || 
+                province.name.en.toLowerCase().includes(searchTerm) ||
+                province.type.fa.toLowerCase().includes(searchTerm) ||
+                province.type.en.toLowerCase().includes(searchTerm)
             );
             renderProvinces(filteredProvinces);
         }
@@ -263,7 +373,7 @@
         // Event listeners
         document.getElementById('province-search').addEventListener('input', searchProvinces);
 
-        // Render all provinces when page loads
+        // Display all provinces and cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
             renderProvinces(provinces);
         });
