@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="de" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - Suiza</title>
+    <title>QRContraentrega - Schweiz / Suisse / Svizzera / Switzerland</title>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2980b9;
+            --red: #FF0000; /* Swiss red */
+            --white: #FFFFFF; 
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -24,6 +24,7 @@
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(255, 0, 0, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -35,28 +36,39 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--red) 0%, #D7003A 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .swiss-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
         }
 
-        .municipalities-grid {
+        .states-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
-        .municipality-card {
+        .state-card {
             background: white;
             border-radius: 8px;
             overflow: hidden;
@@ -64,11 +76,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
+            border-top: 4px solid var(--red);
         }
 
-        .municipality-card:hover {
+        .state-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: #D7003A;
         }
 
         .flag-container {
@@ -77,6 +91,18 @@
             align-items: center;
             justify-content: center;
             background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--red) 0%, #D7003A 100%);
         }
 
         .flag-image {
@@ -85,17 +111,24 @@
             object-fit: contain;
         }
 
-        .municipality-info {
+        .state-info {
             padding: 1.5rem 1rem;
         }
 
-        .municipality-name {
+        .state-name {
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--red);
         }
 
-        .municipality-department {
+        .german-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .state-type {
             color: #666;
             font-size: 0.9rem;
         }
@@ -105,21 +138,26 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
 
-        #municipality-search {
+        #state-search {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 20px 12px 45px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
         }
 
-        #municipality-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        #state-search:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.2);
         }
 
         footer {
@@ -131,12 +169,16 @@
         }
 
         @media (max-width: 768px) {
-            .municipalities-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
                 font-size: 2rem;
+            }
+
+            .swiss-title {
+                font-size: 1.8rem;
             }
 
             .flag-container {
@@ -149,17 +191,21 @@
                 padding: 1rem;
             }
 
-            .municipalities-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
-            .municipality-info {
+            .state-info {
                 padding: 1rem 0.5rem;
             }
 
-            .municipality-name {
+            .state-name {
                 font-size: 1rem;
+            }
+            
+            .german-name {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -167,109 +213,172 @@
 <body>
     <div class="container">
         <header>
-            <h1>QRCONTRAENTREGA</h1>
-            <p class="subtitle">Selecciona tu ciudad en Suiza</p>
+            <h1>QRContraentrega</h1>
+            <div class="swiss-title">Schweiz • Suisse • Svizzera</div>
+            <div>Switzerland</div>
+            <p class="subtitle">Wählen Sie Ihren Kanton oder Stadt / Choisissez votre canton ou ville / Selezioni il suo cantone o città / Select your canton or city</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="municipality-search" placeholder="Buscar ciudad..." aria-label="Buscar ciudad">
+            <input type="text" id="state-search" placeholder="Kanton oder Stadt suchen... / Rechercher un canton ou une ville... / Cercare un cantone o una città... / Search for canton or city..." aria-label="Search for canton or city">
         </div>
 
-        <div class="municipalities-grid" id="municipalities-container">
-            <!-- Las ciudades se cargarán aquí con JavaScript -->
+        <div class="states-grid" id="states-container">
+            <!-- Cantons and cities will appear here -->
         </div>
 
         <footer>
-            <p>© QRContraentrega. Todos los derechos reservados.</p>
+            <p>© QRContraentrega. Alle Rechte vorbehalten / Tous droits réservés / Tutti i diritti riservati / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // Lista de ciudades de Suiza con sus cantones
-        const municipalities = [
-            { "name": "Zúrich", "department": "Zúrich", "url": "https://qrcontraentrega.com/zurich" },
-            { "name": "Ginebra", "department": "Ginebra", "url": "https://qrcontraentrega.com/ginebra" },
-            { "name": "Basilea", "department": "Basilea-Ciudad", "url": "https://qrcontraentrega.com/basilea" },
-            { "name": "Berna", "department": "Berna", "url": "https://qrcontraentrega.com/berna" },
-            { "name": "Lausana", "department": "Vaud", "url": "https://qrcontraentrega.com/lausana" },
-            { "name": "Winterthur", "department": "Zúrich", "url": "https://qrcontraentrega.com/winterthur" },
-            { "name": "Lucerna", "department": "Lucerna", "url": "https://qrcontraentrega.com/lucerna" },
-            { "name": "San Galo", "department": "San Galo", "url": "https://qrcontraentrega.com/sangalo" },
-            { "name": "Lugano", "department": "Tesino", "url": "https://qrcontraentrega.com/lugano" },
-            { "name": "Biel/Bienne", "department": "Berna", "url": "https://qrcontraentrega.com/biel" },
-            { "name": "Thun", "department": "Berna", "url": "https://qrcontraentrega.com/thun" },
-            { "name": "Friburgo", "department": "Friburgo", "url": "https://qrcontraentrega.com/friburgo" },
-            { "name": "Schaffhausen", "department": "Schaffhausen", "url": "https://qrcontraentrega.com/schaffhausen" },
-            { "name": "Chur", "department": "Grisones", "url": "https://qrcontraentrega.com/chur" },
-            { "name": "Neuchâtel", "department": "Neuchâtel", "url": "https://qrcontraentrega.com/neuchatel" },
-            { "name": "La Chaux-de-Fonds", "department": "Neuchâtel", "url": "https://qrcontraentrega.com/chauxdefonds" },
-            { "name": "Sion", "department": "Valais", "url": "https://qrcontraentrega.com/sion" },
-            { "name": "Aarau", "department": "Argovia", "url": "https://qrcontraentrega.com/aarau" },
-            { "name": "Baden", "department": "Argovia", "url": "https://qrcontraentrega.com/baden" },
-            { "name": "Olten", "department": "Solothurn", "url": "https://qrcontraentrega.com/olten" },
-            { "name": "Locarno", "department": "Tesino", "url": "https://qrcontraentrega.com/locarno" },
-            { "name": "Ascona", "department": "Tesino", "url": "https://qrcontraentrega.com/ascona" },
-            { "name": "Zug", "department": "Zug", "url": "https://qrcontraentrega.com/zug" },
-            { "name": "Yverdon-les-Bains", "department": "Vaud", "url": "https://qrcontraentrega.com/yverdon" },
-            { "name": "Montreux", "department": "Vaud", "url": "https://qrcontraentrega.com/montreux" },
-            { "name": "Vevey", "department": "Vaud", "url": "https://qrcontraentrega.com/vevey" },
-            { "name": "Brig-Glis", "department": "Valais", "url": "https://qrcontraentrega.com/brig" },
-            { "name": "Davos", "department": "Grisones", "url": "https://qrcontraentrega.com/davos" },
-            { "name": "St. Moritz", "department": "Grisones", "url": "https://qrcontraentrega.com/stmoritz" },
-            { "name": "Interlaken", "department": "Berna", "url": "https://qrcontraentrega.com/interlaken" },
-            { "name": "Grindelwald", "department": "Berna", "url": "https://qrcontraentrega.com/grindelwald" },
-            { "name": "Lugano", "department": "Tesino", "url": "https://qrcontraentrega.com/lugano" },
-            { "name": "Bellinzona", "department": "Tesino", "url": "https://qrcontraentrega.com/bellinzona" },
-            { "name": "Appenzell", "department": "Appenzell Rodas Interiores", "url": "https://qrcontraentrega.com/appenzell" },
-            { "name": "Stans", "department": "Nidwalden", "url": "https://qrcontraentrega.com/stans" },
-            { "name": "Sarnen", "department": "Obwalden", "url": "https://qrcontraentrega.com/sarnen" },
-            { "name": "Glarus", "department": "Glarus", "url": "https://qrcontraentrega.com/glarus" },
-            { "name": "Frauenfeld", "department": "Turgovia", "url": "https://qrcontraentrega.com/frauenfeld" },
-            { "name": "Delémont", "department": "Jura", "url": "https://qrcontraentrega.com/delemont" }
+        // List of Swiss cantons and major cities with multiple languages
+        const states = [
+            // Cantons
+            { 
+                "name": { "de": "Zürich", "fr": "Zurich", "it": "Zurigo", "en": "Zurich" }, 
+                "type": { "de": "Kanton", "fr": "Canton", "it": "Cantone", "en": "Canton" }, 
+                "url": "https://qrcontraentrega.com/zurich", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Bern", "fr": "Berne", "it": "Berna", "en": "Bern" }, 
+                "type": { "de": "Kanton", "fr": "Canton", "it": "Cantone", "en": "Canton" }, 
+                "url": "https://qrcontraentrega.com/bern", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Luzern", "fr": "Lucerne", "it": "Lucerna", "en": "Lucerne" }, 
+                "type": { "de": "Kanton", "fr": "Canton", "it": "Cantone", "en": "Canton" }, 
+                "url": "https://qrcontraentrega.com/luzern", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Uri", "fr": "Uri", "it": "Uri", "en": "Uri" }, 
+                "type": { "de": "Kanton", "fr": "Canton", "it": "Cantone", "en": "Canton" }, 
+                "url": "https://qrcontraentrega.com/uri", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Schwyz", "fr": "Schwyz", "it": "Svitto", "en": "Schwyz" }, 
+                "type": { "de": "Kanton", "fr": "Canton", "it": "Cantone", "en": "Canton" }, 
+                "url": "https://qrcontraentrega.com/schwyz", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Genf", "fr": "Genève", "it": "Ginevra", "en": "Geneva" }, 
+                "type": { "de": "Kanton", "fr": "Canton", "it": "Cantone", "en": "Canton" }, 
+                "url": "https://qrcontraentrega.com/geneva", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Wallis", "fr": "Valais", "it": "Vallese", "en": "Valais" }, 
+                "type": { "de": "Kanton", "fr": "Canton", "it": "Cantone", "en": "Canton" }, 
+                "url": "https://qrcontraentrega.com/valais", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Graubünden", "fr": "Grisons", "it": "Grigioni", "en": "Grisons" }, 
+                "type": { "de": "Kanton", "fr": "Canton", "it": "Cantone", "en": "Canton" }, 
+                "url": "https://qrcontraentrega.com/graubunden", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major cities
+            { 
+                "name": { "de": "Zürich", "fr": "Zurich", "it": "Zurigo", "en": "Zurich" }, 
+                "type": { "de": "Stadt", "fr": "Ville", "it": "Città", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/zurich-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Genf", "fr": "Genève", "it": "Ginevra", "en": "Geneva" }, 
+                "type": { "de": "Stadt", "fr": "Ville", "it": "Città", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/geneva-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Basel", "fr": "Bâle", "it": "Basilea", "en": "Basel" }, 
+                "type": { "de": "Stadt", "fr": "Ville", "it": "Città", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/basel", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Lausanne", "fr": "Lausanne", "it": "Losanna", "en": "Lausanne" }, 
+                "type": { "de": "Stadt", "fr": "Ville", "it": "Città", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/lausanne", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Bern", "fr": "Berne", "it": "Berna", "en": "Bern" }, 
+                "type": { "de": "Hauptstadt", "fr": "Capitale", "it": "Capitale", "en": "Capital" }, 
+                "url": "https://qrcontraentrega.com/bern-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Luzern", "fr": "Lucerne", "it": "Lucerna", "en": "Lucerne" }, 
+                "type": { "de": "Stadt", "fr": "Ville", "it": "Città", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/lucerne-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "St. Gallen", "fr": "Saint-Gall", "it": "San Gallo", "en": "St. Gallen" }, 
+                "type": { "de": "Stadt", "fr": "Ville", "it": "Città", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/stgallen", 
+                "image": "img/c.jpg" 
+            }
         ];
 
-        // Función para renderizar las ciudades
-        function renderMunicipalities(municipalityList) {
-            const container = document.getElementById('municipalities-container');
+        // Function to display cantons and cities
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
             container.innerHTML = '';
 
-            municipalityList.forEach(municipality => {
-                const municipalityCard = document.createElement('div');
-                municipalityCard.className = 'municipality-card';
-                municipalityCard.innerHTML = `
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${municipality.name}" class="flag-image">
+                        <img src="${state.image}" alt="${state.name.de}" class="flag-image">
                     </div>
-                    <div class="municipality-info">
-                        <div class="municipality-name">${municipality.name}</div>
-                        <div class="municipality-department">${municipality.department}</div>
+                    <div class="state-info">
+                        <div class="german-name">${state.name.de}</div>
+                        <div class="state-name">${state.name.fr} • ${state.name.it} • ${state.name.en}</div>
+                        <div class="state-type">${state.type.de} • ${state.type.fr} • ${state.type.it} • ${state.type.en}</div>
                     </div>
                 `;
                 
-                municipalityCard.addEventListener('click', () => {
-                    window.location.href = municipality.url;
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
                 });
 
-                container.appendChild(municipalityCard);
+                container.appendChild(stateCard);
             });
         }
 
-        // Función para buscar ciudades
-        function searchMunicipalities() {
-            const searchTerm = document.getElementById('municipality-search').value.toLowerCase();
-            const filteredMunicipalities = municipalities.filter(municipality => 
-                municipality.name.toLowerCase().includes(searchTerm) || 
-                municipality.department.toLowerCase().includes(searchTerm)
+        // Function to search cantons and cities
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.de.toLowerCase().includes(searchTerm) || 
+                state.name.fr.toLowerCase().includes(searchTerm) ||
+                state.name.it.toLowerCase().includes(searchTerm) ||
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.de.toLowerCase().includes(searchTerm) ||
+                state.type.fr.toLowerCase().includes(searchTerm) ||
+                state.type.it.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
             );
-            renderMunicipalities(filteredMunicipalities);
+            renderStates(filteredStates);
         }
 
         // Event listeners
-        document.getElementById('municipality-search').addEventListener('input', searchMunicipalities);
+        document.getElementById('state-search').addEventListener('input', searchStates);
 
-        // Renderizar todas las ciudades al cargar la página
+        // Display all cantons and cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            renderMunicipalities(municipalities);
+            renderStates(states);
         });
     </script>
 </body>
