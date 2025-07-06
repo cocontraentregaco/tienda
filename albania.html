@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="sq">
+<html lang="sq" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QRContraentrega - Shqipëria</title>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2980b9;
+            --red: #E41E26; /* Albanian red */
+            --black: #000000; 
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -24,6 +24,7 @@
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(228, 30, 38, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -35,28 +36,39 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--red) 0%, #F52E36 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .albanian-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
         }
 
-        .municipalities-grid {
+        .counties-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
-        .municipality-card {
+        .county-card {
             background: white;
             border-radius: 8px;
             overflow: hidden;
@@ -64,11 +76,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
+            border-top: 4px solid var(--red);
         }
 
-        .municipality-card:hover {
+        .county-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: #F52E36;
         }
 
         .flag-container {
@@ -77,6 +91,18 @@
             align-items: center;
             justify-content: center;
             background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--red) 0%, #F52E36 100%);
         }
 
         .flag-image {
@@ -85,17 +111,24 @@
             object-fit: contain;
         }
 
-        .municipality-info {
+        .county-info {
             padding: 1.5rem 1rem;
         }
 
-        .municipality-name {
+        .county-name {
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--red);
         }
 
-        .municipality-county {
+        .albanian-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .county-type {
             color: #666;
             font-size: 0.9rem;
         }
@@ -105,21 +138,26 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
 
-        #municipality-search {
+        #county-search {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 20px 12px 45px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
         }
 
-        #municipality-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        #county-search:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(228, 30, 38, 0.2);
         }
 
         footer {
@@ -131,12 +169,16 @@
         }
 
         @media (max-width: 768px) {
-            .municipalities-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            .counties-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
                 font-size: 2rem;
+            }
+
+            .albanian-title {
+                font-size: 1.8rem;
             }
 
             .flag-container {
@@ -149,17 +191,21 @@
                 padding: 1rem;
             }
 
-            .municipalities-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            .counties-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
-            .municipality-info {
+            .county-info {
                 padding: 1rem 0.5rem;
             }
 
-            .municipality-name {
+            .county-name {
                 font-size: 1rem;
+            }
+            
+            .albanian-name {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -168,114 +214,167 @@
     <div class="container">
         <header>
             <h1>QRContraentrega</h1>
-            <p class="subtitle">Zgjidhni komunën tuaj në Shqipëri</p>
+            <div class="albanian-title">Shqipëria</div>
+            <div>Albania</div>
+            <p class="subtitle">Zgjidhni qarkun ose qytetin tuaj / Select your county or city</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="municipality-search" placeholder="Kërko një komunë..." aria-label="Kërko një komunë">
+            <input type="text" id="county-search" placeholder="Kërko për qark ose qytet... / Search for county or city..." aria-label="Kërko për qark ose qytet">
         </div>
 
-        <div class="municipalities-grid" id="municipalities-container">
-            <!-- Komunat do të shfaqen këtu -->
+        <div class="counties-grid" id="counties-container">
+            <!-- Counties and cities will appear here -->
         </div>
 
         <footer>
-            <p>© QRContraentrega. Të gjitha të drejtat e rezervuara.</p>
+            <p>© QRContraentrega. Të gjitha të drejtat e rezervuara / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // Lista e komunave të Shqipërisë me qarqet e tyre
-        const municipalities = [
-            { "name": "Tiranë", "county": "Tiranë", "url": "https://qrcontraentrega.com/tirane" },
-            { "name": "Durrës", "county": "Durrës", "url": "https://qrcontraentrega.com/durres" },
-            { "name": "Vlorë", "county": "Vlorë", "url": "https://qrcontraentrega.com/vlore" },
-            { "name": "Shkodër", "county": "Shkodër", "url": "https://qrcontraentrega.com/shkoder" },
-            { "name": "Elbasan", "county": "Elbasan", "url": "https://qrcontraentrega.com/elbasan" },
-            { "name": "Korçë", "county": "Korçë", "url": "https://qrcontraentrega.com/korce" },
-            { "name": "Fier", "county": "Fier", "url": "https://qrcontraentrega.com/fier" },
-            { "name": "Berat", "county": "Berat", "url": "https://qrcontraentrega.com/berat" },
-            { "name": "Lushnjë", "county": "Fier", "url": "https://qrcontraentrega.com/lushnje" },
-            { "name": "Kavajë", "county": "Tiranë", "url": "https://qrcontraentrega.com/kavaje" },
-            { "name": "Lezhë", "county": "Lezhë", "url": "https://qrcontraentrega.com/lezhe" },
-            { "name": "Gjirokastër", "county": "Gjirokastër", "url": "https://qrcontraentrega.com/gjirokaster" },
-            { "name": "Pogradec", "county": "Korçë", "url": "https://qrcontraentrega.com/pogradec" },
-            { "name": "Kukës", "county": "Kukës", "url": "https://qrcontraentrega.com/kukes" },
-            { "name": "Krujë", "county": "Durrës", "url": "https://qrcontraentrega.com/kruje" },
-            { "name": "Patos", "county": "Fier", "url": "https://qrcontraentrega.com/patos" },
-            { "name": "Sarandë", "county": "Vlorë", "url": "https://qrcontraentrega.com/sarande" },
-            { "name": "Përmet", "county": "Gjirokastër", "url": "https://qrcontraentrega.com/permet" },
-            { "name": "Burrel", "county": "Dibër", "url": "https://qrcontraentrega.com/burrel" },
-            { "name": "Divjakë", "county": "Fier", "url": "https://qrcontraentrega.com/divjake" },
-            { "name": "Gramsh", "county": "Elbasan", "url": "https://qrcontraentrega.com/gramsh" },
-            { "name": "Librazhd", "county": "Elbasan", "url": "https://qrcontraentrega.com/librazhd" },
-            { "name": "Peqin", "county": "Elbasan", "url": "https://qrcontraentrega.com/peqin" },
-            { "name": "Poliçan", "county": "Berat", "url": "https://qrcontraentrega.com/polican" },
-            { "name": "Prrenjas", "county": "Elbasan", "url": "https://qrcontraentrega.com/prrenjas" },
-            { "name": "Selenicë", "county": "Vlorë", "url": "https://qrcontraentrega.com/selenice" },
-            { "name": "Çorovodë", "county": "Berat", "url": "https://qrcontraentrega.com/corovode" },
-            { "name": "Bulqizë", "county": "Dibër", "url": "https://qrcontraentrega.com/bulqize" },
-            { "name": "Delvinë", "county": "Vlorë", "url": "https://qrcontraentrega.com/delvine" },
-            { "name": "Devoll", "county": "Korçë", "url": "https://qrcontraentrega.com/devoll" },
-            { "name": "Has", "county": "Kukës", "url": "https://qrcontraentrega.com/has" },
-            { "name": "Himarë", "county": "Vlorë", "url": "https://qrcontraentrega.com/himare" },
-            { "name": "Këlcyrë", "county": "Gjirokastër", "url": "https://qrcontraentrega.com/kelcyre" },
-            { "name": "Konispol", "county": "Vlorë", "url": "https://qrcontraentrega.com/konispol" },
-            { "name": "Kurbin", "county": "Lezhë", "url": "https://qrcontraentrega.com/kurbin" },
-            { "name": "Kuçovë", "county": "Berat", "url": "https://qrcontraentrega.com/kucove" },
-            { "name": "Maliq", "county": "Korçë", "url": "https://qrcontraentrega.com/maliq" },
-            { "name": "Mallakastër", "county": "Fier", "url": "https://qrcontraentrega.com/mallakaster" },
-            { "name": "Mat", "county": "Dibër", "url": "https://qrcontraentrega.com/mat" },
-            { "name": "Memaliaj", "county": "Gjirokastër", "url": "https://qrcontraentrega.com/memaliaj" },
-            { "name": "Mirditë", "county": "Lezhë", "url": "https://qrcontraentrega.com/mirdite" },
-            { "name": "Pukë", "county": "Shkodër", "url": "https://qrcontraentrega.com/puke" },
-            { "name": "Skrapar", "county": "Berat", "url": "https://qrcontraentrega.com/skrapar" },
-            { "name": "Tepelenë", "county": "Gjirokastër", "url": "https://qrcontraentrega.com/tepelene" },
-            { "name": "Tropojë", "county": "Kukës", "url": "https://qrcontraentrega.com/tropoje" }
+        // List of Albanian counties and major cities with both languages
+        const counties = [
+            // Counties
+            { 
+                "name": { "sq": "Tiranë", "en": "Tirana" }, 
+                "type": { "sq": "Qark", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/tirana", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "sq": "Durrës", "en": "Durrës" }, 
+                "type": { "sq": "Qark", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/durres", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "sq": "Vlorë", "en": "Vlorë" }, 
+                "type": { "sq": "Qark", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/vlore", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "sq": "Shkodër", "en": "Shkodër" }, 
+                "type": { "sq": "Qark", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/shkoder", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "sq": "Korçë", "en": "Korçë" }, 
+                "type": { "sq": "Qark", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/korce", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "sq": "Elbasan", "en": "Elbasan" }, 
+                "type": { "sq": "Qark", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/elbasan", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "sq": "Fier", "en": "Fier" }, 
+                "type": { "sq": "Qark", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/fier", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "sq": "Berat", "en": "Berat" }, 
+                "type": { "sq": "Qark", "en": "County" }, 
+                "url": "https://qrcontraentrega.com/berat", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major cities
+            { 
+                "name": { "sq": "Tiranë", "en": "Tirana" }, 
+                "type": { "sq": "Qytet", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/tirana-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "sq": "Durrës", "en": "Durrës" }, 
+                "type": { "sq": "Qytet", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/durres-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "sq": "Vlorë", "en": "Vlorë" }, 
+                "type": { "sq": "Qytet", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/vlore-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "sq": "Shkodër", "en": "Shkodër" }, 
+                "type": { "sq": "Qytet", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/shkoder-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "sq": "Korçë", "en": "Korçë" }, 
+                "type": { "sq": "Qytet", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/korce-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "sq": "Elbasan", "en": "Elbasan" }, 
+                "type": { "sq": "Qytet", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/elbasan-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "sq": "Berat", "en": "Berat" }, 
+                "type": { "sq": "Qytet", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/berat-city", 
+                "image": "img/c.jpg" 
+            }
         ];
 
-        // Funksioni për të shfaqur komunat
-        function renderMunicipalities(municipalityList) {
-            const container = document.getElementById('municipalities-container');
+        // Function to display counties and cities
+        function renderCounties(countyList) {
+            const container = document.getElementById('counties-container');
             container.innerHTML = '';
 
-            municipalityList.forEach(municipality => {
-                const municipalityCard = document.createElement('div');
-                municipalityCard.className = 'municipality-card';
-                municipalityCard.innerHTML = `
+            countyList.forEach(county => {
+                const countyCard = document.createElement('div');
+                countyCard.className = 'county-card';
+                countyCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${municipality.name}" class="flag-image">
+                        <img src="${county.image}" alt="${county.name.sq}" class="flag-image">
                     </div>
-                    <div class="municipality-info">
-                        <div class="municipality-name">${municipality.name}</div>
-                        <div class="municipality-county">${municipality.county}</div>
+                    <div class="county-info">
+                        <div class="albanian-name">${county.name.sq}</div>
+                        <div class="county-name">${county.name.en}</div>
+                        <div class="county-type">${county.type.sq} • ${county.type.en}</div>
                     </div>
                 `;
                 
-                municipalityCard.addEventListener('click', () => {
-                    window.location.href = municipality.url;
+                countyCard.addEventListener('click', () => {
+                    window.location.href = county.url;
                 });
 
-                container.appendChild(municipalityCard);
+                container.appendChild(countyCard);
             });
         }
 
-        // Funksioni për të kërkuar komuna
-        function searchMunicipalities() {
-            const searchTerm = document.getElementById('municipality-search').value.toLowerCase();
-            const filteredMunicipalities = municipalities.filter(municipality => 
-                municipality.name.toLowerCase().includes(searchTerm) || 
-                municipality.county.toLowerCase().includes(searchTerm)
+        // Function to search counties and cities
+        function searchCounties() {
+            const searchTerm = document.getElementById('county-search').value.toLowerCase();
+            const filteredCounties = counties.filter(county => 
+                county.name.sq.toLowerCase().includes(searchTerm) || 
+                county.name.en.toLowerCase().includes(searchTerm) ||
+                county.type.sq.toLowerCase().includes(searchTerm) ||
+                county.type.en.toLowerCase().includes(searchTerm)
             );
-            renderMunicipalities(filteredMunicipalities);
+            renderCounties(filteredCounties);
         }
 
         // Event listeners
-        document.getElementById('municipality-search').addEventListener('input', searchMunicipalities);
+        document.getElementById('county-search').addEventListener('input', searchCounties);
 
-        // Shfaq të gjitha komunat kur faqja ngarkohet
+        // Display all counties and cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            renderMunicipalities(municipalities);
+            renderCounties(counties);
         });
     </script>
 </body>
