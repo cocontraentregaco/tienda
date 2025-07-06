@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - Österreich</title>
+    <title>QRContraentrega - Österreich / Austria</title>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2980b9;
+            --red: #EF3340; /* Austrian red */
+            --white: #FFFFFF; 
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -17,13 +17,14 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
         }
 
         body {
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(239, 51, 64, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -35,24 +36,35 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--red) 0%, #C8102E 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .german-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
         }
 
         .states-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
@@ -64,11 +76,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
+            border-top: 4px solid var(--red);
         }
 
         .state-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: #C8102E;
         }
 
         .flag-container {
@@ -77,6 +91,18 @@
             align-items: center;
             justify-content: center;
             background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--red) 0%, #C8102E 100%);
         }
 
         .flag-image {
@@ -93,6 +119,13 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--red);
+        }
+
+        .german-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
         }
 
         .state-type {
@@ -105,21 +138,26 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
 
         #state-search {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 20px 12px 45px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
         }
 
         #state-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(239, 51, 64, 0.2);
         }
 
         footer {
@@ -132,11 +170,15 @@
 
         @media (max-width: 768px) {
             .states-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
                 font-size: 2rem;
+            }
+
+            .german-title {
+                font-size: 1.8rem;
             }
 
             .flag-container {
@@ -150,7 +192,7 @@
             }
 
             .states-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
@@ -161,6 +203,10 @@
             .state-name {
                 font-size: 1rem;
             }
+            
+            .german-name {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
@@ -168,37 +214,123 @@
     <div class="container">
         <header>
             <h1>QRContraentrega</h1>
-            <p class="subtitle">Wählen Sie Ihr Bundesland in Österreich</p>
+            <div class="german-title">Österreich</div>
+            <div>Austria</div>
+            <p class="subtitle">Bundesland oder Stadt auswählen / Select your state or city</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="state-search" placeholder="Bundesland suchen..." aria-label="Bundesland suchen">
+            <input type="text" id="state-search" placeholder="Bundesland oder Stadt suchen... / Search for state or city..." aria-label="Bundesland oder Stadt suchen">
         </div>
 
         <div class="states-grid" id="states-container">
-            <!-- States will appear here -->
+            <!-- States and cities will appear here -->
         </div>
 
         <footer>
-            <p>© QRContraentrega. Alle Rechte vorbehalten.</p>
+            <p>© QRContraentrega. Alle Rechte vorbehalten / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // List of Austrian states
+        // List of Austrian states and major cities with both languages
         const states = [
-            { "name": "Wien", "type": "Bundesland", "url": "https://qrcontraentrega.com/wien" },
-            { "name": "Niederösterreich", "type": "Bundesland", "url": "https://qrcontraentrega.com/niederoesterreich" },
-            { "name": "Oberösterreich", "type": "Bundesland", "url": "https://qrcontraentrega.com/oberoesterreich" },
-            { "name": "Steiermark", "type": "Bundesland", "url": "https://qrcontraentrega.com/steiermark" },
-            { "name": "Tirol", "type": "Bundesland", "url": "https://qrcontraentrega.com/tirol" },
-            { "name": "Kärnten", "type": "Bundesland", "url": "https://qrcontraentrega.com/kaernten" },
-            { "name": "Salzburg", "type": "Bundesland", "url": "https://qrcontraentrega.com/salzburg" },
-            { "name": "Vorarlberg", "type": "Bundesland", "url": "https://qrcontraentrega.com/vorarlberg" },
-            { "name": "Burgenland", "type": "Bundesland", "url": "https://qrcontraentrega.com/burgenland" }
+            // Bundesländer (States)
+            { 
+                "name": { "de": "Wien", "en": "Vienna" }, 
+                "type": { "de": "Bundesland", "en": "State" }, 
+                "url": "https://qrcontraentrega.com/wien", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Niederösterreich", "en": "Lower Austria" }, 
+                "type": { "de": "Bundesland", "en": "State" }, 
+                "url": "https://qrcontraentrega.com/niederoesterreich", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Oberösterreich", "en": "Upper Austria" }, 
+                "type": { "de": "Bundesland", "en": "State" }, 
+                "url": "https://qrcontraentrega.com/oberoesterreich", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Steiermark", "en": "Styria" }, 
+                "type": { "de": "Bundesland", "en": "State" }, 
+                "url": "https://qrcontraentrega.com/steiermark", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Tirol", "en": "Tyrol" }, 
+                "type": { "de": "Bundesland", "en": "State" }, 
+                "url": "https://qrcontraentrega.com/tirol", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Kärnten", "en": "Carinthia" }, 
+                "type": { "de": "Bundesland", "en": "State" }, 
+                "url": "https://qrcontraentrega.com/kaernten", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Salzburg", "en": "Salzburg" }, 
+                "type": { "de": "Bundesland", "en": "State" }, 
+                "url": "https://qrcontraentrega.com/salzburg", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Vorarlberg", "en": "Vorarlberg" }, 
+                "type": { "de": "Bundesland", "en": "State" }, 
+                "url": "https://qrcontraentrega.com/vorarlberg", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Burgenland", "en": "Burgenland" }, 
+                "type": { "de": "Bundesland", "en": "State" }, 
+                "url": "https://qrcontraentrega.com/burgenland", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major cities
+            { 
+                "name": { "de": "Graz", "en": "Graz" }, 
+                "type": { "de": "Stadt", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/graz", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Linz", "en": "Linz" }, 
+                "type": { "de": "Stadt", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/linz", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Salzburg", "en": "Salzburg" }, 
+                "type": { "de": "Stadt", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/salzburg-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Innsbruck", "en": "Innsbruck" }, 
+                "type": { "de": "Stadt", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/innsbruck", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Klagenfurt", "en": "Klagenfurt" }, 
+                "type": { "de": "Stadt", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/klagenfurt", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "de": "Villach", "en": "Villach" }, 
+                "type": { "de": "Stadt", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/villach", 
+                "image": "img/c.jpg" 
+            }
         ];
 
-        // Function to display states
+        // Function to display states and cities
         function renderStates(stateList) {
             const container = document.getElementById('states-container');
             container.innerHTML = '';
@@ -208,11 +340,12 @@
                 stateCard.className = 'state-card';
                 stateCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${state.name}" class="flag-image">
+                        <img src="${state.image}" alt="${state.name.de}" class="flag-image">
                     </div>
                     <div class="state-info">
-                        <div class="state-name">${state.name}</div>
-                        <div class="state-type">${state.type}</div>
+                        <div class="german-name">${state.name.de}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.de} • ${state.type.en}</div>
                     </div>
                 `;
                 
@@ -224,12 +357,14 @@
             });
         }
 
-        // Function to search states
+        // Function to search states and cities
         function searchStates() {
             const searchTerm = document.getElementById('state-search').value.toLowerCase();
             const filteredStates = states.filter(state => 
-                state.name.toLowerCase().includes(searchTerm) || 
-                state.type.toLowerCase().includes(searchTerm)
+                state.name.de.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.de.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
             );
             renderStates(filteredStates);
         }
@@ -237,7 +372,7 @@
         // Event listeners
         document.getElementById('state-search').addEventListener('input', searchStates);
 
-        // Display all states when page loads
+        // Display all states and cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
             renderStates(states);
         });
