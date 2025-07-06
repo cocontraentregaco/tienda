@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="tet">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - Timor-Leste / Timor Lorosa'e</title>
+    <style>
+        :root {
+            --red: #FF0000; /* Timorese red */
+            --yellow: #FFC72C; /* Timorese yellow */
+            --black: #000000;
+            --white: #FFFFFF;
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(255, 0, 0, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--red) 0%, var(--yellow) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .tetum-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .state-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+            border-top: 4px solid var(--red);
+        }
+
+        .state-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--yellow);
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--red) 0%, var(--yellow) 100%);
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .state-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .state-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--red);
+        }
+
+        .tetum-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .state-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        #state-search {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
+        }
+
+        #state-search:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .tetum-title {
+                font-size: 1.8rem;
+            }
+
+            .flag-container {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+
+            .state-info {
+                padding: 1rem 0.5rem;
+            }
+
+            .state-name {
+                font-size: 1rem;
+            }
+            
+            .tetum-name {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QRContraentrega</h1>
+            <div class="tetum-title">Timor-Leste / Timor Lorosa'e</div>
+            <div>East Timor</div>
+            <p class="subtitle">Hili munisípiu ka sidade / Selecione seu município ou cidade / Select your municipality or city</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="state-search" placeholder="Buka munisípiu ka sidade... / Pesquisar município ou cidade... / Search municipality or city..." aria-label="Search municipality or city">
+        </div>
+
+        <div class="states-grid" id="states-container">
+            <!-- Municipalities will appear here -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. Direitu hotu-hotu reservadu / Todos os direitos reservados / All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // List of Timorese municipalities with three languages
+        const states = [
+            // Municipalities
+            { 
+                "name": { "tet": "Díli", "pt": "Díli", "en": "Dili" }, 
+                "type": { "tet": "Munisípiu", "pt": "Município", "en": "Municipality" }, 
+                "url": "https://qrcontraentrega.com/dili", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tet": "Baucau", "pt": "Baucau", "en": "Baucau" }, 
+                "type": { "tet": "Munisípiu", "pt": "Município", "en": "Municipality" }, 
+                "url": "https://qrcontraentrega.com/baucau", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tet": "Ermera", "pt": "Ermera", "en": "Ermera" }, 
+                "type": { "tet": "Munisípiu", "pt": "Município", "en": "Municipality" }, 
+                "url": "https://qrcontraentrega.com/ermera", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tet": "Liquiça", "pt": "Liquiçá", "en": "Liquiçá" }, 
+                "type": { "tet": "Munisípiu", "pt": "Município", "en": "Municipality" }, 
+                "url": "https://qrcontraentrega.com/liquica", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tet": "Manatutu", "pt": "Manatuto", "en": "Manatuto" }, 
+                "type": { "tet": "Munisípiu", "pt": "Município", "en": "Municipality" }, 
+                "url": "https://qrcontraentrega.com/manatuto", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tet": "Vikeke", "pt": "Viqueque", "en": "Viqueque" }, 
+                "type": { "tet": "Munisípiu", "pt": "Município", "en": "Municipality" }, 
+                "url": "https://qrcontraentrega.com/viqueque", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tet": "Aileu", "pt": "Aileu", "en": "Aileu" }, 
+                "type": { "tet": "Munisípiu", "pt": "Município", "en": "Municipality" }, 
+                "url": "https://qrcontraentrega.com/aileu", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tet": "Ainaru", "pt": "Ainaro", "en": "Ainaro" }, 
+                "type": { "tet": "Munisípiu", "pt": "Município", "en": "Municipality" }, 
+                "url": "https://qrcontraentrega.com/ainaro", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tet": "Bobonaru", "pt": "Bobonaro", "en": "Bobonaro" }, 
+                "type": { "tet": "Munisípiu", "pt": "Município", "en": "Municipality" }, 
+                "url": "https://qrcontraentrega.com/bobonaro", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tet": "Kovalima", "pt": "Covalima", "en": "Covalima" }, 
+                "type": { "tet": "Munisípiu", "pt": "Município", "en": "Municipality" }, 
+                "url": "https://qrcontraentrega.com/covalima", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tet": "Lautein", "pt": "Lautém", "en": "Lautém" }, 
+                "type": { "tet": "Munisípiu", "pt": "Município", "en": "Municipality" }, 
+                "url": "https://qrcontraentrega.com/lautem", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tet": "Manufahi", "pt": "Manufahi", "en": "Manufahi" }, 
+                "type": { "tet": "Munisípiu", "pt": "Município", "en": "Municipality" }, 
+                "url": "https://qrcontraentrega.com/manufahi", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tet": "Oe-Kusi Ambenu", "pt": "Oecusse", "en": "Oecusse" }, 
+                "type": { "tet": "Rejiaun Espesiál", "pt": "Região Especial", "en": "Special Region" }, 
+                "url": "https://qrcontraentrega.com/oecusse", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major towns
+            { 
+                "name": { "tet": "Díli", "pt": "Díli", "en": "Dili" }, 
+                "type": { "tet": "Sidade Kapitál", "pt": "Cidade Capital", "en": "Capital City" }, 
+                "url": "https://qrcontraentrega.com/dili-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tet": "Baucau", "pt": "Baucau", "en": "Baucau" }, 
+                "type": { "tet": "Sidade", "pt": "Cidade", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/baucau-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tet": "Maliana", "pt": "Maliana", "en": "Maliana" }, 
+                "type": { "tet": "Sidade", "pt": "Cidade", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/maliana", 
+                "image": "img/c.jpg" 
+            }
+        ];
+
+        // Function to display municipalities
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
+            container.innerHTML = '';
+
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="${state.image}" alt="${state.name.tet}" class="flag-image">
+                    </div>
+                    <div class="state-info">
+                        <div class="tetum-name">${state.name.tet}</div>
+                        <div class="state-name">${state.name.pt} • ${state.name.en}</div>
+                        <div class="state-type">${state.type.tet} • ${state.type.pt} • ${state.type.en}</div>
+                    </div>
+                `;
+                
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
+                });
+
+                container.appendChild(stateCard);
+            });
+        }
+
+        // Function to search municipalities
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.tet.toLowerCase().includes(searchTerm) || 
+                state.name.pt.toLowerCase().includes(searchTerm) ||
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.tet.toLowerCase().includes(searchTerm) ||
+                state.type.pt.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
+            );
+            renderStates(filteredStates);
+        }
+
+        // Event listeners
+        document.getElementById('state-search').addEventListener('input', searchStates);
+
+        // Display all municipalities when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStates(states);
+        });
+    </script>
+</body>
+</html>
