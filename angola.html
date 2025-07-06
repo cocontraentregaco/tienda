@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QRContraentrega - Angola</title>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2980b9;
+            --red: #CC092F; /* Angolan red */
+            --black: #000000; /* Angolan black */
+            --yellow: #FFCB00; /* Angolan yellow */
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -24,6 +25,7 @@
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(204, 9, 47, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -35,28 +37,39 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--red) 0%, #E00B35 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .angolan-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
         }
 
-        .provincias-grid {
+        .states-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
-        .provincia-card {
+        .state-card {
             background: white;
             border-radius: 8px;
             overflow: hidden;
@@ -64,11 +77,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
+            border-top: 4px solid var(--red);
         }
 
-        .provincia-card:hover {
+        .state-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: #E00B35;
         }
 
         .flag-container {
@@ -77,6 +92,18 @@
             align-items: center;
             justify-content: center;
             background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--red) 0%, #E00B35 100%);
         }
 
         .flag-image {
@@ -85,17 +112,24 @@
             object-fit: contain;
         }
 
-        .provincia-info {
+        .state-info {
             padding: 1.5rem 1rem;
         }
 
-        .provincia-name {
+        .state-name {
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--red);
         }
 
-        .provincia-region {
+        .portuguese-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .state-type {
             color: #666;
             font-size: 0.9rem;
         }
@@ -105,21 +139,26 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
 
-        #provincia-search {
+        #state-search {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 20px 12px 45px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
         }
 
-        #provincia-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        #state-search:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(204, 9, 47, 0.2);
         }
 
         footer {
@@ -131,12 +170,16 @@
         }
 
         @media (max-width: 768px) {
-            .provincias-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
                 font-size: 2rem;
+            }
+
+            .angolan-title {
+                font-size: 1.8rem;
             }
 
             .flag-container {
@@ -149,17 +192,21 @@
                 padding: 1rem;
             }
 
-            .provincias-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
-            .provincia-info {
+            .state-info {
                 padding: 1rem 0.5rem;
             }
 
-            .provincia-name {
+            .state-name {
                 font-size: 1rem;
+            }
+            
+            .portuguese-name {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -168,87 +215,166 @@
     <div class="container">
         <header>
             <h1>QRContraentrega</h1>
-            <p class="subtitle">Selecione sua província em Angola</p>
+            <div class="angolan-title">Angola</div>
+            <p class="subtitle">Selecione sua província ou cidade / Select your province or city</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="provincia-search" placeholder="Pesquisar província..." aria-label="Pesquisar província">
+            <input type="text" id="state-search" placeholder="Pesquisar província ou cidade... / Search for province or city..." aria-label="Pesquisar província ou cidade">
         </div>
 
-        <div class="provincias-grid" id="provincias-container">
-            <!-- As províncias aparecerão aqui -->
+        <div class="states-grid" id="states-container">
+            <!-- Provinces and cities will appear here -->
         </div>
 
         <footer>
-            <p>© QRContraentrega. Todos os direitos reservados.</p>
+            <p>© QRContraentrega. Todos os direitos reservados / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // Lista de províncias de Angola
-        const provincias = [
-            { "name": "Luanda", "region": "Noroeste", "url": "https://qrcontraentrega.com/luanda" },
-            { "name": "Benguela", "region": "Centro-Oeste", "url": "https://qrcontraentrega.com/benguela" },
-            { "name": "Huíla", "region": "Sul", "url": "https://qrcontraentrega.com/huila" },
-            { "name": "Cabinda", "region": "Norte", "url": "https://qrcontraentrega.com/cabinda" },
-            { "name": "Huambo", "region": "Centro", "url": "https://qrcontraentrega.com/huambo" },
-            { "name": "Bié", "region": "Centro", "url": "https://qrcontraentrega.com/bie" },
-            { "name": "Cuanza Norte", "region": "Noroeste", "url": "https://qrcontraentrega.com/cuanzanorte" },
-            { "name": "Cuanza Sul", "region": "Centro-Oeste", "url": "https://qrcontraentrega.com/cuanzasul" },
-            { "name": "Cunene", "region": "Sul", "url": "https://qrcontraentrega.com/cunene" },
-            { "name": "Malanje", "region": "Norte", "url": "https://qrcontraentrega.com/malanje" },
-            { "name": "Lunda Norte", "region": "Nordeste", "url": "https://qrcontraentrega.com/lundanorte" },
-            { "name": "Lunda Sul", "region": "Nordeste", "url": "https://qrcontraentrega.com/lundasul" },
-            { "name": "Moxico", "region": "Leste", "url": "https://qrcontraentrega.com/moxico" },
-            { "name": "Namibe", "region": "Sul", "url": "https://qrcontraentrega.com/namibe" },
-            { "name": "Uíge", "region": "Norte", "url": "https://qrcontraentrega.com/uige" },
-            { "name": "Zaire", "region": "Noroeste", "url": "https://qrcontraentrega.com/zaire" },
-            { "name": "Cuando Cubango", "region": "Sudeste", "url": "https://qrcontraentrega.com/cuandocubango" },
-            { "name": "Bengo", "region": "Noroeste", "url": "https://qrcontraentrega.com/bengo" }
+        // List of Angolan provinces and major cities with both languages
+        const states = [
+            // Provinces
+            { 
+                "name": { "pt": "Luanda", "en": "Luanda" }, 
+                "type": { "pt": "Província", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/luanda", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "pt": "Cabinda", "en": "Cabinda" }, 
+                "type": { "pt": "Província", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/cabinda", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "pt": "Benguela", "en": "Benguela" }, 
+                "type": { "pt": "Província", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/benguela", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "pt": "Huíla", "en": "Huila" }, 
+                "type": { "pt": "Província", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/huila", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "pt": "Huambo", "en": "Huambo" }, 
+                "type": { "pt": "Província", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/huambo", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "pt": "Cunene", "en": "Cunene" }, 
+                "type": { "pt": "Província", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/cunene", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "pt": "Namibe", "en": "Namibe" }, 
+                "type": { "pt": "Província", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/namibe", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "pt": "Lunda Norte", "en": "Lunda Norte" }, 
+                "type": { "pt": "Província", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/lunda-norte", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major cities
+            { 
+                "name": { "pt": "Luanda", "en": "Luanda" }, 
+                "type": { "pt": "Cidade", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/luanda-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "pt": "Lubango", "en": "Lubango" }, 
+                "type": { "pt": "Cidade", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/lubango", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "pt": "Benguela", "en": "Benguela" }, 
+                "type": { "pt": "Cidade", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/benguela-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "pt": "Huambo", "en": "Huambo" }, 
+                "type": { "pt": "Cidade", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/huambo-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "pt": "Cabinda", "en": "Cabinda" }, 
+                "type": { "pt": "Cidade", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/cabinda-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "pt": "Malange", "en": "Malange" }, 
+                "type": { "pt": "Cidade", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/malange", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "pt": "Saurimo", "en": "Saurimo" }, 
+                "type": { "pt": "Cidade", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/saurimo", 
+                "image": "img/c.jpg" 
+            }
         ];
 
-        // Função para mostrar as províncias
-        function renderProvincias(provinciaList) {
-            const container = document.getElementById('provincias-container');
+        // Function to display provinces and cities
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
             container.innerHTML = '';
 
-            provinciaList.forEach(provincia => {
-                const provinciaCard = document.createElement('div');
-                provinciaCard.className = 'provincia-card';
-                provinciaCard.innerHTML = `
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${provincia.name}" class="flag-image">
+                        <img src="${state.image}" alt="${state.name.pt}" class="flag-image">
                     </div>
-                    <div class="provincia-info">
-                        <div class="provincia-name">${provincia.name}</div>
-                        <div class="provincia-region">${provincia.region}</div>
+                    <div class="state-info">
+                        <div class="portuguese-name">${state.name.pt}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.pt} • ${state.type.en}</div>
                     </div>
                 `;
                 
-                provinciaCard.addEventListener('click', () => {
-                    window.location.href = provincia.url;
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
                 });
 
-                container.appendChild(provinciaCard);
+                container.appendChild(stateCard);
             });
         }
 
-        // Função para pesquisar províncias
-        function searchProvincias() {
-            const searchTerm = document.getElementById('provincia-search').value.toLowerCase();
-            const filteredProvincias = provincias.filter(provincia => 
-                provincia.name.toLowerCase().includes(searchTerm) || 
-                provincia.region.toLowerCase().includes(searchTerm)
+        // Function to search provinces and cities
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.pt.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.pt.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
             );
-            renderProvincias(filteredProvincias);
+            renderStates(filteredStates);
         }
 
         // Event listeners
-        document.getElementById('provincia-search').addEventListener('input', searchProvincias);
+        document.getElementById('state-search').addEventListener('input', searchStates);
 
-        // Mostrar todas as províncias ao carregar a página
+        // Display all provinces and cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            renderProvincias(provincias);
+            renderStates(states);
         });
     </script>
 </body>
