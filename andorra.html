@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="ca" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QRContraentrega - Andorra</title>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2980b9;
+            --blue: #0018A8; /* Andorran blue */
+            --yellow: #FCDD09; /* Andorran yellow */
+            --red: #D91023; /* Andorran red */
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -24,6 +25,7 @@
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(0, 24, 168, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -35,28 +37,39 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--blue) 0%, #0020C0 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .andorran-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
         }
 
-        .parroquies-grid {
+        .parishes-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
-        .parroquia-card {
+        .parish-card {
             background: white;
             border-radius: 8px;
             overflow: hidden;
@@ -64,11 +77,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
+            border-top: 4px solid var(--blue);
         }
 
-        .parroquia-card:hover {
+        .parish-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: #0020C0;
         }
 
         .flag-container {
@@ -77,6 +92,18 @@
             align-items: center;
             justify-content: center;
             background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--blue) 0%, #0020C0 100%);
         }
 
         .flag-image {
@@ -85,17 +112,24 @@
             object-fit: contain;
         }
 
-        .parroquia-info {
+        .parish-info {
             padding: 1.5rem 1rem;
         }
 
-        .parroquia-name {
+        .parish-name {
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--blue);
         }
 
-        .parroquia-region {
+        .catalan-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .parish-type {
             color: #666;
             font-size: 0.9rem;
         }
@@ -105,21 +139,26 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
 
-        #parroquia-search {
+        #parish-search {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 20px 12px 45px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
         }
 
-        #parroquia-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        #parish-search:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(0, 24, 168, 0.2);
         }
 
         footer {
@@ -131,12 +170,16 @@
         }
 
         @media (max-width: 768px) {
-            .parroquies-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            .parishes-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
                 font-size: 2rem;
+            }
+
+            .andorran-title {
+                font-size: 1.8rem;
             }
 
             .flag-container {
@@ -149,17 +192,21 @@
                 padding: 1rem;
             }
 
-            .parroquies-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            .parishes-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
-            .parroquia-info {
+            .parish-info {
                 padding: 1rem 0.5rem;
             }
 
-            .parroquia-name {
+            .parish-name {
                 font-size: 1rem;
+            }
+            
+            .catalan-name {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -168,87 +215,160 @@
     <div class="container">
         <header>
             <h1>QRContraentrega</h1>
-            <p class="subtitle">Trieu la vostra parròquia a Andorra</p>
+            <div class="andorran-title">Andorra</div>
+            <p class="subtitle">Seleccioneu la vostra parròquia o localitat / Select your parish or town</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="parroquia-search" placeholder="Cerca una parròquia..." aria-label="Cerca una parròquia">
+            <input type="text" id="parish-search" placeholder="Cercar parròquia o localitat... / Search for parish or town..." aria-label="Cercar parròquia o localitat">
         </div>
 
-        <div class="parroquies-grid" id="parroquies-container">
-            <!-- Les parròquies apareixeran aquí -->
+        <div class="parishes-grid" id="parishes-container">
+            <!-- Parishes and towns will appear here -->
         </div>
 
         <footer>
-            <p>© QRContraentrega. Tots els drets reservats.</p>
+            <p>© QRContraentrega. Tots els drets reservats / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // Llista de parròquies d'Andorra
-        const parroquies = [
-            { "name": "Andorra la Vella", "region": "Capital", "url": "https://qrcontraentrega.com/andorralavella" },
-            { "name": "Canillo", "region": "Nord", "url": "https://qrcontraentrega.com/canillo" },
-            { "name": "Encamp", "region": "Centre", "url": "https://qrcontraentrega.com/encamp" },
-            { "name": "Escaldes-Engordany", "region": "Centre", "url": "https://qrcontraentrega.com/escaldes" },
-            { "name": "La Massana", "region": "Nord", "url": "https://qrcontraentrega.com/lamassana" },
-            { "name": "Ordino", "region": "Nord", "url": "https://qrcontraentrega.com/ordino" },
-            { "name": "Sant Julià de Lòria", "region": "Sud", "url": "https://qrcontraentrega.com/santjulia" },
-            { "name": "Pas de la Casa", "region": "Est", "url": "https://qrcontraentrega.com/pasdelacasa" },
-            { "name": "Soldeu", "region": "Est", "url": "https://qrcontraentrega.com/soldeu" },
-            { "name": "Arinsal", "region": "Nord", "url": "https://qrcontraentrega.com/arinsal" },
-            { "name": "Pal", "region": "Nord", "url": "https://qrcontraentrega.com/pal" },
-            { "name": "El Serrat", "region": "Nord", "url": "https://qrcontraentrega.com/serrat" },
-            { "name": "Arcalís", "region": "Nord", "url": "https://qrcontraentrega.com/arcalis" },
-            { "name": "La Cortinada", "region": "Nord", "url": "https://qrcontraentrega.com/cortinada" },
-            { "name": "Anyós", "region": "Centre", "url": "https://qrcontraentrega.com/anyos" },
-            { "name": "Aixovall", "region": "Sud", "url": "https://qrcontraentrega.com/aixovall" },
-            { "name": "Aldosa", "region": "Nord", "url": "https://qrcontraentrega.com/aldosa" },
-            { "name": "Llorts", "region": "Nord", "url": "https://qrcontraentrega.com/llorts" }
+        // List of Andorran parishes and major towns with both languages
+        const parishes = [
+            // Parishes
+            { 
+                "name": { "ca": "Andorra la Vella", "en": "Andorra la Vella" }, 
+                "type": { "ca": "Parròquia", "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/andorra-la-vella", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ca": "Canillo", "en": "Canillo" }, 
+                "type": { "ca": "Parròquia", "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/canillo", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ca": "Encamp", "en": "Encamp" }, 
+                "type": { "ca": "Parròquia", "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/encamp", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ca": "Escaldes-Engordany", "en": "Escaldes-Engordany" }, 
+                "type": { "ca": "Parròquia", "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/escaldes-engordany", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ca": "La Massana", "en": "La Massana" }, 
+                "type": { "ca": "Parròquia", "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/la-massana", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ca": "Ordino", "en": "Ordino" }, 
+                "type": { "ca": "Parròquia", "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/ordino", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ca": "Sant Julià de Lòria", "en": "Sant Julià de Lòria" }, 
+                "type": { "ca": "Parròquia", "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/sant-julia-de-loria", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major towns
+            { 
+                "name": { "ca": "Andorra la Vella", "en": "Andorra la Vella" }, 
+                "type": { "ca": "Ciutat", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/andorra-la-vella-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ca": "Escaldes", "en": "Escaldes" }, 
+                "type": { "ca": "Vila", "en": "Town" }, 
+                "url": "https://qrcontraentrega.com/escaldes", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ca": "Encamp", "en": "Encamp" }, 
+                "type": { "ca": "Vila", "en": "Town" }, 
+                "url": "https://qrcontraentrega.com/encamp-town", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ca": "Pas de la Casa", "en": "Pas de la Casa" }, 
+                "type": { "ca": "Localitat", "en": "Locality" }, 
+                "url": "https://qrcontraentrega.com/pas-de-la-casa", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ca": "Santa Coloma", "en": "Santa Coloma" }, 
+                "type": { "ca": "Vila", "en": "Town" }, 
+                "url": "https://qrcontraentrega.com/santa-coloma", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ca": "Arinsal", "en": "Arinsal" }, 
+                "type": { "ca": "Poble", "en": "Village" }, 
+                "url": "https://qrcontraentrega.com/arinsal", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ca": "Soldeu", "en": "Soldeu" }, 
+                "type": { "ca": "Poble", "en": "Village" }, 
+                "url": "https://qrcontraentrega.com/soldeu", 
+                "image": "img/c.jpg" 
+            }
         ];
 
-        // Funció per mostrar les parròquies
-        function renderParroquies(parroquiaList) {
-            const container = document.getElementById('parroquies-container');
+        // Function to display parishes and towns
+        function renderParishes(parishList) {
+            const container = document.getElementById('parishes-container');
             container.innerHTML = '';
 
-            parroquiaList.forEach(parroquia => {
-                const parroquiaCard = document.createElement('div');
-                parroquiaCard.className = 'parroquia-card';
-                parroquiaCard.innerHTML = `
+            parishList.forEach(parish => {
+                const parishCard = document.createElement('div');
+                parishCard.className = 'parish-card';
+                parishCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${parroquia.name}" class="flag-image">
+                        <img src="${parish.image}" alt="${parish.name.ca}" class="flag-image">
                     </div>
-                    <div class="parroquia-info">
-                        <div class="parroquia-name">${parroquia.name}</div>
-                        <div class="parroquia-region">${parroquia.region}</div>
+                    <div class="parish-info">
+                        <div class="catalan-name">${parish.name.ca}</div>
+                        <div class="parish-name">${parish.name.en}</div>
+                        <div class="parish-type">${parish.type.ca} • ${parish.type.en}</div>
                     </div>
                 `;
                 
-                parroquiaCard.addEventListener('click', () => {
-                    window.location.href = parroquia.url;
+                parishCard.addEventListener('click', () => {
+                    window.location.href = parish.url;
                 });
 
-                container.appendChild(parroquiaCard);
+                container.appendChild(parishCard);
             });
         }
 
-        // Funció per cercar parròquies
-        function searchParroquies() {
-            const searchTerm = document.getElementById('parroquia-search').value.toLowerCase();
-            const filteredParroquies = parroquies.filter(parroquia => 
-                parroquia.name.toLowerCase().includes(searchTerm) || 
-                parroquia.region.toLowerCase().includes(searchTerm)
+        // Function to search parishes and towns
+        function searchParishes() {
+            const searchTerm = document.getElementById('parish-search').value.toLowerCase();
+            const filteredParishes = parishes.filter(parish => 
+                parish.name.ca.toLowerCase().includes(searchTerm) || 
+                parish.name.en.toLowerCase().includes(searchTerm) ||
+                parish.type.ca.toLowerCase().includes(searchTerm) ||
+                parish.type.en.toLowerCase().includes(searchTerm)
             );
-            renderParroquies(filteredParroquies);
+            renderParishes(filteredParishes);
         }
 
         // Event listeners
-        document.getElementById('parroquia-search').addEventListener('input', searchParroquies);
+        document.getElementById('parish-search').addEventListener('input', searchParishes);
 
-        // Mostrar totes les parròquies en carregar la pàgina
+        // Display all parishes and towns when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            renderParroquies(parroquies);
+            renderParishes(parishes);
         });
     </script>
 </body>
