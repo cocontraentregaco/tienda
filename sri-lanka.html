@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="si" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - ශ්රී ලංකාව / Sri Lanka</title>
+    <style>
+        :root {
+            --maroon: #8D153A; /* Sri Lankan maroon */
+            --gold: #FFB700; /* Sri Lankan gold */
+            --green: #009A44; /* Sri Lankan green */
+            --orange: #F7941D; /* Sri Lankan orange */
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Iskoola Pota', 'Latha', sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(141, 21, 58, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--maroon) 0%, var(--gold) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .sinhala-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-family: 'Iskoola Pota', sans-serif;
+        }
+
+        .tamil-title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Latha', sans-serif;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .state-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+            border-top: 4px solid var(--maroon);
+        }
+
+        .state-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--gold);
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--maroon) 0%, var(--gold) 33%, var(--green) 66%, var(--orange) 100%);
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .state-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .state-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--maroon);
+        }
+
+        .sinhala-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+            font-weight: bold;
+            font-family: 'Iskoola Pota', sans-serif;
+        }
+
+        .tamil-name {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Latha', sans-serif;
+        }
+
+        .state-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        #state-search {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
+        }
+
+        #state-search:focus {
+            border-color: var(--maroon);
+            box-shadow: 0 0 0 3px rgba(141, 21, 58, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        .language-selector {
+            margin: 1rem 0;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .language-btn {
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .sinhala-title {
+                font-size: 1.8rem;
+            }
+
+            .tamil-title {
+                font-size: 1.4rem;
+            }
+
+            .flag-container {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+
+            .state-info {
+                padding: 1rem 0.5rem;
+            }
+
+            .state-name {
+                font-size: 1rem;
+            }
+            
+            .sinhala-name {
+                font-size: 1.1rem;
+            }
+            
+            .tamil-name {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QRContraentrega</h1>
+            <div class="sinhala-title">ශ්රී ලංකාව</div>
+            <div class="tamil-title">இலங்கை</div>
+            <div>Sri Lanka</div>
+            <p class="subtitle">පළාත හෝ නගරය තෝරන්න / மாகாணம் அல்லது நகரத்தைத் தேர்ந்தெடுக்கவும் / Select your province or city</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="state-search" placeholder="පළාත හෝ නගරය සොයන්න... / மாகாணம் அல்லது நகரத்தைத் தேடு... / Search for province or city..." aria-label="Search for province or city">
+        </div>
+
+        <div class="language-selector">
+            <button class="language-btn" style="background-color: var(--maroon); color: white;">සිංහල</button>
+            <button class="language-btn" style="background-color: var(--green); color: white;">தமிழ்</button>
+            <button class="language-btn" style="background-color: var(--blue); color: white;">English</button>
+        </div>
+
+        <div class="states-grid" id="states-container">
+            <!-- Provinces and cities will appear here -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. සියලුම හිමිකම් ඇවිරිණි / அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டுள்ளன / All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // List of Sri Lankan provinces and major cities with all three languages
+        const states = [
+            // Provinces
+            { 
+                "name": { 
+                    "si": "බස්නාහිර පළාත", 
+                    "ta": "மேல் மாகாணம்", 
+                    "en": "Western Province" 
+                }, 
+                "type": { 
+                    "si": "පළාත", 
+                    "ta": "மாகாணம்", 
+                    "en": "Province" 
+                }, 
+                "url": "https://qrcontraentrega.com/western-province", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "මධ්‍යම පළාත", 
+                    "ta": "மத்திய மாகாணம்", 
+                    "en": "Central Province" 
+                }, 
+                "type": { 
+                    "si": "පළාත", 
+                    "ta": "மாகாணம்", 
+                    "en": "Province" 
+                }, 
+                "url": "https://qrcontraentrega.com/central-province", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "දකුණු පළාත", 
+                    "ta": "தென் மாகாணம்", 
+                    "en": "Southern Province" 
+                }, 
+                "type": { 
+                    "si": "පළාත", 
+                    "ta": "மாகாணம்", 
+                    "en": "Province" 
+                }, 
+                "url": "https://qrcontraentrega.com/southern-province", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "උතුරු පළාත", 
+                    "ta": "வட மாகாணம்", 
+                    "en": "Northern Province" 
+                }, 
+                "type": { 
+                    "si": "පළාත", 
+                    "ta": "மாகாணம்", 
+                    "en": "Province" 
+                }, 
+                "url": "https://qrcontraentrega.com/northern-province", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "නැගෙනහිර පළාත", 
+                    "ta": "கிழக்கு மாகாணம்", 
+                    "en": "Eastern Province" 
+                }, 
+                "type": { 
+                    "si": "පළාත", 
+                    "ta": "மாகாணம்", 
+                    "en": "Province" 
+                }, 
+                "url": "https://qrcontraentrega.com/eastern-province", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "වයඹ පළාත", 
+                    "ta": "வட மேல் மாகாணம்", 
+                    "en": "North Western Province" 
+                }, 
+                "type": { 
+                    "si": "පළාත", 
+                    "ta": "மாகாணம்", 
+                    "en": "Province" 
+                }, 
+                "url": "https://qrcontraentrega.com/north-western-province", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "උතුරු මැද පළාත", 
+                    "ta": "வட மத்திய மாகாணம்", 
+                    "en": "North Central Province" 
+                }, 
+                "type": { 
+                    "si": "පළාත", 
+                    "ta": "மாகாணம்", 
+                    "en": "Province" 
+                }, 
+                "url": "https://qrcontraentrega.com/north-central-province", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "ඌව පළාත", 
+                    "ta": "ஊவா மாகாணம்", 
+                    "en": "Uva Province" 
+                }, 
+                "type": { 
+                    "si": "පළාත", 
+                    "ta": "மாகாணம்", 
+                    "en": "Province" 
+                }, 
+                "url": "https://qrcontraentrega.com/uva-province", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "සබරගමුව පළාත", 
+                    "ta": "சபரகமுவா மாகாணம்", 
+                    "en": "Sabaragamuwa Province" 
+                }, 
+                "type": { 
+                    "si": "පළාත", 
+                    "ta": "மாகாணம்", 
+                    "en": "Province" 
+                }, 
+                "url": "https://qrcontraentrega.com/sabaragamuwa-province", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major Cities
+            { 
+                "name": { 
+                    "si": "කොළඹ", 
+                    "ta": "கொழும்பு", 
+                    "en": "Colombo" 
+                }, 
+                "type": { 
+                    "si": "නගරය", 
+                    "ta": "நகரம்", 
+                    "en": "City" 
+                }, 
+                "url": "https://qrcontraentrega.com/colombo", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "කෑගල්ල", 
+                    "ta": "கேகாலை", 
+                    "en": "Kegalle" 
+                }, 
+                "type": { 
+                    "si": "නගරය", 
+                    "ta": "நகரம்", 
+                    "en": "City" 
+                }, 
+                "url": "https://qrcontraentrega.com/kegalle", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "ගාල්ල", 
+                    "ta": "காலி", 
+                    "en": "Galle" 
+                }, 
+                "type": { 
+                    "si": "නගරය", 
+                    "ta": "நகரம்", 
+                    "en": "City" 
+                }, 
+                "url": "https://qrcontraentrega.com/galle", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "කන්දය", 
+                    "ta": "கண்டி", 
+                    "en": "Kandy" 
+                }, 
+                "type": { 
+                    "si": "නගරය", 
+                    "ta": "நகரம்", 
+                    "en": "City" 
+                }, 
+                "url": "https://qrcontraentrega.com/kandy", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "ජාඇල", 
+                    "ta": "யாழ்ப்பாணம்", 
+                    "en": "Jaffna" 
+                }, 
+                "type": { 
+                    "si": "නගරය", 
+                    "ta": "நகரம்", 
+                    "en": "City" 
+                }, 
+                "url": "https://qrcontraentrega.com/jaffna", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "ත්‍රිකුණාමලය", 
+                    "ta": "திருகோணமலை", 
+                    "en": "Trincomalee" 
+                }, 
+                "type": { 
+                    "si": "නගරය", 
+                    "ta": "நகரம்", 
+                    "en": "City" 
+                }, 
+                "url": "https://qrcontraentrega.com/trincomalee", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "මාතර", 
+                    "ta": "மாத்தறை", 
+                    "en": "Matara" 
+                }, 
+                "type": { 
+                    "si": "නගරය", 
+                    "ta": "நகரம்", 
+                    "en": "City" 
+                }, 
+                "url": "https://qrcontraentrega.com/matara", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "අනුරාධපුරය", 
+                    "ta": "அனுராதபுரம்", 
+                    "en": "Anuradhapura" 
+                }, 
+                "type": { 
+                    "si": "නගරය", 
+                    "ta": "நகரம்", 
+                    "en": "City" 
+                }, 
+                "url": "https://qrcontraentrega.com/anuradhapura", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "නුවරඑළිය", 
+                    "ta": "நுவரெலியா", 
+                    "en": "Nuwara Eliya" 
+                }, 
+                "type": { 
+                    "si": "නගරය", 
+                    "ta": "நகரம்", 
+                    "en": "City" 
+                }, 
+                "url": "https://qrcontraentrega.com/nuwara-eliya", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { 
+                    "si": "රත්නපුරය", 
+                    "ta": "இரத்தினபுரி", 
+                    "en": "Ratnapura" 
+                }, 
+                "type": { 
+                    "si": "නගරය", 
+                    "ta": "நகரம்", 
+                    "en": "City" 
+                }, 
+                "url": "https://qrcontraentrega.com/ratnapura", 
+                "image": "img/c.jpg" 
+            }
+        ];
+
+        let currentLanguage = 'si';
+
+        // Function to display provinces and cities
+        function renderStates(stateList, language = 'si') {
+            const container = document.getElementById('states-container');
+            container.innerHTML = '';
+
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                
+                stateCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="${state.image}" alt="${state.name[language]}" class="flag-image">
+                    </div>
+                    <div class="state-info">
+                        ${language === 'si' ? `<div class="sinhala-name">${state.name.si}</div>` : ''}
+                        ${language === 'ta' ? `<div class="tamil-name">${state.name.ta}</div>` : ''}
+                        ${language === 'en' ? `<div class="state-name">${state.name.en}</div>` : ''}
+                        ${language !== 'en' ? `<div class="state-name">${state.name.en}</div>` : ''}
+                        <div class="state-type">${state.type[language]}</div>
+                    </div>
+                `;
+                
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
+                });
+
+                container.appendChild(stateCard);
+            });
+        }
+
+        // Function to search provinces and cities
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.si.toLowerCase().includes(searchTerm) || 
+                state.name.ta.toLowerCase().includes(searchTerm) ||
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.si.toLowerCase().includes(searchTerm) ||
+                state.type.ta.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
+            );
+            renderStates(filteredStates, currentLanguage);
+        }
+
+        // Event listeners
+        document.getElementById('state-search').addEventListener('input', searchStates);
+
+        // Language selector buttons
+        document.querySelectorAll('.language-btn').forEach((btn, index) => {
+            btn.addEventListener('click', function() {
+                currentLanguage = index === 0 ? 'si' : index === 1 ? 'ta' : 'en';
+                searchStates(); // Re-render with current search and new language
+            });
+        });
+
+        // Display all provinces and cities when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStates(states);
+        });
+    </script>
+</body>
+</html>
