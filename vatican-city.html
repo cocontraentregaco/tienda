@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="it" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - Città del Vaticano</title>
+    <style>
+        :root {
+            --yellow: #FFD700; /* Vatican gold */
+            --white: #FFFFFF;
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(255, 215, 0, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        .container {
+            max-width: 800px; /* Smaller container for city-state */
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #FFD700 0%, #FFC000 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: #000;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        .italian-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: rgba(0,0,0,0.8);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .landmarks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .landmark-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+            border-top: 4px solid var(--yellow);
+        }
+
+        .landmark-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: #D4AF37;
+        }
+
+        .image-container {
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--yellow) 0%, #D4AF37 100%);
+        }
+
+        .landmark-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .landmark-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .landmark-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .italian-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .landmark-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        #landmark-search {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
+        }
+
+        #landmark-search:focus {
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .landmarks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .italian-title {
+                font-size: 1.8rem;
+            }
+
+            .image-container {
+                height: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .landmarks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 1rem;
+            }
+
+            .landmark-info {
+                padding: 1rem 0.5rem;
+            }
+
+            .landmark-name {
+                font-size: 1rem;
+            }
+            
+            .italian-name {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QRContraentrega</h1>
+            <div class="italian-title">Città del Vaticano</div>
+            <div>Vatican City</div>
+            <p class="subtitle">Seleziona un luogo di interesse / Select a landmark</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="landmark-search" placeholder="Cerca un luogo... / Search for a landmark..." aria-label="Search for a landmark">
+        </div>
+
+        <div class="landmarks-grid" id="landmarks-container">
+            <!-- Landmarks will appear here -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. Tutti i diritti riservati / All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // List of Vatican landmarks with both languages
+        const landmarks = [
+            { 
+                "name": { "it": "Basilica di San Pietro", "en": "St. Peter's Basilica" }, 
+                "type": { "it": "Basilica Papale", "en": "Papal Basilica" }, 
+                "url": "https://qrcontraentrega.com/san-pietro", 
+                "image": "img/vatican-basilica.jpg" 
+            },
+            { 
+                "name": { "it": "Piazza San Pietro", "en": "St. Peter's Square" }, 
+                "type": { "it": "Piazza", "en": "Square" }, 
+                "url": "https://qrcontraentrega.com/piazza-san-pietro", 
+                "image": "img/vatican-square.jpg" 
+            },
+            { 
+                "name": { "it": "Musei Vaticani", "en": "Vatican Museums" }, 
+                "type": { "it": "Museo", "en": "Museum" }, 
+                "url": "https://qrcontraentrega.com/musei-vaticani", 
+                "image": "img/vatican-museum.jpg" 
+            },
+            { 
+                "name": { "it": "Cappella Sistina", "en": "Sistine Chapel" }, 
+                "type": { "it": "Cappella", "en": "Chapel" }, 
+                "url": "https://qrcontraentrega.com/cappella-sistina", 
+                "image": "img/sistine-chapel.jpg" 
+            },
+            { 
+                "name": { "it": "Giardini Vaticani", "en": "Vatican Gardens" }, 
+                "type": { "it": "Giardini", "en": "Gardens" }, 
+                "url": "https://qrcontraentrega.com/giardini-vaticani", 
+                "image": "img/vatican-gardens.jpg" 
+            },
+            { 
+                "name": { "it": "Palazzo Apostolico", "en": "Apostolic Palace" }, 
+                "type": { "it": "Residenza Papale", "en": "Papal Residence" }, 
+                "url": "https://qrcontraentrega.com/palazzo-apostolico", 
+                "image": "img/apostolic-palace.jpg" 
+            },
+            { 
+                "name": { "it": "Biblioteca Apostolica Vaticana", "en": "Vatican Library" }, 
+                "type": { "it": "Biblioteca", "en": "Library" }, 
+                "url": "https://qrcontraentrega.com/biblioteca-vaticana", 
+                "image": "img/vatican-library.jpg" 
+            },
+            { 
+                "name": { "it": "Necropoli Vaticana", "en": "Vatican Necropolis" }, 
+                "type": { "it": "Sito Archeologico", "en": "Archaeological Site" }, 
+                "url": "https://qrcontraentrega.com/necropoli-vaticana", 
+                "image": "img/vatican-necropolis.jpg" 
+            }
+        ];
+
+        // Function to display landmarks
+        function renderLandmarks(landmarkList) {
+            const container = document.getElementById('landmarks-container');
+            container.innerHTML = '';
+
+            landmarkList.forEach(landmark => {
+                const landmarkCard = document.createElement('div');
+                landmarkCard.className = 'landmark-card';
+                landmarkCard.innerHTML = `
+                    <div class="image-container">
+                        <img src="${landmark.image}" alt="${landmark.name.it}" class="landmark-image">
+                    </div>
+                    <div class="landmark-info">
+                        <div class="italian-name">${landmark.name.it}</div>
+                        <div class="landmark-name">${landmark.name.en}</div>
+                        <div class="landmark-type">${landmark.type.it} • ${landmark.type.en}</div>
+                    </div>
+                `;
+                
+                landmarkCard.addEventListener('click', () => {
+                    window.location.href = landmark.url;
+                });
+
+                container.appendChild(landmarkCard);
+            });
+        }
+
+        // Function to search landmarks
+        function searchLandmarks() {
+            const searchTerm = document.getElementById('landmark-search').value.toLowerCase();
+            const filteredLandmarks = landmarks.filter(landmark => 
+                landmark.name.it.toLowerCase().includes(searchTerm) || 
+                landmark.name.en.toLowerCase().includes(searchTerm) ||
+                landmark.type.it.toLowerCase().includes(searchTerm) ||
+                landmark.type.en.toLowerCase().includes(searchTerm)
+            );
+            renderLandmarks(filteredLandmarks);
+        }
+
+        // Event listeners
+        document.getElementById('landmark-search').addEventListener('input', searchLandmarks);
+
+        // Display all landmarks when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderLandmarks(landmarks);
+        });
+    </script>
+</body>
+</html>
