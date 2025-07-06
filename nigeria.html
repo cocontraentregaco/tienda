@@ -1,1 +1,555 @@
-r
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - Nigeria / Naijiria</title>
+    <style>
+        :root {
+            --green: #008751; /* Nigerian green */
+            --white: #FFFFFF; /* Nigerian white */
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(0, 135, 81, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--green) 0%, #005737 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .nigerian-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .state-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+            border-top: 4px solid var(--green);
+        }
+
+        .state-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: #005737;
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--green) 0%, #005737 100%);
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .state-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .state-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--green);
+        }
+
+        .local-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .state-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        #state-search {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
+        }
+
+        #state-search:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(0, 135, 81, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .nigerian-title {
+                font-size: 1.8rem;
+            }
+
+            .flag-container {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+
+            .state-info {
+                padding: 1rem 0.5rem;
+            }
+
+            .state-name {
+                font-size: 1rem;
+            }
+            
+            .local-name {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QRContraentrega</h1>
+            <div class="nigerian-title">Nigeria</div>
+            <div>Naijiria</div>
+            <p class="subtitle">Select your state or city / Yànn̄i ìpínlẹ̀ tàbí ìlú rẹ</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="state-search" placeholder="Search for state or city... / Wá ìpínlẹ̀ tàbí ìlú..." aria-label="Search for state or city">
+        </div>
+
+        <div class="states-grid" id="states-container">
+            <!-- States and cities will appear here -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. All rights reserved / Gbogbo ẹ̀tọ́ wa ni ipamọ</p>
+        </footer>
+    </div>
+
+    <script>
+        // List of Nigerian states and major cities with both languages
+        const states = [
+            // States
+            { 
+                "name": { "en": "Abia", "yo": "Abia" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/abia", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Adamawa", "yo": "Adamawa" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/adamawa", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Akwa Ibom", "yo": "Akwa Ibom" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/akwa-ibom", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Anambra", "yo": "Anambra" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/anambra", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Bauchi", "yo": "Bauchi" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/bauchi", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Bayelsa", "yo": "Bayelsa" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/bayelsa", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Benue", "yo": "Benue" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/benue", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Borno", "yo": "Borno" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/borno", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Cross River", "yo": "Cross River" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/cross-river", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Delta", "yo": "Delta" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/delta", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Ebonyi", "yo": "Ebonyi" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/ebonyi", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Edo", "yo": "Edo" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/edo", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Ekiti", "yo": "Ekiti" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/ekiti", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Enugu", "yo": "Enugu" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/enugu", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Gombe", "yo": "Gombe" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/gombe", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Imo", "yo": "Imo" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/imo", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Jigawa", "yo": "Jigawa" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/jigawa", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Kaduna", "yo": "Kaduna" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/kaduna", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Kano", "yo": "Kano" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/kano", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Katsina", "yo": "Katsina" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/katsina", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Kebbi", "yo": "Kebbi" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/kebbi", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Kogi", "yo": "Kogi" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/kogi", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Kwara", "yo": "Kwara" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/kwara", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Lagos", "yo": "Èkó" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/lagos", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Nasarawa", "yo": "Nasarawa" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/nasarawa", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Niger", "yo": "Niger" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/niger", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Ogun", "yo": "Ogun" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/ogun", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Ondo", "yo": "Ondo" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/ondo", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Osun", "yo": "Osun" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/osun", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Oyo", "yo": "Oyo" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/oyo", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Plateau", "yo": "Plateau" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/plateau", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Rivers", "yo": "Rivers" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/rivers", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Sokoto", "yo": "Sokoto" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/sokoto", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Taraba", "yo": "Taraba" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/taraba", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Yobe", "yo": "Yobe" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/yobe", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Zamfara", "yo": "Zamfara" }, 
+                "type": { "en": "State", "yo": "Ìpínlẹ̀" }, 
+                "url": "https://qrcontraentrega.com/zamfara", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Federal Capital Territory", "yo": "Agbègbè Olúìlú" }, 
+                "type": { "en": "Territory", "yo": "Agbègbè" }, 
+                "url": "https://qrcontraentrega.com/fct", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major cities
+            { 
+                "name": { "en": "Lagos", "yo": "Èkó" }, 
+                "type": { "en": "City", "yo": "Ìlú" }, 
+                "url": "https://qrcontraentrega.com/lagos-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Abuja", "yo": "Abuja" }, 
+                "type": { "en": "City", "yo": "Ìlú" }, 
+                "url": "https://qrcontraentrega.com/abuja", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Kano", "yo": "Kano" }, 
+                "type": { "en": "City", "yo": "Ìlú" }, 
+                "url": "https://qrcontraentrega.com/kano-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Ibadan", "yo": "Ìbàdàn" }, 
+                "type": { "en": "City", "yo": "Ìlú" }, 
+                "url": "https://qrcontraentrega.com/ibadan", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Port Harcourt", "yo": "Pọ́tá Hákót" }, 
+                "type": { "en": "City", "yo": "Ìlú" }, 
+                "url": "https://qrcontraentrega.com/port-harcourt", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Benin City", "yo": "Benin" }, 
+                "type": { "en": "City", "yo": "Ìlú" }, 
+                "url": "https://qrcontraentrega.com/benin-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Maiduguri", "yo": "Maiduguri" }, 
+                "type": { "en": "City", "yo": "Ìlú" }, 
+                "url": "https://qrcontraentrega.com/maiduguri", 
+                "image": "img/c.jpg" 
+            }
+        ];
+
+        // Function to display states and cities
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
+            container.innerHTML = '';
+
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="${state.image}" alt="${state.name.en}" class="flag-image">
+                    </div>
+                    <div class="state-info">
+                        <div class="local-name">${state.name.yo}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.en} • ${state.type.yo}</div>
+                    </div>
+                `;
+                
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
+                });
+
+                container.appendChild(stateCard);
+            });
+        }
+
+        // Function to search states and cities
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.en.toLowerCase().includes(searchTerm) || 
+                state.name.yo.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm) ||
+                state.type.yo.toLowerCase().includes(searchTerm)
+            );
+            renderStates(filteredStates);
+        }
+
+        // Event listeners
+        document.getElementById('state-search').addEventListener('input', searchStates);
+
+        // Display all states and cities when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStates(states);
+        });
+    </script>
+</body>
+</html>
