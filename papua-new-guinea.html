@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - Papua New Guinea / Papua Niugini</title>
+    <style>
+        :root {
+            --red: #CE1126; /* PNG red */
+            --black: #000000; /* PNG black */
+            --yellow: #FFC72C; /* PNG yellow */
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(206, 17, 38, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--red) 0%, #A50D22 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .tokpisin-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .state-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+            border-top: 4px solid var(--red);
+        }
+
+        .state-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--yellow);
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--red) 0%, var(--yellow) 100%);
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .state-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .state-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--red);
+        }
+
+        .tokpisin-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .state-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        #state-search {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
+        }
+
+        #state-search:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(206, 17, 38, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .tokpisin-title {
+                font-size: 1.8rem;
+            }
+
+            .flag-container {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+
+            .state-info {
+                padding: 1rem 0.5rem;
+            }
+
+            .state-name {
+                font-size: 1rem;
+            }
+            
+            .tokpisin-name {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QRContraentrega</h1>
+            <div class="tokpisin-title">Papua Niugini</div>
+            <div>Papua New Guinea</div>
+            <p class="subtitle">Pilisim provins o taun bilong yu / Select your province or town</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="state-search" placeholder="Painim provins o taun... / Search for province or town..." aria-label="Painim provins o taun">
+        </div>
+
+        <div class="states-grid" id="states-container">
+            <!-- Provinces and towns will appear here -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. Ol raits i stap / All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // List of PNG provinces and major towns with both languages
+        const states = [
+            // Regions
+            { 
+                "name": { "tpi": "Highlands", "en": "Highlands Region" }, 
+                "type": { "tpi": "Rijen", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/highlands", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tpi": "Ailan", "en": "Islands Region" }, 
+                "type": { "tpi": "Rijen", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/islands", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tpi": "Momase", "en": "Momase Region" }, 
+                "type": { "tpi": "Rijen", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/momase", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tpi": "Papua", "en": "Southern Region" }, 
+                "type": { "tpi": "Rijen", "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/southern", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Provinces
+            { 
+                "name": { "tpi": "Sentral", "en": "Central" }, 
+                "type": { "tpi": "Provins", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/central", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tpi": "Niu Briten", "en": "East New Britain" }, 
+                "type": { "tpi": "Provins", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/east-new-britain", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tpi": "Niu Ailan", "en": "New Ireland" }, 
+                "type": { "tpi": "Provins", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/new-ireland", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tpi": "Enga", "en": "Enga" }, 
+                "type": { "tpi": "Provins", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/enga", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tpi": "Hela", "en": "Hela" }, 
+                "type": { "tpi": "Provins", "en": "Province" }, 
+                "url": "https://qrcontraentrega.com/hela", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major towns
+            { 
+                "name": { "tpi": "Pot Mosbi", "en": "Port Moresby" }, 
+                "type": { "tpi": "Taun", "en": "Capital" }, 
+                "url": "https://qrcontraentrega.com/port-moresby", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tpi": "Lae", "en": "Lae" }, 
+                "type": { "tpi": "Taun", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/lae", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tpi": "Madang", "en": "Madang" }, 
+                "type": { "tpi": "Taun", "en": "Town" }, 
+                "url": "https://qrcontraentrega.com/madang", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tpi": "Goroka", "en": "Goroka" }, 
+                "type": { "tpi": "Taun", "en": "Town" }, 
+                "url": "https://qrcontraentrega.com/goroka", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "tpi": "Kokopo", "en": "Kokopo" }, 
+                "type": { "tpi": "Taun", "en": "Town" }, 
+                "url": "https://qrcontraentrega.com/kokopo", 
+                "image": "img/c.jpg" 
+            }
+        ];
+
+        // Function to display provinces and towns
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
+            container.innerHTML = '';
+
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="${state.image}" alt="${state.name.tpi}" class="flag-image">
+                    </div>
+                    <div class="state-info">
+                        <div class="tokpisin-name">${state.name.tpi}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.tpi} • ${state.type.en}</div>
+                    </div>
+                `;
+                
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
+                });
+
+                container.appendChild(stateCard);
+            });
+        }
+
+        // Function to search provinces and towns
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.tpi.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.tpi.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
+            );
+            renderStates(filteredStates);
+        }
+
+        // Event listeners
+        document.getElementById('state-search').addEventListener('input', searchStates);
+
+        // Display all provinces and towns when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStates(states);
+        });
+    </script>
+</body>
+</html>
