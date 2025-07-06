@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - Reino Unido</title>
+    <title>QRContraentrega - United Kingdom</title>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2980b9;
+            --red: #C8102E; /* UK red */
+            --blue: #012169; /* UK blue */
+            --white: #FFFFFF;
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -24,6 +25,7 @@
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(1, 33, 105, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -35,28 +37,39 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--blue) 0%, #002366 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: var(--white);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .uk-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
         }
 
-        .municipalities-grid {
+        .states-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
-        .municipality-card {
+        .state-card {
             background: white;
             border-radius: 8px;
             overflow: hidden;
@@ -64,11 +77,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
+            border-top: 4px solid var(--red);
         }
 
-        .municipality-card:hover {
+        .state-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: #E4003A;
         }
 
         .flag-container {
@@ -77,6 +92,18 @@
             align-items: center;
             justify-content: center;
             background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--red) 0%, var(--blue) 100%);
         }
 
         .flag-image {
@@ -85,17 +112,24 @@
             object-fit: contain;
         }
 
-        .municipality-info {
+        .state-info {
             padding: 1.5rem 1rem;
         }
 
-        .municipality-name {
+        .state-name {
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--blue);
         }
 
-        .municipality-department {
+        .country-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .state-type {
             color: #666;
             font-size: 0.9rem;
         }
@@ -105,21 +139,26 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
 
-        #municipality-search {
+        #state-search {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 20px 12px 45px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
         }
 
-        #municipality-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        #state-search:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.2);
         }
 
         footer {
@@ -131,12 +170,16 @@
         }
 
         @media (max-width: 768px) {
-            .municipalities-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
                 font-size: 2rem;
+            }
+
+            .uk-title {
+                font-size: 1.8rem;
             }
 
             .flag-container {
@@ -149,17 +192,21 @@
                 padding: 1rem;
             }
 
-            .municipalities-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
-            .municipality-info {
+            .state-info {
                 padding: 1rem 0.5rem;
             }
 
-            .municipality-name {
+            .state-name {
                 font-size: 1rem;
+            }
+            
+            .country-name {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -167,108 +214,173 @@
 <body>
     <div class="container">
         <header>
-            <h1>QRCONTRAENTREGA</h1>
-            <p class="subtitle">Selecciona tu ciudad en Reino Unido</p>
+            <h1>QRContraentrega</h1>
+            <div class="uk-title">United Kingdom</div>
+            <div>UK</div>
+            <p class="subtitle">Select your country, region or city</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="municipality-search" placeholder="Buscar ciudad..." aria-label="Buscar ciudad">
+            <input type="text" id="state-search" placeholder="Search for country, region or city..." aria-label="Search for country, region or city">
         </div>
 
-        <div class="municipalities-grid" id="municipalities-container">
-            <!-- Las ciudades se cargarán aquí con JavaScript -->
+        <div class="states-grid" id="states-container">
+            <!-- Countries, regions and cities will appear here -->
         </div>
 
         <footer>
-            <p>© QRContraentrega. Todos los derechos reservados.</p>
+            <p>© QRContraentrega. All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // Lista de ciudades del Reino Unido con sus países/regiones
-        const municipalities = [
-            { "name": "Londres", "department": "Inglaterra", "url": "https://qrcontraentrega.com/londres" },
-            { "name": "Birmingham", "department": "Inglaterra", "url": "https://qrcontraentrega.com/birmingham" },
-            { "name": "Manchester", "department": "Inglaterra", "url": "https://qrcontraentrega.com/manchester" },
-            { "name": "Glasgow", "department": "Escocia", "url": "https://qrcontraentrega.com/glasgow" },
-            { "name": "Liverpool", "department": "Inglaterra", "url": "https://qrcontraentrega.com/liverpool" },
-            { "name": "Bristol", "department": "Inglaterra", "url": "https://qrcontraentrega.com/bristol" },
-            { "name": "Sheffield", "department": "Inglaterra", "url": "https://qrcontraentrega.com/sheffield" },
-            { "name": "Leeds", "department": "Inglaterra", "url": "https://qrcontraentrega.com/leeds" },
-            { "name": "Edimburgo", "department": "Escocia", "url": "https://qrcontraentrega.com/edimburgo" },
-            { "name": "Leicester", "department": "Inglaterra", "url": "https://qrcontraentrega.com/leicester" },
-            { "name": "Cardiff", "department": "Gales", "url": "https://qrcontraentrega.com/cardiff" },
-            { "name": "Belfast", "department": "Irlanda del Norte", "url": "https://qrcontraentrega.com/belfast" },
-            { "name": "Nottingham", "department": "Inglaterra", "url": "https://qrcontraentrega.com/nottingham" },
-            { "name": "Newcastle", "department": "Inglaterra", "url": "https://qrcontraentrega.com/newcastle" },
-            { "name": "Brighton", "department": "Inglaterra", "url": "https://qrcontraentrega.com/brighton" },
-            { "name": "Southampton", "department": "Inglaterra", "url": "https://qrcontraentrega.com/southampton" },
-            { "name": "Portsmouth", "department": "Inglaterra", "url": "https://qrcontraentrega.com/portsmouth" },
-            { "name": "Aberdeen", "department": "Escocia", "url": "https://qrcontraentrega.com/aberdeen" },
-            { "name": "Cambridge", "department": "Inglaterra", "url": "https://qrcontraentrega.com/cambridge" },
-            { "name": "Oxford", "department": "Inglaterra", "url": "https://qrcontraentrega.com/oxford" },
-            { "name": "York", "department": "Inglaterra", "url": "https://qrcontraentrega.com/york" },
-            { "name": "Norwich", "department": "Inglaterra", "url": "https://qrcontraentrega.com/norwich" },
-            { "name": "Plymouth", "department": "Inglaterra", "url": "https://qrcontraentrega.com/plymouth" },
-            { "name": "Swansea", "department": "Gales", "url": "https://qrcontraentrega.com/swansea" },
-            { "name": "Derby", "department": "Inglaterra", "url": "https://qrcontraentrega.com/derby" },
-            { "name": "Coventry", "department": "Inglaterra", "url": "https://qrcontraentrega.com/coventry" },
-            { "name": "Reading", "department": "Inglaterra", "url": "https://qrcontraentrega.com/reading" },
-            { "name": "Exeter", "department": "Inglaterra", "url": "https://qrcontraentrega.com/exeter" },
-            { "name": "Dundee", "department": "Escocia", "url": "https://qrcontraentrega.com/dundee" },
-            { "name": "Bath", "department": "Inglaterra", "url": "https://qrcontraentrega.com/bath" },
-            { "name": "Chester", "department": "Inglaterra", "url": "https://qrcontraentrega.com/chester" },
-            { "name": "Canterbury", "department": "Inglaterra", "url": "https://qrcontraentrega.com/canterbury" },
-            { "name": "Stoke-on-Trent", "department": "Inglaterra", "url": "https://qrcontraentrega.com/stoke" },
-            { "name": "Wolverhampton", "department": "Inglaterra", "url": "https://qrcontraentrega.com/wolverhampton" },
-            { "name": "Milton Keynes", "department": "Inglaterra", "url": "https://qrcontraentrega.com/miltonkeynes" },
-            { "name": "Inverness", "department": "Escocia", "url": "https://qrcontraentrega.com/inverness" },
-            { "name": "Newport", "department": "Gales", "url": "https://qrcontraentrega.com/newport" },
-            { "name": "Londonderry", "department": "Irlanda del Norte", "url": "https://qrcontraentrega.com/londonderry" }
+        // List of UK countries, regions and major cities
+        const states = [
+            // Countries
+            { 
+                "name": { "en": "England" }, 
+                "type": { "en": "Country" }, 
+                "url": "https://qrcontraentrega.com/england", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Scotland" }, 
+                "type": { "en": "Country" }, 
+                "url": "https://qrcontraentrega.com/scotland", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Wales" }, 
+                "type": { "en": "Country" }, 
+                "url": "https://qrcontraentrega.com/wales", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Northern Ireland" }, 
+                "type": { "en": "Country" }, 
+                "url": "https://qrcontraentrega.com/northern-ireland", 
+                "image": "img/c.jpg" 
+            },
+            
+            // English Regions
+            { 
+                "name": { "en": "London" }, 
+                "type": { "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/london", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "South East" }, 
+                "type": { "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/south-east", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "North West" }, 
+                "type": { "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/north-west", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "East of England" }, 
+                "type": { "en": "Region" }, 
+                "url": "https://qrcontraentrega.com/east-england", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Major cities
+            { 
+                "name": { "en": "London" }, 
+                "type": { "en": "City" }, 
+                "url": "https://qrcontraentrega.com/london-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Birmingham" }, 
+                "type": { "en": "City" }, 
+                "url": "https://qrcontraentrega.com/birmingham", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Manchester" }, 
+                "type": { "en": "City" }, 
+                "url": "https://qrcontraentrega.com/manchester", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Liverpool" }, 
+                "type": { "en": "City" }, 
+                "url": "https://qrcontraentrega.com/liverpool", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Edinburgh" }, 
+                "type": { "en": "City" }, 
+                "url": "https://qrcontraentrega.com/edinburgh", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Glasgow" }, 
+                "type": { "en": "City" }, 
+                "url": "https://qrcontraentrega.com/glasgow", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Cardiff" }, 
+                "type": { "en": "City" }, 
+                "url": "https://qrcontraentrega.com/cardiff", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Belfast" }, 
+                "type": { "en": "City" }, 
+                "url": "https://qrcontraentrega.com/belfast", 
+                "image": "img/c.jpg" 
+            }
         ];
 
-        // Función para renderizar las ciudades
-        function renderMunicipalities(municipalityList) {
-            const container = document.getElementById('municipalities-container');
+        // Function to display countries, regions and cities
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
             container.innerHTML = '';
 
-            municipalityList.forEach(municipality => {
-                const municipalityCard = document.createElement('div');
-                municipalityCard.className = 'municipality-card';
-                municipalityCard.innerHTML = `
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${municipality.name}" class="flag-image">
+                        <img src="${state.image}" alt="${state.name.en}" class="flag-image">
                     </div>
-                    <div class="municipality-info">
-                        <div class="municipality-name">${municipality.name}</div>
-                        <div class="municipality-department">${municipality.department}</div>
+                    <div class="state-info">
+                        <div class="country-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.en}</div>
                     </div>
                 `;
                 
-                municipalityCard.addEventListener('click', () => {
-                    window.location.href = municipality.url;
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
                 });
 
-                container.appendChild(municipalityCard);
+                container.appendChild(stateCard);
             });
         }
 
-        // Función para buscar ciudades
-        function searchMunicipalities() {
-            const searchTerm = document.getElementById('municipality-search').value.toLowerCase();
-            const filteredMunicipalities = municipalities.filter(municipality => 
-                municipality.name.toLowerCase().includes(searchTerm) || 
-                municipality.department.toLowerCase().includes(searchTerm)
+        // Function to search countries, regions and cities
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.en.toLowerCase().includes(searchTerm) || 
+                state.type.en.toLowerCase().includes(searchTerm)
             );
-            renderMunicipalities(filteredMunicipalities);
+            renderStates(filteredStates);
         }
 
         // Event listeners
-        document.getElementById('municipality-search').addEventListener('input', searchMunicipalities);
+        document.getElementById('state-search').addEventListener('input', searchStates);
 
-        // Renderizar todas las ciudades al cargar la página
+        // Display all when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            renderMunicipalities(municipalities);
+            renderStates(states);
         });
     </script>
 </body>
