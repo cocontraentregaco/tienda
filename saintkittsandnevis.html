@@ -1,1 +1,382 @@
-y
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - Saint Kitts and Nevis</title>
+    <style>
+        :root {
+            --green: #009E49; /* St. Kitts and Nevis green */
+            --red: #CE1126; /* St. Kitts and Nevis red */
+            --yellow: #FFD100; /* St. Kitts and Nevis yellow */
+            --blue: #000000; /* St. Kitts and Nevis black */
+            --white: #FFFFFF;
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(0, 158, 73, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--green) 0%, var(--yellow) 50%, var(--red) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .country-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .state-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+            border-top: 4px solid var(--green);
+        }
+
+        .state-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--red);
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--green) 0%, var(--yellow) 50%, var(--red) 100%);
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .state-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .state-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--green);
+        }
+
+        .island-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .state-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        #state-search {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
+        }
+
+        #state-search:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(0, 158, 73, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .country-title {
+                font-size: 1.8rem;
+            }
+
+            .flag-container {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+
+            .state-info {
+                padding: 1rem 0.5rem;
+            }
+
+            .state-name {
+                font-size: 1rem;
+            }
+            
+            .island-name {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QRContraentrega</h1>
+            <div class="country-title">Saint Kitts and Nevis</div>
+            <p class="subtitle">Select your island or parish</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="state-search" placeholder="Search for island or parish..." aria-label="Search for island or parish">
+        </div>
+
+        <div class="states-grid" id="states-container">
+            <!-- Islands and parishes will appear here -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // List of Saint Kitts and Nevis islands and parishes
+        const states = [
+            // Main Islands
+            { 
+                "name": { "en": "Saint Kitts" }, 
+                "type": { "en": "Island" }, 
+                "url": "https://qrcontraentrega.com/saint-kitts", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Nevis" }, 
+                "type": { "en": "Island" }, 
+                "url": "https://qrcontraentrega.com/nevis", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Saint Kitts Parishes
+            { 
+                "name": { "en": "Christ Church Nichola Town" }, 
+                "type": { "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/christ-church", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Saint Anne Sandy Point" }, 
+                "type": { "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/saint-anne", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Saint George Basseterre" }, 
+                "type": { "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/saint-george", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Saint John Capisterre" }, 
+                "type": { "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/saint-john", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Saint Mary Cayon" }, 
+                "type": { "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/saint-mary", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Saint Paul Capisterre" }, 
+                "type": { "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/saint-paul", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Saint Peter Basseterre" }, 
+                "type": { "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/saint-peter", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Saint Thomas Middle Island" }, 
+                "type": { "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/saint-thomas", 
+                "image": "img/c.jpg" 
+            },
+            
+            // Nevis Parishes
+            { 
+                "name": { "en": "Saint George Gingerland" }, 
+                "type": { "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/gingerland", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Saint James Windward" }, 
+                "type": { "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/saint-james", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Saint John Figtree" }, 
+                "type": { "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/figtree", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Saint Paul Charlestown" }, 
+                "type": { "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/charlestown", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "en": "Saint Thomas Lowland" }, 
+                "type": { "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/lowland", 
+                "image": "img/c.jpg" 
+            }
+        ];
+
+        // Function to display islands and parishes
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
+            container.innerHTML = '';
+
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="${state.image}" alt="${state.name.en}" class="flag-image">
+                    </div>
+                    <div class="state-info">
+                        <div class="island-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.en}</div>
+                    </div>
+                `;
+                
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
+                });
+
+                container.appendChild(stateCard);
+            });
+        }
+
+        // Function to search islands and parishes
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.en.toLowerCase().includes(searchTerm) || 
+                state.type.en.toLowerCase().includes(searchTerm)
+            );
+            renderStates(filteredStates);
+        }
+
+        // Event listeners
+        document.getElementById('state-search').addEventListener('input', searchStates);
+
+        // Display all islands and parishes when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStates(states);
+        });
+    </script>
+</body>
+</html>
