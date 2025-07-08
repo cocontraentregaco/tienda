@@ -91,6 +91,7 @@
     #mapa { 
       flex: 1; 
       background: #f0f0f0; 
+      width: 100%;
     }
     
     .cluster-marcadores { 
@@ -274,6 +275,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
 </head>
 <body>
   <div id="contenedor-mapa">
@@ -445,14 +447,6 @@
       
       // Evento para enviar la solicitud
       document.getElementById('enviar-solicitud').addEventListener('click', enviarSolicitud);
-      
-      // Evento para cerrar al hacer clic fuera del panel
-      document.addEventListener('click', function(e) {
-        const panel = document.getElementById('panel-cotizacion');
-        if (panel.style.display === 'block' && !panel.contains(e.target) {
-          cerrarPanelCotizacion();
-        }
-      });
     });
 
     function cerrarPanelCotizacion() {
@@ -483,6 +477,11 @@
         layers: [capas["Maxar"]],
         zoomControl: false
       });
+
+      // Asegurar que el mapa ocupe todo el espacio disponible
+      setTimeout(() => {
+        mapa.invalidateSize();
+      }, 0);
 
       // Controles del mapa
       L.control.zoom({ position: 'bottomright' }).addTo(mapa);
