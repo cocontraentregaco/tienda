@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centros de Distribución Omnilife Colombia</title>
+    <title>Acceso a Centros Omnilife Colombia</title>
     <style>
         * {
             box-sizing: border-box;
@@ -17,10 +17,65 @@
             color: #333;
         }
         
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+        }
+        
+        .login-box {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .login-box h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .login-box button:hover {
+            background-color: #2980b9;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            margin-top: 10px;
+            display: none;
+        }
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            display: none;
         }
         
         .header {
@@ -67,6 +122,21 @@
         
         .search-btn:hover {
             background-color: #2980b9;
+        }
+        
+        .logout-btn {
+            padding: 8px 15px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-left: 10px;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c0392b;
         }
         
         .table-container {
@@ -135,12 +205,26 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Contenedor de Login -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <h2>Acceso a Centros Omnilife</h2>
+            <input type="password" id="passwordInput" placeholder="Ingrese la clave de acceso">
+            <button id="loginBtn">Ingresar</button>
+            <div class="error-message" id="errorMessage">Clave incorrecta. Intente nuevamente.</div>
+        </div>
+    </div>
+    
+    <!-- Contenido Principal (oculto inicialmente) -->
+    <div class="container" id="mainContent">
         <div class="header">
             <h1>Centros de Distribución Omnilife Colombia</h1>
-            <div class="search-container">
-                <input type="text" class="search-box" id="searchInput" placeholder="Buscar por ciudad, dirección o teléfono...">
-                <button class="search-btn" id="searchBtn">Buscar</button>
+            <div style="display: flex; align-items: center;">
+                <div class="search-container">
+                    <input type="text" class="search-box" id="searchInput" placeholder="Buscar por ciudad, dirección o teléfono...">
+                    <button class="search-btn" id="searchBtn">Buscar</button>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Salir</button>
             </div>
         </div>
         
@@ -167,7 +251,10 @@
     </div>
 
     <script>
-        // Datos de los centros de distribución (JSON completo)
+        // Clave de acceso
+        const ACCESS_KEY = "18@Cami34";
+        
+        // Datos completos de centros de distribución Omnilife
         const distributionCenters = [
             {
                 "nombre": "Centro de Distribución Express Armenia",
@@ -380,6 +467,12 @@
         ];
 
         // Elementos del DOM
+        const loginContainer = document.getElementById('loginContainer');
+        const mainContent = document.getElementById('mainContent');
+        const passwordInput = document.getElementById('passwordInput');
+        const loginBtn = document.getElementById('loginBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const logoutBtn = document.getElementById('logoutBtn');
         const tableBody = document.getElementById('tableBody');
         const searchInput = document.getElementById('searchInput');
         const searchBtn = document.getElementById('searchBtn');
@@ -425,7 +518,35 @@
             loadTableData(filteredData);
         }
 
-        // Evento de búsqueda al hacer clic en el botón
+        // Evento de login
+        loginBtn.addEventListener('click', () => {
+            if (passwordInput.value === ACCESS_KEY) {
+                loginContainer.style.display = 'none';
+                mainContent.style.display = 'block';
+                loadTableData(distributionCenters);
+            } else {
+                errorMessage.style.display = 'block';
+                passwordInput.value = '';
+            }
+        });
+
+        // Permitir login con Enter
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loginBtn.click();
+            }
+        });
+
+        // Evento de logout
+        logoutBtn.addEventListener('click', () => {
+            loginContainer.style.display = 'flex';
+            mainContent.style.display = 'none';
+            passwordInput.value = '';
+            errorMessage.style.display = 'none';
+            searchInput.value = '';
+        });
+
+        // Evento de búsqueda al hacer clic
         searchBtn.addEventListener('click', filterData);
 
         // Evento de búsqueda al presionar Enter
@@ -434,9 +555,6 @@
                 filterData();
             }
         });
-
-        // Cargar todos los datos al inicio
-        loadTableData(distributionCenters);
     </script>
 </body>
 </html>
