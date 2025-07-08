@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centros de Distribución Omnilife Colombia</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            background-color: #2c3e50;
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .search-box {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 16px;
+        }
+        
+        .search-btn {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .search-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .map-link {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .map-link:hover {
+            text-decoration: underline;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            th, td {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .search-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Centros de Distribución Omnilife Colombia</h1>
+            <div class="search-container">
+                <input type="text" class="search-box" id="searchInput" placeholder="Buscar por ciudad, dirección o teléfono...">
+                <button class="search-btn" id="searchBtn">Buscar</button>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table id="distributionCentersTable">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Ciudad</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>Horario</th>
+                        <th>Mapa</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Los datos se cargarán aquí mediante JavaScript -->
+                </tbody>
+            </table>
+            <div class="no-results" id="noResults">
+                No se encontraron resultados para tu búsqueda.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de los centros de distribución (JSON completo)
+        const distributionCenters = [
+            {
+                "nombre": "Centro de Distribución Express Armenia",
+                "ciudad": "ARMENIA",
+                "direccion": "Carrea 15 #21-25 Armenia, Quindío -Colombia",
+                "telefono": "(606) 7362533 / WhatsApp: 3224101246",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am – 2:00 pm",
+                "mapa": "https://maps.google.com/?q=4.532847,-75.674063"
+            },
+            {
+                "nombre": "Centro de Distribución Barrancabermeja",
+                "ciudad": "BARRANCABERMEJA",
+                "direccion": "Calle 49 # 14 - 18",
+                "telefono": "(607) 607 5613 / WhatsApp: 322 844 9430",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=7.0592967,-73.8652816"
+            },
+            {
+                "nombre": "Centro de Distribución Barranquilla",
+                "ciudad": "BARRANQUILLA",
+                "direccion": "Carrera 49c # 79 - 34 Local 204-206 Centro Comercial Plaza 79",
+                "telefono": "(605) 3852161 / WhatsApp: 3224094785",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=11.0001936,-74.8114491"
+            },
+            {
+                "nombre": "Centro de Distribución Bogotá Calle 13",
+                "ciudad": "BOGOTÁ",
+                "direccion": "Calle 13 # 65-21 Locales 7 y 8, Centro Comercial Zona IN. Pradera",
+                "telefono": "(601) 7427731 / WhatsApp: 3224101149",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=4.6348697,-74.1154559"
+            },
+            {
+                "nombre": "Centro de Distribución Bogotá Tunal",
+                "ciudad": "BOGOTÁ",
+                "direccion": "Calle 47B No. 24B-33 Sur Local 1-149 / 1-150 – Centro comercial Cuidad Tunal",
+                "telefono": "(601) 7609893 / (601) 7609792 / WhatsApp: 3224097317",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=4.578307,-74.13012"
+            },
+            {
+                "nombre": "Centro de Distribución Bucaramanga",
+                "ciudad": "BUCARAMANGA",
+                "direccion": "Calle 47 # 29 - 39 Local 3 - 4 Edificio Herad Center",
+                "telefono": "(607) 6577062 / (607) 6175804 / WhatsApp: 3224093656",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=7.1175462,-73.1118394"
+            },
+            {
+                "nombre": "Centro de Distribución Cali Norte",
+                "ciudad": "CALI",
+                "direccion": "Avenida 6 Norte # 38N - 42",
+                "telefono": "(602) 489 26 91 / (602) 489 26 94 / WhatsApp: 3224098571",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=3.4778143,-76.5258536"
+            },
+            {
+                "nombre": "Centro de Distribución Cali Sur",
+                "ciudad": "CALI",
+                "direccion": "Carrera 100 # 11 – 60, Local 166C-167, Centro Comercial Holguines Trade Center",
+                "telefono": "(602) 485 4396 / WhatsApp: 322 409 7274",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=3.372401,-76.5399111"
+            },
+            {
+                "nombre": "Centro de Distribución Cartagena",
+                "ciudad": "CARTAGENA",
+                "direccion": "Santa Lucía. Transversal 54 No. 31-121 Local 1",
+                "telefono": "(605) 6633171 / (605) 6635790 / WhatsApp: 322 409 3605",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=10.3953622,-75.4783861"
+            },
+            {
+                "nombre": "Centro de Distribución Chapinero",
+                "ciudad": "BOGOTÁ",
+                "direccion": "Carrera 7 # 74B - 42",
+                "telefono": "(601) 744 0464 / WhatsApp: 322 409 9946",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=4.6498535,-74.066141"
+            },
+            {
+                "nombre": "Centro de Distribución Cúcuta",
+                "ciudad": "CÚCUTA",
+                "direccion": "Avenida 0 # 10-72, Local 101. La Playa",
+                "telefono": "(607) 5718965 / WhatsApp: 322 409 8646",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=7.8872447,-72.4983297"
+            },
+            {
+                "nombre": "Centro de Distribución Duitama",
+                "ciudad": "DUITAMA",
+                "direccion": "Calle 11 # 16 - 41",
+                "telefono": "(608) 7618793 / (608) 7623715 / WhatsApp: 322 409 9915",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=5.8252488,-73.0365206"
+            },
+            {
+                "nombre": "CEDIS Expréss Florencia",
+                "ciudad": "FLORENCIA",
+                "direccion": "Calle 17 No. 11 - 53",
+                "telefono": "322 818 3009",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=1.617201,-75.613704"
+            },
+            {
+                "nombre": "Centro de Distribución Ibagué",
+                "ciudad": "IBAGUÉ",
+                "direccion": "Carrera 5 # 23-50",
+                "telefono": "(608) 2771294 / (608) 2771156 / WhatsApp: 322 409 4966",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=4.4404347,-75.2287325"
+            },
+            {
+                "nombre": "Centro de Distribución Medellín",
+                "ciudad": "MEDELLÍN",
+                "direccion": "Carrera 43 A # 19 – 33 Local 1-2-3 Block Empresarial Medellin. El Poblado",
+                "telefono": "(604) 6042360 / (604) 6042361 / WhatsApp: 322 409 8566",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=6.2208418,-75.5701044"
+            },
+            {
+                "nombre": "Centro de Distribución Montería",
+                "ciudad": "MONTERÍA",
+                "direccion": "Calle 29 # 10 - 20",
+                "telefono": "(604) 7821432 / WhatsApp: 322 409 3577",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=8.7527342,-75.8814996"
+            },
+            {
+                "nombre": "Centro de Distribución Neiva",
+                "ciudad": "NEIVA",
+                "direccion": "Calle 6 # 6 – 62, Local 2",
+                "telefono": "(608) 8710333 / WhatsApp: 322 409 8574",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=2.9258756,-75.2866297"
+            },
+            {
+                "nombre": "Centro de Distribución Express Pasto",
+                "ciudad": "PASTO",
+                "direccion": "Carrera 23 # 15 - 62. Centro",
+                "telefono": "(602) 7291494 / (602) 7226216 / WhatsApp: 322 410 2465",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=1.2123393,-77.2801824"
+            },
+            {
+                "nombre": "Centro de Distribución Pereira",
+                "ciudad": "PEREIRA",
+                "direccion": "Carrera 9 #21-46",
+                "telefono": "(606) 3345566 / WhatsApp: 322 409 7490",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=4.8132493,-75.6965437"
+            },
+            {
+                "nombre": "CEDIS EXPRESS POPAYAN",
+                "ciudad": "POPAYÁN",
+                "direccion": "Calle 6ta # 10 - 48",
+                "telefono": "(602) 833 93 16 / WhatsApp: 310 205 71 63",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 02:00 pm",
+                "mapa": "https://maps.google.com/?q=2.441729,-76.610264"
+            },
+            {
+                "nombre": "CEDIS Expréss Riohacha",
+                "ciudad": "RIOHACHA",
+                "direccion": "Calle 4 # 6 -71",
+                "telefono": "(605) 7292579",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=11.55125,-72.9084444"
+            },
+            {
+                "nombre": "Centro de Distribución Express Soacha",
+                "ciudad": "SOACHA",
+                "direccion": "Carrera 7 # 30b - 139 Local 2-221 Centro Comercial Gran Plaza Soacha",
+                "telefono": "(601) 8400133 / WhatsApp: 322 409 8678",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm. Domingos y festivos: 11:00 am a 3:00 pm",
+                "mapa": "https://maps.google.com/?q=4.587115,-74.205305"
+            },
+            {
+                "nombre": "Centro de Distribución Suba",
+                "ciudad": "BOGOTÁ",
+                "direccion": "Calle 145 No. 91-59 Local 17-011. Centro Comercial Centro Suba",
+                "telefono": "(601) 7435261 / (601) 7435828 / WhatsApp: 322 409 9839",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=4.739991,-74.086132"
+            },
+            {
+                "nombre": "Centro de Distribución Valledupar",
+                "ciudad": "VALLEDUPAR",
+                "direccion": "Carrera 10 # 16a - 60 Local 2",
+                "telefono": "(605) 5710009 / WhatsApp: 322 410 3553",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=10.4734747,-73.2470951"
+            },
+            {
+                "nombre": "Centro de Distribución Villavicencio",
+                "ciudad": "VILLAVICENCIO",
+                "direccion": "Carrera 38 # 26c - 51. 7 de Agosto",
+                "telefono": "(608) 6680479 / (608) 6604773 / WhatsApp: 322 409 8585",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=4.1409337,-73.6374404"
+            },
+            {
+                "nombre": "Punto de Entrega Yopal",
+                "ciudad": "YOPAL",
+                "direccion": "Calle 10 # 22 - 76",
+                "telefono": "(608) 633 4138 / WhatsApp: 3202112900",
+                "horario": "Lunes a Viernes: 9:00 am a 6:00 pm. Sábados: 9:00 am a 2:00 pm",
+                "mapa": "https://maps.google.com/?q=5.347394,-72.398662"
+            }
+        ];
+
+        // Elementos del DOM
+        const tableBody = document.getElementById('tableBody');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const noResults = document.getElementById('noResults');
+
+        // Función para cargar los datos en la tabla
+        function loadTableData(data) {
+            tableBody.innerHTML = '';
+            
+            if (data.length === 0) {
+                noResults.style.display = 'block';
+                return;
+            } else {
+                noResults.style.display = 'none';
+            }
+            
+            data.forEach(center => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${center.nombre}</td>
+                    <td>${center.ciudad}</td>
+                    <td>${center.direccion}</td>
+                    <td>${center.telefono}</td>
+                    <td>${center.horario}</td>
+                    <td><a href="${center.mapa}" class="map-link" target="_blank">Ver mapa</a></td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Función para filtrar los datos
+        function filterData() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredData = distributionCenters.filter(center => 
+                center.nombre.toLowerCase().includes(searchTerm) ||
+                center.ciudad.toLowerCase().includes(searchTerm) ||
+                center.direccion.toLowerCase().includes(searchTerm) ||
+                center.telefono.toLowerCase().includes(searchTerm)
+            );
+            
+            loadTableData(filteredData);
+        }
+
+        // Evento de búsqueda al hacer clic en el botón
+        searchBtn.addEventListener('click', filterData);
+
+        // Evento de búsqueda al presionar Enter
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                filterData();
+            }
+        });
+
+        // Cargar todos los datos al inicio
+        loadTableData(distributionCenters);
+    </script>
+</body>
+</html>
