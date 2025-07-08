@@ -112,7 +112,7 @@
 
     /* Panel de cotización mejorado */
     #panel-cotizacion {
-      position: absolute;
+      position: fixed;
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
@@ -123,6 +123,8 @@
       z-index: 1000;
       width: 90%;
       max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
       display: none;
     }
 
@@ -132,13 +134,19 @@
 
     .btn-cerrar {
       position: absolute;
-      top: 5px;
-      right: 5px;
+      top: 10px;
+      right: 10px;
       background: none;
       border: none;
-      font-size: 18px;
+      font-size: 20px;
       cursor: pointer;
       color: #666;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
     }
 
     .btn-cerrar:hover {
@@ -254,6 +262,12 @@
       #barra-superior { 
         flex-direction: column; 
         gap: 0.6rem;
+      }
+      
+      #panel-cotizacion {
+        width: 95%;
+        bottom: 10px;
+        max-height: 70vh;
       }
     }
   </style>
@@ -412,8 +426,7 @@
       
       // Evento para cerrar el panel de cotización
       document.getElementById('cerrar-cotizacion').addEventListener('click', function() {
-        document.getElementById('panel-cotizacion').style.display = 'none';
-        resetearSelecciones();
+        cerrarPanelCotizacion();
       });
       
       // Evento para cerrar el formulario
@@ -424,8 +437,7 @@
       
       // Evento para cerrar el panel desde el mensaje de éxito
       document.getElementById('cerrar-panel').addEventListener('click', function() {
-        document.getElementById('panel-cotizacion').style.display = 'none';
-        resetearFormulario();
+        cerrarPanelCotizacion();
       });
       
       // Evento para confirmar el envío
@@ -433,7 +445,21 @@
       
       // Evento para enviar la solicitud
       document.getElementById('enviar-solicitud').addEventListener('click', enviarSolicitud);
+      
+      // Evento para cerrar al hacer clic fuera del panel
+      document.addEventListener('click', function(e) {
+        const panel = document.getElementById('panel-cotizacion');
+        if (panel.style.display === 'block' && !panel.contains(e.target) {
+          cerrarPanelCotizacion();
+        }
+      });
     });
+
+    function cerrarPanelCotizacion() {
+      document.getElementById('panel-cotizacion').style.display = 'none';
+      resetearFormulario();
+      resetearSelecciones();
+    }
 
     function initializeMap() {
       // Configuración de capas
@@ -489,7 +515,7 @@
           icon: L.icon({
             iconUrl: iconUrl,
             iconSize: [32, 32],
-            className: 'marker-icon-black' // Clase para marcadores negros
+            className: 'marker-icon-black'
           })
         }).bindPopup(`
           <div style="min-width:220px">
@@ -742,7 +768,7 @@
               icon: L.icon({
                 iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
                 iconSize: [32, 32],
-                className: 'marker-icon-blue' // Clase para marcador azul
+                className: 'marker-icon-blue'
               })
             }).addTo(mapa)
               .bindPopup('¡Tu ubicación actual!');
@@ -1014,8 +1040,6 @@
       document.getElementById('confirmar-envio').style.display = 'none';
       document.getElementById('opciones-tarifa').innerHTML = '';
       document.getElementById('cotizacion-resultado').innerHTML = '';
-      
-      resetearSelecciones();
     }
 
     // Función para resetear las selecciones
