@@ -78,6 +78,15 @@
       background: var(--secondary-color);
       transform: translateY(-1px);
     }
+
+    .btn-enviar {
+      background-color: #4CAF50;
+      margin-right: 5px;
+    }
+
+    .btn-recibir {
+      background-color: #f39c12;
+    }
     
     #mapa { 
       flex: 1; 
@@ -213,6 +222,21 @@
       margin-bottom: 10px;
       border: 1px solid #d0e3ff;
     }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
     
     @media (max-width: 768px) { 
       #barra-superior { 
@@ -230,8 +254,6 @@
     <div id="barra-superior">
       <input type="search" id="buscador" placeholder="Buscar Proveedores y Puntos en Cali..." enterkeyhint="search">
       <button class="btn" id="b2b-btn">REGISTRO</button>
-      <button class="btn" id="ubicacion-btn">MI UBICACIÓN</button>
-      <button class="btn" id="cotizar-btn">COTIZAR ENVÍO</button>
     </div>
     <div id="mapa"></div>
   </div>
@@ -255,7 +277,10 @@
         <label for="telefono-cliente">Teléfono celular</label>
         <input type="tel" id="telefono-cliente" placeholder="Ingrese su número de celular" required>
       </div>
-      <button class="btn-confirmar" id="enviar-solicitud">SOLICITAR ENVÍO</button>
+      <button class="btn-confirmar" id="enviar-solicitud">
+        <span id="spinner" style="display:none;"><span class="loading-spinner"></span></span>
+        <span id="submit-text">SOLICITAR ENVÍO</span>
+      </button>
     </div>
   </div>
 
@@ -273,6 +298,7 @@
     let tarifaSeleccionada = null;
     let puntoOrigenSeleccionado = null;
     let puntoDestinoSeleccionado = null;
+    let modoSeleccion = null; // 'enviar' o 'recibir'
 
     // Tarifas actualizadas para Cali (julio 2025) en COP
     const TARIFAS = [
@@ -422,6 +448,10 @@
             ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><i class="fas fa-clock" style="margin-right:5px"></i> ${loc.horario}</p>` : ''}
             ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><i class="fas fa-boxes" style="margin-right:5px"></i> ${loc.servicios}</p>` : ''}
             <a href="${loc.url}" style="display:inline-block;background:var(--accent-color);color:white;padding:6px 12px;border-radius:4px;text-decoration:none;margin-top:5px;font-size:0.9em">Más información</a>
+            <div style="margin-top:10px;display:flex;justify-content:space-between">
+              <button class="btn btn-enviar" onclick="window.iniciarEnvio('${loc.id}')">Enviar</button>
+              <button class="btn btn-recibir" onclick="window.iniciarRecibir('${loc.id}')">Recibir</button>
+            </div>
           </div>
         `);
         
@@ -469,10 +499,13 @@
       if(todosMarcadores.length > 0) {
         mapa.fitBounds(clusters.getBounds().pad(0.3));
       }
+
+      // Solicitar ubicación al cargar la página
+      obtenerUbicacionUsuario();
     }
 
-    // Función para activar geolocalización
-    function activarGeolocalizacion() {
+    // Función para obtener ubicación del usuario
+    function obtenerUbicacionUsuario() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
@@ -507,12 +540,12 @@
             mapa.setView([latitude, longitude], 15);
           },
           (error) => {
-            alert(`Error al obtener ubicación: ${error.message}`);
+            console.log(`Error al obtener ubicación: ${error.message}`);
           },
           { enableHighAccuracy: true }
         );
       } else {
-        alert("Tu navegador no soporta geolocalización.");
+        console.log("Tu navegador no soporta geolocalización.");
       }
     }
 
@@ -607,12 +640,12 @@
       // Mostrar información de los puntos seleccionados
       const infoPuntos = `
         <div class="punto-seleccionado">
-          <strong>Origen:</strong> ${puntoOrigenSeleccionado.nombre}<br>
-          <small>${puntoOrigenSeleccionado.direccion}</small>
+          <strong>${modoSeleccion === 'enviar' ? 'Origen' : 'Destino'}:</strong> ${modoSeleccion === 'enviar' ? puntoOrigenSeleccionado.nombre : puntoDestinoSeleccionado.nombre}<br>
+          <small>${modoSeleccion === 'enviar' ? puntoOrigenSeleccionado.direccion : puntoDestinoSeleccionado.direccion}</small>
         </div>
         <div class="punto-seleccionado">
-          <strong>Destino:</strong> ${puntoDestinoSeleccionado.nombre}<br>
-          <small>${puntoDestinoSeleccionado.direccion}</small>
+          <strong>${modoSeleccion === 'enviar' ? 'Destino' : 'Origen'}:</strong> ${modoSeleccion === 'enviar' ? puntoDestinoSeleccionado.nombre : puntoOrigenSeleccionado.nombre}<br>
+          <small>${modoSeleccion === 'enviar' ? puntoDestinoSeleccionado.direccion : puntoOrigenSeleccionado.direccion}</small>
         </div>
       `;
       opcionesContainer.innerHTML = infoPuntos;
@@ -646,18 +679,43 @@
       });
     }
 
-    // Función para manejar la cotización
-    function iniciarCotizacion() {
+    // Función para iniciar proceso de envío
+    function iniciarEnvio(idPunto) {
+      const punto = UBICACIONES.find(p => p.id === idPunto);
+      if (!punto) return;
+      
+      modoSeleccion = 'enviar';
+      puntoOrigenSeleccionado = punto;
+      
+      // Configurar para seleccionar destino
+      configurarSeleccionPunto('destino');
+    }
+
+    // Función para iniciar proceso de recibir
+    function iniciarRecibir(idPunto) {
+      const punto = UBICACIONES.find(p => p.id === idPunto);
+      if (!punto) return;
+      
+      modoSeleccion = 'recibir';
+      puntoDestinoSeleccionado = punto;
+      
+      // Configurar para seleccionar origen
+      configurarSeleccionPunto('origen');
+    }
+
+    // Función para configurar selección de punto complementario
+    function configurarSeleccionPunto(tipo) {
       // Limpiar selección anterior
       tarifaSeleccionada = null;
-      puntoOrigenSeleccionado = null;
-      puntoDestinoSeleccionado = null;
       document.getElementById('confirmar-envio').style.display = 'none';
       document.getElementById('formulario-envio').style.display = 'none';
       
       // Mostrar panel de cotización
       document.getElementById('panel-cotizacion').style.display = 'block';
-      document.getElementById('cotizacion-resultado').innerHTML = '<p>Seleccione el punto de origen en el mapa</p>';
+      document.getElementById('cotizacion-resultado').innerHTML = `
+        <p>${tipo === 'destino' ? 'Destino' : 'Origen'} a seleccionar para ${modoSeleccion === 'enviar' ? 'envío' : 'recepción'}</p>
+        <p>Seleccione el punto ${tipo === 'destino' ? 'destino' : 'origen'} en el mapa</p>
+      `;
       document.getElementById('opciones-tarifa').innerHTML = '';
 
       // Eliminar marcadores y ruta anteriores
@@ -669,98 +727,106 @@
       destinoMarker = null;
       rutaControl = null;
 
-      // Variable para controlar el paso actual
-      let paso = 'origen';
-
-      // Función para manejar clics en los marcadores
-      function manejarClicMarcador(e) {
-        const marcador = e.target;
-        const ubicacion = marcador.datosUbicacion;
-        
-        if (paso === 'origen') {
-          // Establecer origen
-          if (origenMarker) {
+      // Resaltar el punto ya seleccionado
+      if (modoSeleccion === 'enviar' && puntoOrigenSeleccionado) {
+        const marcadores = mapa._layers;
+        for (const key in marcadores) {
+          if (marcadores[key] instanceof L.Marker && 
+              marcadores[key].datosUbicacion && 
+              marcadores[key].datosUbicacion.id === puntoOrigenSeleccionado.id) {
+            origenMarker = marcadores[key];
             origenMarker.setIcon(L.icon({
-              iconUrl: ubicacion.tipo === 'socio' ? 
-                'https://cdn-icons-png.flaticon.com/512/3514/3514491.png' : 
-                'https://cdn-icons-png.flaticon.com/512/854/854878.png',
+              iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
               iconSize: [32, 32]
             }));
+            break;
           }
-          
-          origenMarker = marcador;
-          puntoOrigenSeleccionado = ubicacion;
-          
-          // Resaltar marcador de origen
-          marcador.setIcon(L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
-            iconSize: [32, 32]
-          }));
-          
-          document.getElementById('cotizacion-resultado').innerHTML = `
-            <p>Origen seleccionado: <strong>${ubicacion.nombre}</strong></p>
-            <p>Ahora seleccione el punto de destino</p>
-          `;
-          paso = 'destino';
-        } else {
-          // No permitir seleccionar el mismo punto como destino
-          if (marcador === origenMarker) {
-            alert('No puede seleccionar el mismo punto como origen y destino');
-            return;
-          }
-          
-          // Establecer destino
-          if (destinoMarker) {
+        }
+      } else if (modoSeleccion === 'recibir' && puntoDestinoSeleccionado) {
+        const marcadores = mapa._layers;
+        for (const key in marcadores) {
+          if (marcadores[key] instanceof L.Marker && 
+              marcadores[key].datosUbicacion && 
+              marcadores[key].datosUbicacion.id === puntoDestinoSeleccionado.id) {
+            destinoMarker = marcadores[key];
             destinoMarker.setIcon(L.icon({
-              iconUrl: ubicacion.tipo === 'socio' ? 
-                'https://cdn-icons-png.flaticon.com/512/3514/3514491.png' : 
-                'https://cdn-icons-png.flaticon.com/512/854/854878.png',
+              iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776030.png',
               iconSize: [32, 32]
             }));
+            break;
           }
-          
-          destinoMarker = marcador;
-          puntoDestinoSeleccionado = ubicacion;
-          
-          // Resaltar marcador de destino
-          marcador.setIcon(L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776030.png',
-            iconSize: [32, 32]
-          }));
-          
-          // Mostrar mensaje de cálculo
-          document.getElementById('cotizacion-resultado').innerHTML = `
-            <p>Origen: <strong>${puntoOrigenSeleccionado.nombre}</strong></p>
-            <p>Destino: <strong>${puntoDestinoSeleccionado.nombre}</strong></p>
-            <p>Calculando ruta y tarifas...</p>
-          `;
-          
-          // Calcular cotización con ruta real
-          calcularCotizacion(
-            { lat: puntoOrigenSeleccionado.latlng[0], lng: puntoOrigenSeleccionado.latlng[1] },
-            { lat: puntoDestinoSeleccionado.latlng[0], lng: puntoDestinoSeleccionado.latlng[1] },
-            (cotizaciones) => {
-              document.getElementById('cotizacion-resultado').innerHTML = `
-                <p>Origen: <strong>${puntoOrigenSeleccionado.nombre}</strong></p>
-                <p>Destino: <strong>${puntoDestinoSeleccionado.nombre}</strong></p>
-                <p><strong>Distancia:</strong> ${cotizaciones[0].distancia} km</p>
-              `;
-              
-              // Mostrar opciones de tarifa
-              mostrarOpcionesTarifa(cotizaciones);
-            }
-          );
-          
-          // Terminar el proceso de selección
-          mapa.off('click', manejarClicMarcador);
         }
       }
 
-      // Escuchar clics en los marcadores
+      // Configurar evento de clic en los marcadores
       mapa.eachLayer(layer => {
         if (layer instanceof L.Marker) {
           layer.off('click');
-          layer.on('click', manejarClicMarcador);
+          layer.on('click', function(e) {
+            const marcador = e.target;
+            const ubicacion = marcador.datosUbicacion;
+            
+            if (tipo === 'destino') {
+              // No permitir seleccionar el mismo punto como destino
+              if (puntoOrigenSeleccionado && ubicacion.id === puntoOrigenSeleccionado.id) {
+                alert('No puede seleccionar el mismo punto como origen y destino');
+                return;
+              }
+              
+              puntoDestinoSeleccionado = ubicacion;
+              destinoMarker = marcador;
+              
+              // Resaltar marcador de destino
+              marcador.setIcon(L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776030.png',
+                iconSize: [32, 32]
+              }));
+            } else {
+              // No permitir seleccionar el mismo punto como origen
+              if (puntoDestinoSeleccionado && ubicacion.id === puntoDestinoSeleccionado.id) {
+                alert('No puede seleccionar el mismo punto como origen y destino');
+                return;
+              }
+              
+              puntoOrigenSeleccionado = ubicacion;
+              origenMarker = marcador;
+              
+              // Resaltar marcador de origen
+              marcador.setIcon(L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
+                iconSize: [32, 32]
+              }));
+            }
+            
+            // Mostrar mensaje de cálculo
+            document.getElementById('cotizacion-resultado').innerHTML = `
+              <p>${modoSeleccion === 'enviar' ? 'Enviando desde' : 'Recibiendo en'}: <strong>${puntoOrigenSeleccionado.nombre}</strong></p>
+              <p>${modoSeleccion === 'enviar' ? 'Hacia' : 'Desde'}: <strong>${puntoDestinoSeleccionado.nombre}</strong></p>
+              <p>Calculando ruta y tarifas...</p>
+            `;
+            
+            // Calcular cotización con ruta real
+            calcularCotizacion(
+              { 
+                lat: modoSeleccion === 'enviar' ? puntoOrigenSeleccionado.latlng[0] : puntoDestinoSeleccionado.latlng[0], 
+                lng: modoSeleccion === 'enviar' ? puntoOrigenSeleccionado.latlng[1] : puntoDestinoSeleccionado.latlng[1] 
+              },
+              { 
+                lat: modoSeleccion === 'enviar' ? puntoDestinoSeleccionado.latlng[0] : puntoOrigenSeleccionado.latlng[0], 
+                lng: modoSeleccion === 'enviar' ? puntoDestinoSeleccionado.latlng[1] : puntoOrigenSeleccionado.latlng[1] 
+              },
+              (cotizaciones) => {
+                document.getElementById('cotizacion-resultado').innerHTML = `
+                  <p>${modoSeleccion === 'enviar' ? 'Enviando desde' : 'Recibiendo en'}: <strong>${puntoOrigenSeleccionado.nombre}</strong></p>
+                  <p>${modoSeleccion === 'enviar' ? 'Hacia' : 'Desde'}: <strong>${puntoDestinoSeleccionado.nombre}</strong></p>
+                  <p><strong>Distancia:</strong> ${cotizaciones[0].distancia} km</p>
+                `;
+                
+                // Mostrar opciones de tarifa
+                mostrarOpcionesTarifa(cotizaciones);
+              }
+            );
+          });
         }
       });
     }
@@ -787,8 +853,18 @@
         return;
       }
       
+      // Mostrar spinner y deshabilitar botón
+      document.getElementById('spinner').style.display = 'inline-block';
+      document.getElementById('submit-text').textContent = 'Enviando...';
+      document.getElementById('enviar-solicitud').disabled = true;
+      
+      // Determinar origen y destino según el modo
+      const origen = modoSeleccion === 'enviar' ? puntoOrigenSeleccionado : puntoDestinoSeleccionado;
+      const destino = modoSeleccion === 'enviar' ? puntoDestinoSeleccionado : puntoOrigenSeleccionado;
+      
       // Datos a enviar (incluyendo toda la info de los puntos)
       const datosEnvio = {
+        tipoOperacion: modoSeleccion,
         cliente: {
           nombre: nombre,
           telefono: telefono
@@ -802,36 +878,32 @@
         ruta: {
           distancia: tarifaSeleccionada.distancia,
           origen: {
-            id: puntoOrigenSeleccionado.id,
-            nombre: puntoOrigenSeleccionado.nombre,
-            direccion: puntoOrigenSeleccionado.direccion,
-            telefono: puntoOrigenSeleccionado.telefono,
-            horario: puntoOrigenSeleccionado.horario,
-            servicios: puntoOrigenSeleccionado.servicios,
-            tipo: puntoOrigenSeleccionado.tipo,
-            lat: puntoOrigenSeleccionado.latlng[0],
-            lng: puntoOrigenSeleccionado.latlng[1]
+            id: origen.id,
+            nombre: origen.nombre,
+            direccion: origen.direccion,
+            telefono: origen.telefono,
+            horario: origen.horario,
+            servicios: origen.servicios,
+            tipo: origen.tipo,
+            lat: origen.latlng[0],
+            lng: origen.latlng[1]
           },
           destino: {
-            id: puntoDestinoSeleccionado.id,
-            nombre: puntoDestinoSeleccionado.nombre,
-            direccion: puntoDestinoSeleccionado.direccion,
-            telefono: puntoDestinoSeleccionado.telefono,
-            horario: puntoDestinoSeleccionado.horario,
-            servicios: puntoDestinoSeleccionado.servicios,
-            tipo: puntoDestinoSeleccionado.tipo,
-            lat: puntoDestinoSeleccionado.latlng[0],
-            lng: puntoDestinoSeleccionado.latlng[1]
+            id: destino.id,
+            nombre: destino.nombre,
+            direccion: destino.direccion,
+            telefono: destino.telefono,
+            horario: destino.horario,
+            servicios: destino.servicios,
+            tipo: destino.tipo,
+            lat: destino.latlng[0],
+            lng: destino.latlng[1]
           }
         },
         fecha: new Date().toISOString()
       };
       
-      // Simular envío a AWS (en un entorno real usarías fetch o axios)
-      console.log('Enviando datos a AWS:', datosEnvio);
-      
-      // Aquí iría la llamada real al endpoint AWS
-      /*
+      // Enviar datos al endpoint AWS
       fetch(AWS_ENDPOINT, {
         method: 'POST',
         headers: {
@@ -839,25 +911,15 @@
         },
         body: JSON.stringify(datosEnvio)
       })
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error en la respuesta del servidor');
+        }
+        return response.json();
+      })
       .then(data => {
         console.log('Success:', data);
-        alert('¡Solicitud enviada con éxito! Nos contactaremos contigo pronto.');
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        alert('Hubo un error al enviar la solicitud. Por favor intente nuevamente.');
-      });
-      */
-      
-      // Simulamos éxito para la demostración
-      setTimeout(() => {
-        alert('¡Solicitud enviada con éxito!\n\n' +
-              `Tipo: ${tarifaSeleccionada.nombre}\n` +
-              `Precio: ${tarifaSeleccionada.precioFormateado}\n` +
-              `Tiempo estimado: ${tarifaSeleccionada.tiempo} minutos\n\n` +
-              `Origen: ${puntoOrigenSeleccionado.nombre}\n` +
-              `Destino: ${puntoDestinoSeleccionado.nombre}\n\n` +
+        alert('¡Solicitud de ' + (modoSeleccion === 'enviar' ? 'envío' : 'recepción') + ' exitosa!\n\n' +
               `Nos contactaremos al número ${telefono} para confirmar.`);
         
         // Cerrar panel y limpiar formulario
@@ -868,7 +930,7 @@
         // Restaurar iconos originales de los marcadores
         if (origenMarker) {
           origenMarker.setIcon(L.icon({
-            iconUrl: puntoOrigenSeleccionado.tipo === 'socio' ? 
+            iconUrl: origen.tipo === 'socio' ? 
               'https://cdn-icons-png.flaticon.com/512/3514/3514491.png' : 
               'https://cdn-icons-png.flaticon.com/512/854/854878.png',
             iconSize: [32, 32]
@@ -877,7 +939,7 @@
         
         if (destinoMarker) {
           destinoMarker.setIcon(L.icon({
-            iconUrl: puntoDestinoSeleccionado.tipo === 'socio' ? 
+            iconUrl: destino.tipo === 'socio' ? 
               'https://cdn-icons-png.flaticon.com/512/3514/3514491.png' : 
               'https://cdn-icons-png.flaticon.com/512/854/854878.png',
             iconSize: [32, 32]
@@ -886,7 +948,17 @@
         
         // Limpiar ruta
         if (rutaControl) mapa.removeControl(rutaControl);
-      }, 1000);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('Hubo un error al enviar la solicitud. Por favor intente nuevamente.');
+      })
+      .finally(() => {
+        // Restaurar botón
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('submit-text').textContent = 'SOLICITAR ENVÍO';
+        document.getElementById('enviar-solicitud').disabled = false;
+      });
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -896,12 +968,6 @@
       document.getElementById('b2b-btn').addEventListener('click', function() {
         window.location.href = "https://colombia.qrcontraentrega.com";
       });
-
-      // Botón de geolocalización
-      document.getElementById('ubicacion-btn').addEventListener('click', activarGeolocalizacion);
-
-      // Botón de cotización
-      document.getElementById('cotizar-btn').addEventListener('click', iniciarCotizacion);
 
       // Botón para cerrar panel de cotización
       document.getElementById('cerrar-cotizacion').addEventListener('click', function() {
@@ -936,6 +1002,10 @@
       // Botón para enviar solicitud
       document.getElementById('enviar-solicitud').addEventListener('click', enviarSolicitud);
     });
+
+    // Hacer funciones accesibles globalmente para los botones en los popups
+    window.iniciarEnvio = iniciarEnvio;
+    window.iniciarRecibir = iniciarRecibir;
   </script>
 </body>
 </html>
