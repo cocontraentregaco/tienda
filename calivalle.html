@@ -101,7 +101,7 @@
       box-shadow: var(--box-shadow);
     }
 
-    /* Nuevos estilos para cotización */
+    /* Panel de cotización mejorado */
     #panel-cotizacion {
       position: absolute;
       bottom: 20px;
@@ -119,8 +119,6 @@
 
     #cotizacion-resultado {
       margin-top: 10px;
-      font-weight: bold;
-      color: var(--accent-color);
     }
 
     .btn-cerrar {
@@ -131,6 +129,55 @@
       border: none;
       font-size: 18px;
       cursor: pointer;
+    }
+
+    .tarifa-option {
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .tarifa-option:hover {
+      background-color: #f5f5f5;
+    }
+
+    .tarifa-option.selected {
+      border-color: var(--accent-color);
+      background-color: rgba(0,102,204,0.1);
+    }
+
+    .tarifa-nombre {
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .tarifa-precio {
+      color: var(--accent-color);
+      font-weight: bold;
+    }
+
+    .tarifa-tiempo {
+      color: var(--secondary-color);
+      font-size: 0.9em;
+    }
+
+    .btn-confirmar {
+      width: 100%;
+      margin-top: 10px;
+      background-color: var(--accent-color);
+      color: white;
+      padding: 10px;
+      border-radius: var(--border-radius);
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-confirmar:hover {
+      background-color: #0055aa;
     }
     
     @media (max-width: 768px) { 
@@ -155,12 +202,13 @@
     <div id="mapa"></div>
   </div>
 
-  <!-- Panel de cotización -->
+  <!-- Panel de cotización mejorado -->
   <div id="panel-cotizacion">
     <button class="btn-cerrar" id="cerrar-cotizacion">×</button>
     <h3>Cotizar Envío</h3>
-    <p>Seleccione origen y destino en el mapa</p>
     <div id="cotizacion-resultado"></div>
+    <div id="opciones-tarifa"></div>
+    <button class="btn-confirmar" id="confirmar-envio" style="display: none;">CONFIRMAR ENVÍO</button>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -171,7 +219,40 @@
     let userMarker;
     let origenMarker = null;
     let destinoMarker = null;
+    let rutaLinea = null;
     let ubicaciones = [];
+    let tarifaSeleccionada = null;
+
+    // Tarifas disponibles solo para Cali (en COP)
+    const TARIFAS = [
+      {
+        id: 'express',
+        nombre: 'Envío Express',
+        descripcion: 'Entrega en menos de 45 minutos',
+        tarifaBase: 8000,
+        tarifaPorKm: 2500,
+        multiplicadorDemanda: 1.2,
+        icono: '🚀'
+      },
+      {
+        id: 'estandar',
+        nombre: 'Envío Estándar',
+        descripcion: 'Entrega en 1-2 horas',
+        tarifaBase: 5000,
+        tarifaPorKm: 1800,
+        multiplicadorDemanda: 1.0,
+        icono: '🚗'
+      },
+      {
+        id: 'economico',
+        nombre: 'Envío Económico',
+        descripcion: 'Entrega en 2-4 horas',
+        tarifaBase: 3000,
+        tarifaPorKm: 1200,
+        multiplicadorDemanda: 0.8,
+        icono: '🚲'
+      }
+    ];
 
     function initializeMap() {
       // Configuración de capas
@@ -320,19 +401,30 @@
           (position) => {
             const { latitude, longitude } = position.coords;
             
+            // Verificar si está en Cali (aproximadamente)
+            const distanciaACali = calcularDistancia(
+              latitude, longitude,
+              3.484941, -76.545259
+            );
+            
+            if (distanciaACali > 30) { // 30km de radio desde centro de Cali
+              alert('El servicio solo está disponible en Cali y sus alrededores');
+              return;
+            }
+            
             // Eliminar marcador anterior si existe
             if (userMarker) {
               mapa.removeLayer(userMarker);
             }
             
-            // Crear nuevo marcador de usuario
+            // Crear nuevo marcador de usuario (caja en lugar de muñeco)
             userMarker = L.marker([latitude, longitude], {
               icon: L.icon({
-                iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
-                iconSize: [40, 40]
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/1170/1170679.png', // Icono de caja
+                iconSize: [32, 32]
               })
             }).addTo(mapa)
-              .bindPopup('¡Tú estás aquí!');
+              .bindPopup('¡Tu ubicación actual!');
               
             // Centrar mapa en la ubicación del usuario
             mapa.setView([latitude, longitude], 15);
@@ -347,49 +439,108 @@
       }
     }
 
-    // Función para calcular distancia y cotización
-    function calcularCotizacion(origen, destino) {
-      // Fórmula Haversine para calcular distancia en km
-      function getDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371; // Radio de la Tierra en km
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = 
-          Math.sin(dLat/2) * Math.sin(dLat/2) +
-          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-          Math.sin(dLon/2) * Math.sin(dLon/2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        return R * c;
-      }
+    // Función para calcular distancia en km (fórmula Haversine)
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Radio de la Tierra en km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
 
-      const distancia = getDistance(
+    // Función para calcular cotización al estilo Uber
+    function calcularCotizacion(origen, destino) {
+      const distancia = calcularDistancia(
         origen.lat, origen.lng,
         destino.lat, destino.lng
       );
+      
+      // Factor de demanda aleatorio (simulado)
+      const factorDemanda = 1 + (Math.random() * 0.5); // 1.0 a 1.5
+      
+      // Calcular tarifas para cada opción
+      const cotizaciones = TARIFAS.map(tarifa => {
+        const precioBase = tarifa.tarifaBase + (distancia * tarifa.tarifaPorKm);
+        const precioFinal = Math.round(precioBase * tarifa.multiplicadorDemanda * factorDemanda);
+        
+        // Tiempo estimado basado en distancia y tipo de servicio
+        let tiempoMinutos;
+        if (tarifa.id === 'express') {
+          tiempoMinutos = Math.max(15, Math.round(distancia * 5));
+        } else if (tarifa.id === 'estandar') {
+          tiempoMinutos = Math.max(30, Math.round(distancia * 8));
+        } else {
+          tiempoMinutos = Math.max(60, Math.round(distancia * 12));
+        }
+        
+        return {
+          ...tarifa,
+          distancia: distancia.toFixed(2),
+          precio: precioFinal,
+          tiempo: tiempoMinutos,
+          precioFormateado: precioFinal.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })
+        };
+      });
+      
+      return cotizaciones;
+    }
 
-      // Tarifas base (puedes ajustar estos valores)
-      const tarifaBase = 5000; // COP
-      const tarifaPorKm = 2000; // COP por km
-      const total = tarifaBase + (distancia * tarifaPorKm);
-
-      return {
-        distancia: distancia.toFixed(2),
-        precio: Math.round(total).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })
-      };
+    // Función para mostrar opciones de tarifa
+    function mostrarOpcionesTarifa(cotizaciones) {
+      const opcionesContainer = document.getElementById('opciones-tarifa');
+      opcionesContainer.innerHTML = '';
+      
+      cotizaciones.forEach((tarifa, index) => {
+        const tarifaElement = document.createElement('div');
+        tarifaElement.className = 'tarifa-option';
+        tarifaElement.innerHTML = `
+          <div class="tarifa-nombre">${tarifa.icono} ${tarifa.nombre}</div>
+          <div class="tarifa-precio">${tarifa.precioFormateado}</div>
+          <div class="tarifa-tiempo">${tarifa.tiempo} min • ${tarifa.distancia} km</div>
+          <div style="font-size:0.8em;margin-top:5px">${tarifa.descripcion}</div>
+        `;
+        
+        tarifaElement.addEventListener('click', () => {
+          // Remover selección anterior
+          document.querySelectorAll('.tarifa-option').forEach(el => {
+            el.classList.remove('selected');
+          });
+          
+          // Seleccionar esta tarifa
+          tarifaElement.classList.add('selected');
+          tarifaSeleccionada = tarifa;
+          
+          // Mostrar botón de confirmar
+          document.getElementById('confirmar-envio').style.display = 'block';
+        });
+        
+        opcionesContainer.appendChild(tarifaElement);
+      });
     }
 
     // Función para manejar la cotización
     function iniciarCotizacion() {
+      // Limpiar selección anterior
+      tarifaSeleccionada = null;
+      document.getElementById('confirmar-envio').style.display = 'none';
+      
       // Mostrar panel de cotización
       document.getElementById('panel-cotizacion').style.display = 'block';
-      document.getElementById('cotizacion-resultado').textContent = '';
+      document.getElementById('cotizacion-resultado').innerHTML = '<p>Seleccione el punto de origen en el mapa</p>';
+      document.getElementById('opciones-tarifa').innerHTML = '';
 
-      // Eliminar marcadores anteriores si existen
+      // Eliminar marcadores y ruta anteriores
       if (origenMarker) mapa.removeLayer(origenMarker);
       if (destinoMarker) mapa.removeLayer(destinoMarker);
+      if (rutaLinea) mapa.removeLayer(rutaLinea);
 
-      // Instrucciones para el usuario
-      document.getElementById('cotizacion-resultado').textContent = 'Seleccione el punto de origen en el mapa';
+      origenMarker = null;
+      destinoMarker = null;
+      rutaLinea = null;
 
       // Variable para controlar el paso actual
       let paso = 'origen';
@@ -406,9 +557,9 @@
               iconSize: [32, 32]
             })
           }).addTo(mapa)
-            .bindPopup('Origen');
+            .bindPopup('Origen del envío');
           
-          document.getElementById('cotizacion-resultado').textContent = 'Ahora seleccione el punto de destino';
+          document.getElementById('cotizacion-resultado').innerHTML = '<p>Ahora seleccione el punto de destino</p>';
           paso = 'destino';
         } else {
           // Establecer destino
@@ -420,36 +571,50 @@
               iconSize: [32, 32]
             })
           }).addTo(mapa)
-            .bindPopup('Destino');
+            .bindPopup('Destino del envío');
+          
+          // Dibujar línea entre puntos
+          if (rutaLinea) mapa.removeLayer(rutaLinea);
+          rutaLinea = L.polyline([origenMarker.getLatLng(), destinoMarker.getLatLng()], {
+            color: '#0066cc',
+            weight: 3,
+            dashArray: '5, 5'
+          }).addTo(mapa);
           
           // Calcular cotización
-          const cotizacion = calcularCotizacion(
+          const cotizaciones = calcularCotizacion(
             origenMarker.getLatLng(),
             destinoMarker.getLatLng()
           );
           
           document.getElementById('cotizacion-resultado').innerHTML = `
-            <strong>Cotización de envío:</strong><br>
-            Distancia: ${cotizacion.distancia} km<br>
-            Precio estimado: ${cotizacion.precio}
+            <p><strong>Ruta calculada:</strong> ${cotizaciones[0].distancia} km</p>
           `;
           
-          // Dibujar línea entre puntos
-          if (mapa.hasLayer(rutaLinea)) mapa.removeLayer(rutaLinea);
-          rutaLinea = L.polyline([origenMarker.getLatLng(), destinoMarker.getLatLng()], {
-            color: 'blue'
-          }).addTo(mapa);
+          // Mostrar opciones de tarifa
+          mostrarOpcionesTarifa(cotizaciones);
           
-          // Terminar el proceso
+          // Terminar el proceso de selección
           mapa.off('click', manejarClic);
         }
       }
 
-      // Variable para la línea de ruta
-      let rutaLinea = null;
-
       // Escuchar clics en el mapa
       mapa.on('click', manejarClic);
+    }
+
+    // Función para confirmar envío
+    function confirmarEnvio() {
+      if (!tarifaSeleccionada || !origenMarker || !destinoMarker) {
+        alert('Por favor seleccione una tarifa primero');
+        return;
+      }
+      
+      // Aquí iría la lógica para procesar el envío
+      alert(`Envío confirmado!\n\nTipo: ${tarifaSeleccionada.nombre}\nPrecio: ${tarifaSeleccionada.precioFormateado}\nTiempo estimado: ${tarifaSeleccionada.tiempo} minutos`);
+      
+      // Cerrar panel
+      document.getElementById('panel-cotizacion').style.display = 'none';
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -473,8 +638,11 @@
         // Limpiar marcadores y línea de ruta
         if (origenMarker) mapa.removeLayer(origenMarker);
         if (destinoMarker) mapa.removeLayer(destinoMarker);
-        if (mapa.hasLayer(rutaLinea)) mapa.removeLayer(rutaLinea);
+        if (rutaLinea) mapa.removeLayer(rutaLinea);
       });
+
+      // Botón para confirmar envío
+      document.getElementById('confirmar-envio').addEventListener('click', confirmarEnvio);
     });
   </script>
 </body>
