@@ -100,6 +100,38 @@
       border-radius: var(--border-radius); 
       box-shadow: var(--box-shadow);
     }
+
+    /* Nuevos estilos para cotización */
+    #panel-cotizacion {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 15px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      z-index: 1000;
+      width: 90%;
+      max-width: 500px;
+      display: none;
+    }
+
+    #cotizacion-resultado {
+      margin-top: 10px;
+      font-weight: bold;
+      color: var(--accent-color);
+    }
+
+    .btn-cerrar {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+    }
     
     @media (max-width: 768px) { 
       #barra-superior { 
@@ -117,13 +149,30 @@
     <div id="barra-superior">
       <input type="search" id="buscador" placeholder="Buscar Proveedores y Puntos en Cali..." enterkeyhint="search">
       <button class="btn" id="b2b-btn">REGISTRO</button>
+      <button class="btn" id="ubicacion-btn">MI UBICACIÓN</button>
+      <button class="btn" id="cotizar-btn">COTIZAR ENVÍO</button>
     </div>
     <div id="mapa"></div>
+  </div>
+
+  <!-- Panel de cotización -->
+  <div id="panel-cotizacion">
+    <button class="btn-cerrar" id="cerrar-cotizacion">×</button>
+    <h3>Cotizar Envío</h3>
+    <p>Seleccione origen y destino en el mapa</p>
+    <div id="cotizacion-resultado"></div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
   <script>
+    // Variables globales
+    let mapa;
+    let userMarker;
+    let origenMarker = null;
+    let destinoMarker = null;
+    let ubicaciones = [];
+
     function initializeMap() {
       // Configuración de capas
       const capas = {
@@ -140,7 +189,7 @@
       };
 
       // Inicializar mapa
-      const mapa = L.map('mapa', {
+      mapa = L.map('mapa', {
         center: [3.484941, -76.545259], // Coordenadas de Cali
         zoom: 12,
         layers: [capas["Maxar"]],
@@ -167,7 +216,7 @@
       });
 
       // Datos de ubicaciones en Cali
-      const ubicaciones = [
+      ubicaciones = [
         { 
           "nombre": "@nanostore", 
           "direccion": "Av 46 Oeste # 3 - 4 Sector Ambulancias Montebello, Cali, Valle del Cauca, Colombia", 
@@ -264,12 +313,167 @@
       }
     }
 
+    // Función para activar geolocalización
+    function activarGeolocalizacion() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            
+            // Eliminar marcador anterior si existe
+            if (userMarker) {
+              mapa.removeLayer(userMarker);
+            }
+            
+            // Crear nuevo marcador de usuario
+            userMarker = L.marker([latitude, longitude], {
+              icon: L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+                iconSize: [40, 40]
+              })
+            }).addTo(mapa)
+              .bindPopup('¡Tú estás aquí!');
+              
+            // Centrar mapa en la ubicación del usuario
+            mapa.setView([latitude, longitude], 15);
+          },
+          (error) => {
+            alert(`Error al obtener ubicación: ${error.message}`);
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        alert("Tu navegador no soporta geolocalización.");
+      }
+    }
+
+    // Función para calcular distancia y cotización
+    function calcularCotizacion(origen, destino) {
+      // Fórmula Haversine para calcular distancia en km
+      function getDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371; // Radio de la Tierra en km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = 
+          Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+          Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+      }
+
+      const distancia = getDistance(
+        origen.lat, origen.lng,
+        destino.lat, destino.lng
+      );
+
+      // Tarifas base (puedes ajustar estos valores)
+      const tarifaBase = 5000; // COP
+      const tarifaPorKm = 2000; // COP por km
+      const total = tarifaBase + (distancia * tarifaPorKm);
+
+      return {
+        distancia: distancia.toFixed(2),
+        precio: Math.round(total).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })
+      };
+    }
+
+    // Función para manejar la cotización
+    function iniciarCotizacion() {
+      // Mostrar panel de cotización
+      document.getElementById('panel-cotizacion').style.display = 'block';
+      document.getElementById('cotizacion-resultado').textContent = '';
+
+      // Eliminar marcadores anteriores si existen
+      if (origenMarker) mapa.removeLayer(origenMarker);
+      if (destinoMarker) mapa.removeLayer(destinoMarker);
+
+      // Instrucciones para el usuario
+      document.getElementById('cotizacion-resultado').textContent = 'Seleccione el punto de origen en el mapa';
+
+      // Variable para controlar el paso actual
+      let paso = 'origen';
+
+      // Función para manejar clics en el mapa
+      function manejarClic(e) {
+        if (paso === 'origen') {
+          // Establecer origen
+          if (origenMarker) mapa.removeLayer(origenMarker);
+          
+          origenMarker = L.marker(e.latlng, {
+            icon: L.icon({
+              iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
+              iconSize: [32, 32]
+            })
+          }).addTo(mapa)
+            .bindPopup('Origen');
+          
+          document.getElementById('cotizacion-resultado').textContent = 'Ahora seleccione el punto de destino';
+          paso = 'destino';
+        } else {
+          // Establecer destino
+          if (destinoMarker) mapa.removeLayer(destinoMarker);
+          
+          destinoMarker = L.marker(e.latlng, {
+            icon: L.icon({
+              iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776030.png',
+              iconSize: [32, 32]
+            })
+          }).addTo(mapa)
+            .bindPopup('Destino');
+          
+          // Calcular cotización
+          const cotizacion = calcularCotizacion(
+            origenMarker.getLatLng(),
+            destinoMarker.getLatLng()
+          );
+          
+          document.getElementById('cotizacion-resultado').innerHTML = `
+            <strong>Cotización de envío:</strong><br>
+            Distancia: ${cotizacion.distancia} km<br>
+            Precio estimado: ${cotizacion.precio}
+          `;
+          
+          // Dibujar línea entre puntos
+          if (mapa.hasLayer(rutaLinea)) mapa.removeLayer(rutaLinea);
+          rutaLinea = L.polyline([origenMarker.getLatLng(), destinoMarker.getLatLng()], {
+            color: 'blue'
+          }).addTo(mapa);
+          
+          // Terminar el proceso
+          mapa.off('click', manejarClic);
+        }
+      }
+
+      // Variable para la línea de ruta
+      let rutaLinea = null;
+
+      // Escuchar clics en el mapa
+      mapa.on('click', manejarClic);
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       initializeMap();
       
       // Redirección al hacer clic en el botón B2B
       document.getElementById('b2b-btn').addEventListener('click', function() {
         window.location.href = "https://colombia.qrcontraentrega.com";
+      });
+
+      // Botón de geolocalización
+      document.getElementById('ubicacion-btn').addEventListener('click', activarGeolocalizacion);
+
+      // Botón de cotización
+      document.getElementById('cotizar-btn').addEventListener('click', iniciarCotizacion);
+
+      // Botón para cerrar panel de cotización
+      document.getElementById('cerrar-cotizacion').addEventListener('click', function() {
+        document.getElementById('panel-cotizacion').style.display = 'none';
+        
+        // Limpiar marcadores y línea de ruta
+        if (origenMarker) mapa.removeLayer(origenMarker);
+        if (destinoMarker) mapa.removeLayer(destinoMarker);
+        if (mapa.hasLayer(rutaLinea)) mapa.removeLayer(rutaLinea);
       });
     });
   </script>
