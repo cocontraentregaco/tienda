@@ -259,6 +259,23 @@
       to { transform: rotate(360deg); }
     }
     
+    /* Estilos para iconos de marcadores */
+    .marker-icon-blue {
+      filter: hue-rotate(200deg) brightness(1.2);
+    }
+    
+    .marker-icon-orange {
+      filter: hue-rotate(30deg) brightness(1.1);
+    }
+    
+    .marker-icon-green {
+      filter: hue-rotate(90deg) brightness(1.1);
+    }
+    
+    .marker-icon-red {
+      filter: hue-rotate(0deg) brightness(1.1);
+    }
+    
     @media (max-width: 768px) { 
       #barra-superior { 
         flex-direction: column; 
@@ -336,6 +353,7 @@
     let puntoOrigenSeleccionado = null;
     let puntoDestinoSeleccionado = null;
     let modoSeleccion = null; // 'enviar' o 'recibir'
+    let marcadoresOriginales = []; // Para almacenar los marcadores originales
 
     // Tarifas actualizadas para Cali (julio 2025) en COP
     const TARIFAS = [
@@ -503,7 +521,6 @@
       });
 
       // Crear marcadores
-      const todosMarcadores = [];
       UBICACIONES.forEach(loc => {
         // Icono diferente para socios y puntos logísticos
         const iconUrl = loc.tipo === 'socio' ? 
@@ -514,7 +531,7 @@
           icon: L.icon({
             iconUrl: iconUrl,
             iconSize: [32, 32],
-            className: 'marker-icon-black'
+            className: loc.tipo === 'socio' ? 'marker-icon-orange' : 'marker-icon-green'
           })
         }).bindPopup(`
           <div style="min-width:220px">
@@ -534,11 +551,11 @@
         // Guardar todos los datos de la ubicación en el marcador
         marcador.datosUbicacion = loc;
         marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
-        todosMarcadores.push(marcador);
+        marcadoresOriginales.push(marcador);
       });
 
       // Añadir marcadores al mapa
-      clusters.addLayers(todosMarcadores);
+      clusters.addLayers(marcadoresOriginales);
       mapa.addLayer(clusters);
 
       // Búsqueda
@@ -552,11 +569,11 @@
           clusters.clearLayers();
           
           if(termino === '') {
-            clusters.addLayers(todosMarcadores);
+            clusters.addLayers(marcadoresOriginales);
             return;
           }
           
-          const filtrados = todosMarcadores.filter(m => 
+          const filtrados = marcadoresOriginales.filter(m => 
             m.datosBusqueda.includes(termino)
           );
           
@@ -572,7 +589,7 @@
       searchInput.addEventListener('search', handleSearch);
 
       // Ajustar vista a los marcadores
-      if(todosMarcadores.length > 0) {
+      if(marcadoresOriginales.length > 0) {
         mapa.fitBounds(clusters.getBounds().pad(0.3));
       }
 
@@ -587,17 +604,15 @@
       
       modoSeleccion = tipo;
       
+      // Si ya tenemos ambos puntos, reiniciamos
+      if (puntoOrigenSeleccionado && puntoDestinoSeleccionado) {
+        resetearSelecciones();
+      }
+      
+      // Asignar el punto según el tipo de selección
       if (tipo === 'enviar') {
-        // Si ya hay un origen seleccionado, lo convertimos en destino si es diferente
-        if (puntoOrigenSeleccionado && puntoOrigenSeleccionado.id !== punto.id) {
-          puntoDestinoSeleccionado = puntoOrigenSeleccionado;
-        }
         puntoOrigenSeleccionado = punto;
       } else {
-        // Si ya hay un destino seleccionado, lo convertimos en origen si es diferente
-        if (puntoDestinoSeleccionado && puntoDestinoSeleccionado.id !== punto.id) {
-          puntoOrigenSeleccionado = puntoDestinoSeleccionado;
-        }
         puntoDestinoSeleccionado = punto;
       }
       
@@ -618,34 +633,32 @@
       rutaControl = null;
 
       // Resaltar los puntos seleccionados
-      const marcadores = mapa._layers;
-      for (const key in marcadores) {
-        if (marcadores[key] instanceof L.Marker && marcadores[key].datosUbicacion) {
-          const marcador = marcadores[key];
-          const ubicacion = marcador.datosUbicacion;
-          
-          if (puntoOrigenSeleccionado && ubicacion.id === puntoOrigenSeleccionado.id) {
-            origenMarker = marcador;
-            origenMarker.setIcon(L.icon({
-              iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png', // Icono de origen
-              iconSize: [32, 32]
-            }));
-          } else if (puntoDestinoSeleccionado && ubicacion.id === puntoDestinoSeleccionado.id) {
-            destinoMarker = marcador;
-            destinoMarker.setIcon(L.icon({
-              iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776030.png', // Icono de destino
-              iconSize: [32, 32]
-            }));
-          } else {
-            // Restaurar icono original
-            marcador.setIcon(L.icon({
-              iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
-              iconSize: [32, 32],
-              className: 'marker-icon-black'
-            }));
-          }
+      marcadoresOriginales.forEach(marcador => {
+        const ubicacion = marcador.datosUbicacion;
+        
+        if (puntoOrigenSeleccionado && ubicacion.id === puntoOrigenSeleccionado.id) {
+          origenMarker = marcador;
+          origenMarker.setIcon(L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png', // Icono de origen
+            iconSize: [32, 32],
+            className: 'marker-icon-green'
+          }));
+        } else if (puntoDestinoSeleccionado && ubicacion.id === puntoDestinoSeleccionado.id) {
+          destinoMarker = marcador;
+          destinoMarker.setIcon(L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776030.png', // Icono de destino
+            iconSize: [32, 32],
+            className: 'marker-icon-red'
+          }));
+        } else {
+          // Restaurar icono original
+          marcador.setIcon(L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+            iconSize: [32, 32],
+            className: ubicacion.tipo === 'socio' ? 'marker-icon-orange' : 'marker-icon-green'
+          }));
         }
-      }
+      });
 
       // Si tenemos ambos puntos, calcular cotización
       if (puntoOrigenSeleccionado && puntoDestinoSeleccionado) {
@@ -658,28 +671,26 @@
         `;
         
         // Configurar evento de clic en los marcadores para seleccionar el otro punto
-        mapa.eachLayer(layer => {
-          if (layer instanceof L.Marker) {
-            layer.off('click');
-            layer.on('click', function(e) {
-              const marcador = e.target;
-              const ubicacion = marcador.datosUbicacion;
-              
-              // No permitir seleccionar el mismo punto como origen y destino
-              if ((puntoOrigenSeleccionado && ubicacion.id === puntoOrigenSeleccionado.id) || 
-                  (puntoDestinoSeleccionado && ubicacion.id === puntoDestinoSeleccionado.id)) {
-                return;
-              }
-              
-              if (tipo === 'enviar') {
-                puntoDestinoSeleccionado = ubicacion;
-              } else {
-                puntoOrigenSeleccionado = ubicacion;
-              }
-              
-              mostrarCotizacion();
-            });
-          }
+        marcadoresOriginales.forEach(marcador => {
+          marcador.off('click');
+          marcador.on('click', function(e) {
+            const ubicacion = e.target.datosUbicacion;
+            
+            // No permitir seleccionar el mismo punto como origen y destino
+            if ((puntoOrigenSeleccionado && ubicacion.id === puntoOrigenSeleccionado.id) || 
+                (puntoDestinoSeleccionado && ubicacion.id === puntoDestinoSeleccionado.id)) {
+              return;
+            }
+            
+            // Seleccionar el otro punto según el modo
+            if (tipo === 'enviar') {
+              puntoDestinoSeleccionado = ubicacion;
+            } else {
+              puntoOrigenSeleccionado = ubicacion;
+            }
+            
+            mostrarCotizacion();
+          });
         });
       }
     }
@@ -694,27 +705,25 @@
       `;
       
       // Actualizar marcadores
-      const marcadores = mapa._layers;
-      for (const key in marcadores) {
-        if (marcadores[key] instanceof L.Marker && marcadores[key].datosUbicacion) {
-          const marcador = marcadores[key];
-          const ubicacion = marcador.datosUbicacion;
-          
-          if (ubicacion.id === puntoOrigenSeleccionado.id) {
-            origenMarker = marcador;
-            origenMarker.setIcon(L.icon({
-              iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
-              iconSize: [32, 32]
-            }));
-          } else if (ubicacion.id === puntoDestinoSeleccionado.id) {
-            destinoMarker = marcador;
-            destinoMarker.setIcon(L.icon({
-              iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776030.png',
-              iconSize: [32, 32]
-            }));
-          }
+      marcadoresOriginales.forEach(marcador => {
+        const ubicacion = marcador.datosUbicacion;
+        
+        if (ubicacion.id === puntoOrigenSeleccionado.id) {
+          origenMarker = marcador;
+          origenMarker.setIcon(L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
+            iconSize: [32, 32],
+            className: 'marker-icon-green'
+          }));
+        } else if (ubicacion.id === puntoDestinoSeleccionado.id) {
+          destinoMarker = marcador;
+          destinoMarker.setIcon(L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776030.png',
+            iconSize: [32, 32],
+            className: 'marker-icon-red'
+          }));
         }
-      }
+      });
       
       // Calcular cotización con ruta real
       calcularCotizacion(
@@ -771,18 +780,6 @@
               })
             }).addTo(mapa)
               .bindPopup('¡Tu ubicación actual!');
-              
-            // Añadir estilo para el icono azul
-            const style = document.createElement('style');
-            style.innerHTML = `
-              .marker-icon-blue {
-                filter: hue-rotate(200deg) brightness(1.2);
-              }
-              .marker-icon-black {
-                filter: brightness(0);
-              }
-            `;
-            document.head.appendChild(style);
               
             // Centrar mapa en la ubicación del usuario
             mapa.setView([latitude, longitude], 15);
@@ -1044,17 +1041,14 @@
     // Función para resetear las selecciones
     function resetearSelecciones() {
       // Restaurar iconos originales
-      const marcadores = mapa._layers;
-      for (const key in marcadores) {
-        if (marcadores[key] instanceof L.Marker && marcadores[key].datosUbicacion) {
-          const marcador = marcadores[key];
-          marcador.setIcon(L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
-            iconSize: [32, 32],
-            className: 'marker-icon-black'
-          }));
-        }
-      }
+      marcadoresOriginales.forEach(marcador => {
+        const ubicacion = marcador.datosUbicacion;
+        marcador.setIcon(L.icon({
+          iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+          iconSize: [32, 32],
+          className: ubicacion.tipo === 'socio' ? 'marker-icon-orange' : 'marker-icon-green'
+        }));
+      });
       
       // Limpiar ruta
       if (rutaControl) {
