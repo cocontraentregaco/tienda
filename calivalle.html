@@ -205,6 +205,14 @@
       padding-top: 15px;
       border-top: 1px solid #eee;
     }
+
+    .punto-seleccionado {
+      background-color: #f0f8ff;
+      padding: 10px;
+      border-radius: var(--border-radius);
+      margin-bottom: 10px;
+      border: 1px solid #d0e3ff;
+    }
     
     @media (max-width: 768px) { 
       #barra-superior { 
@@ -263,6 +271,8 @@
     let rutaControl = null;
     let ubicaciones = [];
     let tarifaSeleccionada = null;
+    let puntoOrigenSeleccionado = null;
+    let puntoDestinoSeleccionado = null;
 
     // Tarifas actualizadas para Cali (julio 2025) en COP
     const TARIFAS = [
@@ -300,6 +310,54 @@
 
     // Endpoint AWS para enviar los datos
     const AWS_ENDPOINT = 'https://api.qrcontraentrega.com/envios';
+
+    // Datos de ubicaciones en Cali (socios y puntos logísticos)
+    const UBICACIONES = [
+      { 
+        "id": "nano001",
+        "nombre": "@nanostore", 
+        "direccion": "Av 46 Oeste # 3 - 4 Sector Ambulancias Montebello, Cali, Valle del Cauca, Colombia", 
+        "latlng": [3.447641, -76.532071], 
+        "url": "https://nanostore.contraentregaco.com/",
+        "telefono": "+57 3041146297",
+        "horario": "L - V 09:00 a 17:00",
+        "servicios": "Tienda para mascotas",
+        "tipo": "socio"
+      }, 
+      { 
+        "id": "isola001",
+        "nombre": "@isolinatienda", 
+        "direccion": "Av 46 Oeste # 3 - 4 Sector Ambulancias Montebello, Cali, Valle del Cauca, Colombia", 
+        "latlng": [3.447641, -76.532071], 
+        "url": "https://isolinatienda.contraentregaco.com/",
+        "telefono": "+57 3041146297",
+        "horario": "L - V 09:00 a 17:00",
+        "servicios": "Tienda para el hogar",
+        "tipo": "socio"
+      },
+      { 
+        "id": "herma001",
+        "nombre": "@hermanosdreams", 
+        "direccion": "Av 46 Oeste # 3 - 4 Sector Ambulancias Montebello, Cali, Valle del Cauca, Colombia", 
+        "latlng": [3.484443, -76.544682], 
+        "url": "https://hermanosdreams.qrcontraentrega.com/",
+        "telefono": "+57 3041146297",
+        "horario": "L - V 09:00 a 17:00",
+        "servicios": "Tienda de productos nutricionales",
+        "tipo": "socio"
+      },
+      { 
+        "id": "logis001",
+        "nombre": "Punto Logístico QRC 1", 
+        "direccion": "Av 46 Oeste # 3 - 4 Sector Ambulancias Montebello, Cali, Valle del Cauca, Colombia", 
+        "latlng": [3.484443, -76.544682], 
+        "url": "https://wa.me/573146824438",
+        "telefono": "+57 3146824438",
+        "horario": "L - V 09:00 a 17:00",
+        "servicios": "Oficina Postal QRC",
+        "tipo": "logistico"
+      }
+    ];
 
     function initializeMap() {
       // Configuración de capas
@@ -343,50 +401,20 @@
         zoomToBoundsOnClick: true
       });
 
-      // Datos de ubicaciones en Cali
-      ubicaciones = [
-        { 
-          "nombre": "@nanostore", 
-          "direccion": "Av 46 Oeste # 3 - 4 Sector Ambulancias Montebello, Cali, Valle del Cauca, Colombia", 
-          "latlng": [3.447641, -76.532071], 
-          "url": "https://nanostore.contraentregaco.com/",
-          "telefono": "+57 3041146297",
-          "horario": "L - V 09:00 a 17:00",
-          "servicios": "Tienda para mascotas"
-        }, 
-        { 
-          "nombre": "@isolinatienda", 
-          "direccion": "Av 46 Oeste # 3 - 4 Sector Ambulancias Montebello, Cali, Valle del Cauca, Colombia", 
-          "latlng": [3.447641, -76.532071], 
-          "url": "https://isolinatienda.contraentregaco.com/",
-          "telefono": "+57 3041146297",
-          "horario": "L - V 09:00 a 17:00",
-          "servicios": "Tienda para el hogar"
-        },
-        { 
-          "nombre": "Proveedor: @hermanosdreams", 
-          "direccion": "3.484443, -76.544682 Av 46 Oeste # 3 - 4 Sector Ambulancias Montebello, Cali, Valle del Cauca, Colombia", 
-          "latlng": [3.484443, -76.544682], 
-          "url": "https://hermanosdreams.qrcontraentrega.com/",
-          "telefono": "+57 3041146297",
-          "horario": "L - V 09:00 a 17:00",
-          "servicios": "Tienda de productos nutricionales"
-        },
-        { 
-          "nombre": "Punto Logístico: 1", 
-          "direccion": "3.484443, -76.544682 Av 46 Oeste # 3 - 4 Sector Ambulancias Montebello, Cali, Valle del Cauca, Colombia", 
-          "latlng": [3.484443, -76.544682], 
-          "url": "https://wa.me/573146824438",
-          "telefono": "+57 3146824438",
-          "horario": "L - V 09:00 a 17:00",
-          "servicios": "Oficina Postal QRC"
-        }
-      ];
-
       // Crear marcadores
       const todosMarcadores = [];
-      ubicaciones.forEach(loc => {
-        const marcador = L.marker(loc.latlng).bindPopup(`
+      UBICACIONES.forEach(loc => {
+        // Icono diferente para socios y puntos logísticos
+        const iconUrl = loc.tipo === 'socio' ? 
+          'https://cdn-icons-png.flaticon.com/512/3514/3514491.png' : // Icono de tienda
+          'https://cdn-icons-png.flaticon.com/512/854/854878.png';    // Icono de almacén
+        
+        const marcador = L.marker(loc.latlng, {
+          icon: L.icon({
+            iconUrl: iconUrl,
+            iconSize: [32, 32]
+          })
+        }).bindPopup(`
           <div style="min-width:220px">
             <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
             <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
@@ -397,6 +425,8 @@
           </div>
         `);
         
+        // Guardar todos los datos de la ubicación en el marcador
+        marcador.datosUbicacion = loc;
         marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
         todosMarcadores.push(marcador);
       });
@@ -574,6 +604,20 @@
       const opcionesContainer = document.getElementById('opciones-tarifa');
       opcionesContainer.innerHTML = '';
       
+      // Mostrar información de los puntos seleccionados
+      const infoPuntos = `
+        <div class="punto-seleccionado">
+          <strong>Origen:</strong> ${puntoOrigenSeleccionado.nombre}<br>
+          <small>${puntoOrigenSeleccionado.direccion}</small>
+        </div>
+        <div class="punto-seleccionado">
+          <strong>Destino:</strong> ${puntoDestinoSeleccionado.nombre}<br>
+          <small>${puntoDestinoSeleccionado.direccion}</small>
+        </div>
+      `;
+      opcionesContainer.innerHTML = infoPuntos;
+      
+      // Mostrar opciones de tarifas
       cotizaciones.forEach((tarifa, index) => {
         const tarifaElement = document.createElement('div');
         tarifaElement.className = 'tarifa-option';
@@ -606,6 +650,8 @@
     function iniciarCotizacion() {
       // Limpiar selección anterior
       tarifaSeleccionada = null;
+      puntoOrigenSeleccionado = null;
+      puntoDestinoSeleccionado = null;
       document.getElementById('confirmar-envio').style.display = 'none';
       document.getElementById('formulario-envio').style.display = 'none';
       
@@ -626,44 +672,78 @@
       // Variable para controlar el paso actual
       let paso = 'origen';
 
-      // Función para manejar clics en el mapa
-      function manejarClic(e) {
+      // Función para manejar clics en los marcadores
+      function manejarClicMarcador(e) {
+        const marcador = e.target;
+        const ubicacion = marcador.datosUbicacion;
+        
         if (paso === 'origen') {
           // Establecer origen
-          if (origenMarker) mapa.removeLayer(origenMarker);
-          
-          origenMarker = L.marker(e.latlng, {
-            icon: L.icon({
-              iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
+          if (origenMarker) {
+            origenMarker.setIcon(L.icon({
+              iconUrl: ubicacion.tipo === 'socio' ? 
+                'https://cdn-icons-png.flaticon.com/512/3514/3514491.png' : 
+                'https://cdn-icons-png.flaticon.com/512/854/854878.png',
               iconSize: [32, 32]
-            })
-          }).addTo(mapa)
-            .bindPopup('Origen del envío');
+            }));
+          }
           
-          document.getElementById('cotizacion-resultado').innerHTML = '<p>Ahora seleccione el punto de destino</p>';
+          origenMarker = marcador;
+          puntoOrigenSeleccionado = ubicacion;
+          
+          // Resaltar marcador de origen
+          marcador.setIcon(L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
+            iconSize: [32, 32]
+          }));
+          
+          document.getElementById('cotizacion-resultado').innerHTML = `
+            <p>Origen seleccionado: <strong>${ubicacion.nombre}</strong></p>
+            <p>Ahora seleccione el punto de destino</p>
+          `;
           paso = 'destino';
         } else {
-          // Establecer destino
-          if (destinoMarker) mapa.removeLayer(destinoMarker);
+          // No permitir seleccionar el mismo punto como destino
+          if (marcador === origenMarker) {
+            alert('No puede seleccionar el mismo punto como origen y destino');
+            return;
+          }
           
-          destinoMarker = L.marker(e.latlng, {
-            icon: L.icon({
-              iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776030.png',
+          // Establecer destino
+          if (destinoMarker) {
+            destinoMarker.setIcon(L.icon({
+              iconUrl: ubicacion.tipo === 'socio' ? 
+                'https://cdn-icons-png.flaticon.com/512/3514/3514491.png' : 
+                'https://cdn-icons-png.flaticon.com/512/854/854878.png',
               iconSize: [32, 32]
-            })
-          }).addTo(mapa)
-            .bindPopup('Destino del envío');
+            }));
+          }
+          
+          destinoMarker = marcador;
+          puntoDestinoSeleccionado = ubicacion;
+          
+          // Resaltar marcador de destino
+          marcador.setIcon(L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776030.png',
+            iconSize: [32, 32]
+          }));
           
           // Mostrar mensaje de cálculo
-          document.getElementById('cotizacion-resultado').innerHTML = '<p>Calculando ruta y tarifas...</p>';
+          document.getElementById('cotizacion-resultado').innerHTML = `
+            <p>Origen: <strong>${puntoOrigenSeleccionado.nombre}</strong></p>
+            <p>Destino: <strong>${puntoDestinoSeleccionado.nombre}</strong></p>
+            <p>Calculando ruta y tarifas...</p>
+          `;
           
           // Calcular cotización con ruta real
           calcularCotizacion(
-            origenMarker.getLatLng(),
-            destinoMarker.getLatLng(),
+            { lat: puntoOrigenSeleccionado.latlng[0], lng: puntoOrigenSeleccionado.latlng[1] },
+            { lat: puntoDestinoSeleccionado.latlng[0], lng: puntoDestinoSeleccionado.latlng[1] },
             (cotizaciones) => {
               document.getElementById('cotizacion-resultado').innerHTML = `
-                <p><strong>Ruta calculada:</strong> ${cotizaciones[0].distancia} km</p>
+                <p>Origen: <strong>${puntoOrigenSeleccionado.nombre}</strong></p>
+                <p>Destino: <strong>${puntoDestinoSeleccionado.nombre}</strong></p>
+                <p><strong>Distancia:</strong> ${cotizaciones[0].distancia} km</p>
               `;
               
               // Mostrar opciones de tarifa
@@ -672,17 +752,22 @@
           );
           
           // Terminar el proceso de selección
-          mapa.off('click', manejarClic);
+          mapa.off('click', manejarClicMarcador);
         }
       }
 
-      // Escuchar clics en el mapa
-      mapa.on('click', manejarClic);
+      // Escuchar clics en los marcadores
+      mapa.eachLayer(layer => {
+        if (layer instanceof L.Marker) {
+          layer.off('click');
+          layer.on('click', manejarClicMarcador);
+        }
+      });
     }
 
     // Función para confirmar envío
     function confirmarEnvio() {
-      if (!tarifaSeleccionada || !origenMarker || !destinoMarker) {
+      if (!tarifaSeleccionada || !puntoOrigenSeleccionado || !puntoDestinoSeleccionado) {
         alert('Por favor seleccione una tarifa primero');
         return;
       }
@@ -702,21 +787,42 @@
         return;
       }
       
-      // Datos a enviar
+      // Datos a enviar (incluyendo toda la info de los puntos)
       const datosEnvio = {
-        nombre: nombre,
-        telefono: telefono,
-        tarifa: tarifaSeleccionada.nombre,
-        precio: tarifaSeleccionada.precio,
-        distancia: tarifaSeleccionada.distancia,
-        tiempoEstimado: tarifaSeleccionada.tiempo,
-        origen: {
-          lat: origenMarker.getLatLng().lat,
-          lng: origenMarker.getLatLng().lng
+        cliente: {
+          nombre: nombre,
+          telefono: telefono
         },
-        destino: {
-          lat: destinoMarker.getLatLng().lat,
-          lng: destinoMarker.getLatLng().lng
+        tarifa: {
+          tipo: tarifaSeleccionada.nombre,
+          precio: tarifaSeleccionada.precio,
+          precioFormateado: tarifaSeleccionada.precioFormateado,
+          tiempoEstimado: tarifaSeleccionada.tiempo
+        },
+        ruta: {
+          distancia: tarifaSeleccionada.distancia,
+          origen: {
+            id: puntoOrigenSeleccionado.id,
+            nombre: puntoOrigenSeleccionado.nombre,
+            direccion: puntoOrigenSeleccionado.direccion,
+            telefono: puntoOrigenSeleccionado.telefono,
+            horario: puntoOrigenSeleccionado.horario,
+            servicios: puntoOrigenSeleccionado.servicios,
+            tipo: puntoOrigenSeleccionado.tipo,
+            lat: puntoOrigenSeleccionado.latlng[0],
+            lng: puntoOrigenSeleccionado.latlng[1]
+          },
+          destino: {
+            id: puntoDestinoSeleccionado.id,
+            nombre: puntoDestinoSeleccionado.nombre,
+            direccion: puntoDestinoSeleccionado.direccion,
+            telefono: puntoDestinoSeleccionado.telefono,
+            horario: puntoDestinoSeleccionado.horario,
+            servicios: puntoDestinoSeleccionado.servicios,
+            tipo: puntoDestinoSeleccionado.tipo,
+            lat: puntoDestinoSeleccionado.latlng[0],
+            lng: puntoDestinoSeleccionado.latlng[1]
+          }
         },
         fecha: new Date().toISOString()
       };
@@ -750,6 +856,8 @@
               `Tipo: ${tarifaSeleccionada.nombre}\n` +
               `Precio: ${tarifaSeleccionada.precioFormateado}\n` +
               `Tiempo estimado: ${tarifaSeleccionada.tiempo} minutos\n\n` +
+              `Origen: ${puntoOrigenSeleccionado.nombre}\n` +
+              `Destino: ${puntoDestinoSeleccionado.nombre}\n\n` +
               `Nos contactaremos al número ${telefono} para confirmar.`);
         
         // Cerrar panel y limpiar formulario
@@ -757,9 +865,26 @@
         document.getElementById('nombre-cliente').value = '';
         document.getElementById('telefono-cliente').value = '';
         
-        // Limpiar marcadores y ruta
-        if (origenMarker) mapa.removeLayer(origenMarker);
-        if (destinoMarker) mapa.removeLayer(destinoMarker);
+        // Restaurar iconos originales de los marcadores
+        if (origenMarker) {
+          origenMarker.setIcon(L.icon({
+            iconUrl: puntoOrigenSeleccionado.tipo === 'socio' ? 
+              'https://cdn-icons-png.flaticon.com/512/3514/3514491.png' : 
+              'https://cdn-icons-png.flaticon.com/512/854/854878.png',
+            iconSize: [32, 32]
+          }));
+        }
+        
+        if (destinoMarker) {
+          destinoMarker.setIcon(L.icon({
+            iconUrl: puntoDestinoSeleccionado.tipo === 'socio' ? 
+              'https://cdn-icons-png.flaticon.com/512/3514/3514491.png' : 
+              'https://cdn-icons-png.flaticon.com/512/854/854878.png',
+            iconSize: [32, 32]
+          }));
+        }
+        
+        // Limpiar ruta
         if (rutaControl) mapa.removeControl(rutaControl);
       }, 1000);
     }
@@ -782,9 +907,26 @@
       document.getElementById('cerrar-cotizacion').addEventListener('click', function() {
         document.getElementById('panel-cotizacion').style.display = 'none';
         
-        // Limpiar marcadores y ruta
-        if (origenMarker) mapa.removeLayer(origenMarker);
-        if (destinoMarker) mapa.removeLayer(destinoMarker);
+        // Restaurar iconos originales si hay marcadores seleccionados
+        if (origenMarker && puntoOrigenSeleccionado) {
+          origenMarker.setIcon(L.icon({
+            iconUrl: puntoOrigenSeleccionado.tipo === 'socio' ? 
+              'https://cdn-icons-png.flaticon.com/512/3514/3514491.png' : 
+              'https://cdn-icons-png.flaticon.com/512/854/854878.png',
+            iconSize: [32, 32]
+          }));
+        }
+        
+        if (destinoMarker && puntoDestinoSeleccionado) {
+          destinoMarker.setIcon(L.icon({
+            iconUrl: puntoDestinoSeleccionado.tipo === 'socio' ? 
+              'https://cdn-icons-png.flaticon.com/512/3514/3514491.png' : 
+              'https://cdn-icons-png.flaticon.com/512/854/854878.png',
+            iconSize: [32, 32]
+          }));
+        }
+        
+        // Limpiar ruta
         if (rutaControl) mapa.removeControl(rutaControl);
       });
 
