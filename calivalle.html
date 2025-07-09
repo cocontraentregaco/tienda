@@ -698,10 +698,14 @@
 
     // Función para mostrar la cotización
     function mostrarCotizacion() {
+      // Determinar origen y destino según el modo
+      const origen = modoSeleccion === 'enviar' ? puntoOrigenSeleccionado : puntoDestinoSeleccionado;
+      const destino = modoSeleccion === 'enviar' ? puntoDestinoSeleccionado : puntoOrigenSeleccionado;
+
       // Mostrar mensaje de cálculo
       document.getElementById('cotizacion-resultado').innerHTML = `
-        <p>${modoSeleccion === 'enviar' ? 'Enviando desde' : 'Recibiendo en'}: <strong>${puntoOrigenSeleccionado.nombre}</strong></p>
-        <p>${modoSeleccion === 'enviar' ? 'Hacia' : 'Desde'}: <strong>${puntoDestinoSeleccionado.nombre}</strong></p>
+        <p>${modoSeleccion === 'enviar' ? 'Enviando desde' : 'Recibiendo en'}: <strong>${origen.nombre}</strong></p>
+        <p>${modoSeleccion === 'enviar' ? 'Hacia' : 'Desde'}: <strong>${destino.nombre}</strong></p>
         <p>Calculando ruta y tarifas...</p>
       `;
       
@@ -709,14 +713,14 @@
       marcadoresOriginales.forEach(marcador => {
         const ubicacion = marcador.datosUbicacion;
         
-        if (ubicacion.id === puntoOrigenSeleccionado.id) {
+        if (ubicacion.id === origen.id) {
           origenMarker = marcador;
           origenMarker.setIcon(L.icon({
             iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
             iconSize: [32, 32],
             className: 'marker-icon-green'
           }));
-        } else if (ubicacion.id === puntoDestinoSeleccionado.id) {
+        } else if (ubicacion.id === destino.id) {
           destinoMarker = marcador;
           destinoMarker.setIcon(L.icon({
             iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776030.png',
@@ -729,17 +733,17 @@
       // Calcular cotización con ruta real
       calcularCotizacion(
         { 
-          lat: puntoOrigenSeleccionado.latlng[0], 
-          lng: puntoOrigenSeleccionado.latlng[1] 
+          lat: origen.latlng[0], 
+          lng: origen.latlng[1] 
         },
         { 
-          lat: puntoDestinoSeleccionado.latlng[0], 
-          lng: puntoDestinoSeleccionado.latlng[1] 
+          lat: destino.latlng[0], 
+          lng: destino.latlng[1] 
         },
         (cotizaciones) => {
           document.getElementById('cotizacion-resultado').innerHTML = `
-            <p>${modoSeleccion === 'enviar' ? 'Enviando desde' : 'Recibiendo en'}: <strong>${puntoOrigenSeleccionado.nombre}</strong></p>
-            <p>${modoSeleccion === 'enviar' ? 'Hacia' : 'Desde'}: <strong>${puntoDestinoSeleccionado.nombre}</strong></p>
+            <p>${modoSeleccion === 'enviar' ? 'Enviando desde' : 'Recibiendo en'}: <strong>${origen.nombre}</strong></p>
+            <p>${modoSeleccion === 'enviar' ? 'Hacia' : 'Desde'}: <strong>${destino.nombre}</strong></p>
             <p><strong>Distancia:</strong> ${cotizaciones[0].distancia} km</p>
           `;
           
@@ -747,6 +751,57 @@
           mostrarOpcionesTarifa(cotizaciones);
         }
       );
+    }
+
+    // Función para mostrar opciones de tarifa
+    function mostrarOpcionesTarifa(cotizaciones) {
+      const opcionesContainer = document.getElementById('opciones-tarifa');
+      opcionesContainer.innerHTML = '';
+      
+      // Determinar origen y destino según el modo
+      const origen = modoSeleccion === 'enviar' ? puntoOrigenSeleccionado : puntoDestinoSeleccionado;
+      const destino = modoSeleccion === 'enviar' ? puntoDestinoSeleccionado : puntoOrigenSeleccionado;
+
+      // Mostrar información de los puntos seleccionados
+      const infoPuntos = `
+        <div class="punto-seleccionado">
+          <strong>${modoSeleccion === 'enviar' ? 'Origen' : 'Destino'}:</strong> ${origen.nombre}<br>
+          <small>${origen.direccion}</small>
+        </div>
+        <div class="punto-seleccionado">
+          <strong>${modoSeleccion === 'enviar' ? 'Destino' : 'Origen'}:</strong> ${destino.nombre}<br>
+          <small>${destino.direccion}</small>
+        </div>
+      `;
+      opcionesContainer.innerHTML = infoPuntos;
+      
+      // Mostrar opciones de tarifas
+      cotizaciones.forEach((tarifa, index) => {
+        const tarifaElement = document.createElement('div');
+        tarifaElement.className = 'tarifa-option';
+        tarifaElement.innerHTML = `
+          <div class="tarifa-nombre">${tarifa.icono} ${tarifa.nombre}</div>
+          <div class="tarifa-precio">${tarifa.precioFormateado}</div>
+          <div class="tarifa-tiempo">${tarifa.tiempo} min • ${tarifa.distancia} km</div>
+          <div style="font-size:0.8em;margin-top:5px">${tarifa.descripcion}</div>
+        `;
+        
+        tarifaElement.addEventListener('click', () => {
+          // Remover selección anterior
+          document.querySelectorAll('.tarifa-option').forEach(el => {
+            el.classList.remove('selected');
+          });
+          
+          // Seleccionar esta tarifa
+          tarifaElement.classList.add('selected');
+          tarifaSeleccionada = tarifa;
+          
+          // Mostrar botón de confirmar
+          document.getElementById('confirmar-envio').style.display = 'block';
+        });
+        
+        opcionesContainer.appendChild(tarifaElement);
+      });
     }
 
     // Función para obtener ubicación del usuario
@@ -875,53 +930,6 @@
         });
         
         callback(cotizaciones);
-      });
-    }
-
-    // Función para mostrar opciones de tarifa
-    function mostrarOpcionesTarifa(cotizaciones) {
-      const opcionesContainer = document.getElementById('opciones-tarifa');
-      opcionesContainer.innerHTML = '';
-      
-      // Mostrar información de los puntos seleccionados
-      const infoPuntos = `
-        <div class="punto-seleccionado">
-          <strong>${modoSeleccion === 'enviar' ? 'Origen' : 'Destino'}:</strong> ${modoSeleccion === 'enviar' ? puntoOrigenSeleccionado.nombre : puntoDestinoSeleccionado.nombre}<br>
-          <small>${modoSeleccion === 'enviar' ? puntoOrigenSeleccionado.direccion : puntoDestinoSeleccionado.direccion}</small>
-        </div>
-        <div class="punto-seleccionado">
-          <strong>${modoSeleccion === 'enviar' ? 'Destino' : 'Origen'}:</strong> ${modoSeleccion === 'enviar' ? puntoDestinoSeleccionado.nombre : puntoOrigenSeleccionado.nombre}<br>
-          <small>${modoSeleccion === 'enviar' ? puntoDestinoSeleccionado.direccion : puntoOrigenSeleccionado.direccion}</small>
-        </div>
-      `;
-      opcionesContainer.innerHTML = infoPuntos;
-      
-      // Mostrar opciones de tarifas
-      cotizaciones.forEach((tarifa, index) => {
-        const tarifaElement = document.createElement('div');
-        tarifaElement.className = 'tarifa-option';
-        tarifaElement.innerHTML = `
-          <div class="tarifa-nombre">${tarifa.icono} ${tarifa.nombre}</div>
-          <div class="tarifa-precio">${tarifa.precioFormateado}</div>
-          <div class="tarifa-tiempo">${tarifa.tiempo} min • ${tarifa.distancia} km</div>
-          <div style="font-size:0.8em;margin-top:5px">${tarifa.descripcion}</div>
-        `;
-        
-        tarifaElement.addEventListener('click', () => {
-          // Remover selección anterior
-          document.querySelectorAll('.tarifa-option').forEach(el => {
-            el.classList.remove('selected');
-          });
-          
-          // Seleccionar esta tarifa
-          tarifaElement.classList.add('selected');
-          tarifaSeleccionada = tarifa;
-          
-          // Mostrar botón de confirmar
-          document.getElementById('confirmar-envio').style.display = 'block';
-        });
-        
-        opcionesContainer.appendChild(tarifaElement);
       });
     }
 
