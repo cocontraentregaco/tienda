@@ -603,8 +603,6 @@
       const punto = UBICACIONES.find(p => p.id === idPunto);
       if (!punto) return;
       
-      modoSeleccion = tipo;
-      
       // Si ya tenemos ambos puntos, reiniciamos
       if (puntoOrigenSeleccionado && puntoDestinoSeleccionado) {
         resetearSelecciones();
@@ -613,8 +611,10 @@
       // Asignar el punto según el tipo de selección
       if (tipo === 'enviar') {
         puntoOrigenSeleccionado = punto;
+        modoSeleccion = 'enviar';
       } else {
         puntoDestinoSeleccionado = punto;
+        modoSeleccion = 'recibir';
       }
       
       // Mostrar panel
@@ -640,14 +640,14 @@
         if (puntoOrigenSeleccionado && ubicacion.id === puntoOrigenSeleccionado.id) {
           origenMarker = marcador;
           origenMarker.setIcon(L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png', // Icono de origen
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
             iconSize: [32, 32],
             className: 'marker-icon-green'
           }));
         } else if (puntoDestinoSeleccionado && ubicacion.id === puntoDestinoSeleccionado.id) {
           destinoMarker = marcador;
           destinoMarker.setIcon(L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776030.png', // Icono de destino
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776030.png',
             iconSize: [32, 32],
             className: 'marker-icon-red'
           }));
@@ -684,7 +684,7 @@
             }
             
             // Seleccionar el otro punto según el modo
-            if (tipo === 'enviar') {
+            if (modoSeleccion === 'enviar') {
               puntoDestinoSeleccionado = ubicacion;
             } else {
               puntoOrigenSeleccionado = ubicacion;
@@ -1064,6 +1064,15 @@
       puntoDestinoSeleccionado = null;
       tarifaSeleccionada = null;
       modoSeleccion = null;
+      
+      // Reactivar eventos de clic en los marcadores
+      marcadoresOriginales.forEach(marcador => {
+        marcador.off('click');
+        marcador.on('click', function() {
+          // Abrir popup al hacer clic
+          this.openPopup();
+        });
+      });
     }
   </script>
 </body>
