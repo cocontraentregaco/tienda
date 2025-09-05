@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - Antigua and Barbuda</title>
+    <title>QRContraentrega - Antigua y Barbuda / Antigua and Barbuda</title>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2980b9;
+            --red: #CE1126; /* Antigua and Barbuda red */
+            --black: #000000; /* Antigua and Barbuda black */
+            --blue: #0072C6; /* Antigua and Barbuda blue */
+            --white: #FFFFFF;
+            --yellow: #FCD116; /* Antigua and Barbuda yellow */
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -24,6 +27,7 @@
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(0, 114, 198, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -35,28 +39,39 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--red) 0%, var(--blue) 35%, var(--black) 70%, var(--yellow) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .spanish-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
         }
 
-        .parishes-grid {
+        .states-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
-        .parish-card {
+        .state-card {
             background: white;
             border-radius: 8px;
             overflow: hidden;
@@ -64,11 +79,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
+            border-top: 4px solid var(--red);
         }
 
-        .parish-card:hover {
+        .state-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--blue);
         }
 
         .flag-container {
@@ -77,6 +94,18 @@
             align-items: center;
             justify-content: center;
             background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--red) 0%, var(--blue) 35%, var(--black) 70%, var(--yellow) 100%);
         }
 
         .flag-image {
@@ -85,17 +114,24 @@
             object-fit: contain;
         }
 
-        .parish-info {
+        .state-info {
             padding: 1.5rem 1rem;
         }
 
-        .parish-name {
+        .state-name {
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--blue);
         }
 
-        .parish-island {
+        .spanish-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .state-type {
             color: #666;
             font-size: 0.9rem;
         }
@@ -105,21 +141,26 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
 
-        #parish-search {
+        #state-search {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 20px 12px 45px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
         }
 
-        #parish-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        #state-search:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(206, 17, 38, 0.2);
         }
 
         footer {
@@ -131,12 +172,16 @@
         }
 
         @media (max-width: 768px) {
-            .parishes-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
                 font-size: 2rem;
+            }
+
+            .spanish-title {
+                font-size: 1.8rem;
             }
 
             .flag-container {
@@ -149,17 +194,21 @@
                 padding: 1rem;
             }
 
-            .parishes-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
-            .parish-info {
+            .state-info {
                 padding: 1rem 0.5rem;
             }
 
-            .parish-name {
+            .state-name {
                 font-size: 1rem;
+            }
+            
+            .spanish-name {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -168,87 +217,179 @@
     <div class="container">
         <header>
             <h1>QRContraentrega</h1>
-            <p class="subtitle">Select your parish in Antigua and Barbuda</p>
+            <div class="spanish-title">Antigua y Barbuda</div>
+            <div>Antigua and Barbuda</div>
+            <p class="subtitle">Selecciona tu parroquia o isla / Select your parish or island</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="parish-search" placeholder="Search parish..." aria-label="Search parish">
+            <input type="text" id="state-search" placeholder="Busca una parroquia o isla / Search for parish or island..." aria-label="Busca una parroquia o isla">
         </div>
 
-        <div class="parishes-grid" id="parishes-container">
-            <!-- Parishes will appear here -->
+        <div class="states-grid" id="states-container">
+            <!-- States and cities will appear here -->
         </div>
 
         <footer>
-            <p>© QRContraentrega. All rights reserved.</p>
+            <p>© QRContraentrega. Todos los derechos reservados / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // List of parishes in Antigua and Barbuda
-        const parishes = [
-            { "name": "Saint John's", "island": "Antigua", "url": "https://qrcontraentrega.com/stjohns" },
-            { "name": "Saint George", "island": "Antigua", "url": "https://qrcontraentrega.com/stgeorge" },
-            { "name": "Saint Peter", "island": "Antigua", "url": "https://qrcontraentrega.com/stpeter" },
-            { "name": "Saint Philip", "island": "Antigua", "url": "https://qrcontraentrega.com/stphilip" },
-            { "name": "Saint Mary", "island": "Antigua", "url": "https://qrcontraentrega.com/stmary" },
-            { "name": "Saint Paul", "island": "Antigua", "url": "https://qrcontraentrega.com/stpaul" },
-            { "name": "Saint John", "island": "Barbuda", "url": "https://qrcontraentrega.com/stjohnbarbuda" },
-            { "name": "Codrington", "island": "Barbuda", "url": "https://qrcontraentrega.com/codrington" },
-            { "name": "English Harbour", "island": "Antigua", "url": "https://qrcontraentrega.com/englishharbour" },
-            { "name": "Falmouth", "island": "Antigua", "url": "https://qrcontraentrega.com/falmouth" },
-            { "name": "Liberta", "island": "Antigua", "url": "https://qrcontraentrega.com/liberta" },
-            { "name": "All Saints", "island": "Antigua", "url": "https://qrcontraentrega.com/allsaints" },
-            { "name": "Piggotts", "island": "Antigua", "url": "https://qrcontraentrega.com/piggotts" },
-            { "name": "Bolans", "island": "Antigua", "url": "https://qrcontraentrega.com/bolans" },
-            { "name": "Carlisle", "island": "Antigua", "url": "https://qrcontraentrega.com/carlisle" },
-            { "name": "Old Road", "island": "Antigua", "url": "https://qrcontraentrega.com/oldroad" },
-            { "name": "Parham", "island": "Antigua", "url": "https://qrcontraentrega.com/parham" },
-            { "name": "Willikies", "island": "Antigua", "url": "https://qrcontraentrega.com/willikies" }
+        // List of Antigua and Barbuda parishes and islands with both languages
+        const states = [
+            // Parishes of Antigua
+            { 
+                "name": { "es": "Saint George", "en": "Saint George" }, 
+                "type": { "es": "Parroquia", "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/saint-george", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Saint John", "en": "Saint John" }, 
+                "type": { "es": "Parroquia", "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/saint-john", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Saint Mary", "en": "Saint Mary" }, 
+                "type": { "es": "Parroquia", "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/saint-mary", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Saint Paul", "en": "Saint Paul" }, 
+                "type": { "es": "Parroquia", "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/saint-paul", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Saint Peter", "en": "Saint Peter" }, 
+                "type": { "es": "Parroquia", "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/saint-peter", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Saint Philip", "en": "Saint Philip" }, 
+                "type": { "es": "Parroquia", "en": "Parish" }, 
+                "url": "https://qrcontraentrega.com/saint-philip", 
+                "image": "img/c.jpg" 
+            },
+            // Dependencies
+            { 
+                "name": { "es": "Barbuda", "en": "Barbuda" }, 
+                "type": { "es": "Dependencia", "en": "Dependency" }, 
+                "url": "https://qrcontraentrega.com/barbuda", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Redonda", "en": "Redonda" }, 
+                "type": { "es": "Dependencia", "en": "Dependency" }, 
+                "url": "https://qrcontraentrega.com/redonda", 
+                "image": "img/c.jpg" 
+            },
+            // Major cities/towns
+            { 
+                "name": { "es": "Saint John's", "en": "Saint John's" }, 
+                "type": { "es": "Capital", "en": "Capital" }, 
+                "url": "https://qrcontraentrega.com/saint-johns", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "All Saints", "en": "All Saints" }, 
+                "type": { "es": "Pueblo", "en": "Town" }, 
+                "url": "https://qrcontraentrega.com/all-saints", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Liberta", "en": "Liberta" }, 
+                "type": { "es": "Pueblo", "en": "Town" }, 
+                "url": "https://qrcontraentrega.com/liberta", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Parham", "en": "Parham" }, 
+                "type": { "es": "Pueblo", "en": "Town" }, 
+                "url": "https://qrcontraentrega.com/parham", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Codrington", "en": "Codrington" }, 
+                "type": { "es": "Pueblo", "en": "Town" }, 
+                "url": "https://qrcontraentrega.com/codrington", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Bolans", "en": "Bolans" }, 
+                "type": { "es": "Pueblo", "en": "Town" }, 
+                "url": "https://qrcontraentrega.com/bolans", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Piggotts", "en": "Piggotts" }, 
+                "type": { "es": "Pueblo", "en": "Town" }, 
+                "url": "https://qrcontraentrega.com/piggotts", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Potter's Village", "en": "Potter's Village" }, 
+                "type": { "es": "Pueblo", "en": "Town" }, 
+                "url": "https://qrcontraentrega.com/potters-village", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Swetes", "en": "Swetes" }, 
+                "type": { "es": "Pueblo", "en": "Town" }, 
+                "url": "https://qrcontraentrega.com/swetes", 
+                "image": "img/c.jpg" 
+            }
         ];
 
-        // Function to display parishes
-        function renderParishes(parishList) {
-            const container = document.getElementById('parishes-container');
+        // Function to display states and cities
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
             container.innerHTML = '';
 
-            parishList.forEach(parish => {
-                const parishCard = document.createElement('div');
-                parishCard.className = 'parish-card';
-                parishCard.innerHTML = `
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${parish.name}" class="flag-image">
+                        <img src="${state.image}" alt="${state.name.es}" class="flag-image">
                     </div>
-                    <div class="parish-info">
-                        <div class="parish-name">${parish.name}</div>
-                        <div class="parish-island">${parish.island}</div>
+                    <div class="state-info">
+                        <div class="spanish-name">${state.name.es}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.es} • ${state.type.en}</div>
                     </div>
                 `;
                 
-                parishCard.addEventListener('click', () => {
-                    window.location.href = parish.url;
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
                 });
 
-                container.appendChild(parishCard);
+                container.appendChild(stateCard);
             });
         }
 
-        // Function to search parishes
-        function searchParishes() {
-            const searchTerm = document.getElementById('parish-search').value.toLowerCase();
-            const filteredParishes = parishes.filter(parish => 
-                parish.name.toLowerCase().includes(searchTerm) || 
-                parish.island.toLowerCase().includes(searchTerm)
+        // Function to search states and cities
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.es.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.es.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
             );
-            renderParishes(filteredParishes);
+            renderStates(filteredStates);
         }
 
         // Event listeners
-        document.getElementById('parish-search').addEventListener('input', searchParishes);
+        document.getElementById('state-search').addEventListener('input', searchStates);
 
-        // Display all parishes when page loads
+        // Display all states and cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            renderParishes(parishes);
+            renderStates(states);
         });
     </script>
 </body>
