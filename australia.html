@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - Australia</title>
+    <title>QRContraentrega - Australia / Australia</title>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2980b9;
+            --blue: #012169; /* Australia blue */
+            --red: #E4002B; /* Australia red */
+            --white: #FFFFFF;
+            --light-blue: #0099CC; /* Australia light blue */
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -24,6 +26,7 @@
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(1, 33, 105, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -35,24 +38,81 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--blue) 0%, var(--red) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 60px;
+            height: 30px;
+            background: 
+                linear-gradient(180deg, 
+                    transparent 0%, transparent 40%, 
+                    var(--white) 40%, var(--white) 60%, 
+                    transparent 60%, transparent 100%),
+                linear-gradient(90deg, 
+                    transparent 0%, transparent 40%, 
+                    var(--white) 40%, var(--white) 60%, 
+                    transparent 60%, transparent 100%);
+            opacity: 0.8;
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 70px;
+            height: 35px;
+            background: 
+                linear-gradient(180deg, 
+                    transparent 0%, transparent 40%, 
+                    var(--white) 40%, var(--white) 60%, 
+                    transparent 60%, transparent 100%),
+                linear-gradient(90deg, 
+                    transparent 0%, transparent 40%, 
+                    var(--white) 40%, var(--white) 60%, 
+                    transparent 60%, transparent 100%);
+            opacity: 0.8;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .spanish-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         .states-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
@@ -64,11 +124,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
+            border-top: 4px solid var(--blue);
         }
 
         .state-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--red);
         }
 
         .flag-container {
@@ -77,6 +139,18 @@
             align-items: center;
             justify-content: center;
             background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--blue) 0%, var(--red) 100%);
         }
 
         .flag-image {
@@ -93,6 +167,13 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--blue);
+        }
+
+        .spanish-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
         }
 
         .state-type {
@@ -105,21 +186,26 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
 
         #state-search {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 20px 12px 45px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
         }
 
         #state-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(228, 0, 43, 0.2);
         }
 
         footer {
@@ -132,11 +218,15 @@
 
         @media (max-width: 768px) {
             .states-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
                 font-size: 2rem;
+            }
+
+            .spanish-title {
+                font-size: 1.8rem;
             }
 
             .flag-container {
@@ -150,7 +240,7 @@
             }
 
             .states-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
@@ -161,6 +251,10 @@
             .state-name {
                 font-size: 1rem;
             }
+            
+            .spanish-name {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
@@ -168,40 +262,147 @@
     <div class="container">
         <header>
             <h1>QRContraentrega</h1>
-            <p class="subtitle">Select your state or territory in Australia</p>
+            <div class="spanish-title">Australia</div>
+            <div>Australia</div>
+            <p class="subtitle">Selecciona tu estado o territorio / Select your state or territory</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="state-search" placeholder="Search state or territory..." aria-label="Search state or territory">
+            <input type="text" id="state-search" placeholder="Busca un estado o territorio / Search for state or territory..." aria-label="Busca un estado o territorio">
         </div>
 
         <div class="states-grid" id="states-container">
-            <!-- States and territories will appear here -->
+            <!-- States and cities will appear here -->
         </div>
 
         <footer>
-            <p>© QRContraentrega. All rights reserved.</p>
+            <p>© QRContraentrega. Todos los derechos reservados / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // List of Australian states and territories
+        // List of Australian states, territories and major cities with both languages
         const states = [
-            { "name": "New South Wales", "type": "State", "url": "https://qrcontraentrega.com/nsw" },
-            { "name": "Victoria", "type": "State", "url": "https://qrcontraentrega.com/vic" },
-            { "name": "Queensland", "type": "State", "url": "https://qrcontraentrega.com/qld" },
-            { "name": "Western Australia", "type": "State", "url": "https://qrcontraentrega.com/wa" },
-            { "name": "South Australia", "type": "State", "url": "https://qrcontraentrega.com/sa" },
-            { "name": "Tasmania", "type": "State", "url": "https://qrcontraentrega.com/tas" },
-            { "name": "Australian Capital Territory", "type": "Territory", "url": "https://qrcontraentrega.com/act" },
-            { "name": "Northern Territory", "type": "Territory", "url": "https://qrcontraentrega.com/nt" },
-            { "name": "Jervis Bay Territory", "type": "Territory", "url": "https://qrcontraentrega.com/jbt" },
-            { "name": "Norfolk Island", "type": "External Territory", "url": "https://qrcontraentrega.com/norfolk" },
-            { "name": "Christmas Island", "type": "External Territory", "url": "https://qrcontraentrega.com/christmas" },
-            { "name": "Cocos (Keeling) Islands", "type": "External Territory", "url": "https://qrcontraentrega.com/cocos" }
+            // States
+            { 
+                "name": { "es": "Nueva Gales del Sur", "en": "New South Wales" }, 
+                "type": { "es": "Estado", "en": "State" }, 
+                "url": "https://qrcontraentrega.com/nsw", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Queensland", "en": "Queensland" }, 
+                "type": { "es": "Estado", "en": "State" }, 
+                "url": "https://qrcontraentrega.com/queensland", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Australia Meridional", "en": "South Australia" }, 
+                "type": { "es": "Estado", "en": "State" }, 
+                "url": "https://qrcontraentrega.com/sa", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Tasmania", "en": "Tasmania" }, 
+                "type": { "es": "Estado", "en": "State" }, 
+                "url": "https://qrcontraentrega.com/tasmania", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Victoria", "en": "Victoria" }, 
+                "type": { "es": "Estado", "en": "State" }, 
+                "url": "https://qrcontraentrega.com/victoria", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Australia Occidental", "en": "Western Australia" }, 
+                "type": { "es": "Estado", "en": "State" }, 
+                "url": "https://qrcontraentrega.com/wa", 
+                "image": "img/c.jpg" 
+            },
+            // Territories
+            { 
+                "name": { "es": "Territorio de la Capital Australiana", "en": "Australian Capital Territory" }, 
+                "type": { "es": "Territorio", "en": "Territory" }, 
+                "url": "https://qrcontraentrega.com/act", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Territorio del Norte", "en": "Northern Territory" }, 
+                "type": { "es": "Territorio", "en": "Territory" }, 
+                "url": "https://qrcontraentrega.com/nt", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Isla Norfolk", "en": "Norfolk Island" }, 
+                "type": { "es": "Territorio Externo", "en": "External Territory" }, 
+                "url": "https://qrcontraentrega.com/norfolk", 
+                "image": "img/c.jpg" 
+            },
+            // Major cities
+            { 
+                "name": { "es": "Sídney", "en": "Sydney" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/sydney", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Melbourne", "en": "Melbourne" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/melbourne", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Brisbane", "en": "Brisbane" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/brisbane", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Perth", "en": "Perth" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/perth", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Adelaida", "en": "Adelaide" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/adelaide", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Gold Coast", "en": "Gold Coast" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/gold-coast", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Canberra", "en": "Canberra" }, 
+                "type": { "es": "Capital", "en": "Capital" }, 
+                "url": "https://qrcontraentrega.com/canberra", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Hobart", "en": "Hobart" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/hobart", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Darwin", "en": "Darwin" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/darwin", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Cairns", "en": "Cairns" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/cairns", 
+                "image": "img/c.jpg" 
+            }
         ];
 
-        // Function to display states and territories
+        // Function to display states and cities
         function renderStates(stateList) {
             const container = document.getElementById('states-container');
             container.innerHTML = '';
@@ -211,11 +412,12 @@
                 stateCard.className = 'state-card';
                 stateCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${state.name}" class="flag-image">
+                        <img src="${state.image}" alt="${state.name.es}" class="flag-image">
                     </div>
                     <div class="state-info">
-                        <div class="state-name">${state.name}</div>
-                        <div class="state-type">${state.type}</div>
+                        <div class="spanish-name">${state.name.es}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.es} • ${state.type.en}</div>
                     </div>
                 `;
                 
@@ -227,12 +429,14 @@
             });
         }
 
-        // Function to search states and territories
+        // Function to search states and cities
         function searchStates() {
             const searchTerm = document.getElementById('state-search').value.toLowerCase();
             const filteredStates = states.filter(state => 
-                state.name.toLowerCase().includes(searchTerm) || 
-                state.type.toLowerCase().includes(searchTerm)
+                state.name.es.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.es.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
             );
             renderStates(filteredStates);
         }
@@ -240,7 +444,7 @@
         // Event listeners
         document.getElementById('state-search').addEventListener('input', searchStates);
 
-        // Display all states and territories when page loads
+        // Display all states and cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
             renderStates(states);
         });
