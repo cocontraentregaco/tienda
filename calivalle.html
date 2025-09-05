@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QRContraentrega - Cali, Valle Del Cauca, Colombia.</title>
+  <title>Contraentrega Cali, Valle Del Cauca, Colombia.</title>
   <style>
     :root {
       --primary-color: #1a1a1a;
@@ -86,6 +86,14 @@
 
     .btn-recibir {
       background-color: #f39c12;
+    }
+    
+    .btn-centrar {
+      background-color: #0066cc;
+    }
+    
+    .btn-ruta {
+      background-color: #9b59b6;
     }
     
     #mapa { 
@@ -298,6 +306,7 @@
   <div id="contenedor-mapa">
     <div id="barra-superior">
       <input type="search" id="buscador" placeholder="Buscar Socios en Cali..." enterkeyhint="search">
+      <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
       <button class="btn" id="b2b-btn" onclick="window.open('https://colombia.qrcontraentrega.com', '_blank')">REGISTRO SOCIOS</button>
     </div>
     <div id="mapa"></div>
@@ -317,6 +326,8 @@
         <h4>Datos del envío</h4>
         <button class="btn-cerrar" id="cerrar-formulario">×</button>
       </div>
+      
+      <h5>Datos del remitente</h5>
       <div class="form-group">
         <label for="nombre-cliente">Nombre completo</label>
         <input type="text" id="nombre-cliente" placeholder="Ingrese su nombre completo" required>
@@ -325,6 +336,17 @@
         <label for="telefono-cliente">Teléfono celular</label>
         <input type="tel" id="telefono-cliente" placeholder="Ingrese su número de celular" required>
       </div>
+      
+      <h5>Datos del destinatario</h5>
+      <div class="form-group">
+        <label for="nombre-destinatario">Nombre completo</label>
+        <input type="text" id="nombre-destinatario" placeholder="Ingrese nombre del destinatario" required>
+      </div>
+      <div class="form-group">
+        <label for="telefono-destinatario">Teléfono celular</label>
+        <input type="tel" id="telefono-destinatario" placeholder="Ingrese teléfono del destinatario" required>
+      </div>
+      
       <button class="btn-confirmar" id="enviar-solicitud">
         <span id="spinner" style="display:none;"><span class="loading-spinner"></span></span>
         <span id="submit-text">SOLICITAR ENVÍO</span>
@@ -354,6 +376,7 @@
     let puntoDestinoSeleccionado = null;
     let modoSeleccion = null; // 'enviar' o 'recibir'
     let marcadoresOriginales = []; // Para almacenar los marcadores originales
+    let rutaActiva = false; // Para controlar si hay una ruta activa
 
     // Tarifas actualizadas para Cali (julio 2025) en COP
     const TARIFAS = [
@@ -389,8 +412,8 @@
       }
     ];
 
-    // Endpoint AWS para enviar los datos
-    const AWS_ENDPOINT = 'https://api.qrcontraentrega.com/envios';
+    // Endpoint actualizado para Forminator
+    const FORM_ENDPOINT = 'https://colombia.qrcontraentrega.com/wp-admin/admin-ajax.php?action=submit_forminator_custom_form';
 
     // Datos de ubicaciones en Cali (socios y puntos logísticos)
     const UBICACIONES = [
@@ -467,6 +490,9 @@
       
       // Evento para enviar la solicitud
       document.getElementById('enviar-solicitud').addEventListener('click', enviarSolicitud);
+      
+      // Evento para el botón centrar
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
     });
 
     function cerrarPanelCotizacion() {
@@ -545,6 +571,7 @@
             <div style="margin-top:10px;display:flex;justify-content:space-between">
               <button class="btn btn-enviar" onclick="seleccionarPunto('enviar','${loc.id}')">Enviar</button>
               <button class="btn btn-recibir" onclick="seleccionarPunto('recibir','${loc.id}')">Recibir</button>
+              <button class="btn btn-ruta" onclick="calcularRutaUbicacion('${loc.id}')">Cómo llegar</button>
             </div>
           </div>
         `);
@@ -598,6 +625,66 @@
       obtenerUbicacionUsuario();
     }
 
+    // Función para centrar el mapa en la ubicación actual
+    function centrarMapa() {
+      if (userMarker) {
+        mapa.setView(userMarker.getLatLng(), 15);
+      } else {
+        obtenerUbicacionUsuario();
+      }
+    }
+
+    // Función para calcular ruta a una ubicación
+    function calcularRutaUbicacion(idPunto) {
+      const punto = UBICACIONES.find(p => p.id === idPunto);
+      if (!punto) return;
+      
+      // Limpiar ruta existente
+      if (rutaControl) {
+        mapa.removeControl(rutaControl);
+        rutaControl = null;
+      }
+      
+      // Obtener ubicación actual del usuario
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            
+            // Calcular ruta desde la ubicación actual hasta el punto seleccionado
+            rutaControl = L.Routing.control({
+              waypoints: [
+                L.latLng(latitude, longitude),
+                L.latLng(punto.latlng[0], punto.latlng[1])
+              ],
+              routeWhileDragging: false,
+              show: true,
+              addWaypoints: false,
+              draggableWaypoints: false,
+              fitSelectedRoutes: true,
+              lineOptions: {
+                styles: [{color: '#9b59b6', opacity: 0.7, weight: 5}]
+              },
+              router: L.Routing.osrmv1({
+                serviceUrl: 'https://router.project-osrm.org/route/v1',
+                profile: 'car' // Usar perfil para carro
+              }),
+              createMarker: function() { return null; } // No crear marcadores adicionales
+            }).addTo(mapa);
+            
+            rutaActiva = true;
+          },
+          (error) => {
+            console.log(`Error al obtener ubicación: ${error.message}`);
+            alert('No se pudo obtener tu ubicación para calcular la ruta.');
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        alert('Tu navegador no soporta geolocalización.');
+      }
+    }
+
     // Función para seleccionar punto (origen o destino)
     function seleccionarPunto(tipo, idPunto) {
       const punto = UBICACIONES.find(p => p.id === idPunto);
@@ -627,11 +714,14 @@
       // Eliminar marcadores y ruta anteriores
       if (origenMarker) mapa.removeLayer(origenMarker);
       if (destinoMarker) mapa.removeLayer(destinoMarker);
-      if (rutaControl) mapa.removeControl(rutaControl);
+      if (rutaControl) {
+        mapa.removeControl(rutaControl);
+        rutaControl = null;
+        rutaActiva = false;
+      }
 
       origenMarker = null;
       destinoMarker = null;
-      rutaControl = null;
 
       // Resaltar los puntos seleccionados
       marcadoresOriginales.forEach(marcador => {
@@ -883,7 +973,8 @@
           styles: [{color: '#0066cc', opacity: 0.7, weight: 5}]
         },
         router: L.Routing.osrmv1({
-          serviceUrl: 'https://router.project-osrm.org/route/v1'
+          serviceUrl: 'https://router.project-osrm.org/route/v1',
+          profile: 'car' // Usar perfil para carro
         })
       }).addTo(mapa);
       
@@ -945,19 +1036,21 @@
       document.getElementById('formulario-envio').style.display = 'block';
     }
 
-    // Función para enviar solicitud a AWS
+    // Función para enviar solicitud al formulario de Forminator
     function enviarSolicitud() {
       const nombre = document.getElementById('nombre-cliente').value.trim();
       const telefono = document.getElementById('telefono-cliente').value.trim();
+      const nombreDestinatario = document.getElementById('nombre-destinatario').value.trim();
+      const telefonoDestinatario = document.getElementById('telefono-destinatario').value.trim();
       
-      if (!nombre || !telefono) {
+      if (!nombre || !telefono || !nombreDestinatario || !telefonoDestinatario) {
         alert('Por favor complete todos los campos');
         return;
       }
       
       // Validar formato de teléfono
-      if (!/^[0-9]{10,15}$/.test(telefono)) {
-        alert('Por favor ingrese un número de teléfono válido');
+      if (!/^[0-9]{10,15}$/.test(telefono) || !/^[0-9]{10,15}$/.test(telefonoDestinatario)) {
+        alert('Por favor ingrese números de teléfono válidos');
         return;
       }
       
@@ -972,42 +1065,36 @@
       
       // Crear objeto de datos para enviar
       const datosEnvio = {
-        tipoServicio: modoSeleccion,
-        tarifa: {
-          id: tarifaSeleccionada.id,
-          nombre: tarifaSeleccionada.nombre,
-          precio: tarifaSeleccionada.precio,
-          tiempoEstimado: tarifaSeleccionada.tiempo,
-          distancia: tarifaSeleccionada.distancia
-        },
-        origen: {
-          id: origen.id,
-          nombre: origen.nombre,
-          direccion: origen.direccion,
-          telefono: origen.telefono,
-          coordenadas: origen.latlng
-        },
-        destino: {
-          id: destino.id,
-          nombre: destino.nombre,
-          direccion: destino.direccion,
-          telefono: destino.telefono,
-          coordenadas: destino.latlng
-        },
-        cliente: {
-          nombre: nombre,
-          telefono: telefono,
-          fecha: new Date().toISOString()
-        }
+        "forminator_nonce": "nonce_value", // Este valor debería generarse dinámicamente
+        "form_id": "123", // ID del formulario Forminator
+        "nombre-remitente": nombre,
+        "telefono-remitente": telefono,
+        "nombre-destinatario": nombreDestinatario,
+        "telefono-destinatario": telefonoDestinatario,
+        "tipo-servicio": modoSeleccion,
+        "tarifa-id": tarifaSeleccionada.id,
+        "tarifa-nombre": tarifaSeleccionada.nombre,
+        "tarifa-precio": tarifaSeleccionada.precio,
+        "tiempo-estimado": tarifaSeleccionada.tiempo,
+        "distancia": tarifaSeleccionada.distancia,
+        "origen-id": origen.id,
+        "origen-nombre": origen.nombre,
+        "origen-direccion": origen.direccion,
+        "origen-telefono": origen.telefono,
+        "destino-id": destino.id,
+        "destino-nombre": destino.nombre,
+        "destino-direccion": destino.direccion,
+        "destino-telefono": destino.telefono,
+        "fecha-solicitud": new Date().toISOString()
       };
       
-      // Enviar datos al endpoint de AWS Lambda
-      fetch(AWS_ENDPOINT, {
+      // Enviar datos al endpoint de Forminator
+      fetch(FORM_ENDPOINT, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify(datosEnvio)
+        body: new URLSearchParams(datosEnvio)
       })
       .then(response => {
         if (!response.ok) {
@@ -1040,6 +1127,8 @@
     function resetearFormulario() {
       document.getElementById('nombre-cliente').value = '';
       document.getElementById('telefono-cliente').value = '';
+      document.getElementById('nombre-destinatario').value = '';
+      document.getElementById('telefono-destinatario').value = '';
       document.getElementById('formulario-envio').style.display = 'none';
       document.getElementById('mensaje-exito').style.display = 'none';
       document.getElementById('confirmar-envio').style.display = 'none';
@@ -1063,6 +1152,7 @@
       if (rutaControl) {
         mapa.removeControl(rutaControl);
         rutaControl = null;
+        rutaActiva = false;
       }
       
       // Limpiar selecciones
