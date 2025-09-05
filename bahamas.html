@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - Bahamas</title>
+    <title>QRContraentrega - Bahamas / Bahamas</title>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2980b9;
+            --aqua: #00ABC9; /* Bahamas aqua */
+            --yellow: #FAE042; /* Bahamas yellow */
+            --black: #000000; /* Bahamas black */
+            --blue: #0077C8; /* Bahamas blue accent */
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -24,6 +26,7 @@
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(0, 171, 201, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -35,24 +38,54 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--aqua) 0%, var(--yellow) 50%, var(--black) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 40%, rgba(255,255,255,0.2) 50%, transparent 60%);
+            z-index: 1;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .spanish-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
+            position: relative;
+            z-index: 2;
         }
 
         .states-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
@@ -64,11 +97,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
+            border-top: 4px solid var(--aqua);
         }
 
         .state-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--yellow);
         }
 
         .flag-container {
@@ -77,6 +112,18 @@
             align-items: center;
             justify-content: center;
             background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--aqua) 0%, var(--yellow) 50%, var(--black) 100%);
         }
 
         .flag-image {
@@ -93,6 +140,13 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--aqua);
+        }
+
+        .spanish-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
         }
 
         .state-type {
@@ -105,21 +159,26 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
 
         #state-search {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 20px 12px 45px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
         }
 
         #state-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 3px rgba(250, 224, 66, 0.2);
         }
 
         footer {
@@ -132,11 +191,15 @@
 
         @media (max-width: 768px) {
             .states-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
                 font-size: 2rem;
+            }
+
+            .spanish-title {
+                font-size: 1.8rem;
             }
 
             .flag-container {
@@ -150,7 +213,7 @@
             }
 
             .states-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
@@ -161,6 +224,10 @@
             .state-name {
                 font-size: 1rem;
             }
+            
+            .spanish-name {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
@@ -168,49 +235,165 @@
     <div class="container">
         <header>
             <h1>QRContraentrega</h1>
-            <p class="subtitle">Select your island or district in The Bahamas</p>
+            <div class="spanish-title">Bahamas</div>
+            <div>Bahamas</div>
+            <p class="subtitle">Selecciona tu isla o distrito / Select your island or district</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="state-search" placeholder="Search island or district..." aria-label="Search island or district">
+            <input type="text" id="state-search" placeholder="Busca una isla o distrito / Search for island or district..." aria-label="Busca una isla o distrito">
         </div>
 
         <div class="states-grid" id="states-container">
-            <!-- Islands and districts will appear here -->
+            <!-- States and cities will appear here -->
         </div>
 
         <footer>
-            <p>© QRContraentrega. All rights reserved.</p>
+            <p>© QRContraentrega. Todos los derechos reservados / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // List of Bahamian islands and districts
+        // List of Bahamian islands, districts and major cities with both languages
         const states = [
-            { "name": "New Providence", "type": "Island", "url": "https://qrcontraentrega.com/newprovidence" },
-            { "name": "Grand Bahama", "type": "Island", "url": "https://qrcontraentrega.com/grandbahama" },
-            { "name": "Abaco Islands", "type": "Island Group", "url": "https://qrcontraentrega.com/abaco" },
-            { "name": "Acklins", "type": "Island", "url": "https://qrcontraentrega.com/acklins" },
-            { "name": "Andros", "type": "Island", "url": "https://qrcontraentrega.com/andros" },
-            { "name": "Berry Islands", "type": "Island Group", "url": "https://qrcontraentrega.com/berryislands" },
-            { "name": "Bimini", "type": "Island", "url": "https://qrcontraentrega.com/bimini" },
-            { "name": "Cat Island", "type": "Island", "url": "https://qrcontraentrega.com/catisland" },
-            { "name": "Crooked Island", "type": "Island", "url": "https://qrcontraentrega.com/crookedisland" },
-            { "name": "Eleuthera", "type": "Island", "url": "https://qrcontraentrega.com/eleuthera" },
-            { "name": "Exuma", "type": "Island", "url": "https://qrcontraentrega.com/exuma" },
-            { "name": "Harbour Island", "type": "Island", "url": "https://qrcontraentrega.com/harbourisland" },
-            { "name": "Inagua", "type": "Island", "url": "https://qrcontraentrega.com/inagua" },
-            { "name": "Long Island", "type": "Island", "url": "https://qrcontraentrega.com/longisland" },
-            { "name": "Mayaguana", "type": "Island", "url": "https://qrcontraentrega.com/mayaguana" },
-            { "name": "Ragged Island", "type": "Island", "url": "https://qrcontraentrega.com/raggedisland" },
-            { "name": "Rum Cay", "type": "Island", "url": "https://qrcontraentrega.com/rumcay" },
-            { "name": "San Salvador", "type": "Island", "url": "https://qrcontraentrega.com/sansalvador" },
-            { "name": "Spanish Wells", "type": "Island", "url": "https://qrcontraentrega.com/spanishwells" },
-            { "name": "Nassau", "type": "Capital District", "url": "https://qrcontraentrega.com/nassau" },
-            { "name": "Freeport", "type": "City", "url": "https://qrcontraentrega.com/freeport" }
+            // Major Islands
+            { 
+                "name": { "es": "New Providence", "en": "New Providence" }, 
+                "type": { "es": "Isla", "en": "Island" }, 
+                "url": "https://qrcontraentrega.com/new-providence", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Gran Bahama", "en": "Grand Bahama" }, 
+                "type": { "es": "Isla", "en": "Island" }, 
+                "url": "https://qrcontraentrega.com/grand-bahama", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Andros", "en": "Andros" }, 
+                "type": { "es": "Isla", "en": "Island" }, 
+                "url": "https://qrcontraentrega.com/andros", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Eleuthera", "en": "Eleuthera" }, 
+                "type": { "es": "Isla", "en": "Island" }, 
+                "url": "https://qrcontraentrega.com/eleuthera", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Abaco", "en": "Abaco" }, 
+                "type": { "es": "Isla", "en": "Island" }, 
+                "url": "https://qrcontraentrega.com/abaco", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Exuma", "en": "Exuma" }, 
+                "type": { "es": "Isla", "en": "Island" }, 
+                "url": "https://qrcontraentrega.com/exuma", 
+                "image": "img/c.jpg" 
+            },
+            // Districts
+            { 
+                "name": { "es": "Acklins", "en": "Acklins" }, 
+                "type": { "es": "Distrito", "en": "District" }, 
+                "url": "https://qrcontraentrega.com/acklins", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Berry Islands", "en": "Berry Islands" }, 
+                "type": { "es": "Distrito", "en": "District" }, 
+                "url": "https://qrcontraentrega.com/berry-islands", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Bimini", "en": "Bimini" }, 
+                "type": { "es": "Distrito", "en": "District" }, 
+                "url": "https://qrcontraentrega.com/bimini", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Cat Island", "en": "Cat Island" }, 
+                "type": { "es": "Distrito", "en": "District" }, 
+                "url": "https://qrcontraentrega.com/cat-island", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Crooked Island", "en": "Crooked Island" }, 
+                "type": { "es": "Distrito", "en": "District" }, 
+                "url": "https://qrcontraentrega.com/crooked-island", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Harbour Island", "en": "Harbour Island" }, 
+                "type": { "es": "Distrito", "en": "District" }, 
+                "url": "https://qrcontraentrega.com/harbour-island", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Long Island", "en": "Long Island" }, 
+                "type": { "es": "Distrito", "en": "District" }, 
+                "url": "https://qrcontraentrega.com/long-island", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Mayaguana", "en": "Mayaguana" }, 
+                "type": { "es": "Distrito", "en": "District" }, 
+                "url": "https://qrcontraentrega.com/mayaguana", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Ragged Island", "en": "Ragged Island" }, 
+                "type": { "es": "Distrito", "en": "District" }, 
+                "url": "https://qrcontraentrega.com/ragged-island", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "San Salvador", "en": "San Salvador" }, 
+                "type": { "es": "Distrito", "en": "District" }, 
+                "url": "https://qrcontraentrega.com/san-salvador", 
+                "image": "img/c.jpg" 
+            },
+            // Major cities/towns
+            { 
+                "name": { "es": "Nasáu", "en": "Nassau" }, 
+                "type": { "es": "Capital", "en": "Capital" }, 
+                "url": "https://qrcontraentrega.com/nassau", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Freeport", "en": "Freeport" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/freeport", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "West End", "en": "West End" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/west-end", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Coopers Town", "en": "Coopers Town" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/coopers-town", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Marsh Harbour", "en": "Marsh Harbour" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/marsh-harbour", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "High Rock", "en": "High Rock" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/high-rock", 
+                "image": "img/c.jpg" 
+            }
         ];
 
-        // Function to display islands and districts
+        // Function to display states and cities
         function renderStates(stateList) {
             const container = document.getElementById('states-container');
             container.innerHTML = '';
@@ -220,11 +403,12 @@
                 stateCard.className = 'state-card';
                 stateCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${state.name}" class="flag-image">
+                        <img src="${state.image}" alt="${state.name.es}" class="flag-image">
                     </div>
                     <div class="state-info">
-                        <div class="state-name">${state.name}</div>
-                        <div class="state-type">${state.type}</div>
+                        <div class="spanish-name">${state.name.es}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.es} • ${state.type.en}</div>
                     </div>
                 `;
                 
@@ -236,12 +420,14 @@
             });
         }
 
-        // Function to search islands and districts
+        // Function to search states and cities
         function searchStates() {
             const searchTerm = document.getElementById('state-search').value.toLowerCase();
             const filteredStates = states.filter(state => 
-                state.name.toLowerCase().includes(searchTerm) || 
-                state.type.toLowerCase().includes(searchTerm)
+                state.name.es.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.es.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
             );
             renderStates(filteredStates);
         }
@@ -249,7 +435,7 @@
         // Event listeners
         document.getElementById('state-search').addEventListener('input', searchStates);
 
-        // Display all islands and districts when page loads
+        // Display all states and cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
             renderStates(states);
         });
