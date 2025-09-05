@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - البحرين</title>
+    <title>QRContraentrega - البحرين / Bahrain</title>
     <style>
         :root {
-            --primary-color: #000000;
-            --secondary-color: #2980b9;
+            --red: #CE1126; /* Bahrain red */
+            --white: #FFFFFF;
+            --dark-red: #A01C2D; /* Bahrain dark red accent */
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -17,13 +18,14 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, 'Arabic Typesetting', sans-serif;
         }
 
         body {
             background-color: var(--background-color);
             color: #333;
             line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(206, 17, 38, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
 
         .container {
@@ -35,24 +37,66 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--red) 0%, var(--white) 30%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: var(--red);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 30%;
+            height: 100%;
+            background-color: var(--red);
+            z-index: 0;
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 30%;
+            width: 10%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--red) 0%, transparent 100%);
+            z-index: 0;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            color: var(--white);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .arabic-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--white);
+            position: relative;
+            z-index: 2;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
+            position: relative;
+            z-index: 2;
         }
 
         .states-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
         }
 
@@ -64,11 +108,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
+            border-top: 4px solid var(--red);
         }
 
         .state-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--dark-red);
         }
 
         .flag-container {
@@ -77,6 +123,18 @@
             align-items: center;
             justify-content: center;
             background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--red) 0%, var(--white) 30%);
         }
 
         .flag-image {
@@ -93,6 +151,13 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            color: var(--red);
+        }
+
+        .arabic-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
         }
 
         .state-type {
@@ -105,21 +170,26 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
 
         #state-search {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 45px 12px 20px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
         }
 
         #state-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(206, 17, 38, 0.2);
         }
 
         footer {
@@ -130,13 +200,29 @@
             color: #777;
         }
 
+        .language-toggle {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            z-index: 3;
+        }
+
         @media (max-width: 768px) {
             .states-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
 
             h1 {
                 font-size: 2rem;
+            }
+
+            .arabic-title {
+                font-size: 1.8rem;
             }
 
             .flag-container {
@@ -150,7 +236,7 @@
             }
 
             .states-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 1rem;
             }
 
@@ -161,49 +247,162 @@
             .state-name {
                 font-size: 1rem;
             }
+            
+            .arabic-name {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="language-toggle" id="language-toggle">EN</div>
+        
         <header>
-            <h1>QRContraentrega - البحرين</h1>
-            <p class="subtitle">اختر المحافظة أو المنطقة في البحرين | Select your governorate or region in Bahrain</p>
+            <h1>QRContraentrega</h1>
+            <div class="arabic-title">البحرين</div>
+            <div>Bahrain</div>
+            <p class="subtitle">اختر المحافظة أو المدينة / Select your governorate or city</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="state-search" placeholder="ابحث عن محافظة أو منطقة... | Search governorate or region..." aria-label="Search governorate or region">
+            <input type="text" id="state-search" placeholder="ابحث عن محافظة أو مدينة / Search for governorate or city..." aria-label="ابحث عن محافظة أو مدينة">
         </div>
 
         <div class="states-grid" id="states-container">
-            <!-- Governorates and regions will appear here -->
+            <!-- States and cities will appear here -->
         </div>
 
         <footer>
-            <p>© QRContraentrega. جميع الحقوق محفوظة.</p>
+            <p>© QRContraentrega. جميع الحقوق محفوظة / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // List of Bahraini governorates and regions
+        // List of Bahraini governorates and major cities with both languages
         const states = [
-            { "name": "العاصمة", "nameEn": "Capital", "type": "محافظة", "typeEn": "Governorate", "url": "https://qrcontraentrega.com/capital" },
-            { "name": "المحرق", "nameEn": "Muharraq", "type": "محافظة", "typeEn": "Governorate", "url": "https://qrcontraentrega.com/muharraq" },
-            { "name": "الشمالية", "nameEn": "Northern", "type": "محافظة", "typeEn": "Governorate", "url": "https://qrcontraentrega.com/northern" },
-            { "name": "الجنوبية", "nameEn": "Southern", "type": "محافظة", "typeEn": "Governorate", "url": "https://qrcontraentrega.com/southern" },
-            { "name": "المنامة", "nameEn": "Manama", "type": "عاصمة", "typeEn": "Capital", "url": "https://qrcontraentrega.com/manama" },
-            { "name": "الرفاع", "nameEn": "Riffa", "type": "مدينة", "typeEn": "City", "url": "https://qrcontraentrega.com/riffa" },
-            { "name": "مدينة حمد", "nameEn": "Hamad Town", "type": "مدينة", "typeEn": "City", "url": "https://qrcontraentrega.com/hamadtown" },
-            { "name": "عيسى مدينة", "nameEn": "Isa Town", "type": "مدينة", "typeEn": "City", "url": "https://qrcontraentrega.com/isatown" },
-            { "name": "الحد", "nameEn": "Hidd", "type": "مدينة", "typeEn": "City", "url": "https://qrcontraentrega.com/hidd" },
-            { "name": "جد حفص", "nameEn": "Jidhafs", "type": "مدينة", "typeEn": "City", "url": "https://qrcontraentrega.com/jidhafs" },
-            { "name": "سترة", "nameEn": "Sitra", "type": "جزيرة", "typeEn": "Island", "url": "https://qrcontraentrega.com/sitra" },
-            { "name": "الدراز", "nameEn": "Diraz", "type": "قرية", "typeEn": "Village", "url": "https://qrcontraentrega.com/diraz" },
-            { "name": "بوري", "nameEn": "Buri", "type": "قرية", "typeEn": "Village", "url": "https://qrcontraentrega.com/buri" },
-            { "name": "المالكية", "nameEn": "Malikiya", "type": "قرية", "typeEn": "Village", "url": "https://qrcontraentrega.com/malikiya" }
+            // Governorates
+            { 
+                "name": { "ar": "العاصمة", "en": "Capital" }, 
+                "type": { "ar": "محافظة", "en": "Governorate" }, 
+                "url": "https://qrcontraentrega.com/capital", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "المحرق", "en": "Muharraq" }, 
+                "type": { "ar": "محافظة", "en": "Governorate" }, 
+                "url": "https://qrcontraentrega.com/muharraq", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "الشمالية", "en": "Northern" }, 
+                "type": { "ar": "محافظة", "en": "Governorate" }, 
+                "url": "https://qrcontraentrega.com/northern", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "الجنوبية", "en": "Southern" }, 
+                "type": { "ar": "محافظة", "en": "Governorate" }, 
+                "url": "https://qrcontraentrega.com/southern", 
+                "image": "img/c.jpg" 
+            },
+            // Major cities
+            { 
+                "name": { "ar": "المنامة", "en": "Manama" }, 
+                "type": { "ar": "العاصمة", "en": "Capital" }, 
+                "url": "https://qrcontraentrega.com/manama", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "الرفاع", "en": "Riffa" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/riffa", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "المحرق", "en": "Muharraq" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/muharraq-city", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "مدينة حمد", "en": "Hamad Town" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/hamad-town", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "عالي", "en": "A'ali" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/aali", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "مدينة عيسى", "en": "Isa Town" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/isa-town", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "سترة", "en": "Sitra" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/sitra", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "البديع", "en": "Budaiya" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/budaiya", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "جدحفص", "en": "Jidhafs" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/jidhafs", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "المالكية", "en": "Al-Malikiya" }, 
+                "type": { "ar": "مدينة", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/al-malikiya", 
+                "image": "img/c.jpg" 
+            },
+            // Islands
+            { 
+                "name": { "ar": "جزيرة المحرق", "en": "Muharraq Island" }, 
+                "type": { "ar": "جزيرة", "en": "Island" }, 
+                "url": "https://qrcontraentrega.com/muharraq-island", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "جزيرة نبيه صالح", "en": "Nabih Saleh Island" }, 
+                "type": { "ar": "جزيرة", "en": "Island" }, 
+                "url": "https://qrcontraentrega.com/nabih-saleh", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "جزيرة سترة", "en": "Sitra Island" }, 
+                "type": { "ar": "جزيرة", "en": "Island" }, 
+                "url": "https://qrcontraentrega.com/sitra-island", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "جزيرة أم النعسان", "en": "Umm an Nasan Island" }, 
+                "type": { "ar": "جزيرة", "en": "Island" }, 
+                "url": "https://qrcontraentrega.com/umm-an-nasan", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "ar": "جزر حوار", "en": "Hawar Islands" }, 
+                "type": { "ar": "أرخبيل", "en": "Archipelago" }, 
+                "url": "https://qrcontraentrega.com/hawar-islands", 
+                "image": "img/c.jpg" 
+            }
         ];
 
-        // Function to display governorates and regions
+        let currentLanguage = 'ar'; // Default language is Arabic
+
+        // Function to display states and cities
         function renderStates(stateList) {
             const container = document.getElementById('states-container');
             container.innerHTML = '';
@@ -213,11 +412,12 @@
                 stateCard.className = 'state-card';
                 stateCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${state.name}" class="flag-image">
+                        <img src="${state.image}" alt="${state.name[currentLanguage]}" class="flag-image">
                     </div>
                     <div class="state-info">
-                        <div class="state-name">${state.name} | ${state.nameEn}</div>
-                        <div class="state-type">${state.type} | ${state.typeEn}</div>
+                        <div class="arabic-name">${state.name[currentLanguage]}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type[currentLanguage]} • ${state.type.en}</div>
                     </div>
                 `;
                 
@@ -229,22 +429,50 @@
             });
         }
 
-        // Function to search governorates and regions
+        // Function to search states and cities
         function searchStates() {
             const searchTerm = document.getElementById('state-search').value.toLowerCase();
             const filteredStates = states.filter(state => 
-                state.name.toLowerCase().includes(searchTerm) || 
-                state.nameEn.toLowerCase().includes(searchTerm) ||
-                state.type.toLowerCase().includes(searchTerm) ||
-                state.typeEn.toLowerCase().includes(searchTerm)
+                state.name.ar.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.ar.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
             );
             renderStates(filteredStates);
         }
 
+        // Function to toggle language
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'ar' ? 'en' : 'ar';
+            
+            // Update UI based on language
+            if (currentLanguage === 'ar') {
+                document.documentElement.dir = 'rtl';
+                document.documentElement.lang = 'ar';
+                document.getElementById('language-toggle').textContent = 'EN';
+                document.querySelector('.arabic-title').textContent = 'البحرين';
+                document.querySelector('p.subtitle').textContent = 'اختر المحافظة أو المدينة / Select your governorate or city';
+                document.getElementById('state-search').placeholder = 'ابحث عن محافظة أو مدينة / Search for governorate or city...';
+                document.querySelector('footer p').textContent = '© QRContraentrega. جميع الحقوق محفوظة / All rights reserved.';
+            } else {
+                document.documentElement.dir = 'ltr';
+                document.documentElement.lang = 'en';
+                document.getElementById('language-toggle').textContent = 'AR';
+                document.querySelector('.arabic-title').textContent = 'Bahrain';
+                document.querySelector('p.subtitle').textContent = 'Select your governorate or city / اختر المحافظة أو المدينة';
+                document.getElementById('state-search').placeholder = 'Search for governorate or city... / ابحث عن محافظة أو مدينة';
+                document.querySelector('footer p').textContent = '© QRContraentrega. All rights reserved / جميع الحقوق محفوظة.';
+            }
+            
+            // Re-render states with new language
+            searchStates();
+        }
+
         // Event listeners
         document.getElementById('state-search').addEventListener('input', searchStates);
+        document.getElementById('language-toggle').addEventListener('click', toggleLanguage);
 
-        // Display all governorates and regions when page loads
+        // Display all states and cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
             renderStates(states);
         });
