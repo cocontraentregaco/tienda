@@ -878,12 +878,6 @@
         let cart = [];
         let currentDirectProduct = null;
         
-        // Números de WhatsApp (reemplaza con los números reales)
-        const whatsappNumbers = [
-            "573215343562",  // Número 1
-            "573146824438"   // Número 2
-        ];
-        
         const cartIcon = document.getElementById('cartIcon');
         const cartCount = document.getElementById('cartCount');
         const cartModal = document.getElementById('cartModal');
@@ -1178,13 +1172,6 @@
             }, 2000);
         }
 
-        // Enviar mensaje a múltiples números de WhatsApp
-        function sendToMultipleWhatsAppNumbers(message) {
-            whatsappNumbers.forEach(number => {
-                window.open(`https://wa.me/${number}?text=${message}`, '_blank');
-            });
-        }
-
         // Generar mensaje de WhatsApp para el carrito
         function generateWhatsAppMessage() {
             let message = "¡Hola! Quiero realizar la siguiente compra:\n\n";
@@ -1199,6 +1186,9 @@
             message += `Teléfono: ${customerPhone.value}\n`;
             message += `Dirección: ${customerAddress.value}`;
             
+            // Añadir el mensaje para la transportadora
+            message += `\n\nTe vamos a despachar de la dirección: ${customerAddress.value}`;
+            
             return encodeURIComponent(message);
         }
 
@@ -1212,6 +1202,9 @@
             message += `Nombre: ${directCustomerName.value}\n`;
             message += `Teléfono: ${directCustomerPhone.value}\n`;
             message += `Dirección: ${directCustomerAddress.value}`;
+            
+            // Añadir el mensaje para la transportadora
+            message += `\n\nTe vamos a despachar de la dirección: ${directCustomerAddress.value}`;
             
             return encodeURIComponent(message);
         }
@@ -1236,7 +1229,7 @@
             }
             
             const message = generateWhatsAppMessage();
-            sendToMultipleWhatsAppNumbers(message);
+            window.open(`https://wa.me/573123456789?text=${message}`, '_blank');
         });
 
         // Event Listeners para compra directa
@@ -1255,7 +1248,7 @@
             }
             
             const message = generateDirectWhatsAppMessage();
-            sendToMultipleWhatsAppNumbers(message);
+            window.open(`https://wa.me/573123456789?text=${message}`, '_blank');
         });
 
         searchInput.addEventListener('input', filterProducts);
