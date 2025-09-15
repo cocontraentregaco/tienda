@@ -383,6 +383,37 @@
             border-top: 2px solid var(--color-gris-medio);
         }
         
+        /* Customer Info Form */
+        .customer-info {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: var(--color-gris-claro);
+            border-radius: 8px;
+        }
+        
+        .customer-info h3 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--color-gris-medio);
+            border-radius: 4px;
+            font-family: 'Libre Baskerville', serif;
+        }
+        
         .checkout-buttons {
             display: flex;
             flex-direction: column;
@@ -406,6 +437,11 @@
         
         .whatsapp-btn:hover {
             background-color: #128C7E;
+        }
+        
+        .whatsapp-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
         }
         
         .continue-shopping {
@@ -538,7 +574,6 @@
                     <rect x="0" y="0" width="100" height="40" fill="white" />
                     <text x="50" y="25" font-family="Libre Baskerville" font-weight="700" font-size="16" text-anchor="middle" fill="black">CALIVALLE</text>
                 </svg>
-                <span class="logo-text">CaliValle</span>
             </a>
             <div class="cart-icon" id="cartIcon">
                 <i class="fas fa-shopping-cart"></i>
@@ -588,8 +623,26 @@
                 <span>Total:</span>
                 <span id="cartTotal">$0.00</span>
             </div>
+            
+            <!-- Customer Information Form -->
+            <div class="customer-info">
+                <h3>Información de Envío</h3>
+                <div class="form-group">
+                    <label for="customerName">Nombre Completo *</label>
+                    <input type="text" id="customerName" placeholder="Ingresa tu nombre completo" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerPhone">Teléfono *</label>
+                    <input type="tel" id="customerPhone" placeholder="Ingresa tu número de teléfono" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerAddress">Dirección de Envío *</label>
+                    <input type="text" id="customerAddress" placeholder="Ingresa tu dirección completa" required>
+                </div>
+            </div>
+            
             <div class="checkout-buttons">
-                <button class="checkout-btn whatsapp-btn" id="whatsappBtn">
+                <button class="checkout-btn whatsapp-btn" id="whatsappBtn" disabled>
                     <i class="fab fa-whatsapp"></i> Finalizar compra por WhatsApp
                 </button>
                 <button class="checkout-btn continue-shopping" id="continueShopping">Seguir comprando</button>
@@ -742,6 +795,9 @@
         const productsGrid = document.getElementById('productsGrid');
         const searchInput = document.getElementById('searchInput');
         const categoryBtns = document.querySelectorAll('.category-btn');
+        const customerName = document.getElementById('customerName');
+        const customerPhone = document.getElementById('customerPhone');
+        const customerAddress = document.getElementById('customerAddress');
 
         // Cargar productos en la página
         function loadProducts(productsToLoad) {
@@ -929,6 +985,19 @@
                     removeFromCart(id);
                 });
             });
+            
+            // Habilitar o deshabilitar el botón de WhatsApp según si hay productos y datos completos
+            validateCheckoutButton();
+        }
+
+        // Validar si se puede habilitar el botón de WhatsApp
+        function validateCheckoutButton() {
+            const hasItems = cart.length > 0;
+            const hasName = customerName.value.trim() !== '';
+            const hasPhone = customerPhone.value.trim() !== '';
+            const hasAddress = customerAddress.value.trim() !== '';
+            
+            whatsappBtn.disabled = !(hasItems && hasName && hasPhone && hasAddress);
         }
 
         // Mostrar notificación
@@ -965,7 +1034,10 @@
             });
             
             message += `\nTotal: $${cart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)}`;
-            message += "\n\nMi información de envío es: [Nombre completo, dirección y teléfono]";
+            message += `\n\nMi información de envío es:\n`;
+            message += `Nombre: ${customerName.value}\n`;
+            message += `Teléfono: ${customerPhone.value}\n`;
+            message += `Dirección: ${customerAddress.value}`;
             
             return encodeURIComponent(message);
         }
@@ -1002,6 +1074,11 @@
                 filterProducts();
             });
         });
+
+        // Validar formulario cuando cambian los campos
+        customerName.addEventListener('input', validateCheckoutButton);
+        customerPhone.addEventListener('input', validateCheckoutButton);
+        customerAddress.addEventListener('input', validateCheckoutButton);
 
         // Cerrar modal al hacer clic fuera de él
         window.addEventListener('click', (e) => {
