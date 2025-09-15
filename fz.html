@@ -48,6 +48,19 @@
         }
         
         .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--color-blanco);
+        }
+        
+        .logo-img {
+            height: 40px;
+            width: auto;
+        }
+        
+        .logo-text {
             font-size: 1.8rem;
             font-weight: 700;
             letter-spacing: 1px;
@@ -157,6 +170,7 @@
             border-radius: 8px;
             overflow: hidden;
             transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
         }
         
         .product-card:hover {
@@ -164,11 +178,48 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
         
-        .product-image {
+        .product-image-container {
+            position: relative;
             width: 100%;
             height: 200px;
+            overflow: hidden;
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             border-bottom: 1px solid var(--color-gris-medio);
+            transition: opacity 0.3s;
+        }
+        
+        .image-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .product-image-container:hover .image-nav {
+            opacity: 1;
+        }
+        
+        .nav-btn {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .product-info {
@@ -194,21 +245,43 @@
             color: var(--color-gris-oscuro);
         }
         
-        .add-to-cart {
-            width: 100%;
+        .product-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .add-to-cart, .buy-now {
             padding: 0.8rem;
-            background-color: var(--color-negro);
-            color: var(--color-blanco);
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-family: 'Libre Baskerville', serif;
-            font-size: 1rem;
+            font-size: 0.9rem;
             transition: background-color 0.3s;
+            flex: 1;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .add-to-cart {
+            background-color: var(--color-negro);
+            color: var(--color-blanco);
         }
         
         .add-to-cart:hover {
             background-color: var(--color-gris-oscuro);
+        }
+        
+        .buy-now {
+            background-color: var(--color-gris-oscuro);
+            color: var(--color-blanco);
+        }
+        
+        .buy-now:hover {
+            background-color: var(--color-negro);
         }
         
         /* Cart Modal */
@@ -404,7 +477,7 @@
         /* Responsive */
         @media (max-width: 768px) {
             .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                grid-template-columns: repeat(2, 1fr);
                 gap: 1rem;
             }
             
@@ -423,16 +496,20 @@
             .hero p {
                 font-size: 1rem;
             }
+            
+            .product-actions {
+                flex-direction: column;
+            }
         }
         
         @media (max-width: 480px) {
-            .products-grid {
-                grid-template-columns: 1fr;
-            }
-            
             .header-container {
                 flex-direction: column;
                 gap: 1rem;
+            }
+            
+            .logo-text {
+                font-size: 1.5rem;
             }
             
             .cart-item {
@@ -444,6 +521,10 @@
             .item-quantity {
                 align-self: flex-end;
             }
+            
+            .image-nav {
+                opacity: 1; /* Mostrar flechas siempre en móviles */
+            }
         }
     </style>
 </head>
@@ -451,7 +532,14 @@
     <!-- Header -->
     <header>
         <div class="header-container">
-            <div class="logo">CaliValle</div>
+            <a href="#" class="logo">
+                <!-- Logo en SVG para mantener relación de aspecto -->
+                <svg class="logo-img" viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="0" y="0" width="100" height="40" fill="white" />
+                    <text x="50" y="25" font-family="Libre Baskerville" font-weight="700" font-size="16" text-anchor="middle" fill="black">CALIVALLE</text>
+                </svg>
+                <span class="logo-text">CaliValle</span>
+            </a>
             <div class="cart-icon" id="cartIcon">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="cart-count" id="cartCount">0</span>
@@ -548,7 +636,12 @@
                 price: 149.99,
                 description: "Auriculares con cancelación de ruido y 20h de batería",
                 category: "tecnologia",
-                image: "https://via.placeholder.com/300x300?text=Auriculares"
+                images: [
+                    "https://via.placeholder.com/300x300/CCCCCC/333333?text=Auriculares+1",
+                    "https://via.placeholder.com/300x300/999999/333333?text=Auriculares+2",
+                    "https://via.placeholder.com/300x300/666666/FFFFFF?text=Auriculares+3"
+                ],
+                affiliateUrl: "https://calivalle.qrcontraentrega.com/product/auriculares"
             },
             {
                 id: 2,
@@ -556,7 +649,11 @@
                 price: 199.99,
                 description: "Reloj inteligente con monitor de ritmo cardíaco y GPS",
                 category: "tecnologia",
-                image: "https://via.placeholder.com/300x300?text=Smartwatch"
+                images: [
+                    "https://via.placeholder.com/300x300/CCCCCC/333333?text=Smartwatch+1",
+                    "https://via.placeholder.com/300x300/999999/333333?text=Smartwatch+2"
+                ],
+                affiliateUrl: "https://calivalle.qrcontraentrega.com/product/smartwatch"
             },
             {
                 id: 3,
@@ -564,7 +661,11 @@
                 price: 89.99,
                 description: "Set de 3 sartenes de diferentes tamaños",
                 category: "hogar",
-                image: "https://via.placeholder.com/300x300?text=Sartenes"
+                images: [
+                    "https://via.placeholder.com/300x300/CCCCCC/333333?text=Sartenes+1",
+                    "https://via.placeholder.com/300x300/999999/333333?text=Sartenes+2"
+                ],
+                affiliateUrl: "https://calivalle.qrcontraentrega.com/product/sartenes"
             },
             {
                 id: 4,
@@ -572,7 +673,11 @@
                 price: 49.99,
                 description: "Balón de fútbol tamaño oficial para competencia",
                 category: "deportes",
-                image: "https://via.placeholder.com/300x300?text=Balón"
+                images: [
+                    "https://via.placeholder.com/300x300/CCCCCC/333333?text=Balón+1",
+                    "https://via.placeholder.com/300x300/999999/333333?text=Balón+2"
+                ],
+                affiliateUrl: "https://calivalle.qrcontraentrega.com/product/balon"
             },
             {
                 id: 5,
@@ -580,7 +685,11 @@
                 price: 79.99,
                 description: "Altavoz portátil resistente al agua con 12h de batería",
                 category: "tecnologia",
-                image: "https://via.placeholder.com/300x300?text=Altavoz"
+                images: [
+                    "https://via.placeholder.com/300x300/CCCCCC/333333?text=Altavoz+1",
+                    "https://via.placeholder.com/300x300/999999/333333?text=Altavoz+2"
+                ],
+                affiliateUrl: "https://calivalle.qrcontraentrega.com/product/altavoz"
             },
             {
                 id: 6,
@@ -588,7 +697,11 @@
                 price: 129.99,
                 description: "Juego de 6 cuchillos profesionales de acero inoxidable",
                 category: "hogar",
-                image: "https://via.placeholder.com/300x300?text=Cuchillos"
+                images: [
+                    "https://via.placeholder.com/300x300/CCCCCC/333333?text=Cuchillos+1",
+                    "https://via.placeholder.com/300x300/999999/333333?text=Cuchillos+2"
+                ],
+                affiliateUrl: "https://calivalle.qrcontraentrega.com/product/cuchillos"
             },
             {
                 id: 7,
@@ -596,7 +709,11 @@
                 price: 119.99,
                 description: "Par de mancuernas ajustables de 5 a 20 kg cada una",
                 category: "deportes",
-                image: "https://via.placeholder.com/300x300?text=Mancuernas"
+                images: [
+                    "https://via.placeholder.com/300x300/CCCCCC/333333?text=Mancuernas+1",
+                    "https://via.placeholder.com/300x300/999999/333333?text=Mancuernas+2"
+                ],
+                affiliateUrl: "https://calivalle.qrcontraentrega.com/product/mancuernas"
             },
             {
                 id: 8,
@@ -604,7 +721,11 @@
                 price: 299.99,
                 description: "Tablet con pantalla Full HD y 64GB de almacenamiento",
                 category: "tecnologia",
-                image: "https://via.placeholder.com/300x300?text=Tablet"
+                images: [
+                    "https://via.placeholder.com/300x300/CCCCCC/333333?text=Tablet+1",
+                    "https://via.placeholder.com/300x300/999999/333333?text=Tablet+2"
+                ],
+                affiliateUrl: "https://calivalle.qrcontraentrega.com/product/tablet"
             }
         ];
 
@@ -630,12 +751,29 @@
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.innerHTML = `
-                    <img src="${product.image}" alt="${product.title}" class="product-image">
+                    <div class="product-image-container">
+                        <img src="${product.images[0]}" alt="${product.title}" class="product-image" data-product-id="${product.id}" data-image-index="0">
+                        <div class="image-nav">
+                            <button class="nav-btn prev-btn" data-product-id="${product.id}">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="nav-btn next-btn" data-product-id="${product.id}">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
                     <div class="product-info">
                         <h3 class="product-title">${product.title}</h3>
                         <p class="product-price">$${product.price.toFixed(2)}</p>
                         <p class="product-description">${product.description}</p>
-                        <button class="add-to-cart" data-id="${product.id}">Agregar al Carrito</button>
+                        <div class="product-actions">
+                            <button class="add-to-cart" data-id="${product.id}">
+                                <i class="fas fa-cart-plus"></i> Añadir al Carrito
+                            </button>
+                            <a href="${product.affiliateUrl}" class="buy-now" target="_blank">
+                                <i class="fas fa-shopping-bag"></i> Comprar Ahora
+                            </a>
+                        </div>
                     </div>
                 `;
                 productsGrid.appendChild(productCard);
@@ -644,10 +782,40 @@
             // Agregar event listeners a los botones de agregar al carrito
             document.querySelectorAll('.add-to-cart').forEach(button => {
                 button.addEventListener('click', (e) => {
-                    const productId = parseInt(e.target.getAttribute('data-id'));
+                    const productId = parseInt(e.target.closest('.add-to-cart').getAttribute('data-id'));
                     addToCart(productId);
                 });
             });
+            
+            // Agregar event listeners a los botones de navegación de imágenes
+            document.querySelectorAll('.nav-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const productId = parseInt(e.target.closest('.nav-btn').getAttribute('data-product-id'));
+                    const isNext = e.target.closest('.nav-btn').classList.contains('next-btn');
+                    navigateImage(productId, isNext);
+                });
+            });
+        }
+
+        // Navegar entre imágenes de un producto
+        function navigateImage(productId, isNext) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const imageElement = document.querySelector(`.product-image[data-product-id="${productId}"]`);
+            if (!imageElement) return;
+            
+            let currentIndex = parseInt(imageElement.getAttribute('data-image-index'));
+            let newIndex;
+            
+            if (isNext) {
+                newIndex = (currentIndex + 1) % product.images.length;
+            } else {
+                newIndex = (currentIndex - 1 + product.images.length) % product.images.length;
+            }
+            
+            imageElement.src = product.images[newIndex];
+            imageElement.setAttribute('data-image-index', newIndex);
         }
 
         // Filtrar productos
@@ -679,7 +847,7 @@
                     title: product.title,
                     price: product.price,
                     quantity: 1,
-                    image: product.image
+                    image: product.images[0]
                 });
             }
             
@@ -743,14 +911,14 @@
             // Agregar event listeners a los botones de cantidad y eliminar
             document.querySelectorAll('.quantity-btn.minus').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const id = parseInt(e.target.getAttribute('data-id'));
+                    const id = parseInt(e.target.closest('.quantity-btn').getAttribute('data-id'));
                     updateQuantity(id, -1);
                 });
             });
             
             document.querySelectorAll('.quantity-btn.plus').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const id = parseInt(e.target.getAttribute('data-id'));
+                    const id = parseInt(e.target.closest('.quantity-btn').getAttribute('data-id'));
                     updateQuantity(id, 1);
                 });
             });
