@@ -13,6 +13,7 @@
             --color-gris-claro: #f5f5f5;
             --color-gris-medio: #e0e0e0;
             --color-gris-oscuro: #333333;
+            --color-verde: #25D366;
         }
         
         * {
@@ -231,6 +232,7 @@
             font-size: 1.1rem;
             margin-bottom: 0.5rem;
             font-weight: 700;
+            min-height: 2.8rem;
         }
         
         .product-price {
@@ -244,6 +246,7 @@
             margin-bottom: 1rem;
             font-size: 0.9rem;
             color: var(--color-gris-oscuro);
+            min-height: 2.8rem;
         }
         
         .product-actions {
@@ -302,10 +305,10 @@
         .cart-content {
             background-color: var(--color-blanco);
             width: 90%;
-            max-width: 600px;
+            max-width: 700px;
             border-radius: 8px;
             padding: 2rem;
-            max-height: 80vh;
+            max-height: 90vh;
             overflow-y: auto;
         }
         
@@ -395,6 +398,18 @@
         .customer-info h3 {
             margin-bottom: 1rem;
             font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .toggle-form {
+            font-size: 0.8rem;
+            background: none;
+            border: none;
+            color: var(--color-gris-oscuro);
+            cursor: pointer;
+            text-decoration: underline;
         }
         
         .form-group {
@@ -429,10 +444,14 @@
             font-size: 1rem;
             cursor: pointer;
             transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
         
         .whatsapp-btn {
-            background-color: #25D366;
+            background-color: var(--color-verde);
             color: white;
         }
         
@@ -455,6 +474,21 @@
             color: var(--color-blanco);
         }
         
+        /* Remitente Info Form */
+        .remitente-info {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: #e8f4f8;
+            border-radius: 8px;
+            border-left: 4px solid #4a90e2;
+        }
+        
+        .remitente-info h3 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: #4a90e2;
+        }
+        
         /* Modal para compra directa */
         .direct-purchase-modal {
             display: none;
@@ -472,10 +506,10 @@
         .direct-purchase-content {
             background-color: var(--color-blanco);
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             border-radius: 8px;
             padding: 2rem;
-            max-height: 80vh;
+            max-height: 90vh;
             overflow-y: auto;
         }
         
@@ -601,6 +635,11 @@
             .product-actions {
                 flex-direction: column;
             }
+            
+            .cart-content, .direct-purchase-content {
+                width: 95%;
+                padding: 1rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -626,6 +665,24 @@
             .image-nav {
                 opacity: 1; /* Mostrar flechas siempre en móviles */
             }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Notificación */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--color-negro);
+            color: var(--color-blanco);
+            padding: 10px 20px;
+            border-radius: 4px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: opacity 0.5s;
         }
     </style>
 </head>
@@ -636,6 +693,7 @@
             <a href="#" class="logo">
                 <!-- Logo como imagen responsive sin texto -->
                 <img src="https://qrcontraentrega.com/wp-content/uploads/2025/09/IMG_0736.png" alt="Logo CaliValle" class="logo-img">
+                <span class="logo-text">CaliValle</span>
             </a>
             <div class="cart-icon" id="cartIcon">
                 <i class="fas fa-shopping-cart"></i>
@@ -686,20 +744,42 @@
                 <span id="cartTotal">$0.00</span>
             </div>
             
+            <!-- Información del Remitente -->
+            <div class="remitente-info">
+                <h3>Información del Remitente</h3>
+                <div class="form-group">
+                    <label for="remitenteName">Nombre del Negocio *</label>
+                    <input type="text" id="remitenteName" placeholder="Nombre de tu negocio" value="CaliValle Store" required>
+                </div>
+                <div class="form-group">
+                    <label for="remitenteAddress">Dirección del Negocio *</label>
+                    <input type="text" id="remitenteAddress" placeholder="Dirección de tu negocio" value="Calle 10 # 20-30, Cali" required>
+                </div>
+                <div class="form-group">
+                    <label for="remitentePhone">Teléfono del Negocio *</label>
+                    <input type="tel" id="remitentePhone" placeholder="Teléfono de contacto" value="+57 123 456 7890" required>
+                </div>
+            </div>
+            
             <!-- Customer Information Form -->
             <div class="customer-info">
-                <h3>Información de Envío</h3>
-                <div class="form-group">
-                    <label for="customerName">Nombre Completo *</label>
-                    <input type="text" id="customerName" placeholder="Ingresa tu nombre completo" required>
-                </div>
-                <div class="form-group">
-                    <label for="customerPhone">Teléfono *</label>
-                    <input type="tel" id="customerPhone" placeholder="Ingresa tu número de teléfono" required>
-                </div>
-                <div class="form-group">
-                    <label for="customerAddress">Dirección de Envío *</label>
-                    <input type="text" id="customerAddress" placeholder="Ingresa tu dirección completa" required>
+                <h3>
+                    Información de Envío
+                    <button type="button" class="toggle-form" id="toggleCustomerForm">Ocultar</button>
+                </h3>
+                <div id="customerForm">
+                    <div class="form-group">
+                        <label for="customerName">Nombre Completo *</label>
+                        <input type="text" id="customerName" placeholder="Ingresa tu nombre completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">Teléfono *</label>
+                        <input type="tel" id="customerPhone" placeholder="Ingresa tu número de teléfono" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerAddress">Dirección de Envío *</label>
+                        <input type="text" id="customerAddress" placeholder="Ingresa tu dirección completa" required>
+                    </div>
                 </div>
             </div>
             
@@ -722,6 +802,23 @@
             
             <div class="direct-purchase-product" id="directPurchaseProduct">
                 <!-- Información del producto se cargará dinámicamente -->
+            </div>
+            
+            <!-- Información del Remitente -->
+            <div class="remitente-info">
+                <h3>Información del Remitente</h3>
+                <div class="form-group">
+                    <label for="directRemitenteName">Nombre del Negocio *</label>
+                    <input type="text" id="directRemitenteName" placeholder="Nombre de tu negocio" value="CaliValle Store" required>
+                </div>
+                <div class="form-group">
+                    <label for="directRemitenteAddress">Dirección del Negocio *</label>
+                    <input type="text" id="directRemitenteAddress" placeholder="Dirección de tu negocio" value="Calle 10 # 20-30, Cali" required>
+                </div>
+                <div class="form-group">
+                    <label for="directRemitentePhone">Teléfono del Negocio *</label>
+                    <input type="tel" id="directRemitentePhone" placeholder="Teléfono de contacto" value="+57 123 456 7890" required>
+                </div>
             </div>
             
             <!-- Customer Information Form -->
@@ -790,9 +887,8 @@
                 description: "Auriculares con cancelación de ruido y 20h de batería",
                 category: "tecnologia",
                 images: [
-                    "https://via.placeholder.com/300x300/CCCCCC/333333?text=Auriculares+1",
-                    "https://via.placeholder.com/300x300/999999/333333?text=Auriculares+2",
-                    "https://via.placeholder.com/300x300/666666/FFFFFF?text=Auriculares+3"
+                    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1572536147248-ac59a8abfa4b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
                 ]
             },
             {
@@ -802,8 +898,8 @@
                 description: "Reloj inteligente con monitor de ritmo cardíaco y GPS",
                 category: "tecnologia",
                 images: [
-                    "https://via.placeholder.com/300x300/CCCCCC/333333?text=Smartwatch+1",
-                    "https://via.placeholder.com/300x300/999999/333333?text=Smartwatch+2"
+                    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
                 ]
             },
             {
@@ -813,8 +909,8 @@
                 description: "Set de 3 sartenes de diferentes tamaños",
                 category: "hogar",
                 images: [
-                    "https://via.placeholder.com/300x300/CCCCCC/333333?text=Sartenes+1",
-                    "https://via.placeholder.com/300x300/999999/333333?text=Sartenes+2"
+                    "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1583778176476-4a8b8dc94b4f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
                 ]
             },
             {
@@ -824,8 +920,8 @@
                 description: "Balón de fútbol tamaño oficial para competencia",
                 category: "deportes",
                 images: [
-                    "https://via.placeholder.com/300x300/CCCCCC/333333?text=Balón+1",
-                    "https://via.placeholder.com/300x300/999999/333333?text=Balón+2"
+                    "https://images.unsplash.com/photo-1614632537197-38a17061c2bd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1614632537190-874c3ef6d3d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
                 ]
             },
             {
@@ -835,8 +931,8 @@
                 description: "Altavoz portátil resistente al agua con 12h de batería",
                 category: "tecnologia",
                 images: [
-                    "https://via.placeholder.com/300x300/CCCCCC/333333?text=Altavoz+1",
-                    "https://via.placeholder.com/300x300/999999/333333?text=Altavoz+2"
+                    "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1546435770-a3e426bf472b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
                 ]
             },
             {
@@ -846,8 +942,8 @@
                 description: "Juego de 6 cuchillos profesionales de acero inoxidable",
                 category: "hogar",
                 images: [
-                    "https://via.placeholder.com/300x300/CCCCCC/333333?text=Cuchillos+1",
-                    "https://via.placeholder.com/300x300/999999/333333?text=Cuchillos+2"
+                    "https://images.unsplash.com/photo-1594736797933-d0401ba94693?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1583384728630-1db93aa3dd99?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
                 ]
             },
             {
@@ -857,8 +953,8 @@
                 description: "Par de mancuernas ajustables de 5 a 20 kg cada una",
                 category: "deportes",
                 images: [
-                    "https://via.placeholder.com/300x300/CCCCCC/333333?text=Mancuernas+1",
-                    "https://via.placeholder.com/300x300/999999/333333?text=Mancuernas+2"
+                    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1534258936925-c58bed479fcb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
                 ]
             },
             {
@@ -868,8 +964,8 @@
                 description: "Tablet con pantalla Full HD y 64GB de almacenamiento",
                 category: "tecnologia",
                 images: [
-                    "https://via.placeholder.com/300x300/CCCCCC/333333?text=Tablet+1",
-                    "https://via.placeholder.com/300x300/999999/333333?text=Tablet+2"
+                    "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1561154464-82e9adf32764?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
                 ]
             }
         ];
@@ -892,6 +988,13 @@
         const customerName = document.getElementById('customerName');
         const customerPhone = document.getElementById('customerPhone');
         const customerAddress = document.getElementById('customerAddress');
+        const customerForm = document.getElementById('customerForm');
+        const toggleCustomerForm = document.getElementById('toggleCustomerForm');
+        
+        // Campos de remitente
+        const remitenteName = document.getElementById('remitenteName');
+        const remitenteAddress = document.getElementById('remitenteAddress');
+        const remitentePhone = document.getElementById('remitentePhone');
         
         // Elementos para compra directa
         const directPurchaseModal = document.getElementById('directPurchaseModal');
@@ -902,6 +1005,11 @@
         const directCustomerAddress = document.getElementById('directCustomerAddress');
         const directWhatsappBtn = document.getElementById('directWhatsappBtn');
         const cancelDirectPurchase = document.getElementById('cancelDirectPurchase');
+        
+        // Campos de remitente para compra directa
+        const directRemitenteName = document.getElementById('directRemitenteName');
+        const directRemitenteAddress = document.getElementById('directRemitenteAddress');
+        const directRemitentePhone = document.getElementById('directRemitentePhone');
 
         // Cargar productos en la página
         function loadProducts(productsToLoad) {
@@ -986,6 +1094,11 @@
             directCustomerPhone.value = '';
             directCustomerAddress.value = '';
             directWhatsappBtn.disabled = true;
+            
+            // Sincronizar información del remitente
+            directRemitenteName.value = remitenteName.value;
+            directRemitenteAddress.value = remitenteAddress.value;
+            directRemitentePhone.value = remitentePhone.value;
             
             // Mostrar modal
             directPurchaseModal.style.display = 'flex';
@@ -1134,8 +1247,11 @@
             const hasName = customerName.value.trim() !== '';
             const hasPhone = customerPhone.value.trim() !== '';
             const hasAddress = customerAddress.value.trim() !== '';
+            const hasRemitenteName = remitenteName.value.trim() !== '';
+            const hasRemitenteAddress = remitenteAddress.value.trim() !== '';
+            const hasRemitentePhone = remitentePhone.value.trim() !== '';
             
-            whatsappBtn.disabled = !(hasItems && hasName && hasPhone && hasAddress);
+            whatsappBtn.disabled = !(hasItems && hasName && hasPhone && hasAddress && hasRemitenteName && hasRemitenteAddress && hasRemitentePhone);
         }
 
         // Validar si se puede habilitar el botón de WhatsApp para compra directa
@@ -1143,33 +1259,33 @@
             const hasName = directCustomerName.value.trim() !== '';
             const hasPhone = directCustomerPhone.value.trim() !== '';
             const hasAddress = directCustomerAddress.value.trim() !== '';
+            const hasRemitenteName = directRemitenteName.value.trim() !== '';
+            const hasRemitenteAddress = directRemitenteAddress.value.trim() !== '';
+            const hasRemitentePhone = directRemitentePhone.value.trim() !== '';
             
-            directWhatsappBtn.disabled = !(hasName && hasPhone && hasAddress);
+            directWhatsappBtn.disabled = !(hasName && hasPhone && hasAddress && hasRemitenteName && hasRemitenteAddress && hasRemitentePhone);
         }
 
         // Mostrar notificación
         function showNotification(message) {
+            // Eliminar notificación existente si hay una
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
             const notification = document.createElement('div');
-            notification.style.position = 'fixed';
-            notification.style.bottom = '20px';
-            notification.style.right = '20px';
-            notification.style.backgroundColor = 'var(--color-negro)';
-            notification.style.color = 'var(--color-blanco)';
-            notification.style.padding = '10px 20px';
-            notification.style.borderRadius = '4px';
-            notification.style.zIndex = '1000';
-            notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+            notification.className = 'notification';
             notification.textContent = message;
             
             document.body.appendChild(notification);
             
             setTimeout(() => {
                 notification.style.opacity = '0';
-                notification.style.transition = 'opacity 0.5s';
                 setTimeout(() => {
                     document.body.removeChild(notification);
                 }, 500);
-            }, 2000);
+            }, 3000);
         }
 
         // Generar mensaje de WhatsApp para el carrito
@@ -1186,8 +1302,11 @@
             message += `Teléfono: ${customerPhone.value}\n`;
             message += `Dirección: ${customerAddress.value}`;
             
-            // Añadir el mensaje para la transportadora
-            message += `\n\nTe vamos a despachar de la dirección: ${customerAddress.value}`;
+            // Añadir información del remitente
+            message += `\n\nInformación del remitente:\n`;
+            message += `Negocio: ${remitenteName.value}\n`;
+            message += `Dirección: ${remitenteAddress.value}\n`;
+            message += `Teléfono: ${remitentePhone.value}`;
             
             return encodeURIComponent(message);
         }
@@ -1203,10 +1322,24 @@
             message += `Teléfono: ${directCustomerPhone.value}\n`;
             message += `Dirección: ${directCustomerAddress.value}`;
             
-            // Añadir el mensaje para la transportadora
-            message += `\n\nTe vamos a despachar de la dirección: ${directCustomerAddress.value}`;
+            // Añadir información del remitente
+            message += `\n\nInformación del remitente:\n`;
+            message += `Negocio: ${directRemitenteName.value}\n`;
+            message += `Dirección: ${directRemitenteAddress.value}\n`;
+            message += `Teléfono: ${directRemitentePhone.value}`;
             
             return encodeURIComponent(message);
+        }
+
+        // Toggle formulario de información de envío
+        function toggleFormVisibility() {
+            if (customerForm.style.display === 'none') {
+                customerForm.style.display = 'block';
+                toggleCustomerForm.textContent = 'Ocultar';
+            } else {
+                customerForm.style.display = 'none';
+                toggleCustomerForm.textContent = 'Mostrar';
+            }
         }
 
         // Event Listeners
@@ -1265,11 +1398,20 @@
         customerName.addEventListener('input', validateCheckoutButton);
         customerPhone.addEventListener('input', validateCheckoutButton);
         customerAddress.addEventListener('input', validateCheckoutButton);
+        remitenteName.addEventListener('input', validateCheckoutButton);
+        remitenteAddress.addEventListener('input', validateCheckoutButton);
+        remitentePhone.addEventListener('input', validateCheckoutButton);
 
         // Validar formulario de compra directa cuando cambian los campos
         directCustomerName.addEventListener('input', validateDirectCheckoutButton);
         directCustomerPhone.addEventListener('input', validateDirectCheckoutButton);
         directCustomerAddress.addEventListener('input', validateDirectCheckoutButton);
+        directRemitenteName.addEventListener('input', validateDirectCheckoutButton);
+        directRemitenteAddress.addEventListener('input', validateDirectCheckoutButton);
+        directRemitentePhone.addEventListener('input', validateDirectCheckoutButton);
+
+        // Toggle formulario de información de envío
+        toggleCustomerForm.addEventListener('click', toggleFormVisibility);
 
         // Cerrar modal al hacer clic fuera de él
         window.addEventListener('click', (e) => {
@@ -1279,6 +1421,19 @@
             if (e.target === directPurchaseModal) {
                 directPurchaseModal.style.display = 'none';
             }
+        });
+
+        // Sincronizar cambios en los campos de remitente entre modales
+        remitenteName.addEventListener('input', () => {
+            directRemitenteName.value = remitenteName.value;
+        });
+        
+        remitenteAddress.addEventListener('input', () => {
+            directRemitenteAddress.value = remitenteAddress.value;
+        });
+        
+        remitentePhone.addEventListener('input', () => {
+            directRemitentePhone.value = remitentePhone.value;
         });
 
         // Inicializar la página
