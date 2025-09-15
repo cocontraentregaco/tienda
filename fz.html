@@ -3,1593 +3,847 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ContraEntrega - Sistema de Logística</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <title>Catálogo CaliValle | QR Contra Entrega</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #0066FF;
-            --primary-dark: #0052cc;
-            --secondary: #635bff;
-            --success: #2ed573;
-            --error: #ff4757;
-            --warning: #ffa502;
-            --text: #333;
-            --text-light: #666;
-            --bg: #f5f7fa;
-            --card-bg: #fff;
-            --border: #e0e6ed;
+            --color-blanco: #ffffff;
+            --color-negro: #000000;
+            --color-gris-claro: #f5f5f5;
+            --color-gris-medio: #e0e0e0;
+            --color-gris-oscuro: #333333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Libre Baskerville', serif;
+            background-color: var(--color-blanco);
+            color: var(--color-negro);
             line-height: 1.6;
-            color: var(--text);
-            background-color: var(--bg);
-            min-height: 100vh;
         }
         
-        .auth-container {
-            max-width: 400px;
+        /* Header */
+        header {
+            background-color: var(--color-negro);
+            color: var(--color-blanco);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-container {
+            max-width: 1200px;
             margin: 0 auto;
-            padding-top: 100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .custom-card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            padding: 20px;
-            margin-bottom: 20px;
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
         
-        .custom-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-        }
-        
-        .btn-primary-custom {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .btn-primary-custom:hover {
-            background: var(--primary-dark);
-        }
-        
-        .btn-secondary-custom {
-            background: var(--secondary);
-            color: white;
-        }
-        
-        .custom-form-group {
-            margin-bottom: 15px;
-        }
-        
-        .custom-alert {
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-        
-        .alert-error-custom {
-            background: #ffebee;
-            color: var(--error);
-            border-left: 3px solid var(--error);
-        }
-        
-        .alert-success-custom {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border-left: 3px solid #2e7d32;
-        }
-        
-        .custom-tab-content {
-            display: none;
-        }
-        
-        .custom-tab-content.active {
-            display: block;
-        }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        
-        .status-pending {
-            background: #fff3e0;
-            color: #ff8f00;
-        }
-        
-        .status-completed {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-        
-        .status-scheduled {
-            background: #e3f2fd;
-            color: #1565c0;
-        }
-        
-        .nav-tabs-custom .nav-link {
-            color: var(--text);
-            border: none;
-            padding: 10px 20px;
-        }
-        
-        .nav-tabs-custom .nav-link.active {
-            border-bottom: 2px solid var(--primary);
-            color: var(--primary);
-            font-weight: 500;
-        }
-        
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            display: block;
-            color: var(--primary);
-        }
-        
-        .stat-label {
-            font-size: 14px;
-            color: var(--text-light);
-        }
-        
-        .modal-custom .modal-content {
-            border: none;
-            border-radius: 8px;
-        }
-        
-        .tracking-card {
-            border-left: 4px solid var(--primary);
-        }
-        
-        .tracking-step {
+        .cart-icon {
             position: relative;
-            padding-left: 30px;
-            margin-bottom: 20px;
+            cursor: pointer;
+            font-size: 1.5rem;
         }
         
-        .tracking-step:last-child {
-            margin-bottom: 0;
-        }
-        
-        .tracking-step::before {
-            content: '';
+        .cart-count {
             position: absolute;
-            left: 9px;
-            top: 0;
-            height: 100%;
-            width: 2px;
-            background: var(--border);
-        }
-        
-        .tracking-step.completed::before {
-            background: var(--success);
-        }
-        
-        .tracking-step-icon {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 20px;
-            height: 20px;
+            top: -10px;
+            right: -10px;
+            background-color: var(--color-blanco);
+            color: var(--color-negro);
             border-radius: 50%;
-            background: var(--border);
+            width: 22px;
+            height: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background-color: var(--color-gris-claro);
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        /* Filtros */
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .search-box {
+            flex-grow: 1;
+            max-width: 500px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--color-gris-medio);
+            border-radius: 4px;
+            font-family: 'Libre Baskerville', serif;
+        }
+        
+        .category-filter {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .category-btn {
+            background: none;
+            border: 1px solid var(--color-negro);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: 'Libre Baskerville', serif;
+            transition: all 0.3s;
+            border-radius: 4px;
+        }
+        
+        .category-btn:hover, .category-btn.active {
+            background-color: var(--color-negro);
+            color: var(--color-blanco);
+        }
+        
+        /* Product Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .product-card {
+            border: 1px solid var(--color-gris-medio);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--color-gris-medio);
+        }
+        
+        .product-info {
+            padding: 1rem;
+        }
+        
+        .product-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--color-gris-oscuro);
+        }
+        
+        .product-description {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--color-gris-oscuro);
+        }
+        
+        .add-to-cart {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: var(--color-negro);
+            color: var(--color-blanco);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        .add-to-cart:hover {
+            background-color: var(--color-gris-oscuro);
+        }
+        
+        /* Cart Modal */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .cart-content {
+            background-color: var(--color-blanco);
+            width: 90%;
+            max-width: 600px;
+            border-radius: 8px;
+            padding: 2rem;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--color-gris-medio);
+        }
+        
+        .close-cart {
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        
+        .cart-items {
+            margin-bottom: 1.5rem;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--color-gris-medio);
+        }
+        
+        .item-info {
+            flex-grow: 1;
+        }
+        
+        .item-title {
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        
+        .item-price {
+            color: var(--color-gris-oscuro);
+        }
+        
+        .item-quantity {
             display: flex;
             align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .quantity-btn {
+            background: none;
+            border: 1px solid var(--color-gris-medio);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
             justify-content: center;
+            align-items: center;
         }
         
-        .tracking-step.completed .tracking-step-icon {
-            background: var(--success);
+        .remove-item {
+            color: #ff0000;
+            cursor: pointer;
+            margin-left: 1rem;
+        }
+        
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--color-gris-medio);
+        }
+        
+        .checkout-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .checkout-btn {
+            padding: 1rem;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .whatsapp-btn {
+            background-color: #25D366;
             color: white;
         }
         
-        .tracking-step.active .tracking-step-icon {
-            background: var(--primary);
-            color: white;
+        .whatsapp-btn:hover {
+            background-color: #128C7E;
         }
         
-        .tracking-step-date {
-            font-size: 12px;
-            color: var(--text-light);
+        .continue-shopping {
+            background-color: var(--color-gris-medio);
+            color: var(--color-negro);
         }
         
-        .tracking-step-content {
-            font-size: 14px;
+        .continue-shopping:hover {
+            background-color: var(--color-gris-oscuro);
+            color: var(--color-blanco);
         }
         
-        .admin-table th {
-            background-color: #f8f9fa;
+        /* Footer */
+        footer {
+            background-color: var(--color-negro);
+            color: var(--color-blanco);
+            padding: 2rem 1rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-section p, .footer-section a {
+            margin-bottom: 0.5rem;
+            color: var(--color-gris-medio);
+            text-decoration: none;
+            display: block;
+        }
+        
+        .footer-section a:hover {
+            color: var(--color-blanco);
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-icons a {
+            font-size: 1.5rem;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--color-gris-oscuro);
+            color: var(--color-gris-medio);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+            
+            .category-filter {
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .item-quantity {
+                align-self: flex-end;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Login Page -->
-    <div id="loginPage" class="auth-container">
-        <div class="text-center mb-4">
-            <h2 class="mb-1">Contraentregaco FZ</h2>
-            <p class="text-muted">Worldwide Logistics Services</p>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">CaliValle</div>
+            <div class="cart-icon" id="cartIcon">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count" id="cartCount">0</span>
+            </div>
         </div>
-        
-        <div class="custom-card">
-            <h3 class="h5 mb-4 text-center">Sign in</h3>
-            
-            <div id="loginAlert"></div>
-            
-            <form id="loginForm">
-                <div class="custom-form-group">
-                    <label for="loginEmail" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="loginEmail" required>
-                </div>
-                
-                <div class="custom-form-group">
-                    <label for="loginPassword" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="loginPassword" required>
-                </div>
-                
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="rememberMe">
-                        <label class="form-check-label" for="rememberMe">Remember Me</label>
-                    </div>
-                </div>
-                
-                <button type="submit" class="custom-btn btn-primary-custom w-100">Sign in</button>
-            </form>
-            
-            <div class="text-center mt-3">
-                <p class="mb-0">Create your fz account <a href="https://checkout.wompi.co/l/omorRM" id="registerLink">Sign up</a></p>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Catálogo de Productos</h1>
+        <p>Descubre nuestra selección de productos de alta calidad con entrega contra reembolso</p>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Filtros -->
+        <div class="filters">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar productos...">
+            </div>
+            <div class="category-filter">
+                <button class="category-btn active" data-category="all">Todos</button>
+                <button class="category-btn" data-category="tecnologia">Tecnología</button>
+                <button class="category-btn" data-category="hogar">Hogar</button>
+                <button class="category-btn" data-category="deportes">Deportes</button>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="products-grid" id="productsGrid">
+            <!-- Los productos se cargarán dinámicamente con JavaScript -->
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2>Tu Carrito de Compras</h2>
+                <button class="close-cart" id="closeCart">&times;</button>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <!-- Los items del carrito se cargarán dinámicamente -->
+            </div>
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">$0.00</span>
+            </div>
+            <div class="checkout-buttons">
+                <button class="checkout-btn whatsapp-btn" id="whatsappBtn">
+                    <i class="fab fa-whatsapp"></i> Finalizar compra por WhatsApp
+                </button>
+                <button class="checkout-btn continue-shopping" id="continueShopping">Seguir comprando</button>
             </div>
         </div>
     </div>
 
-    <!-- Dashboard (hidden by default) -->
-    <div id="dashboardPage" style="display: none;">
-        <div class="container py-4">
-            <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
-                <h1 class="h3 mb-0">ContraEntrega</h1>
-                <div class="d-flex align-items-center gap-3" id="userMenu">
-                    <span id="usernameDisplay"></span>
-                    <a href="#" class="text-danger text-decoration-none small" id="logoutBtn">
-                        <i class="bi bi-box-arrow-right"></i> Salir
-                    </a>
-                </div>
-            </header>
-            
-            <nav class="mb-4">
-                <ul class="nav nav-tabs nav-tabs-custom border-0" id="mainNav">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#" data-tab="dashboard">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-tab="quotes">Mis Cotizaciones</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-tab="pickups">Mis Recogidas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-tab="tracking">Rastreo</a>
-                    </li>
-                    <li class="nav-item" id="adminTab" style="display: none;">
-                        <a class="nav-link" href="#" data-tab="admin">Administración</a>
-                    </li>
-                </ul>
-            </nav>
-            
-            <main>
-                <!-- Alert Container -->
-                <div id="alertContainer"></div>
-                
-                <!-- Dashboard Tab -->
-                <div id="dashboard" class="custom-tab-content active">
-                    <div class="row g-4">
-                        <!-- Quick Actions -->
-                        <div class="col-md-6">
-                            <div class="custom-card">
-                                <h2 class="h5 mb-3">Acciones Rápidas</h2>
-                                <div class="d-flex gap-3">
-                                    <a href="#quote-form" class="custom-btn btn-primary-custom">Nueva Cotización</a>
-                                    <a href="#pickup-form" class="custom-btn btn-secondary-custom">Programar Recogida</a>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Stats -->
-                        <div class="col-md-6">
-                            <div class="custom-card">
-                                <h2 class="h5 mb-3">Resumen</h2>
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <div class="p-3 bg-light rounded text-center">
-                                            <span class="stat-value" id="quotesCount">0</span>
-                                            <span class="stat-label">Cotizaciones</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="p-3 bg-light rounded text-center">
-                                            <span class="stat-value" id="pickupsCount">0</span>
-                                            <span class="stat-label">Recogidas</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Quote Form -->
-                        <div class="col-12" id="quote-form">
-                            <div class="custom-card">
-                                <h2 class="h5 mb-3">Nueva Cotización</h2>
-                                <form id="quoteForm">
-                                    <input type="hidden" name="form_type" value="quote">
-                                    
-                                    <div class="row g-3">
-                                        <div class="col-md-6 col-lg-3">
-                                            <div class="custom-form-group">
-                                                <label for="q-fecha" class="form-label">Fecha del envío</label>
-                                                <input type="date" class="form-control" id="q-fecha" name="fecha" required>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 col-lg-3">
-                                            <div class="custom-form-group">
-                                                <label for="q-desde" class="form-label">Ciudad origen</label>
-                                                <input type="text" class="form-control" id="q-desde" name="desde" required>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 col-lg-3">
-                                            <div class="custom-form-group">
-                                                <label for="q-hacia" class="form-label">Ciudad destino</label>
-                                                <input type="text" class="form-control" id="q-hacia" name="hacia" required>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 col-lg-3">
-                                            <div class="custom-form-group">
-                                                <label for="q-peso" class="form-label">Peso (kg)</label>
-                                                <input type="number" class="form-control" id="q-peso" name="peso" step="0.1" required>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-12">
-                                            <div class="custom-form-group">
-                                                <label for="q-direccion" class="form-label">Dirección completa</label>
-                                                <textarea class="form-control" id="q-direccion" name="direccion" rows="2" required></textarea>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6">
-                                            <div class="custom-form-group">
-                                                <label for="q-valor" class="form-label">Valor declarado</label>
-                                                <input type="number" class="form-control" id="q-valor" name="valor" required>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-12">
-                                            <button type="submit" class="custom-btn btn-primary-custom">Solicitar Cotización</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        
-                        <!-- Pickup Form -->
-                        <div class="col-12" id="pickup-form">
-                            <div class="custom-card">
-                                <h2 class="h5 mb-3">Programar Recogida</h2>
-                                <form id="pickupForm">
-                                    <input type="hidden" name="form_type" value="pickup">
-                                    
-                                    <div class="row g-3">
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="custom-form-group">
-                                                <label for="p-id" class="form-label">Identificación</label>
-                                                <input type="text" class="form-control" id="p-id" name="identificacion" required>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="custom-form-group">
-                                                <label for="p-celular" class="form-label">Celular</label>
-                                                <input type="tel" class="form-control" id="p-celular" name="celular" required>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="custom-form-group">
-                                                <label for="p-nombre" class="form-label">Nombre completo</label>
-                                                <input type="text" class="form-control" id="p-nombre" name="nombre" required>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="custom-form-group">
-                                                <label for="p-email" class="form-label">Email</label>
-                                                <input type="email" class="form-control" id="p-email" name="email" required>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="custom-form-group">
-                                                <label for="p-ciudad" class="form-label">Ciudad</label>
-                                                <input type="text" class="form-control" id="p-ciudad" name="ciudad" required>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-12">
-                                            <div class="custom-form-group">
-                                                <label for="p-direccion" class="form-label">Dirección exacta</label>
-                                                <textarea class="form-control" id="p-direccion" name="direccion" rows="2" required></textarea>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 col-lg-3">
-                                            <div class="custom-form-group">
-                                                <label for="p-fecha" class="form-label">Fecha recogida</label>
-                                                <input type="date" class="form-control" id="p-fecha" name="fecha" required>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 col-lg-3">
-                                            <div class="custom-form-group">
-                                                <label for="p-hora" class="form-label">Hora recogida</label>
-                                                <input type="time" class="form-control" id="p-hora" name="hora" required>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 col-lg-3">
-                                            <div class="custom-form-group">
-                                                <label for="p-referencia" class="form-label">Persona de referencia</label>
-                                                <input type="text" class="form-control" id="p-referencia" name="referencia" required>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-12">
-                                            <button type="submit" class="custom-btn btn-primary-custom">Programar Recogida</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Quotes Tab -->
-                <div id="quotes" class="custom-tab-content">
-                    <div class="custom-card">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h2 class="h5 mb-0">Mis Cotizaciones</h2>
-                            <a href="#quote-form" class="custom-btn btn-primary-custom btn-sm">
-                                <i class="bi bi-plus"></i> Nueva Cotización
-                            </a>
-                        </div>
-                        
-                        <div id="quotesList">
-                            <div class="text-center py-4">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Cargando...</span>
-                                </div>
-                                <p class="mt-2">Cargando cotizaciones...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Pickups Tab -->
-                <div id="pickups" class="custom-tab-content">
-                    <div class="custom-card">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h2 class="h5 mb-0">Mis Recogidas</h2>
-                            <a href="#pickup-form" class="custom-btn btn-primary-custom btn-sm">
-                                <i class="bi bi-plus"></i> Nueva Recogida
-                            </a>
-                        </div>
-                        
-                        <div id="pickupsList">
-                            <div class="text-center py-4">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Cargando...</span>
-                                </div>
-                                <p class="mt-2">Cargando recogidas...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Tracking Tab -->
-                <div id="tracking" class="custom-tab-content">
-                    <div class="custom-card">
-                        <h2 class="h5 mb-3">Rastreo de Guías</h2>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="custom-form-group">
-                                    <label for="trackingNumber" class="form-label">Número de guía</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="trackingNumber" placeholder="Ingresa el número de guía">
-                                        <button class="btn btn-primary-custom" type="button" id="trackButton">
-                                            <i class="bi bi-search"></i> Rastrear
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                <div class="mt-3">
-                                    <p class="small text-muted">Ejemplos para probar:</p>
-                                    <ul class="small text-muted">
-                                        <li>GUIA123456 (FedEx)</li>
-                                        <li>ABC789XYZ (DHL)</li>
-                                        <li>1234567890 (Servientrega)</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div id="trackingResult" class="mt-4" style="display: none;">
-                            <div class="custom-card tracking-card">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h3 class="h6 mb-0" id="trackingTitle">Información de envío</h3>
-                                    <span class="badge bg-success" id="trackingStatus">En tránsito</span>
-                                </div>
-                                
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <p class="mb-1"><strong>Origen:</strong> <span id="trackingOrigin">Cali, Colombia</span></p>
-                                        <p class="mb-1"><strong>Destino:</strong> <span id="trackingDestination">Bogotá, Colombia</span></p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p class="mb-1"><strong>Transportadora:</strong> <span id="trackingCarrier">Servientrega</span></p>
-                                        <p class="mb-1"><strong>Fecha estimada:</strong> <span id="trackingEstDate">15 Jul 2023</span></p>
-                                    </div>
-                                </div>
-                                
-                                <h4 class="h6 mb-3">Historial de seguimiento</h4>
-                                
-                                <div id="trackingHistory">
-                                    <!-- Tracking steps will be inserted here -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Admin Tab -->
-                <div id="admin" class="custom-tab-content">
-                    <div class="custom-card">
-                        <h2 class="h5 mb-3">Administración del Sistema</h2>
-                        
-                        <ul class="nav nav-tabs mb-4" id="adminTabs">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-bs-toggle="tab" href="#usersTab">Usuarios</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#allQuotesTab">Todas las Cotizaciones</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#allPickupsTab">Todas las Recogidas</a>
-                            </li>
-                        </ul>
-                        
-                        <div class="tab-content">
-                            <div class="tab-pane fade show active" id="usersTab">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h3 class="h6">Gestión de Usuarios</h3>
-                                    <button class="btn btn-primary-custom btn-sm" id="addUserBtn">
-                                        <i class="bi bi-plus"></i> Agregar Usuario
-                                    </button>
-                                </div>
-                                
-                                <div class="table-responsive">
-                                    <table class="table table-hover admin-table">
-                                        <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Email</th>
-                                                <th>Nombre</th>
-                                                <th>Rol</th>
-                                                <th>Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="usersTableBody">
-                                            <!-- Users will be loaded here -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            
-                            <div class="tab-pane fade" id="allQuotesTab">
-                                <h3 class="h6 mb-3">Todas las Cotizaciones</h3>
-                                <div class="table-responsive">
-                                    <table class="table table-hover admin-table">
-                                        <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Usuario</th>
-                                                <th>Fecha</th>
-                                                <th>Ruta</th>
-                                                <th>Peso</th>
-                                                <th>Valor</th>
-                                                <th>Estado</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="allQuotesTableBody">
-                                            <!-- All quotes will be loaded here -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            
-                            <div class="tab-pane fade" id="allPickupsTab">
-                                <h3 class="h6 mb-3">Todas las Recogidas</h3>
-                                <div class="table-responsive">
-                                    <table class="table table-hover admin-table">
-                                        <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Usuario</th>
-                                                <th>Fecha/Hora</th>
-                                                <th>Ubicación</th>
-                                                <th>Contacto</th>
-                                                <th>Estado</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="allPickupsTableBody">
-                                            <!-- All pickups will be loaded here -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-            
-            <footer class="mt-5 pt-4 border-top text-center text-muted small">
-                <div id="currentTime" class="mb-2"></div>
-                <div class="mb-2">
-                    <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#termsModal">
-                        Términos y condiciones
-                    </a> | 
-                    <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#privacyModal">
-                        Política de privacidad
-                    </a>
-                </div>
-                <div id="copyright"></div>
-            </footer>
-        </div>
-    </div>
-
-    <!-- Modals -->
-    <div class="modal fade modal-custom" id="termsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Términos y Condiciones</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
-                    <h6 class="mt-3">1. Uso del Servicio</h6>
-                    <p>El servicio está destinado para uso logístico...</p>
-                    
-                    <h6 class="mt-3">2. Cotizaciones</h6>
-                    <p>Las cotizaciones son estimados no vinculantes...</p>
-                    
-                    <h6 class="mt-3">3. Recogidas</h6>
-                    <p>Las recogidas deben programarse con 24 horas de anticipación...</p>
-                    
-                    <h6 class="mt-3">4. Responsabilidades</h6>
-                    <p>El cliente es responsable de declarar el valor real de los envíos...</p>
-                    
-                    <h6 class="mt-3">5. Política de Privacidad</h6>
-                    <p>No almacenamos información personal sensible...</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="custom-btn btn-primary-custom" data-bs-dismiss="modal">Cerrar</button>
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Acerca de Nosotros</h3>
+                <p>Calivalle ofrece productos de calidad con entrega contra reembolso en todo el país.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contacto</h3>
+                <p><i class="fas fa-phone"></i> +57 123 456 7890</p>
+                <p><i class="fas fa-envelope"></i> info@calivalle.qrcontraentrega.com</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="modal fade modal-custom" id="privacyModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Política de Privacidad</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
-                    <h6 class="mt-3">1. Información Recopilada</h6>
-                    <p>Solo recopilamos información necesaria para los servicios logísticos...</p>
-                    
-                    <h6 class="mt-3">2. Uso de la Información</h6>
-                    <p>La información se usa exclusivamente para procesar tus solicitudes...</p>
-                    
-                    <h6 class="mt-3">3. Protección de Datos</h6>
-                    <p>Implementamos medidas de seguridad para proteger tu información...</p>
-                    
-                    <h6 class="mt-3">4. Cookies</h6>
-                    <p>Utilizamos cookies solo para mantener tu sesión activa...</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="custom-btn btn-primary-custom" data-bs-dismiss="modal">Cerrar</button>
-                </div>
+            <div class="footer-section">
+                <h3>Enlaces Rápidos</h3>
+                <a href="#">Inicio</a>
+                <a href="#">Productos</a>
+                <a href="#">Términos y Condiciones</a>
+                <a href="#">Política de Privacidad</a>
             </div>
         </div>
-    </div>
-
-    <!-- Add User Modal -->
-    <div class="modal fade modal-custom" id="addUserModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Agregar Nuevo Usuario</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addUserForm">
-                        <div class="custom-form-group">
-                            <label for="newUserName" class="form-label">Nombre Completo</label>
-                            <input type="text" class="form-control" id="newUserName" required>
-                        </div>
-                        
-                        <div class="custom-form-group">
-                            <label for="newUserEmail" class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="newUserEmail" required>
-                        </div>
-                        
-                        <div class="custom-form-group">
-                            <label for="newUserPassword" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="newUserPassword" required>
-                        </div>
-                        
-                        <div class="custom-form-group">
-                            <label for="newUserRole" class="form-label">Rol</label>
-                            <select class="form-control" id="newUserRole" required>
-                                <option value="user">Usuario Normal</option>
-                                <option value="admin">Administrador</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary-custom" id="saveUserBtn">Guardar Usuario</button>
-                </div>
-            </div>
+        <div class="copyright">
+            <p>&copy; 2023 CaliValle QR Contra Entrega. Todos los derechos reservados.</p>
         </div>
-    </div>
+    </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Configuración
-        const STORAGE_KEY = 'contraentrega_data';
-        const COOKIE_NAME = 'contraentrega_session';
-        const COOKIE_EXPIRY_DAYS = 7;
-        
-        // Estado de la aplicación
-        let currentUser = null;
-        let allUsers = [];
-        let userQuotes = [];
-        let userPickups = [];
-        let allQuotes = [];
-        let allPickups = [];
-        
-        // Elementos del DOM
-        const loginPage = document.getElementById('loginPage');
-        const dashboardPage = document.getElementById('dashboardPage');
-        const loginForm = document.getElementById('loginForm');
-        const loginAlert = document.getElementById('loginAlert');
-        const usernameDisplay = document.getElementById('usernameDisplay');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const alertContainer = document.getElementById('alertContainer');
-        const currentTimeElement = document.getElementById('currentTime');
-        const copyrightElement = document.getElementById('copyright');
-        const quotesCountElement = document.getElementById('quotesCount');
-        const pickupsCountElement = document.getElementById('pickupsCount');
-        const quotesListElement = document.getElementById('quotesList');
-        const pickupsListElement = document.getElementById('pickupsList');
-        const quoteForm = document.getElementById('quoteForm');
-        const pickupForm = document.getElementById('pickupForm');
-        const trackButton = document.getElementById('trackButton');
-        const trackingNumber = document.getElementById('trackingNumber');
-        const trackingResult = document.getElementById('trackingResult');
-        const trackingTitle = document.getElementById('trackingTitle');
-        const trackingStatus = document.getElementById('trackingStatus');
-        const trackingOrigin = document.getElementById('trackingOrigin');
-        const trackingDestination = document.getElementById('trackingDestination');
-        const trackingCarrier = document.getElementById('trackingCarrier');
-        const trackingEstDate = document.getElementById('trackingEstDate');
-        const trackingHistory = document.getElementById('trackingHistory');
-        const adminTab = document.getElementById('adminTab');
-        const usersTableBody = document.getElementById('usersTableBody');
-        const allQuotesTableBody = document.getElementById('allQuotesTableBody');
-        const allPickupsTableBody = document.getElementById('allPickupsTableBody');
-        const addUserBtn = document.getElementById('addUserBtn');
-        const saveUserBtn = document.getElementById('saveUserBtn');
-        
-        // Funciones de utilidad
-        function showAlert(message, type = 'error', container = alertContainer) {
-            const alert = document.createElement('div');
-            alert.className = `custom-alert alert-${type}-custom`;
-            alert.innerHTML = `
-                <div class="d-flex align-items-center">
-                    <i class="bi ${type === 'error' ? 'bi-exclamation-triangle' : 'bi-check-circle'} me-2"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-            container.appendChild(alert);
+        // Base de datos de productos (simulada)
+        const products = [
+            {
+                id: 1,
+                title: "Auriculares Inalámbricos",
+                price: 149.99,
+                description: "Auriculares con cancelación de ruido y 20h de batería",
+                category: "tecnologia",
+                image: "https://via.placeholder.com/300x300?text=Auriculares"
+            },
+            {
+                id: 2,
+                title: "Smartwatch Deportivo",
+                price: 199.99,
+                description: "Reloj inteligente con monitor de ritmo cardíaco y GPS",
+                category: "tecnologia",
+                image: "https://via.placeholder.com/300x300?text=Smartwatch"
+            },
+            {
+                id: 3,
+                title: "Juego de Sartenes Antiadherentes",
+                price: 89.99,
+                description: "Set de 3 sartenes de diferentes tamaños",
+                category: "hogar",
+                image: "https://via.placeholder.com/300x300?text=Sartenes"
+            },
+            {
+                id: 4,
+                title: "Balón de Fútbol Oficial",
+                price: 49.99,
+                description: "Balón de fútbol tamaño oficial para competencia",
+                category: "deportes",
+                image: "https://via.placeholder.com/300x300?text=Balón"
+            },
+            {
+                id: 5,
+                title: "Altavoz Bluetooth",
+                price: 79.99,
+                description: "Altavoz portátil resistente al agua con 12h de batería",
+                category: "tecnologia",
+                image: "https://via.placeholder.com/300x300?text=Altavoz"
+            },
+            {
+                id: 6,
+                title: "Set de Cuchillos de Cocina",
+                price: 129.99,
+                description: "Juego de 6 cuchillos profesionales de acero inoxidable",
+                category: "hogar",
+                image: "https://via.placeholder.com/300x300?text=Cuchillos"
+            },
+            {
+                id: 7,
+                title: "Mancuernas Ajustables",
+                price: 119.99,
+                description: "Par de mancuernas ajustables de 5 a 20 kg cada una",
+                category: "deportes",
+                image: "https://via.placeholder.com/300x300?text=Mancuernas"
+            },
+            {
+                id: 8,
+                title: "Tablet 10 Pulgadas",
+                price: 299.99,
+                description: "Tablet con pantalla Full HD y 64GB de almacenamiento",
+                category: "tecnologia",
+                image: "https://via.placeholder.com/300x300?text=Tablet"
+            }
+        ];
+
+        // Variables globales
+        let cart = [];
+        const cartIcon = document.getElementById('cartIcon');
+        const cartCount = document.getElementById('cartCount');
+        const cartModal = document.getElementById('cartModal');
+        const closeCart = document.getElementById('closeCart');
+        const cartItems = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+        const whatsappBtn = document.getElementById('whatsappBtn');
+        const continueShopping = document.getElementById('continueShopping');
+        const productsGrid = document.getElementById('productsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const categoryBtns = document.querySelectorAll('.category-btn');
+
+        // Cargar productos en la página
+        function loadProducts(productsToLoad) {
+            productsGrid.innerHTML = '';
             
-            setTimeout(() => {
-                alert.remove();
-            }, 5000);
-        }
-        
-        function updateClock() {
-            const now = new Date();
-            const options = {
-                timeZone: "America/Bogota",
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            };
-            if (currentTimeElement) {
-                currentTimeElement.textContent = now.toLocaleDateString('es-CO', options) + ' | Valle del Cauca, COL';
-            }
-        }
-        
-        function updateCopyright() {
-            if (copyrightElement) {
-                copyrightElement.textContent = `© ${new Date().getFullYear()} ContraEntrega - Todos los derechos reservados`;
-            }
-        }
-        
-        function switchTab(tabId) {
-            // Actualizar navegación
-            document.querySelectorAll('#mainNav .nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
-            event.currentTarget.classList.add('active');
-            
-            // Mostrar contenido
-            document.querySelectorAll('.custom-tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.getElementById(tabId).classList.add('active');
-        }
-        
-        // Funciones de cookies
-        function setCookie(name, value, days) {
-            const date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            const expires = "expires=" + date.toUTCString();
-            document.cookie = name + "=" + value + ";" + expires + ";path=/";
-        }
-        
-        function getCookie(name) {
-            const cookieName = name + "=";
-            const decodedCookie = decodeURIComponent(document.cookie);
-            const cookieArray = decodedCookie.split(';');
-            for(let i = 0; i < cookieArray.length; i++) {
-                let cookie = cookieArray[i];
-                while (cookie.charAt(0) === ' ') {
-                    cookie = cookie.substring(1);
-                }
-                if (cookie.indexOf(cookieName) === 0) {
-                    return cookie.substring(cookieName.length, cookie.length);
-                }
-            }
-            return "";
-        }
-        
-        function deleteCookie(name) {
-            document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        }
-        
-        // Funciones de autenticación
-        function checkAuth() {
-            const sessionCookie = getCookie(COOKIE_NAME);
-            if (sessionCookie) {
-                try {
-                    const sessionData = JSON.parse(sessionCookie);
-                    currentUser = sessionData.user;
-                    
-                    // Mostrar dashboard
-                    loginPage.style.display = 'none';
-                    dashboardPage.style.display = 'block';
-                    
-                    // Actualizar interfaz
-                    usernameDisplay.textContent = currentUser.name;
-                    
-                    // Mostrar pestaña de admin si es administrador
-                    if (currentUser.role === 'admin') {
-                        adminTab.style.display = 'block';
-                    }
-                    
-                    // Cargar datos del usuario
-                    loadFromLocalStorage();
-                    
-                    return true;
-                } catch (e) {
-                    console.error('Error parsing session cookie:', e);
-                    return false;
-                }
-            } else {
-                loginPage.style.display = 'block';
-                dashboardPage.style.display = 'none';
-                return false;
-            }
-        }
-        
-        function login(email, password, remember) {
-            // Buscar usuario en la base de datos
-            const user = allUsers.find(u => u.email === email && u.password === password);
-            
-            if (user) {
-                currentUser = {
-                    id: user.id,
-                    email: user.email,
-                    name: user.name,
-                    role: user.role
-                };
-                
-                // Crear sesión en cookie
-                const sessionData = {
-                    user: currentUser,
-                    expires: new Date().getTime() + (remember ? COOKIE_EXPIRY_DAYS : 1) * 24 * 60 * 60 * 1000
-                };
-                
-                setCookie(COOKIE_NAME, JSON.stringify(sessionData), remember ? COOKIE_EXPIRY_DAYS : 1);
-                
-                // Mostrar dashboard
-                loginPage.style.display = 'none';
-                dashboardPage.style.display = 'block';
-                
-                // Actualizar interfaz
-                usernameDisplay.textContent = currentUser.name;
-                
-                // Mostrar pestaña de admin si es administrador
-                if (currentUser.role === 'admin') {
-                    adminTab.style.display = 'block';
-                    loadAdminData();
-                }
-                
-                return true;
-            }
-            return false;
-        }
-        
-        function logout() {
-            deleteCookie(COOKIE_NAME);
-            window.location.reload();
-        }
-        
-        // Funciones de almacenamiento local
-        function loadFromLocalStorage() {
-            const data = localStorage.getItem(STORAGE_KEY);
-            if (data) {
-                try {
-                    const parsedData = JSON.parse(data);
-                    
-                    // Cargar usuarios si no están cargados
-                    if (!allUsers.length && parsedData.users) {
-                        allUsers = parsedData.users;
-                    }
-                    
-                    // Cargar datos del usuario actual
-                    if (currentUser) {
-                        userQuotes = parsedData.quotes?.filter(q => q.userId === currentUser.id) || [];
-                        userPickups = parsedData.pickups?.filter(p => p.userId === currentUser.id) || [];
-                        
-                        quotesCountElement.textContent = userQuotes.length;
-                        pickupsCountElement.textContent = userPickups.length;
-                        
-                        renderQuotesList();
-                        renderPickupsList();
-                    }
-                    
-                    // Cargar todos los datos para admin
-                    if (currentUser?.role === 'admin') {
-                        allQuotes = parsedData.quotes || [];
-                        allPickups = parsedData.pickups || [];
-                    }
-                    
-                    return true;
-                } catch (e) {
-                    console.error('Error parsing localStorage data:', e);
-                    return false;
-                }
-            }
-            return false;
-        }
-        
-        function saveToLocalStorage() {
-            const data = {
-                users: allUsers,
-                quotes: allQuotes.length ? allQuotes : userQuotes,
-                pickups: allPickups.length ? allPickups : userPickups
-            };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        }
-        
-        function generateId() {
-            return 'id-' + Math.random().toString(36).substr(2, 9);
-        }
-        
-        // Funciones de renderizado
-        function renderQuotesList() {
-            if (userQuotes.length === 0) {
-                quotesListElement.innerHTML = `
-                    <div class="text-center py-4">
-                        <i class="bi bi-file-text fs-1 text-muted"></i>
-                        <p class="mt-2">No tienes cotizaciones registradas</p>
+            productsToLoad.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <img src="${product.image}" alt="${product.title}" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">${product.title}</h3>
+                        <p class="product-price">$${product.price.toFixed(2)}</p>
+                        <p class="product-description">${product.description}</p>
+                        <button class="add-to-cart" data-id="${product.id}">Agregar al Carrito</button>
                     </div>
                 `;
-                return;
-            }
-            
-            let html = `
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th>ID</th>
-                            <th>Fecha</th>
-                            <th>Ruta</th>
-                            <th>Peso</th>
-                            <th>Valor</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            userQuotes.forEach(quote => {
-                html += `
-                <tr>
-                    <td>${quote.id}</td>
-                    <td>${new Date(quote.createdAt).toLocaleDateString()}</td>
-                    <td>${quote.desde} → ${quote.hacia}</td>
-                    <td>${quote.peso} kg</td>
-                    <td>$${quote.valor.toLocaleString()}</td>
-                    <td>
-                        <span class="status-badge ${quote.status === 'pending' ? 'status-pending' : 'status-completed'}">
-                            ${quote.status === 'pending' ? 'Pendiente' : 'Completada'}
-                        </span>
-                    </td>
-                </tr>
-                `;
+                productsGrid.appendChild(productCard);
             });
             
-            html += `
-                    </tbody>
-                </table>
-            </div>
-            `;
-            
-            quotesListElement.innerHTML = html;
+            // Agregar event listeners a los botones de agregar al carrito
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const productId = parseInt(e.target.getAttribute('data-id'));
+                    addToCart(productId);
+                });
+            });
         }
-        
-        function renderPickupsList() {
-            if (userPickups.length === 0) {
-                pickupsListElement.innerHTML = `
-                    <div class="text-center py-4">
-                        <i class="bi bi-truck fs-1 text-muted"></i>
-                        <p class="mt-2">No tienes recogidas programadas</p>
-                    </div>
-                `;
-                return;
-            }
+
+        // Filtrar productos
+        function filterProducts() {
+            const searchText = searchInput.value.toLowerCase();
+            const activeCategory = document.querySelector('.category-btn.active').getAttribute('data-category');
             
-            let html = `
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th>ID</th>
-                            <th>Fecha/Hora</th>
-                            <th>Ubicación</th>
-                            <th>Contacto</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            userPickups.forEach(pickup => {
-                html += `
-                <tr>
-                    <td>${pickup.id}</td>
-                    <td>${pickup.fecha} ${pickup.hora}</td>
-                    <td>${pickup.ciudad}</td>
-                    <td>${pickup.referencia}<br><small>${pickup.celular}</small></td>
-                    <td>
-                        <span class="status-badge ${pickup.status === 'scheduled' ? 'status-scheduled' : 'status-completed'}">
-                            ${pickup.status === 'scheduled' ? 'Programada' : 'Completada'}
-                        </span>
-                    </td>
-                </tr>
-                `;
+            const filteredProducts = products.filter(product => {
+                const matchesSearch = product.title.toLowerCase().includes(searchText) || 
+                                     product.description.toLowerCase().includes(searchText);
+                const matchesCategory = activeCategory === 'all' || product.category === activeCategory;
+                
+                return matchesSearch && matchesCategory;
             });
             
-            html += `
-                    </tbody>
-                </table>
-            </div>
-            `;
-            
-            pickupsListElement.innerHTML = html;
+            loadProducts(filteredProducts);
         }
-        
-        // Funciones de administración
-        function loadAdminData() {
-            renderUsersTable();
-            renderAllQuotesTable();
-            renderAllPickupsTable();
-        }
-        
-        function renderUsersTable() {
-            let html = '';
+
+        // Agregar producto al carrito
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
             
-            allUsers.forEach(user => {
-                html += `
-                <tr>
-                    <td>${user.id.substring(0, 8)}</td>
-                    <td>${user.email}</td>
-                    <td>${user.name}</td>
-                    <td>${user.role === 'admin' ? 'Administrador' : 'Usuario'}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${user.id}')">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-                `;
-            });
-            
-            usersTableBody.innerHTML = html;
-        }
-        
-        function renderAllQuotesTable() {
-            let html = '';
-            
-            allQuotes.forEach(quote => {
-                const user = allUsers.find(u => u.id === quote.userId);
-                html += `
-                <tr>
-                    <td>${quote.id.substring(0, 8)}</td>
-                    <td>${user?.name || 'Desconocido'}</td>
-                    <td>${new Date(quote.createdAt).toLocaleDateString()}</td>
-                    <td>${quote.desde} → ${quote.hacia}</td>
-                    <td>${quote.peso} kg</td>
-                    <td>$${quote.valor.toLocaleString()}</td>
-                    <td>
-                        <span class="status-badge ${quote.status === 'pending' ? 'status-pending' : 'status-completed'}">
-                            ${quote.status === 'pending' ? 'Pendiente' : 'Completada'}
-                        </span>
-                    </td>
-                </tr>
-                `;
-            });
-            
-            allQuotesTableBody.innerHTML = html;
-        }
-        
-        function renderAllPickupsTable() {
-            let html = '';
-            
-            allPickups.forEach(pickup => {
-                const user = allUsers.find(u => u.id === pickup.userId);
-                html += `
-                <tr>
-                    <td>${pickup.id.substring(0, 8)}</td>
-                    <td>${user?.name || 'Desconocido'}</td>
-                    <td>${pickup.fecha} ${pickup.hora}</td>
-                    <td>${pickup.ciudad}</td>
-                    <td>${pickup.referencia}<br><small>${pickup.celular}</small></td>
-                    <td>
-                        <span class="status-badge ${pickup.status === 'scheduled' ? 'status-scheduled' : 'status-completed'}">
-                            ${pickup.status === 'scheduled' ? 'Programada' : 'Completada'}
-                        </span>
-                    </td>
-                </tr>
-                `;
-            });
-            
-            allPickupsTableBody.innerHTML = html;
-        }
-        
-        function addUser(name, email, password, role) {
-            const newUser = {
-                id: generateId(),
-                name,
-                email,
-                password,
-                role,
-                createdAt: new Date().toISOString()
-            };
-            
-            allUsers.push(newUser);
-            saveToLocalStorage();
-            
-            if (currentUser?.role === 'admin') {
-                renderUsersTable();
-            }
-            
-            showAlert('Usuario creado con éxito', 'success');
-        }
-        
-        function deleteUser(userId) {
-            if (confirm('¿Estás seguro de eliminar este usuario?')) {
-                allUsers = allUsers.filter(user => user.id !== userId);
-                saveToLocalStorage();
-                
-                if (currentUser?.role === 'admin') {
-                    renderUsersTable();
-                }
-                
-                showAlert('Usuario eliminado', 'success');
-            }
-        }
-        
-        // Funciones de rastreo
-        function trackPackage(trackingNumber) {
-            // Simular API de rastreo con datos de ejemplo
-            const carriers = ['FedEx', 'DHL', 'Servientrega', 'UPS', 'TCC'];
-            const statuses = ['En tránsito', 'En reparto', 'Entregado', 'Retenido en aduana'];
-            const cities = ['Cali', 'Bogotá', 'Medellín', 'Barranquilla', 'Cartagena'];
-            
-            const carrier = carriers[Math.floor(Math.random() * carriers.length)];
-            const status = statuses[Math.floor(Math.random() * statuses.length)];
-            const origin = cities[Math.floor(Math.random() * cities.length)];
-            let destination = cities[Math.floor(Math.random() * cities.length)];
-            
-            // Asegurarse de que origen y destino sean diferentes
-            while (destination === origin) {
-                destination = cities[Math.floor(Math.random() * cities.length)];
-            }
-            
-            // Fecha estimada de entrega (1-5 días a partir de hoy)
-            const estDate = new Date();
-            estDate.setDate(estDate.getDate() + Math.floor(Math.random() * 5) + 1);
-            
-            // Actualizar información básica
-            trackingTitle.textContent = `Guía: ${trackingNumber}`;
-            trackingStatus.textContent = status;
-            trackingOrigin.textContent = `${origin}, Colombia`;
-            trackingDestination.textContent = `${destination}, Colombia`;
-            trackingCarrier.textContent = carrier;
-            trackingEstDate.textContent = estDate.toLocaleDateString('es-CO', { 
-                day: 'numeric', 
-                month: 'short', 
-                year: 'numeric' 
-            });
-            
-            // Generar historial de seguimiento
-            let historyHTML = '';
-            const stepsCount = 3 + Math.floor(Math.random() * 4); // Entre 3 y 6 pasos
-            const completedSteps = status === 'Entregado' ? stepsCount : Math.floor(Math.random() * (stepsCount - 1)) + 1;
-            
-            const steps = [
-                `Recibido en las instalaciones de ${origin}`,
-                `En proceso de clasificación`,
-                `En tránsito hacia ${destination}`,
-                `Llegó a la bodega de ${destination}`,
-                `En reparto`,
-                `Entregado al destinatario`
-            ];
-            
-            for (let i = 0; i < stepsCount; i++) {
-                const stepDate = new Date();
-                stepDate.setDate(stepDate.getDate() - (stepsCount - i));
-                
-                const isCompleted = i < completedSteps;
-                const isActive = i === completedSteps - 1 && !(status === 'Entregado');
-                
-                historyHTML += `
-                <div class="tracking-step ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}">
-                    <div class="tracking-step-icon">
-                        <i class="bi ${isCompleted ? 'bi-check' : (isActive ? 'bi-geo-alt' : 'bi-circle')}"></i>
-                    </div>
-                    <div>
-                        <div class="tracking-step-date">
-                            ${stepDate.toLocaleDateString('es-CO', { 
-                                day: 'numeric', 
-                                month: 'short', 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
-                            })}
-                        </div>
-                        <div class="tracking-step-content">
-                            ${steps[i] || steps[steps.length - 1]}
-                        </div>
-                    </div>
-                </div>
-                `;
-            }
-            
-            trackingHistory.innerHTML = historyHTML;
-            trackingResult.style.display = 'block';
-        }
-        
-        // Funciones de formularios
-        function submitQuote(formData) {
-            try {
-                const newQuote = {
-                    id: generateId(),
-                    userId: currentUser.id,
-                    desde: formData.get('desde'),
-                    hacia: formData.get('hacia'),
-                    fecha: formData.get('fecha'),
-                    peso: parseFloat(formData.get('peso')),
-                    valor: parseFloat(formData.get('valor')),
-                    direccion: formData.get('direccion'),
-                    status: 'pending',
-                    createdAt: new Date().toISOString()
-                };
-                
-                userQuotes.unshift(newQuote);
-                allQuotes.unshift(newQuote);
-                quotesCountElement.textContent = userQuotes.length;
-                renderQuotesList();
-                saveToLocalStorage();
-                
-                showAlert('Cotización creada con éxito', 'success');
-                quoteForm.reset();
-                
-            } catch (error) {
-                console.error('Error submitting quote:', error);
-                showAlert('Error al crear la cotización. Intenta nuevamente.');
-            }
-        }
-        
-        function submitPickup(formData) {
-            try {
-                const newPickup = {
-                    id: generateId(),
-                    userId: currentUser.id,
-                    identificacion: formData.get('identificacion'),
-                    celular: formData.get('celular'),
-                    nombre: formData.get('nombre'),
-                    email: formData.get('email'),
-                    ciudad: formData.get('ciudad'),
-                    direccion: formData.get('direccion'),
-                    fecha: formData.get('fecha'),
-                    hora: formData.get('hora'),
-                    referencia: formData.get('referencia'),
-                    status: 'scheduled',
-                    createdAt: new Date().toISOString()
-                };
-                
-                userPickups.unshift(newPickup);
-                allPickups.unshift(newPickup);
-                pickupsCountElement.textContent = userPickups.length;
-                renderPickupsList();
-                saveToLocalStorage();
-                
-                showAlert('Recogida programada con éxito', 'success');
-                pickupForm.reset();
-                
-            } catch (error) {
-                console.error('Error submitting pickup:', error);
-                showAlert('Error al programar la recogida. Intenta nuevamente.');
-            }
-        }
-        
-        // Event Listeners
-        document.querySelectorAll('#mainNav .nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                switchTab(this.getAttribute('data-tab'));
-            });
-        });
-        
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const remember = document.getElementById('rememberMe').checked;
-            
-            if (email && password) {
-                if (login(email, password, remember)) {
-                    showAlert('Inicio de sesión exitoso', 'success', loginAlert);
-                } else {
-                    showAlert('Credenciales incorrectas', 'error', loginAlert);
-                }
+            if (existingItem) {
+                existingItem.quantity += 1;
             } else {
-                showAlert('Por favor completa todos los campos', 'error', loginAlert);
-            }
-        });
-        
-        quoteForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            submitQuote(formData);
-        });
-        
-        pickupForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            submitPickup(formData);
-        });
-        
-        logoutBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            logout();
-        });
-        
-        trackButton.addEventListener('click', function() {
-            if (trackingNumber.value.trim()) {
-                trackPackage(trackingNumber.value.trim());
-            } else {
-                showAlert('Por favor ingresa un número de guía');
-            }
-        });
-        
-        trackingNumber.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                trackButton.click();
-            }
-        });
-        
-        addUserBtn.addEventListener('click', function() {
-            // Limpiar formulario
-            document.getElementById('addUserForm').reset();
-            // Mostrar modal
-            const modal = new bootstrap.Modal(document.getElementById('addUserModal'));
-            modal.show();
-        });
-        
-        saveUserBtn.addEventListener('click', function() {
-            const name = document.getElementById('newUserName').value;
-            const email = document.getElementById('newUserEmail').value;
-            const password = document.getElementById('newUserPassword').value;
-            const role = document.getElementById('newUserRole').value;
-            
-            if (name && email && password) {
-                // Verificar si el email ya existe
-                if (allUsers.some(u => u.email === email)) {
-                    showAlert('Este correo electrónico ya está registrado', 'error');
-                    return;
-                }
-                
-                addUser(name, email, password, role);
-                
-                // Cerrar modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
-                modal.hide();
-            } else {
-                showAlert('Por favor completa todos los campos', 'error');
-            }
-        });
-        
-        // Inicialización
-        function init() {
-            updateClock();
-            updateCopyright();
-            setInterval(updateClock, 1000);
-            
-            // Datos iniciales (solo si no existen)
-            if (!localStorage.getItem(STORAGE_KEY)) {
-                // Crear usuario admin por defecto
-                allUsers = [
-                    {
-                        id: generateId(),
-                        name: 'Administrador',
-                        email: 'fz@contraentregaco.com',
-                        password: 'admin123',
-                        role: 'admin',
-                        createdAt: new Date().toISOString()
-                    },
-                    {
-                        id: generateId(),
-                        name: 'Usuario Demo',
-                        email: 'fz1@contraentregaco.com',
-                        password: 'demo123',
-                        role: 'user',
-                        createdAt: new Date().toISOString()
-                    }
-                ];
-                
-                // Crear algunas cotizaciones y recogidas de ejemplo
-                userQuotes = [
-                    {
-                        id: generateId(),
-                        userId: allUsers[1].id,
-                        desde: 'Cali',
-                        hacia: 'Bogotá',
-                        fecha: '2023-07-15',
-                        peso: 5.2,
-                        valor: 120000,
-                        direccion: 'Carrera 10 #20-30, Barrio Granada',
-                        status: 'completed',
-                        createdAt: '2023-07-10T09:15:00Z'
-                    },
-                    {
-                        id: generateId(),
-                        userId: allUsers[1].id,
-                        desde: 'Palmira',
-                        hacia: 'Medellín',
-                        fecha: '2023-07-20',
-                        peso: 8.5,
-                        valor: 185000,
-                        direccion: 'Calle 15 #5-67, Centro',
-                        status: 'pending',
-                        createdAt: '2023-07-14T14:30:00Z'
-                    }
-                ];
-                
-                userPickups = [
-                    {
-                        id: generateId(),
-                        userId: allUsers[1].id,
-                        identificacion: '123456789',
-                        celular: '3001234567',
-                        nombre: 'Juan Pérez',
-                        email: 'juan@example.com',
-                        ciudad: 'Cali',
-                        direccion: 'Carrera 10 #20-30, Barrio Granada',
-                        fecha: '2023-07-18',
-                        hora: '14:00',
-                        referencia: 'María Gómez',
-                        status: 'scheduled',
-                        createdAt: '2023-07-12T10:45:00Z'
-                    }
-                ];
-                
-                allQuotes = [...userQuotes];
-                allPickups = [...userPickups];
-                
-                saveToLocalStorage();
-            } else {
-                // Cargar datos existentes
-                const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
-                allUsers = data.users || [];
-                allQuotes = data.quotes || [];
-                allPickups = data.pickups || [];
-            }
-            
-            // Verificar autenticación
-            checkAuth();
-            
-            // Configurar formularios con fechas mínimas
-            if (quoteForm) {
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById('q-fecha').min = today;
-                document.getElementById('p-fecha').min = today;
-                
-                // Configurar hora mínima para recogidas (si es hoy)
-                document.getElementById('p-fecha').addEventListener('change', function() {
-                    const timeInput = document.getElementById('p-hora');
-                    if (this.value === today) {
-                        const now = new Date();
-                        const currentHour = now.getHours().toString().padStart(2, '0');
-                        const currentMinute = now.getMinutes().toString().padStart(2, '0');
-                        timeInput.min = `${currentHour}:${currentMinute}`;
-                    } else {
-                        timeInput.removeAttribute('min');
-                    }
+                cart.push({
+                    id: product.id,
+                    title: product.title,
+                    price: product.price,
+                    quantity: 1,
+                    image: product.image
                 });
             }
+            
+            updateCart();
+            showNotification(`${product.title} agregado al carrito`);
         }
-        
-        // Hacer funciones disponibles globalmente para los botones
-        window.deleteUser = deleteUser;
-        
-        init();
+
+        // Eliminar producto del carrito
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCart();
+        }
+
+        // Actualizar cantidad de producto en el carrito
+        function updateQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            
+            if (item) {
+                item.quantity += change;
+                
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    updateCart();
+                }
+            }
+        }
+
+        // Actualizar visualización del carrito
+        function updateCart() {
+            cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+            
+            cartItems.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}" width="50">
+                    <div class="item-info">
+                        <h4 class="item-title">${item.title}</h4>
+                        <p class="item-price">$${item.price.toFixed(2)} c/u</p>
+                    </div>
+                    <div class="item-quantity">
+                        <button class="quantity-btn minus" data-id="${item.id}">-</button>
+                        <span>${item.quantity}</span>
+                        <button class="quantity-btn plus" data-id="${item.id}">+</button>
+                        <span class="remove-item" data-id="${item.id}"><i class="fas fa-trash"></i></span>
+                    </div>
+                    <div class="item-total">$${itemTotal.toFixed(2)}</div>
+                `;
+                cartItems.appendChild(cartItem);
+            });
+            
+            cartTotal.textContent = `$${total.toFixed(2)}`;
+            
+            // Agregar event listeners a los botones de cantidad y eliminar
+            document.querySelectorAll('.quantity-btn.minus').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.target.getAttribute('data-id'));
+                    updateQuantity(id, -1);
+                });
+            });
+            
+            document.querySelectorAll('.quantity-btn.plus').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.target.getAttribute('data-id'));
+                    updateQuantity(id, 1);
+                });
+            });
+            
+            document.querySelectorAll('.remove-item').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.target.closest('.remove-item').getAttribute('data-id'));
+                    removeFromCart(id);
+                });
+            });
+        }
+
+        // Mostrar notificación
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.right = '20px';
+            notification.style.backgroundColor = 'var(--color-negro)';
+            notification.style.color = 'var(--color-blanco)';
+            notification.style.padding = '10px 20px';
+            notification.style.borderRadius = '4px';
+            notification.style.zIndex = '1000';
+            notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.5s';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 500);
+            }, 2000);
+        }
+
+        // Generar mensaje de WhatsApp
+        function generateWhatsAppMessage() {
+            let message = "¡Hola! Quiero realizar la siguiente compra:\n\n";
+            
+            cart.forEach(item => {
+                message += `- ${item.title} x${item.quantity}: $${(item.price * item.quantity).toFixed(2)}\n`;
+            });
+            
+            message += `\nTotal: $${cart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)}`;
+            message += "\n\nMi información de envío es: [Nombre completo, dirección y teléfono]";
+            
+            return encodeURIComponent(message);
+        }
+
+        // Event Listeners
+        cartIcon.addEventListener('click', () => {
+            cartModal.style.display = 'flex';
+        });
+
+        closeCart.addEventListener('click', () => {
+            cartModal.style.display = 'none';
+        });
+
+        continueShopping.addEventListener('click', () => {
+            cartModal.style.display = 'none';
+        });
+
+        whatsappBtn.addEventListener('click', () => {
+            if (cart.length === 0) {
+                showNotification('El carrito está vacío');
+                return;
+            }
+            
+            const message = generateWhatsAppMessage();
+            window.open(`https://wa.me/573123456789?text=${message}`, '_blank');
+        });
+
+        searchInput.addEventListener('input', filterProducts);
+
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                filterProducts();
+            });
+        });
+
+        // Cerrar modal al hacer clic fuera de él
+        window.addEventListener('click', (e) => {
+            if (e.target === cartModal) {
+                cartModal.style.display = 'none';
+            }
+        });
+
+        // Inicializar la página
+        loadProducts(products);
     </script>
 </body>
 </html>
