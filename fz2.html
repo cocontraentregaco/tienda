@@ -781,10 +781,6 @@
                     <input type="text" id="customerName" placeholder="Ingresa tu nombre completo" required>
                 </div>
                 <div class="form-group">
-                    <label for="customerEmail">Correo Electrónico *</label>
-                    <input type="email" id="customerEmail" placeholder="Ingresa tu correo electrónico" required>
-                </div>
-                <div class="form-group">
                     <label for="customerPhone">Teléfono *</label>
                     <input type="tel" id="customerPhone" placeholder="Ingresa tu número de teléfono" required>
                 </div>
@@ -821,10 +817,6 @@
                 <div class="form-group">
                     <label for="directCustomerName">Nombre Completo *</label>
                     <input type="text" id="directCustomerName" placeholder="Ingresa tu nombre completo" required>
-                </div>
-                <div class="form-group">
-                    <label for="directCustomerEmail">Correo Electrónico *</label>
-                    <input type="email" id="directCustomerEmail" placeholder="Ingresa tu correo electrónico" required>
                 </div>
                 <div class="form-group">
                     <label for="directCustomerPhone">Teléfono *</label>
@@ -936,7 +928,7 @@
                 productUrl: "https://ejemplo.com/productos/altavoz-bluetooth",
                 images: [
                     "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1546435770-a3e426bf472b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
+                    "https://images.unsplash.com/photo-1546435770-a3e426bf472b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D&auto=format&fit=crop&w=600&q=80"
                 ]
             },
             {
@@ -993,7 +985,6 @@
         const searchInput = document.getElementById('searchInput');
         const categoryBtns = document.querySelectorAll('.category-btn');
         const customerName = document.getElementById('customerName');
-        const customerEmail = document.getElementById('customerEmail');
         const customerPhone = document.getElementById('customerPhone');
         const customerAddress = document.getElementById('customerAddress');
         
@@ -1002,7 +993,6 @@
         const directPurchaseProduct = document.getElementById('directPurchaseProduct');
         const closeDirectPurchase = document.getElementById('closeDirectPurchase');
         const directCustomerName = document.getElementById('directCustomerName');
-        const directCustomerEmail = document.getElementById('directCustomerEmail');
         const directCustomerPhone = document.getElementById('directCustomerPhone');
         const directCustomerAddress = document.getElementById('directCustomerAddress');
         const directWhatsappBtn = document.getElementById('directWhatsappBtn');
@@ -1092,7 +1082,6 @@
             
             // Limpiar formulario
             directCustomerName.value = '';
-            directCustomerEmail.value = '';
             directCustomerPhone.value = '';
             directCustomerAddress.value = '';
             directWhatsappBtn.disabled = true;
@@ -1242,21 +1231,19 @@
         function validateCheckoutButton() {
             const hasItems = cart.length > 0;
             const hasName = customerName.value.trim() !== '';
-            const hasEmail = customerEmail.value.trim() !== '';
             const hasPhone = customerPhone.value.trim() !== '';
             const hasAddress = customerAddress.value.trim() !== '';
             
-            whatsappBtn.disabled = !(hasItems && hasName && hasEmail && hasPhone && hasAddress);
+            whatsappBtn.disabled = !(hasItems && hasName && hasPhone && hasAddress);
         }
 
         // Validar si se puede habilitar el botón de WhatsApp para compra directa
         function validateDirectCheckoutButton() {
             const hasName = directCustomerName.value.trim() !== '';
-            const hasEmail = directCustomerEmail.value.trim() !== '';
             const hasPhone = directCustomerPhone.value.trim() !== '';
             const hasAddress = directCustomerAddress.value.trim() !== '';
             
-            directWhatsappBtn.disabled = !(hasName && hasEmail && hasPhone && hasAddress);
+            directWhatsappBtn.disabled = !(hasName && hasPhone && hasAddress);
         }
 
         // Mostrar notificación
@@ -1309,7 +1296,6 @@
             message += `\nTotal: $${cart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)}`;
             message += `\n\nMi información de envío es:\n`;
             message += `Nombre: ${customerName.value}\n`;
-            message += `Correo: ${customerEmail.value}\n`;
             message += `Teléfono: ${customerPhone.value}\n`;
             message += `Dirección: ${customerAddress.value}`;
             
@@ -1333,7 +1319,6 @@
             message += `\nTotal: $${currentDirectProduct.price.toFixed(2)}`;
             message += `\n\nMi información de envío es:\n`;
             message += `Nombre: ${directCustomerName.value}\n`;
-            message += `Correo: ${directCustomerEmail.value}\n`;
             message += `Teléfono: ${directCustomerPhone.value}\n`;
             message += `Dirección: ${directCustomerAddress.value}`;
             
@@ -1401,13 +1386,11 @@
 
         // Validar formulario cuando cambian los campos
         customerName.addEventListener('input', validateCheckoutButton);
-        customerEmail.addEventListener('input', validateCheckoutButton);
         customerPhone.addEventListener('input', validateCheckoutButton);
         customerAddress.addEventListener('input', validateCheckoutButton);
 
         // Validar formulario de compra directa cuando cambian los campos
         directCustomerName.addEventListener('input', validateDirectCheckoutButton);
-        directCustomerEmail.addEventListener('input', validateDirectCheckoutButton);
         directCustomerPhone.addEventListener('input', validateDirectCheckoutButton);
         directCustomerAddress.addEventListener('input', validateDirectCheckoutButton);
 
