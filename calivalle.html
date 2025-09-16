@@ -72,20 +72,15 @@
       border: none;
       cursor: pointer;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
     }
     
     .btn:hover {
       background: var(--secondary-color);
       transform: translateY(-1px);
-    }
-
-    .btn-enviar {
-      background-color: #4CAF50;
-      margin-right: 5px;
-    }
-
-    .btn-recibir {
-      background-color: #f39c12;
     }
     
     .btn-centrar {
@@ -94,6 +89,18 @@
     
     .btn-ruta {
       background-color: #9b59b6;
+    }
+    
+    .btn-info {
+      background-color: #3498db;
+    }
+    
+    .btn-whatsapp {
+      background-color: #25D366;
+    }
+    
+    .btn-solicitar {
+      background-color: #e74c3c;
     }
     
     #mapa { 
@@ -119,133 +126,82 @@
       box-shadow: var(--box-shadow);
     }
 
-    /* Panel de cotización mejorado */
-    #panel-cotizacion {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
+    /* MODIFICACIÓN: Selector de mapa en la parte inferior izquierda */
+    .leaflet-control-layers {
+      position: absolute;
+      left: 10px;
+      bottom: 30px;
+      top: auto !important;
+      right: auto !important;
+    }
+
+    .whatsapp-icon {
+      width: 16px;
+      height: 16px;
+      filter: invert(1);
+    }
+
+    .popup-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .popup-button-row {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+    }
+
+    .sugerencias-busqueda {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
       background: white;
-      padding: 15px;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       z-index: 1000;
-      width: 90%;
-      max-width: 500px;
-      max-height: 80vh;
+      max-height: 200px;
       overflow-y: auto;
       display: none;
     }
 
-    #cotizacion-resultado {
-      margin-top: 10px;
-    }
-
-    .btn-cerrar {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: none;
-      border: none;
-      font-size: 20px;
+    .sugerencia-item {
+      padding: 10px 15px;
       cursor: pointer;
-      color: #666;
-      width: 30px;
-      height: 30px;
+      border-bottom: 1px solid #eee;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      z-index: 1001;
     }
 
-    .btn-cerrar:hover {
-      color: #000;
-    }
-
-    .tarifa-option {
-      padding: 10px;
-      margin: 5px 0;
-      border: 1px solid #ddd;
-      border-radius: var(--border-radius);
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .tarifa-option:hover {
+    .sugerencia-item:hover {
       background-color: #f5f5f5;
     }
 
-    .tarifa-option.selected {
-      border-color: var(--accent-color);
-      background-color: rgba(0,102,204,0.1);
+    .sugerencia-texto {
+      flex: 1;
     }
 
-    .tarifa-nombre {
-      font-weight: bold;
-      color: var(--primary-color);
-    }
-
-    .tarifa-precio {
-      color: var(--accent-color);
-      font-weight: bold;
-    }
-
-    .tarifa-tiempo {
-      color: var(--secondary-color);
-      font-size: 0.9em;
-    }
-
-    .btn-confirmar {
-      width: 100%;
-      margin-top: 10px;
-      background-color: var(--accent-color);
+    .sugerencia-boton {
+      margin-left: 10px;
+      padding: 5px 10px;
+      background-color: #9b59b6;
       color: white;
-      padding: 10px;
-      border-radius: var(--border-radius);
       border: none;
-      font-weight: bold;
+      border-radius: 4px;
       cursor: pointer;
+      font-size: 12px;
     }
 
-    .btn-confirmar:hover {
-      background-color: #0055aa;
+    .contenedor-buscador {
+      position: relative;
+      flex: 1;
     }
 
-    /* Formulario de confirmación */
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 500;
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      border-radius: var(--border-radius);
-      font-size: 16px;
-    }
-
-    .formulario-envio {
-      display: none;
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid #eee;
-    }
-
-    .punto-seleccionado {
-      background-color: #f0f8ff;
-      padding: 10px;
-      border-radius: var(--border-radius);
-      margin-bottom: 10px;
-      border: 1px solid #d0e3ff;
-    }
-
-    .loading-spinner {
+    .cargando {
       display: inline-block;
       width: 20px;
       height: 20px;
@@ -253,47 +209,37 @@
       border-radius: 50%;
       border-top-color: #fff;
       animation: spin 1s ease-in-out infinite;
-      margin-right: 10px;
-    }
-
-    .mensaje-exito {
-      display: none;
-      text-align: center;
-      padding: 20px;
-      color: #4CAF50;
     }
 
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
-    
-    /* Estilos para iconos de marcadores */
-    .marker-icon-blue {
-      filter: hue-rotate(200deg) brightness(1.2) !important;
-    }
-    
-    .marker-icon-orange {
-      filter: hue-rotate(30deg) brightness(1.1);
-    }
-    
-    .marker-icon-green {
-      filter: hue-rotate(90deg) brightness(1.1);
-    }
-    
-    .marker-icon-red {
-      filter: hue-rotate(0deg) brightness(1.1);
-    }
-    
+
     @media (max-width: 768px) { 
       #barra-superior { 
         flex-direction: column; 
         gap: 0.6rem;
       }
       
-      #panel-cotizacion {
-        width: 95%;
+      .popup-button-row {
+        flex-direction: column;
+      }
+
+      .sugerencia-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .sugerencia-boton {
+        margin-left: 0;
+        margin-top: 5px;
+        align-self: flex-end;
+      }
+
+      /* MODIFICACIÓN: Ajuste para móviles */
+      .leaflet-control-layers {
         bottom: 10px;
-        max-height: 70vh;
+        left: 5px;
       }
     }
   </style>
@@ -305,60 +251,13 @@
 <body>
   <div id="contenedor-mapa">
     <div id="barra-superior">
-      <input type="search" id="buscador" placeholder="Buscar Afiliados en Cali..." enterkeyhint="search">
+      <div class="contenedor-buscador">
+        <input type="search" id="buscador" placeholder="Buscar Afiliados en Cali…" enterkeyhint="search">
+        <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+      </div>
       <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
-      <button class="btn" id="b2b-btn" onclick="window.open('https://colombia.qrcontraentrega.com/calivalle', '_blank')">MARKETPLACE</button>
     </div>
     <div id="mapa"></div>
-  </div>
-
-  <!-- Panel de cotización mejorado -->
-  <div id="panel-cotizacion">
-    <button class="btn-cerrar" id="cerrar-cotizacion">×</button>
-    <h3>Cotizar Envío</h3>
-    <div id="cotizacion-resultado"></div>
-    <div id="opciones-tarifa"></div>
-    <button class="btn-confirmar" id="confirmar-envio" style="display: none;">CONFIRMAR ENVÍO</button>
-    
-    <!-- Formulario de confirmación -->
-    <div id="formulario-envio" class="formulario-envio">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h4>Datos del envío</h4>
-        <button class="btn-cerrar" id="cerrar-formulario">×</button>
-      </div>
-      
-      <h5>Datos del remitente</h5>
-      <div class="form-group">
-        <label for="nombre-cliente">Nombre completo</label>
-        <input type="text" id="nombre-cliente" placeholder="Ingrese su nombre completo" required>
-      </div>
-      <div class="form-group">
-        <label for="telefono-cliente">Teléfono celular</label>
-        <input type="tel" id="telefono-cliente" placeholder="Ingrese su número de celular" required>
-      </div>
-      
-      <h5>Datos del destinatario</h5>
-      <div class="form-group">
-        <label for="nombre-destinatario">Nombre completo</label>
-        <input type="text" id="nombre-destinatario" placeholder="Ingrese nombre del destinatario" required>
-      </div>
-      <div class="form-group">
-        <label for="telefono-destinatario">Teléfono celular</label>
-        <input type="tel" id="telefono-destinatario" placeholder="Ingrese teléfono del destinatario" required>
-      </div>
-      
-      <button class="btn-confirmar" id="enviar-solicitud">
-        <span id="spinner" style="display:none;"><span class="loading-spinner"></span></span>
-        <span id="submit-text">SOLICITAR ENVÍO</span>
-      </button>
-    </div>
-
-    <!-- Mensaje de éxito -->
-    <div id="mensaje-exito" class="mensaje-exito">
-      <h3>¡Solicitud enviada con éxito!</h3>
-      <p>Nos pondremos en contacto contigo pronto para confirmar los detalles.</p>
-      <button class="btn-confirmar" id="cerrar-panel">CERRAR</button>
-    </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -368,98 +267,35 @@
     // Variables globales
     let mapa;
     let userMarker;
-    let origenMarker = null;
-    let destinoMarker = null;
     let rutaControl = null;
-    let tarifaSeleccionada = null;
-    let puntoOrigenSeleccionado = null;
-    let puntoDestinoSeleccionado = null;
-    let modoSeleccion = null; // 'enviar' o 'recibir'
-    let marcadoresOriginales = []; // Para almacenar los marcadores originales
-    let rutaActiva = false; // Para controlar si hay una ruta activa
+    let rutaActiva = false;
+    let marcadoresOriginales = [];
+    let destinoMarker = null;
+    let buscadorTimeout;
 
-    // Tarifas actualizadas para Cali (julio 2025) en COP
-    const TARIFAS = [
-      {
-        id: 'express',
-        nombre: 'Envío Express',
-        descripcion: 'Entrega en menos de 45 minutos',
-        tarifaBase: 6000,
-        tarifaPorKm: 2000,
-        multiplicadorDemanda: 1.1,
-        icono: '🚚',
-        velocidadPromedio: 30 // km/h
-      },
-      {
-        id: 'estandar',
-        nombre: 'Envío Estándar',
-        descripcion: 'Entrega en 1-2 horas',
-        tarifaBase: 4000,
-        tarifaPorKm: 1500,
-        multiplicadorDemanda: 1.0,
-        icono: '🚗',
-        velocidadPromedio: 20 // km/h
-      },
-      {
-        id: 'economico',
-        nombre: 'Envío Económico',
-        descripcion: 'Entrega en 2-4 horas',
-        tarifaBase: 2500,
-        tarifaPorKm: 500,
-        multiplicadorDemanda: 0.9,
-        icono: '🛵',
-        velocidadPromedio: 12 // km/h
-      }
-    ];
-
-    // Endpoint actualizado para Forminator
-    const FORM_ENDPOINT = 'https://colombia.qrcontraentrega.com/wp-admin/admin-ajax.php?action=submit_forminator_custom_form';
-
-    // Datos de ubicaciones en Cali (socios y puntos logísticos)
+    // Datos de ubicaciones en Cali (solo socios)
     const UBICACIONES = [
       { 
-        "id": "nano001",
-        "nombre": "@nanostore", 
-        "direccion": "Av 46 Oeste # 3 - 4 Sector Ambulancias Montebello, Cali, Valle del Cauca, Colombia", 
-        "latlng": [3.447641, -76.532071], 
-        "url": "https://nanostore.contraentregaco.com/",
-        "telefono": "+57 3041146297",
-        "horario": "L - V 09:00 a 17:00",
-        "servicios": "Tienda para mascotas",
-        "tipo": "socio"
-      }, 
-      { 
-        "id": "isola001",
-        "nombre": "@isolinatienda", 
-        "direccion": "Av 46 Oeste # 3 - 4 Sector Ambulancias Montebello, Cali, Valle del Cauca, Colombia", 
-        "latlng": [3.447641, -76.532071], 
-        "url": "https://isolinatienda.contraentregaco.com/",
-        "telefono": "+57 3041146297",
-        "horario": "L - V 09:00 a 17:00",
-        "servicios": "Tienda para el hogar",
-        "tipo": "socio"
-      },
-      { 
-        "id": "herma001",
+        "id": "hermanosdreams",
         "nombre": "@hermanosdreams", 
-        "direccion": "3.484443, -76.544682 Av 46 Oeste # 3 - 4 Sector Ambulancias Montebello, Cali, Valle del Cauca, Colombia", 
+        "direccion": "Av 46 Oeste # 3 - 4 Sector Ambulancias Montebello, Cali", 
         "latlng": [3.484443, -76.544682], 
         "url": "https://hermanosdreams.qrcontraentrega.com/",
-        "telefono": "+57 3041146297",
+        "telefono": "+573041146297",
         "horario": "L - V 09:00 a 17:00",
         "servicios": "Tienda de productos nutricionales",
         "tipo": "socio"
       },
       { 
-        "id": "logis001",
-        "nombre": "Punto Logístico: 1", 
-        "direccion": "3.484443, -76.544682 Av 46 Oeste # 3 - 4 Sector Ambulancias Montebello, Cali, Valle del Cauca, Colombia", 
-        "latlng": [3.484443, -76.544682], 
-        "url": "https://wa.me/573146824438",
-        "telefono": "+57 3146824438",
-        "horario": "L - V 09:00 a 17:00",
-        "servicios": "Oficina Postal QRC",
-        "tipo": "logistico"
+        "id": "tiendasaludable",
+        "nombre": "Tienda Saludable", 
+        "direccion": "Av. 5N # 20-30, Cali", 
+        "latlng": [3.464841, -76.525159], 
+        "url": "https://tiendasaludable.qrcontraentrega.com/",
+        "telefono": "+573124567890",
+        "horario": "L - D 07:00 a 22:00",
+        "servicios": "Productos orgánicos y suplementos",
+        "tipo": "socio"
       }
     ];
 
@@ -467,50 +303,33 @@
     document.addEventListener('DOMContentLoaded', function() {
       initializeMap();
       
-      // Evento para cerrar el panel de cotización
-      document.getElementById('cerrar-cotizacion').addEventListener('click', function() {
-        cerrarPanelCotizacion();
-        resetearSelecciones();
-      });
-      
-      // Evento para cerrar el formulario
-      document.getElementById('cerrar-formulario').addEventListener('click', function() {
-        document.getElementById('formulario-envio').style.display = 'none';
-        document.getElementById('confirmar-envio').style.display = 'block';
-      });
-      
-      // Evento para cerrar el panel desde el mensaje de éxito
-      document.getElementById('cerrar-panel').addEventListener('click', function() {
-        cerrarPanelCotizacion();
-        resetearSelecciones();
-      });
-      
-      // Evento para confirmar el envío
-      document.getElementById('confirmar-envio').addEventListener('click', confirmarEnvio);
-      
-      // Evento para enviar la solicitud
-      document.getElementById('enviar-solicitud').addEventListener('click', enviarSolicitud);
-      
       // Evento para el botón centrar
       document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
+      
+      // Eventos para el buscador
+      const searchInput = document.getElementById('buscador');
+      searchInput.addEventListener('input', handleSearchInput);
+      searchInput.addEventListener('keydown', handleSearchKeydown);
+      
+      // Cerrar sugerencias al hacer clic fuera
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.contenedor-buscador')) {
+          document.getElementById('sugerencias-busqueda').style.display = 'none';
+        }
+      });
     });
 
-    function cerrarPanelCotizacion() {
-      document.getElementById('panel-cotizacion').style.display = 'none';
-      resetearFormulario();
-    }
-
     function initializeMap() {
-      // Configuración de capas
+      // Configuración de capas - Maxar WorldView Legion (alta definición)
       const capas = {
-        "Maxar": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        "Maxar WorldView Legion": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
           attribution: 'Satellite: Maxar WorldView Legion',
-          maxZoom: 18,
-          maxNativeZoom: 18,
+          maxZoom: 19,
+          maxNativeZoom: 19,
           detectRetina: true
         }),
-        "OSM": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors',
+        "OpenStreetMap": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
           maxZoom: 19
         })
       };
@@ -518,8 +337,8 @@
       // Inicializar mapa
       mapa = L.map('mapa', {
         center: [3.484941, -76.545259], // Coordenadas de Cali
-        zoom: 12,
-        layers: [capas["Maxar"]],
+        zoom: 15,
+        layers: [capas["Maxar WorldView Legion"]],
         zoomControl: false
       });
 
@@ -530,8 +349,10 @@
 
       // Controles del mapa
       L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+      
+      // MODIFICACIÓN: Selector de capas en la parte inferior izquierda
       L.control.layers(capas, null, { 
-        position: 'topright',
+        position: 'bottomleft', // Cambiado de 'topright' a 'bottomleft'
         collapsed: false
       }).addTo(mapa);
 
@@ -547,31 +368,32 @@
         zoomToBoundsOnClick: true
       });
 
-      // Crear marcadores
+      // Crear marcadores (solo socios)
       UBICACIONES.forEach(loc => {
-        // Icono diferente para socios y puntos logísticos
-        const iconUrl = loc.tipo === 'socio' ? 
-          'https://cdn-icons-png.flaticon.com/512/447/447031.png' : // Icono de ubicación para socios
-          'https://cdn-icons-png.flaticon.com/512/447/447031.png'; // Icono de ubicación para puntos logísticos
-        
         const marcador = L.marker(loc.latlng, {
           icon: L.icon({
-            iconUrl: iconUrl,
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
             iconSize: [32, 32],
-            className: loc.tipo === 'socio' ? 'marker-icon-orange' : 'marker-icon-green'
+            className: 'marker-icon-orange'
           })
         }).bindPopup(`
           <div style="min-width:220px">
             <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
             <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
-            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><i class="fas fa-phone" style="margin-right:5px"></i> ${loc.telefono}</p>` : ''}
-            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><i class="fas fa-clock" style="margin-right:5px"></i> ${loc.horario}</p>` : ''}
-            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><i class="fas fa-boxes" style="margin-right:5px"></i> ${loc.servicios}</p>` : ''}
-            <a href="${loc.url}" style="display:inline-block;background:var(--accent-color);color:white;padding:6px 12px;border-radius:4px;text-decoration:none;margin-top:5px;font-size:0.9em">Más información</a>
-            <div style="margin-top:10px;display:flex;justify-content:space-between">
-              <button class="btn btn-enviar" onclick="seleccionarPunto('enviar','${loc.id}')">Enviar</button>
-              <button class="btn btn-recibir" onclick="seleccionarPunto('recibir','${loc.id}')">Recibir</button>
-              <button class="btn btn-ruta" onclick="calcularRutaUbicacion('${loc.id}')">Cómo llegar</button>
+            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Teléfono:</strong> ${loc.telefono}</p>` : ''}
+            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Horario:</strong> ${loc.horario}</p>` : ''}
+            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><strong>Servicios:</strong> ${loc.servicios}</p>` : ''}
+            <div class="popup-buttons">
+              <div class="popup-button-row">
+                <button class="btn btn-whatsapp" onclick="abrirWhatsApp('${loc.telefono}', '${loc.nombre}')">
+                  <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
+                  Chatear por WhatsApp
+                </button>
+              </div>
+              <div class="popup-button-row">
+                <button class="btn btn-ruta" onclick="calcularRutaUbicacion('${loc.id}')">Cómo llegar</button>
+                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">Más información</button>
+              </div>
             </div>
           </div>
         `);
@@ -586,36 +408,6 @@
       clusters.addLayers(marcadoresOriginales);
       mapa.addLayer(clusters);
 
-      // Búsqueda
-      const searchInput = document.getElementById('buscador');
-      let searchTimeout;
-
-      const handleSearch = () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-          const termino = searchInput.value.toLowerCase().trim();
-          clusters.clearLayers();
-          
-          if(termino === '') {
-            clusters.addLayers(marcadoresOriginales);
-            return;
-          }
-          
-          const filtrados = marcadoresOriginales.filter(m => 
-            m.datosBusqueda.includes(termino)
-          );
-          
-          clusters.addLayers(filtrados);
-          
-          if(filtrados.length > 0) {
-            mapa.fitBounds(clusters.getBounds().pad(0.3));
-          }
-        }, 300);
-      };
-
-      searchInput.addEventListener('input', handleSearch);
-      searchInput.addEventListener('search', handleSearch);
-
       // Ajustar vista a los marcadores
       if(marcadoresOriginales.length > 0) {
         mapa.fitBounds(clusters.getBounds().pad(0.3));
@@ -625,10 +417,268 @@
       obtenerUbicacionUsuario();
     }
 
+    // Función para manejar la búsqueda
+    function handleSearchInput(e) {
+      clearTimeout(buscadorTimeout);
+      const termino = e.target.value.trim();
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      if (termino.length < 3) {
+        sugerenciasContainer.style.display = 'none';
+        return;
+      }
+      
+      // Mostrar indicador de carga
+      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Buscando... <span class="cargando"></span></div>';
+      sugerenciasContainer.style.display = 'block';
+      
+      buscadorTimeout = setTimeout(() => {
+        buscarConNominatim(termino);
+      }, 500);
+    }
+
+    // Función para buscar usando Nominatim API
+    function buscarConNominatim(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      // Primero buscar en puntos locales
+      const resultadosLocales = buscarEnPuntosLocales(consulta);
+      if (resultadosLocales) {
+        return;
+      }
+      
+      // Si no hay resultados locales, usar Nominatim para búsqueda de direcciones
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(consulta + ', Cali, Colombia')}&limit=5&countrycodes=co`;
+      
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error en la API de Nominatim');
+          }
+          return response.json();
+        })
+        .then(data => {
+          sugerenciasContainer.innerHTML = '';
+          
+          if (data && data.length > 0) {
+            data.forEach(lugar => {
+              const item = document.createElement('div');
+              item.className = 'sugerencia-item';
+              
+              const lat = lugar.lat;
+              const lon = lugar.lon;
+              const nombre = lugar.display_name;
+              let nombreCorto = lugar.display_name.split(',')[0];
+              
+              item.innerHTML = `
+                <div class="sugerencia-texto">
+                  <strong>📍 ${nombreCorto}</strong><br>
+                  <small>${lugar.display_name.replace('Cali, Valle del Cauca, Colombia', 'Cali')}</small>
+                </div>
+                <button class="sugerencia-boton" data-lat="${lat}" data-lon="${lon}" data-nombre="${nombre}">
+                  Cómo llegar
+                </button>
+              `;
+              
+              // Agregar evento al botón "Cómo llegar"
+              const boton = item.querySelector('.sugerencia-boton');
+              boton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const lat = parseFloat(this.getAttribute('data-lat'));
+                const lon = parseFloat(this.getAttribute('data-lon'));
+                const nombre = this.getAttribute('data-nombre');
+                
+                // Mover el mapa a la ubicación seleccionada
+                const latlng = [lat, lon];
+                mapa.setView(latlng, 18);
+                
+                // Crear o actualizar marcador de destino
+                if (destinoMarker) {
+                  mapa.removeLayer(destinoMarker);
+                }
+                destinoMarker = L.marker(latlng, {
+                  icon: L.icon({
+                    iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                    iconSize: [32, 32],
+                    className: 'marker-icon-red'
+                  })
+                }).addTo(mapa)
+                  .bindPopup(`<strong>${nombre}</strong>`);
+                
+                destinoMarker.openPopup();
+                document.getElementById('buscador').value = nombre.split(',')[0];
+                sugerenciasContainer.style.display = 'none';
+                
+                // Calcular ruta si tenemos ubicación del usuario
+                calcularRutaADestino(latlng);
+              });
+              
+              // Agregar evento al item completo
+              item.addEventListener('click', function() {
+                const lat = parseFloat(boton.getAttribute('data-lat'));
+                const lon = parseFloat(boton.getAttribute('data-lon'));
+                const nombre = boton.getAttribute('data-nombre');
+                
+                const latlng = [lat, lon];
+                mapa.setView(latlng, 18);
+                
+                if (destinoMarker) {
+                  mapa.removeLayer(destinoMarker);
+                }
+                destinoMarker = L.marker(latlng, {
+                  icon: L.icon({
+                    iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                    iconSize: [32, 32],
+                    className: 'marker-icon-red'
+                  })
+                }).addTo(mapa)
+                  .bindPopup(`<strong>${nombre}</strong>`);
+                
+                destinoMarker.openPopup();
+                document.getElementById('buscador').value = nombre.split(',')[0];
+                sugerenciasContainer.style.display = 'none';
+              });
+              
+              sugerenciasContainer.appendChild(item);
+            });
+            sugerenciasContainer.style.display = 'block';
+          } else {
+            sugerenciasContainer.innerHTML = '<div class="sugerencia-item">No se encontraron resultados para: ' + consulta + '</div>';
+            sugerenciasContainer.style.display = 'block';
+          }
+        })
+        .catch(error => {
+          console.error("Error con Nominatim:", error);
+          sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Error al buscar. Intenta con otra formulación.</div>';
+          sugerenciasContainer.style.display = 'block';
+        });
+    }
+
+    // Función para buscar en los puntos locales
+    function buscarEnPuntosLocales(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      const termino = consulta.toLowerCase();
+      const resultados = marcadoresOriginales.filter(m => 
+        m.datosBusqueda.includes(termino)
+      );
+      
+      if (resultados.length > 0) {
+        sugerenciasContainer.innerHTML = '';
+        
+        resultados.forEach(marcador => {
+          const loc = marcador.datosUbicacion;
+          const item = document.createElement('div');
+          item.className = 'sugerencia-item';
+          item.innerHTML = `
+            <div class="sugerencia-texto">
+              <strong>📍 ${loc.nombre}</strong><br>
+              <small>${loc.direccion}</small>
+            </div>
+            <button class="sugerencia-boton" data-id="${loc.id}">
+              Cómo llegar
+            </button>
+          `;
+          
+          // Agregar evento al botón "Cómo llegar"
+          const boton = item.querySelector('.sugerencia-boton');
+          boton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = this.getAttribute('data-id');
+            calcularRutaUbicacion(id);
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          // Agregar evento al item completo
+          item.addEventListener('click', function() {
+            mapa.setView(marcador.getLatLng(), 17);
+            marcador.openPopup();
+            document.getElementById('buscador').value = loc.nombre;
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          sugerenciasContainer.appendChild(item);
+        });
+        sugerenciasContainer.style.display = 'block';
+        return true;
+      }
+      return false;
+    }
+
+    // Función para manejar teclas en el buscador
+    function handleSearchKeydown(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const termino = document.getElementById('buscador').value.trim();
+        if (termino) {
+          buscarConNominatim(termino);
+        }
+      }
+    }
+
+    // Función para calcular ruta a un destino específico (coordenadas)
+    function calcularRutaADestino(destinoLatLng) {
+      // Limpiar ruta existente
+      if (rutaControl) {
+        mapa.removeControl(rutaControl);
+        rutaControl = null;
+      }
+      
+      // Obtener ubicación actual del usuario
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            
+            // Calcular ruta desde la ubicación actual hasta el destino
+            rutaControl = L.Routing.control({
+              waypoints: [
+                L.latLng(latitude, longitude),
+                L.latLng(destinoLatLng[0], destinoLatLng[1])
+              ],
+              routeWhileDragging: false,
+              show: true,
+              addWaypoints: false,
+              draggableWaypoints: false,
+              fitSelectedRoutes: true,
+              lineOptions: {
+                styles: [{color: '#9b59b6', opacity: 0.7, weight: 5}]
+              },
+              router: L.Routing.osrmv1({
+                serviceUrl: 'https://router.project-osrm.org/route/v1',
+                profile: 'car'
+              }),
+              createMarker: function() { return null; }
+            }).addTo(mapa);
+            
+            rutaActiva = true;
+            
+            // Acercar el zoom después de calcular la ruta
+            setTimeout(() => {
+              mapa.setZoom(15);
+            }, 1000);
+          },
+          (error) => {
+            console.log(`Error al obtener ubicación: ${error.message}`);
+            alert('No se pudo obtener tu ubicación para calcular la ruta.');
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        alert('Tu navegador no soporta geolocalización.');
+      }
+    }
+
+    // Función para abrir WhatsApp
+    function abrirWhatsApp(telefono, nombre) {
+      const numeroLimpio = telefono.replace(/\D/g, '');
+      const mensaje = `Hola ${nombre}, me interesa conocer más sobre sus servicios de contraentrega.`;
+      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
+    }
+
     // Función para centrar el mapa en la ubicación actual
     function centrarMapa() {
       if (userMarker) {
-        mapa.setView(userMarker.getLatLng(), 15);
+        mapa.setView(userMarker.getLatLng(), 17);
       } else {
         obtenerUbicacionUsuario();
       }
@@ -667,12 +717,17 @@
               },
               router: L.Routing.osrmv1({
                 serviceUrl: 'https://router.project-osrm.org/route/v1',
-                profile: 'car' // Usar perfil para carro
+                profile: 'car'
               }),
-              createMarker: function() { return null; } // No crear marcadores adicionales
+              createMarker: function() { return null; }
             }).addTo(mapa);
             
             rutaActiva = true;
+            
+            // Acercar el zoom después de calcular la ruta
+            setTimeout(() => {
+              mapa.setZoom(15);
+            }, 1000);
           },
           (error) => {
             console.log(`Error al obtener ubicación: ${error.message}`);
@@ -683,215 +738,6 @@
       } else {
         alert('Tu navegador no soporta geolocalización.');
       }
-    }
-
-    // Función para seleccionar punto (origen o destino)
-    function seleccionarPunto(tipo, idPunto) {
-      const punto = UBICACIONES.find(p => p.id === idPunto);
-      if (!punto) return;
-      
-      // Si ya tenemos ambos puntos, reiniciamos
-      if (puntoOrigenSeleccionado && puntoDestinoSeleccionado) {
-        resetearSelecciones();
-      }
-      
-      // Asignar el punto según el tipo de selección
-      if (tipo === 'enviar') {
-        puntoOrigenSeleccionado = punto;
-        modoSeleccion = 'enviar';
-      } else {
-        puntoDestinoSeleccionado = punto;
-        modoSeleccion = 'recibir';
-      }
-      
-      // Mostrar panel
-      document.getElementById('panel-cotizacion').style.display = 'block';
-      document.getElementById('opciones-tarifa').innerHTML = '';
-      document.getElementById('formulario-envio').style.display = 'none';
-      document.getElementById('mensaje-exito').style.display = 'none';
-      document.getElementById('confirmar-envio').style.display = 'none';
-      
-      // Eliminar marcadores y ruta anteriores
-      if (origenMarker) mapa.removeLayer(origenMarker);
-      if (destinoMarker) mapa.removeLayer(destinoMarker);
-      if (rutaControl) {
-        mapa.removeControl(rutaControl);
-        rutaControl = null;
-        rutaActiva = false;
-      }
-
-      origenMarker = null;
-      destinoMarker = null;
-
-      // Resaltar los puntos seleccionados
-      marcadoresOriginales.forEach(marcador => {
-        const ubicacion = marcador.datosUbicacion;
-        
-        if (puntoOrigenSeleccionado && ubicacion.id === puntoOrigenSeleccionado.id) {
-          origenMarker = marcador;
-          origenMarker.setIcon(L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
-            iconSize: [32, 32],
-            className: 'marker-icon-green'
-          }));
-        } else if (puntoDestinoSeleccionado && ubicacion.id === puntoDestinoSeleccionado.id) {
-          destinoMarker = marcador;
-          destinoMarker.setIcon(L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776030.png',
-            iconSize: [32, 32],
-            className: 'marker-icon-red'
-          }));
-        } else {
-          // Restaurar icono original
-          marcador.setIcon(L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
-            iconSize: [32, 32],
-            className: ubicacion.tipo === 'socio' ? 'marker-icon-orange' : 'marker-icon-green'
-          }));
-        }
-      });
-
-      // Si tenemos ambos puntos, calcular cotización
-      if (puntoOrigenSeleccionado && puntoDestinoSeleccionado) {
-        mostrarCotizacion();
-      } else {
-        // Mostrar mensaje para seleccionar el otro punto
-        document.getElementById('cotizacion-resultado').innerHTML = `
-          <p>${modoSeleccion === 'enviar' ? 'Enviando desde' : 'Recibiendo en'}: <strong>${tipo === 'enviar' ? puntoOrigenSeleccionado.nombre : puntoDestinoSeleccionado.nombre}</strong></p>
-          <p>Seleccione el ${tipo === 'enviar' ? 'destino' : 'origen'} en el mapa</p>
-        `;
-        
-        // Configurar evento de clic en los marcadores para seleccionar el otro punto
-        marcadoresOriginales.forEach(marcador => {
-          marcador.off('click');
-          marcador.on('click', function(e) {
-            const ubicacion = e.target.datosUbicacion;
-            
-            // No permitir seleccionar el mismo punto como origen y destino
-            if ((puntoOrigenSeleccionado && ubicacion.id === puntoOrigenSeleccionado.id) || 
-                (puntoDestinoSeleccionado && ubicacion.id === puntoDestinoSeleccionado.id)) {
-              return;
-            }
-            
-            // Seleccionar el otro punto según el modo
-            if (modoSeleccion === 'enviar') {
-              puntoDestinoSeleccionado = ubicacion;
-            } else {
-              puntoOrigenSeleccionado = ubicacion;
-            }
-            
-            mostrarCotizacion();
-          });
-        });
-      }
-    }
-
-    // Función para mostrar la cotización
-    function mostrarCotizacion() {
-      // Determinar origen y destino según el modo
-      const origen = modoSeleccion === 'enviar' ? puntoOrigenSeleccionado : puntoDestinoSeleccionado;
-      const destino = modoSeleccion === 'enviar' ? puntoDestinoSeleccionado : puntoOrigenSeleccionado;
-
-      // Mostrar mensaje de cálculo
-      document.getElementById('cotizacion-resultado').innerHTML = `
-        <p>${modoSeleccion === 'enviar' ? 'Enviando desde' : 'Recibiendo en'}: <strong>${origen.nombre}</strong></p>
-        <p>${modoSeleccion === 'enviar' ? 'Hacia' : 'Desde'}: <strong>${destino.nombre}</strong></p>
-        <p>Calculando ruta y tarifas...</p>
-      `;
-      
-      // Actualizar marcadores
-      marcadoresOriginales.forEach(marcador => {
-        const ubicacion = marcador.datosUbicacion;
-        
-        if (ubicacion.id === origen.id) {
-          origenMarker = marcador;
-          origenMarker.setIcon(L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
-            iconSize: [32, 32],
-            className: 'marker-icon-green'
-          }));
-        } else if (ubicacion.id === destino.id) {
-          destinoMarker = marcador;
-          destinoMarker.setIcon(L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776030.png',
-            iconSize: [32, 32],
-            className: 'marker-icon-red'
-          }));
-        }
-      });
-      
-      // Calcular cotización con ruta real
-      calcularCotizacion(
-        { 
-          lat: origen.latlng[0], 
-          lng: origen.latlng[1] 
-        },
-        { 
-          lat: destino.latlng[0], 
-          lng: destino.latlng[1] 
-        },
-        (cotizaciones) => {
-          document.getElementById('cotizacion-resultado').innerHTML = `
-            <p>${modoSeleccion === 'enviar' ? 'Enviando desde' : 'Recibiendo en'}: <strong>${origen.nombre}</strong></p>
-            <p>${modoSeleccion === 'enviar' ? 'Hacia' : 'Desde'}: <strong>${destino.nombre}</strong></p>
-            <p><strong>Distancia:</strong> ${cotizaciones[0].distancia} km</p>
-          `;
-          
-          // Mostrar opciones de tarifa
-          mostrarOpcionesTarifa(cotizaciones);
-        }
-      );
-    }
-
-    // Función para mostrar opciones de tarifa
-    function mostrarOpcionesTarifa(cotizaciones) {
-      const opcionesContainer = document.getElementById('opciones-tarifa');
-      opcionesContainer.innerHTML = '';
-      
-      // Determinar origen y destino según el modo
-      const origen = modoSeleccion === 'enviar' ? puntoOrigenSeleccionado : puntoDestinoSeleccionado;
-      const destino = modoSeleccion === 'enviar' ? puntoDestinoSeleccionado : puntoOrigenSeleccionado;
-
-      // Mostrar información de los puntos seleccionados
-      const infoPuntos = `
-        <div class="punto-seleccionado">
-          <strong>${modoSeleccion === 'enviar' ? 'Origen' : 'Destino'}:</strong> ${origen.nombre}<br>
-          <small>${origen.direccion}</small>
-        </div>
-        <div class="punto-seleccionado">
-          <strong>${modoSeleccion === 'enviar' ? 'Destino' : 'Origen'}:</strong> ${destino.nombre}<br>
-          <small>${destino.direccion}</small>
-        </div>
-      `;
-      opcionesContainer.innerHTML = infoPuntos;
-      
-      // Mostrar opciones de tarifas
-      cotizaciones.forEach((tarifa, index) => {
-        const tarifaElement = document.createElement('div');
-        tarifaElement.className = 'tarifa-option';
-        tarifaElement.innerHTML = `
-          <div class="tarifa-nombre">${tarifa.icono} ${tarifa.nombre}</div>
-          <div class="tarifa-precio">${tarifa.precioFormateado}</div>
-          <div class="tarifa-tiempo">${tarifa.tiempo} min • ${tarifa.distancia} km</div>
-          <div style="font-size:0.8em;margin-top:5px">${tarifa.descripcion}</div>
-        `;
-        
-        tarifaElement.addEventListener('click', () => {
-          // Remover selección anterior
-          document.querySelectorAll('.tarifa-option').forEach(el => {
-            el.classList.remove('selected');
-          });
-          
-          // Seleccionar esta tarifa
-          tarifaElement.classList.add('selected');
-          tarifaSeleccionada = tarifa;
-          
-          // Mostrar botón de confirmar
-          document.getElementById('confirmar-envio').style.display = 'block';
-        });
-        
-        opcionesContainer.appendChild(tarifaElement);
-      });
     }
 
     // Función para obtener ubicación del usuario
@@ -907,7 +753,7 @@
               3.484941, -76.545259
             );
             
-            if (distanciaACali > 30) { // 30km de radio desde centro de Cali
+            if (distanciaACali > 30) {
               alert('El servicio solo está disponible en Cali y sus alrededores');
               return;
             }
@@ -927,8 +773,8 @@
             }).addTo(mapa)
               .bindPopup('¡Tu ubicación actual!');
               
-            // Centrar mapa en la ubicación del usuario
-            mapa.setView([latitude, longitude], 15);
+            // Centrar mapa en la ubicación del usuario avec zoom cercano
+            mapa.setView([latitude, longitude], 17);
           },
           (error) => {
             console.log(`Error al obtener ubicación: ${error.message}`);
@@ -942,7 +788,7 @@
 
     // Función para calcular distancia en km (fórmula Haversine)
     function calcularDistancia(lat1, lon1, lat2, lon2) {
-      const R = 6371; // Radio de la Tierra en km
+      const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLon = (lon2 - lon1) * Math.PI / 180;
       const a = 
@@ -951,226 +797,6 @@
         Math.sin(dLon/2) * Math.sin(dLon/2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
       return R * c;
-    }
-
-    // Función para calcular ruta por carreteras usando OSRM
-    function calcularRuta(origen, destino, callback) {
-      if (rutaControl) {
-        mapa.removeControl(rutaControl);
-      }
-      
-      rutaControl = L.Routing.control({
-        waypoints: [
-          L.latLng(origen.lat, origen.lng),
-          L.latLng(destino.lat, destino.lng)
-        ],
-        routeWhileDragging: false,
-        show: false,
-        addWaypoints: false,
-        draggableWaypoints: false,
-        fitSelectedRoutes: true,
-        lineOptions: {
-          styles: [{color: '#0066cc', opacity: 0.7, weight: 5}]
-        },
-        router: L.Routing.osrmv1({
-          serviceUrl: 'https://router.project-osrm.org/route/v1',
-          profile: 'car' // Usar perfil para carro
-        })
-      }).addTo(mapa);
-      
-      rutaControl.on('routesfound', function(e) {
-        const routes = e.routes;
-        if (routes && routes.length > 0) {
-          const route = routes[0];
-          callback({
-            distancia: (route.summary.totalDistance / 1000).toFixed(2), // en km
-            tiempo: (route.summary.totalTime / 60).toFixed(0) // en minutos
-          });
-        }
-      });
-    }
-
-    // Función para calcular cotización al estilo Uber
-    function calcularCotizacion(origen, destino, callback) {
-      calcularRuta(origen, destino, function(ruta) {
-        const distancia = parseFloat(ruta.distancia);
-        const tiempoBase = parseFloat(ruta.tiempo);
-        
-        // Factor de demanda aleatorio (simulado)
-        const factorDemanda = 1 + (Math.random() * 0.3); // 1.0 a 1.3
-        
-        // Calcular tarifas para cada opción
-        const cotizaciones = TARIFAS.map(tarifa => {
-          // Ajustar tiempo según velocidad promedio del servicio
-          const tiempoEstimado = Math.max(
-            Math.round((distancia / tarifa.velocidadPromedio) * 60 * 0.8), // 80% del tiempo teórico
-            tiempoBase
-          );
-          
-          const precioBase = tarifa.tarifaBase + (distancia * tarifa.tarifaPorKm);
-          const precioFinal = Math.round(precioBase * tarifa.multiplicadorDemanda * factorDemanda);
-          
-          return {
-            ...tarifa,
-            distancia: distancia.toFixed(2),
-            precio: precioFinal,
-            tiempo: tiempoEstimado,
-            precioFormateado: precioFinal.toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }),
-            ruta: ruta
-          };
-        });
-        
-        callback(cotizaciones);
-      });
-    }
-
-    // Función para confirmar envío
-    function confirmarEnvio() {
-      if (!tarifaSeleccionada || !puntoOrigenSeleccionado || !puntoDestinoSeleccionado) {
-        alert('Por favor seleccione una tarifa primero');
-        return;
-      }
-      
-      // Mostrar formulario y ocultar botón de confirmar
-      document.getElementById('confirmar-envio').style.display = 'none';
-      document.getElementById('formulario-envio').style.display = 'block';
-    }
-
-    // Función para enviar solicitud al formulario de Forminator
-    function enviarSolicitud() {
-      const nombre = document.getElementById('nombre-cliente').value.trim();
-      const telefono = document.getElementById('telefono-cliente').value.trim();
-      const nombreDestinatario = document.getElementById('nombre-destinatario').value.trim();
-      const telefonoDestinatario = document.getElementById('telefono-destinatario').value.trim();
-      
-      if (!nombre || !telefono || !nombreDestinatario || !telefonoDestinatario) {
-        alert('Por favor complete todos los campos');
-        return;
-      }
-      
-      // Validar formato de teléfono
-      if (!/^[0-9]{10,15}$/.test(telefono) || !/^[0-9]{10,15}$/.test(telefonoDestinatario)) {
-        alert('Por favor ingrese números de teléfono válidos');
-        return;
-      }
-      
-      // Mostrar spinner y deshabilitar botón
-      document.getElementById('spinner').style.display = 'inline-block';
-      document.getElementById('submit-text').textContent = 'Enviando...';
-      document.getElementById('enviar-solicitud').disabled = true;
-      
-      // Determinar origen y destino según el modo
-      const origen = modoSeleccion === 'enviar' ? puntoOrigenSeleccionado : puntoDestinoSeleccionado;
-      const destino = modoSeleccion === 'enviar' ? puntoDestinoSeleccionado : puntoOrigenSeleccionado;
-      
-      // Crear objeto de datos para enviar
-      const datosEnvio = {
-        "forminator_nonce": "nonce_value", // Este valor debería generarse dinámicamente
-        "form_id": "123", // ID del formulario Forminator
-        "nombre-remitente": nombre,
-        "telefono-remitente": telefono,
-        "nombre-destinatario": nombreDestinatario,
-        "telefono-destinatario": telefonoDestinatario,
-        "tipo-servicio": modoSeleccion,
-        "tarifa-id": tarifaSeleccionada.id,
-        "tarifa-nombre": tarifaSeleccionada.nombre,
-        "tarifa-precio": tarifaSeleccionada.precio,
-        "tiempo-estimado": tarifaSeleccionada.tiempo,
-        "distancia": tarifaSeleccionada.distancia,
-        "origen-id": origen.id,
-        "origen-nombre": origen.nombre,
-        "origen-direccion": origen.direccion,
-        "origen-telefono": origen.telefono,
-        "destino-id": destino.id,
-        "destino-nombre": destino.nombre,
-        "destino-direccion": destino.direccion,
-        "destino-telefono": destino.telefono,
-        "fecha-solicitud": new Date().toISOString()
-      };
-      
-      // Enviar datos al endpoint de Forminator
-      fetch(FORM_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams(datosEnvio)
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Error en la respuesta del servidor');
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Mostrar mensaje de éxito
-        document.getElementById('formulario-envio').style.display = 'none';
-        document.getElementById('mensaje-exito').style.display = 'block';
-        
-        // Restaurar botón
-        document.getElementById('spinner').style.display = 'none';
-        document.getElementById('submit-text').textContent = 'SOLICITAR ENVÍO';
-        document.getElementById('enviar-solicitud').disabled = false;
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        alert('Hubo un error al enviar la solicitud. Por favor intente nuevamente.');
-        
-        // Restaurar botón
-        document.getElementById('spinner').style.display = 'none';
-        document.getElementById('submit-text').textContent = 'SOLICITAR ENVÍO';
-        document.getElementById('enviar-solicitud').disabled = false;
-      });
-    }
-
-    // Función para resetear el formulario
-    function resetearFormulario() {
-      document.getElementById('nombre-cliente').value = '';
-      document.getElementById('telefono-cliente').value = '';
-      document.getElementById('nombre-destinatario').value = '';
-      document.getElementById('telefono-destinatario').value = '';
-      document.getElementById('formulario-envio').style.display = 'none';
-      document.getElementById('mensaje-exito').style.display = 'none';
-      document.getElementById('confirmar-envio').style.display = 'none';
-      document.getElementById('opciones-tarifa').innerHTML = '';
-      document.getElementById('cotizacion-resultado').innerHTML = '';
-    }
-
-    // Función para resetear las selecciones
-    function resetearSelecciones() {
-      // Restaurar iconos originales
-      marcadoresOriginales.forEach(marcador => {
-        const ubicacion = marcador.datosUbicacion;
-        marcador.setIcon(L.icon({
-          iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
-          iconSize: [32, 32],
-          className: ubicacion.tipo === 'socio' ? 'marker-icon-orange' : 'marker-icon-green'
-        }));
-      });
-      
-      // Limpiar ruta
-      if (rutaControl) {
-        mapa.removeControl(rutaControl);
-        rutaControl = null;
-        rutaActiva = false;
-      }
-      
-      // Limpiar selecciones
-      origenMarker = null;
-      destinoMarker = null;
-      puntoOrigenSeleccionado = null;
-      puntoDestinoSeleccionado = null;
-      tarifaSeleccionada = null;
-      modoSeleccion = null;
-      
-      // Reactivar eventos de clic en los marcadores
-      marcadoresOriginales.forEach(marcador => {
-        marcador.off('click');
-        marcador.on('click', function() {
-          // Abrir popup al hacer clic
-          this.openPopup();
-        });
-      });
     }
   </script>
 </body>
