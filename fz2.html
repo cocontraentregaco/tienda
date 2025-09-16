@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Catálogo CaliValle | QR Contra Entrega</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -27,6 +27,7 @@
             background-color: var(--color-blanco);
             color: var(--color-negro);
             line-height: 1.6;
+            font-size: 16px; /* Tamaño de fuente base para evitar zoom */
         }
         
         /* Header */
@@ -130,6 +131,7 @@
             border: 1px solid var(--color-gris-medio);
             border-radius: 4px;
             font-family: 'Libre Baskerville', serif;
+            font-size: 16px; /* Prevenir zoom en iOS */
         }
         
         .category-filter {
@@ -200,6 +202,7 @@
             transform: translateY(-50%);
             opacity: 0;
             transition: opacity 0.3s;
+            display: none; /* Ocultar navegación de imágenes para simplificar */
         }
         
         .product-image-container:hover .image-nav {
@@ -424,6 +427,7 @@
             border: 1px solid var(--color-gris-medio);
             border-radius: 4px;
             font-family: 'Libre Baskerville', serif;
+            font-size: 16px; /* Prevenir zoom en iOS */
         }
         
         .checkout-buttons {
@@ -632,6 +636,11 @@
             .footer-content {
                 flex-direction: column;
             }
+            
+            /* Ajustes para evitar zoom en formularios móviles */
+            input, select, textarea {
+                font-size: 16px !important;
+            }
         }
         
         @media (max-width: 480px) {
@@ -648,10 +657,6 @@
             
             .item-quantity {
                 align-self: flex-end;
-            }
-            
-            .image-nav {
-                opacity: 1;
             }
             
             .products-grid {
@@ -711,6 +716,13 @@
             .scroll-content {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+        
+        /* Estilo específico para prevenir zoom en iOS */
+        @media screen and (max-width: 767px) {
+            input, textarea, select {
+                font-size: 16px !important;
             }
         }
     </style>
@@ -880,7 +892,7 @@
                 productUrl: "https://ejemplo.com/productos/auriculares-inalambricos",
                 images: [
                     "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1572536147248-ac59a8abfa4b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
+                    "https://images.unsplash.com/photo-1572536147248-ac59a8abfa4b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=c crop&w=600&q=80"
                 ]
             },
             {
@@ -928,7 +940,7 @@
                 productUrl: "https://ejemplo.com/productos/altavoz-bluetooth",
                 images: [
                     "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1546435770-a3e426bf472b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D&auto=format&fit=crop&w=600&q=80"
+                    "https://images.unsplash.com/photo-1546435770-a3e426bf472b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
                 ]
             },
             {
@@ -1009,14 +1021,6 @@
                     <a href="${product.productUrl}" class="product-link" target="_blank">
                         <div class="product-image-container">
                             <img src="${product.images[0]}" alt="${product.title}" class="product-image" data-product-id="${product.id}" data-image-index="0">
-                            <div class="image-nav">
-                                <button class="nav-btn prev-btn" data-product-id="${product.id}">
-                                    <i class="fas fa-chevron-left"></i>
-                                </button>
-                                <button class="nav-btn next-btn" data-product-id="${product.id}">
-                                    <i class="fas fa-chevron-right"></i>
-                                </button>
-                            </div>
                         </div>
                     </a>
                     <div class="product-info">
@@ -1053,15 +1057,6 @@
                     openDirectPurchase(productId);
                 });
             });
-            
-            // Agregar event listeners a los botones de navegación de imágenes
-            document.querySelectorAll('.nav-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const productId = parseInt(e.target.closest('.nav-btn').getAttribute('data-product-id'));
-                    const isNext = e.target.closest('.nav-btn').classList.contains('next-btn');
-                    navigateImage(productId, isNext);
-                });
-            });
         }
 
         // Abrir modal para compra directa
@@ -1088,27 +1083,6 @@
             
             // Mostrar modal
             directPurchaseModal.style.display = 'flex';
-        }
-
-        // Navegar entre imágenes de un producto
-        function navigateImage(productId, isNext) {
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
-            
-            const imageElement = document.querySelector(`.product-image[data-product-id="${productId}"]`);
-            if (!imageElement) return;
-            
-            let currentIndex = parseInt(imageElement.getAttribute('data-image-index'));
-            let newIndex;
-            
-            if (isNext) {
-                newIndex = (currentIndex + 1) % product.images.length;
-            } else {
-                newIndex = (currentIndex - 1 + product.images.length) % product.images.length;
-            }
-            
-            imageElement.src = product.images[newIndex];
-            imageElement.setAttribute('data-image-index', newIndex);
         }
 
         // Filtrar productos
