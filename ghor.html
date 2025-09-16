@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Auriculares Inalámbricos | CaliValle</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -27,6 +27,7 @@
             background-color: var(--color-blanco);
             color: var(--color-negro);
             line-height: 1.6;
+            font-size: 16px; /* Tamaño de fuente base para evitar zoom */
         }
         
         /* Header */
@@ -296,53 +297,7 @@
         /* Related Products */
         .related-products {
             margin: 3rem 0;
-        }
-        
-        .related-products h2 {
-            margin-bottom: 1.5rem;
-            font-size: 1.8rem;
-        }
-        
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .product-card {
-            border: 1px solid var(--color-gris-medio);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-        
-        .product-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-bottom: 1px solid var(--color-gris-medio);
-        }
-        
-        .product-card-info {
-            padding: 1rem;
-        }
-        
-        .product-card-title {
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-        }
-        
-        .product-card-price {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--color-gris-oscuro);
+            display: none; /* Ocultar productos relacionados para enfocar en el formulario */
         }
         
         /* Cart Modal */
@@ -475,6 +430,7 @@
             border: 1px solid var(--color-gris-medio);
             border-radius: 4px;
             font-family: 'Libre Baskerville', serif;
+            font-size: 16px; /* Prevenir zoom en iOS */
         }
         
         .checkout-buttons {
@@ -605,6 +561,11 @@
         .footer-section {
             flex: 1;
             min-width: 250px;
+            display: none; /* Ocultar secciones del footer para enfocar en el formulario */
+        }
+        
+        .footer-section:nth-child(2) {
+            display: block; /* Mostrar solo la sección de contacto */
         }
         
         .footer-section h3 {
@@ -665,13 +626,14 @@
                 flex-direction: column;
             }
             
-            .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
             .cart-content, .direct-purchase-content {
                 width: 95%;
                 padding: 1rem;
+            }
+            
+            /* Ajustes para evitar zoom en formularios móviles */
+            input, select, textarea {
+                font-size: 16px !important;
             }
         }
         
@@ -693,10 +655,6 @@
                 font-size: 0.9rem;
             }
             
-            .products-grid {
-                grid-template-columns: 1fr;
-            }
-            
             .thumbnail {
                 width: 60px;
                 height: 60px;
@@ -710,6 +668,10 @@
             
             .item-quantity {
                 align-self: flex-end;
+            }
+            
+            .social-sharing {
+                display: none; /* Ocultar compartir en redes en móvil para enfocar en formulario */
             }
         }
         
@@ -725,6 +687,13 @@
             z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             transition: opacity 0.5s;
+        }
+        
+        /* Estilo específico para prevenir zoom en iOS */
+        @media screen and (max-width: 767px) {
+            input, textarea, select {
+                font-size: 16px !important;
+            }
         }
     </style>
 </head>
@@ -789,62 +758,6 @@
                         <i class="fas fa-shopping-bag"></i> Comprar Ahora
                     </button>
                 </div>
-                
-                <div class="social-sharing">
-                    <h3>Compartir producto:</h3>
-                    <div class="social-icons">
-                        <a href="#" class="social-icon facebook" id="shareFacebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="social-icon twitter" id="shareTwitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="social-icon whatsapp" id="shareWhatsApp">
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Video Section -->
-        <div class="video-section">
-            <h2>Videoreview del Producto</h2>
-            <div class="video-container">
-                <iframe src="https://www.youtube.com/embed/6NTIKDf2R-8" title="Review de auriculares inalámbricos" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-        </div>
-        
-        <!-- Related Products -->
-        <div class="related-products">
-            <h2>Productos Relacionados</h2>
-            <div class="products-grid">
-                <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Smartwatch Deportivo">
-                    <div class="product-card-info">
-                        <h3 class="product-card-title">Smartwatch Deportivo</h3>
-                        <p class="product-card-price">$199.99</p>
-                        <a href="producto-smartwatch.html" class="add-to-cart">Ver Detalles</a>
-                    </div>
-                </div>
-                
-                <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Altavoz Bluetooth">
-                    <div class="product-card-info">
-                        <h3 class="product-card-title">Altavoz Bluetooth</h3>
-                        <p class="product-card-price">$79.99</p>
-                        <a href="producto-altavoz.html" class="add-to-cart">Ver Detalles</a>
-                    </div>
-                </div>
-                
-                <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Tablet 10 Pulgadas">
-                    <div class="product-card-info">
-                        <h3 class="product-card-title">Tablet 10 Pulgadas</h3>
-                        <p class="product-card-price">$299.99</p>
-                        <a href="producto-tablet.html" class="add-to-cart">Ver Detalles</a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -883,7 +796,7 @@
             
             <div class="checkout-buttons">
                 <button class="checkout-btn whatsapp-btn" id="whatsappBtn" disabled>
-                    <i class="fab fa-whatsapp"></i> Finalizar compra por WhatsApp
+                    <i class="fab fa-whatsapp"></i> Comprar por WhatsApp
                 </button>
                 <button class="checkout-btn continue-shopping" id="continueShopping">Seguir comprando</button>
             </div>
@@ -940,11 +853,6 @@
                 <p><i class="fas fa-phone"></i> +57 123 456 7890</p>
                 <p><i class="fas fa-envelope"></i> info@calivalle.qrcontraentrega.com</p>
                 <p><i class="fas fa-map-marker-alt"></i> Calle 10 # 20-30, Cali, Colombia</p>
-                <div class="footer-social-icons">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-whatsapp"></i></a>
-                </div>
             </div>
             <div class="footer-section">
                 <h3>Enlaces Rápidos</h3>
@@ -989,11 +897,6 @@
         // Botones de producto
         const addToCartButton = document.getElementById('addToCart');
         const buyNowButton = document.getElementById('buyNow');
-        
-        // Botones para compartir
-        const shareFacebook = document.getElementById('shareFacebook');
-        const shareTwitter = document.getElementById('shareTwitter');
-        const shareWhatsApp = document.getElementById('shareWhatsApp');
         
         // Información del producto actual
         const currentProduct = {
@@ -1322,26 +1225,6 @@
             if (e.target === directPurchaseModal) {
                 directPurchaseModal.style.display = 'none';
             }
-        });
-
-        // Funcionalidad para compartir en redes sociales
-        shareFacebook.addEventListener('click', (e) => {
-            e.preventDefault();
-            const url = encodeURIComponent(window.location.href);
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
-        });
-
-        shareTwitter.addEventListener('click', (e) => {
-            e.preventDefault();
-            const text = encodeURIComponent('¡Mira estos auriculares increíbles de CaliValle!');
-            const url = encodeURIComponent(window.location.href);
-            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
-        });
-
-        shareWhatsApp.addEventListener('click', (e) => {
-            e.preventDefault();
-            const text = encodeURIComponent('¡Mira estos auriculares increíbles de CaliValle! ' + window.location.href);
-            window.open(`https://wa.me/?text=${text}`, '_blank');
         });
 
         // Inicializar la página
