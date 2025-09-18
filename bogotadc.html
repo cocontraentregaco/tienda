@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QRContraentrega - Bogotá, Colombia</title>
+  <title>Contraentrega Bogotá, Colombia.</title>
   <style>
     :root {
       --primary-color: #1a1a1a;
@@ -72,6 +73,10 @@
       border: none;
       cursor: pointer;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
     }
     
     .btn:hover {
@@ -79,9 +84,30 @@
       transform: translateY(-1px);
     }
     
+    .btn-centrar {
+      background-color: #0066cc;
+    }
+    
+    .btn-ruta {
+      background-color: #9b59b6;
+    }
+    
+    .btn-info {
+      background-color: #3498db;
+    }
+    
+    .btn-whatsapp {
+      background-color: #25D366;
+    }
+    
+    .btn-solicitar {
+      background-color: #e74c3c;
+    }
+    
     #mapa { 
       flex: 1; 
       background: #f0f0f0; 
+      width: 100%;
     }
     
     .cluster-marcadores { 
@@ -100,57 +126,237 @@
       border-radius: var(--border-radius); 
       box-shadow: var(--box-shadow);
     }
-    
+
+    /* MODIFICACIÓN: Selector de mapa en la parte inferior izquierda */
+    .leaflet-control-layers {
+      position: absolute;
+      left: 10px;
+      bottom: 30px;
+      top: auto !important;
+      right: auto !important;
+    }
+
+    .whatsapp-icon {
+      width: 16px;
+      height: 16px;
+      filter: invert(1);
+    }
+
+    .popup-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .popup-button-row {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+    }
+
+    .sugerencias-busqueda {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .sugerencia-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sugerencia-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    .sugerencia-texto {
+      flex: 1;
+    }
+
+    .sugerencia-boton {
+      margin-left: 10px;
+      padding: 5px 10px;
+      background-color: #9b59b6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .contenedor-buscador {
+      position: relative;
+      flex: 1;
+    }
+
+    .cargando {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     @media (max-width: 768px) { 
       #barra-superior { 
         flex-direction: column; 
         gap: 0.6rem;
+      }
+      
+      .popup-button-row {
+        flex-direction: column;
+      }
+
+      .sugerencia-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .sugerencia-boton {
+        margin-left: 0;
+        margin-top: 5px;
+        align-self: flex-end;
+      }
+
+      /* MODIFICACIÓN: Ajuste para móviles */
+      .leaflet-control-layers {
+        bottom: 10px;
+        left: 5px;
       }
     }
   </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
 </head>
 <body>
   <div id="contenedor-mapa">
     <div id="barra-superior">
-      <input type="search" id="buscador" placeholder="Buscar Productos y Servicios en Bogotá..." enterkeyhint="search">
-      <button class="btn" id="b2b-btn">VER TODO</button>
+      <div class="contenedor-buscador">
+        <input type="search" id="buscador" placeholder="Buscar Afiliados en Bogotá…" enterkeyhint="search">
+        <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+      </div>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://bogota.qrcontraentrega.com/afiliacion', '_blank')">AFILIARSE</button>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://bogota.qrcontraentrega.com/solicitar-envio', '_blank')">SOLICITAR ENVÍO</button>
+      <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://bogota.qrcontraentrega.com', '_blank')">MARKETPLACE</button>
     </div>
     <div id="mapa"></div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
   <script>
+    // Variables globales
+    let mapa;
+    let userMarker;
+    let rutaControl = null;
+    let rutaActiva = false;
+    let marcadoresOriginales = [];
+    let destinoMarker = null;
+    let buscadorTimeout;
+
+    // Datos de ubicaciones en Bogotá (solo socios)
+    const UBICACIONES = [
+      { 
+        "id": "hermanosdreams",
+        "nombre": "@hermanosdreams", 
+        "direccion": "Cra. 15 #93-75, Bogotá", 
+        "latlng": [4.676191, -74.050118], 
+        "url": "https://hermanosdreams.qrcontraentrega.com/",
+        "telefono": "+573041146297",
+        "horario": "L - V 09:00 a 17:00",
+        "servicios": "Tienda de productos nutricionales",
+        "tipo": "socio"
+      },
+      { 
+        "id": "tiendasaludable",
+        "nombre": "Tienda Saludable", 
+        "direccion": "Cl. 82 #11-50, Bogotá", 
+        "latlng": [4.666667, -74.056667], 
+        "url": "https://tiendasaludable.qrcontraentrega.com/",
+        "telefono": "+573124567890",
+        "horario": "L - D 07:00 a 22:00",
+        "servicios": "Productos orgánicos y suplementos",
+        "tipo": "socio"
+      }
+    ];
+
+    // Inicializar el mapa cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeMap();
+      
+      // Evento para el botón centrar
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
+      
+      // Eventos para el buscador
+      const searchInput = document.getElementById('buscador');
+      searchInput.addEventListener('input', handleSearchInput);
+      searchInput.addEventListener('keydown', handleSearchKeydown);
+      
+      // Cerrar sugerencias al hacer clic fuera
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.contenedor-buscador')) {
+          document.getElementById('sugerencias-busqueda').style.display = 'none';
+        }
+      });
+    });
+
     function initializeMap() {
-      // Configuración de capas
+      // Configuración de capas - Maxar WorldView Legion (alta definición)
       const capas = {
-        "Maxar": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        "Maxar WorldView Legion": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
           attribution: 'Satellite: Maxar WorldView Legion',
-          maxZoom: 18,
-          maxNativeZoom: 18,
+          maxZoom: 19,
+          maxNativeZoom: 19,
           detectRetina: true
         }),
-        "OSM": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors',
+        "OpenStreetMap": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
           maxZoom: 19
         })
       };
 
       // Inicializar mapa
-      const mapa = L.map('mapa', {
-        center: [4.7110, -74.0721], // Coordenadas de Bogotá
-        zoom: 12,
-        layers: [capas["Maxar"]],
+      mapa = L.map('mapa', {
+        center: [4.676191, -74.050118], // Coordenadas de Bogotá
+        zoom: 15,
+        layers: [capas["Maxar WorldView Legion"]],
         zoomControl: false
       });
 
+      // Asegurar que el mapa ocupe todo el espacio disponible
+      setTimeout(() => {
+        mapa.invalidateSize();
+      }, 0);
+
       // Controles del mapa
       L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+      
+      // MODIFICACIÓN: Selector de capas en la parte inferior izquierda
       L.control.layers(capas, null, { 
-        position: 'topright',
+        position: 'bottomleft', // Cambiado de 'topright' a 'bottomleft'
         collapsed: false
       }).addTo(mapa);
 
@@ -166,103 +372,437 @@
         zoomToBoundsOnClick: true
       });
 
-      // Datos de ubicaciones en Bogotá
-      const ubicaciones = [
-        { 
-          "nombre": "@nanostore", 
-          "direccion": "Cra 15 # 88-64, Bogotá, Colombia", 
-          "latlng": [4.6789, -74.0567], 
-          "url": "https://nanostore.contraentregaco.com/",
-          "telefono": "+57 3041146297",
-          "horario": "L - V 09:00 a 17:00",
-          "servicios": "Tienda para mascotas"
-        }, 
-        { 
-          "nombre": "@isolinatienda", 
-          "direccion": "Cra 15 # 88-64, Bogotá, Colombia", 
-          "latlng": [4.6789, -74.0567], 
-          "url": "https://isolinatienda.contraentregaco.com/",
-          "telefono": "+57 3041146297",
-          "horario": "L - V 09:00 a 17:00",
-          "servicios": "Tienda para el hogar"
-        },
-        { 
-          "nombre": "@hermanosdreams", 
-          "direccion": "Cra 15 # 88-64, Bogotá, Colombia", 
-          "latlng": [4.7110, -74.0721], 
-          "url": "https://hermanosdreams.qrcontraentrega.com/",
-          "telefono": "+57 3041146297",
-          "horario": "L - V 09:00 a 17:00",
-          "servicios": "Tienda de productos nutricionales"
-        },
-      ];
-
-      // Crear marcadores
-      const todosMarcadores = [];
-      ubicaciones.forEach(loc => {
-        const marcador = L.marker(loc.latlng).bindPopup(`
+      // Crear marcadores (solo socios)
+      UBICACIONES.forEach(loc => {
+        const marcador = L.marker(loc.latlng, {
+          icon: L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+            iconSize: [32, 32],
+            className: 'marker-icon-orange'
+          })
+        }).bindPopup(`
           <div style="min-width:220px">
             <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
             <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
-            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><i class="fas fa-phone" style="margin-right:5px"></i> ${loc.telefono}</p>` : ''}
-            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><i class="fas fa-clock" style="margin-right:5px"></i> ${loc.horario}</p>` : ''}
-            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><i class="fas fa-boxes" style="margin-right:5px"></i> ${loc.servicios}</p>` : ''}
-            <a href="${loc.url}" style="display:inline-block;background:var(--accent-color);color:white;padding:6px 12px;border-radius:4px;text-decoration:none;margin-top:5px;font-size:0.9em">Más información</a>
+            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Teléfono:</strong> ${loc.telefono}</p>` : ''}
+            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Horario:</strong> ${loc.horario}</p>` : ''}
+            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><strong>Servicios:</strong> ${loc.servicios}</p>` : ''}
+            <div class="popup-buttons">
+              <div class="popup-button-row">
+                <button class="btn btn-whatsapp" onclick="abrirWhatsApp('${loc.telefono}', '${loc.nombre}')">
+                  <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
+                  Chatear por WhatsApp
+                </button>
+              </div>
+              <div class="popup-button-row">
+                <button class="btn btn-ruta" onclick="calcularRutaUbicacion('${loc.id}')">Cómo llegar</button>
+                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">Más información</button>
+              </div>
+            </div>
           </div>
         `);
         
+        // Guardar todos los datos de la ubicación en el marcador
+        marcador.datosUbicacion = loc;
         marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
-        todosMarcadores.push(marcador);
+        marcadoresOriginales.push(marcador);
       });
 
       // Añadir marcadores al mapa
-      clusters.addLayers(todosMarcadores);
+      clusters.addLayers(marcadoresOriginales);
       mapa.addLayer(clusters);
 
-      // Búsqueda
-      const searchInput = document.getElementById('buscador');
-      let searchTimeout;
-
-      const handleSearch = () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-          const termino = searchInput.value.toLowerCase().trim();
-          clusters.clearLayers();
-          
-          if(termino === '') {
-            clusters.addLayers(todosMarcadores);
-            return;
-          }
-          
-          const filtrados = todosMarcadores.filter(m => 
-            m.datosBusqueda.includes(termino)
-          );
-          
-          clusters.addLayers(filtrados);
-          
-          if(filtrados.length > 0) {
-            mapa.fitBounds(clusters.getBounds().pad(0.3));
-          }
-        }, 300);
-      };
-
-      searchInput.addEventListener('input', handleSearch);
-      searchInput.addEventListener('search', handleSearch);
-
       // Ajustar vista a los marcadores
-      if(todosMarcadores.length > 0) {
+      if(marcadoresOriginales.length > 0) {
         mapa.fitBounds(clusters.getBounds().pad(0.3));
+      }
+
+      // Solicitar ubicación al cargar la página
+      obtenerUbicacionUsuario();
+    }
+
+    // Función para manejar la búsqueda
+    function handleSearchInput(e) {
+      clearTimeout(buscadorTimeout);
+      const termino = e.target.value.trim();
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      if (termino.length < 3) {
+        sugerenciasContainer.style.display = 'none';
+        return;
+      }
+      
+      // Mostrar indicador de carga
+      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Buscando... <span class="cargando"></span></div>';
+      sugerenciasContainer.style.display = 'block';
+      
+      buscadorTimeout = setTimeout(() => {
+        buscarConNominatim(termino);
+      }, 500);
+    }
+
+    // Función para buscar usando Nominatim API
+    function buscarConNominatim(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      // Primero buscar en puntos locales
+      const resultadosLocales = buscarEnPuntosLocales(consulta);
+      if (resultadosLocales) {
+        return;
+      }
+      
+      // Si no hay resultados locales, usar Nominatim para búsqueda de direcciones
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(consulta + ', Bogotá, Colombia')}&limit=5&countrycodes=co`;
+      
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error en la API de Nominatim');
+          }
+          return response.json();
+        })
+        .then(data => {
+          sugerenciasContainer.innerHTML = '';
+          
+          if (data && data.length > 0) {
+            data.forEach(lugar => {
+              const item = document.createElement('div');
+              item.className = 'sugerencia-item';
+              
+              const lat = lugar.lat;
+              const lon = lugar.lon;
+              const nombre = lugar.display_name;
+              let nombreCorto = lugar.display_name.split(',')[0];
+              
+              item.innerHTML = `
+                <div class="sugerencia-texto">
+                  <strong>📍 ${nombreCorto}</strong><br>
+                  <small>${lugar.display_name.replace('Bogotá, Colombia', 'Bogotá')}</small>
+                </div>
+                <button class="sugerencia-boton" data-lat="${lat}" data-lon="${lon}" data-nombre="${nombre}">
+                  Cómo llegar
+                </button>
+              `;
+              
+              // Agregar evento al botón "Cómo llegar"
+              const boton = item.querySelector('.sugerencia-boton');
+              boton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const lat = parseFloat(this.getAttribute('data-lat'));
+                const lon = parseFloat(this.getAttribute('data-lon'));
+                const nombre = this.getAttribute('data-nombre');
+                
+                // Mover el mapa a la ubicación seleccionada
+                const latlng = [lat, lon];
+                mapa.setView(latlng, 18);
+                
+                // Crear o actualizar marcador de destino
+                if (destinoMarker) {
+                  mapa.removeLayer(destinoMarker);
+                }
+                destinoMarker = L.marker(latlng, {
+                  icon: L.icon({
+                    iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                    iconSize: [32, 32],
+                    className: 'marker-icon-red'
+                  })
+                }).addTo(mapa)
+                  .bindPopup(`<strong>${nombre}</strong>`);
+                
+                destinoMarker.openPopup();
+                document.getElementById('buscador').value = nombre.split(',')[0];
+                sugerenciasContainer.style.display = 'none';
+                
+                // Calcular ruta si tenemos ubicación del usuario
+                calcularRutaADestino(latlng);
+              });
+              
+              // Agregar evento al item completo
+              item.addEventListener('click', function() {
+                const lat = parseFloat(boton.getAttribute('data-lat'));
+                const lon = parseFloat(boton.getAttribute('data-lon'));
+                const nombre = boton.getAttribute('data-nombre');
+                
+                const latlng = [lat, lon];
+                mapa.setView(latlng, 18);
+                
+                if (destinoMarker) {
+                  mapa.removeLayer(destinoMarker);
+                }
+                destinoMarker = L.marker(latlng, {
+                  icon: L.icon({
+                    iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                    iconSize: [32, 32],
+                    className: 'marker-icon-red'
+                  })
+                }).addTo(mapa)
+                  .bindPopup(`<strong>${nombre}</strong>`);
+                
+                destinoMarker.openPopup();
+                document.getElementById('buscador').value = nombre.split(',')[0];
+                sugerenciasContainer.style.display = 'none';
+              });
+              
+              sugerenciasContainer.appendChild(item);
+            });
+            sugerenciasContainer.style.display = 'block';
+          } else {
+            sugerenciasContainer.innerHTML = '<div class="sugerencia-item">No se encontraron resultados para: ' + consulta + '</div>';
+            sugerenciasContainer.style.display = 'block';
+          }
+        })
+        .catch(error => {
+          console.error("Error con Nominatim:", error);
+          sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Error al buscar. Intenta con otra formulación.</div>';
+          sugerenciasContainer.style.display = 'block';
+        });
+    }
+
+    // Función para buscar en los puntos locales
+    function buscarEnPuntosLocales(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      const termino = consulta.toLowerCase();
+      const resultados = marcadoresOriginales.filter(m => 
+        m.datosBusqueda.includes(termino)
+      );
+      
+      if (resultados.length > 0) {
+        sugerenciasContainer.innerHTML = '';
+        
+        resultados.forEach(marcador => {
+          const loc = marcador.datosUbicacion;
+          const item = document.createElement('div');
+          item.className = 'sugerencia-item';
+          item.innerHTML = `
+            <div class="sugerencia-texto">
+              <strong>📍 ${loc.nombre}</strong><br>
+              <small>${loc.direccion}</small>
+            </div>
+            <button class="sugerencia-boton" data-id="${loc.id}">
+              Cómo llegar
+            </button>
+          `;
+          
+          // Agregar evento al botón "Cómo llegar"
+          const boton = item.querySelector('.sugerencia-boton');
+          boton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = this.getAttribute('data-id');
+            calcularRutaUbicacion(id);
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          // Agregar evento al item completo
+          item.addEventListener('click', function() {
+            mapa.setView(marcador.getLatLng(), 17);
+            marcador.openPopup();
+            document.getElementById('buscador').value = loc.nombre;
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          sugerenciasContainer.appendChild(item);
+        });
+        sugerenciasContainer.style.display = 'block';
+        return true;
+      }
+      return false;
+    }
+
+    // Función para manejar teclas en el buscador
+    function handleSearchKeydown(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const termino = document.getElementById('buscador').value.trim();
+        if (termino) {
+          buscarConNominatim(termino);
+        }
       }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-      initializeMap();
+    // Función para calcular ruta a un destino específico (coordenadas)
+    function calcularRutaADestino(destinoLatLng) {
+      // Limpiar ruta existente
+      if (rutaControl) {
+        mapa.removeControl(rutaControl);
+        rutaControl = null;
+      }
       
-      // Redirección al hacer clic en el botón B2B
-      document.getElementById('b2b-btn').addEventListener('click', function() {
-        window.location.href = "https://co.qrcontraentrega.com/sucursal/bogota/";
-      });
-    });
+      // Obtener ubicación actual del usuario
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            
+            // Calcular ruta desde la ubicación actual hasta el destino
+            rutaControl = L.Routing.control({
+              waypoints: [
+                L.latLng(latitude, longitude),
+                L.latLng(destinoLatLng[0], destinoLatLng[1])
+              ],
+              routeWhileDragging: false,
+              show: true,
+              addWaypoints: false,
+              draggableWaypoints: false,
+              fitSelectedRoutes: true,
+              lineOptions: {
+                styles: [{color: '#9b59b6', opacity: 0.7, weight: 5}]
+              },
+              router: L.Routing.osrmv1({
+                serviceUrl: 'https://router.project-osrm.org/route/v1',
+                profile: 'car'
+              }),
+              createMarker: function() { return null; }
+            }).addTo(mapa);
+            
+            rutaActiva = true;
+            
+            // Acercar el zoom después de calcular la ruta
+            setTimeout(() => {
+              mapa.setZoom(15);
+            }, 1000);
+          },
+          (error) => {
+            console.log(`Error al obtener ubicación: ${error.message}`);
+            alert('No se pudo obtener tu ubicación para calcular la ruta.');
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        alert('Tu navegador no soporta geolocalización.');
+      }
+    }
+
+    // Función para abrir WhatsApp
+    function abrirWhatsApp(telefono, nombre) {
+      const numeroLimpio = telefono.replace(/\D/g, '');
+      const mensaje = `Hola ${nombre}, me interesa conocer más sobre sus servicios de contraentrega.`;
+      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
+    }
+
+    // Función para centrar el mapa en la ubicación actual
+    function centrarMapa() {
+      if (userMarker) {
+        mapa.setView(userMarker.getLatLng(), 17);
+      } else {
+        obtenerUbicacionUsuario();
+      }
+    }
+
+    // Función para calcular ruta a una ubicación
+    function calcularRutaUbicacion(idPunto) {
+      const punto = UBICACIONES.find(p => p.id === idPunto);
+      if (!punto) return;
+      
+      // Limpiar ruta existente
+      if (rutaControl) {
+        mapa.removeControl(rutaControl);
+        rutaControl = null;
+      }
+      
+      // Obtener ubicación actual del usuario
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            
+            // Calcular ruta desde la ubicación actual hasta el punto seleccionado
+            rutaControl = L.Routing.control({
+              waypoints: [
+                L.latLng(latitude, longitude),
+                L.latLng(punto.latlng[0], punto.latlng[1])
+              ],
+              routeWhileDragging: false,
+              show: true,
+              addWaypoints: false,
+              draggableWaypoints: false,
+              fitSelectedRoutes: true,
+              lineOptions: {
+                styles: [{color: '#9b59b6', opacity: 0.7, weight: 5}]
+              },
+              router: L.Routing.osrmv1({
+                serviceUrl: 'https://router.project-osrm.org/route/v1',
+                profile: 'car'
+              }),
+              createMarker: function() { return null; }
+            }).addTo(mapa);
+            
+            rutaActiva = true;
+            
+            // Acercar el zoom después de calcular la ruta
+            setTimeout(() => {
+              mapa.setZoom(15);
+            }, 1000);
+          },
+          (error) => {
+            console.log(`Error al obtener ubicación: ${error.message}`);
+            alert('No se pudo obtener tu ubicación para calcular la ruta.');
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        alert('Tu navegador no soporta geolocalización.');
+      }
+    }
+
+    // Función para obtener ubicación del usuario
+    function obtenerUbicacionUsuario() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            
+            // Verificar si está en Bogotá (aproximadamente)
+            const distanciaABogota = calcularDistancia(
+              latitude, longitude,
+              4.676191, -74.050118
+            );
+            
+            if (distanciaABogota > 30) {
+              alert('El servicio solo está disponible en Bogotá y sus alrededores');
+              return;
+            }
+            
+            // Eliminar marcador anterior si existe
+            if (userMarker) {
+              mapa.removeLayer(userMarker);
+            }
+            
+            // Crear nuevo marcador de usuario (azul)
+            userMarker = L.marker([latitude, longitude], {
+              icon: L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+                iconSize: [32, 32],
+                className: 'marker-icon-blue'
+              })
+            }).addTo(mapa)
+              .bindPopup('¡Tu ubicación actual!');
+              
+            // Centrar mapa en la ubicación del usuario avec zoom cercano
+            mapa.setView([latitude, longitude], 17);
+          },
+          (error) => {
+            console.log(`Error al obtener ubicación: ${error.message}`);
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        console.log("Tu navegador no soporta geolocalización.");
+      }
+    }
+
+    // Función para calcular distancia en km (fórmula Haversine)
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
   </script>
 </body>
 </html>
+```
