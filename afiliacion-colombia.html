@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Afiliación - Contraentrega Colombia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --color-blanco: #ffffff;
+            --color-negro: #000000;
+            --color-gris-claro: #f5f5f5;
+            --color-gris-medio: #e0e0e0;
+            --color-gris-oscuro: #333333;
+            --color-verde: #25D366;
+            --color-azul: #007bff;
+            --color-rojo: #dc3545;
+            --color-dorado: #FFD700;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Libre Baskerville', serif;
+            background-color: var(--color-blanco);
+            color: var(--color-negro);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        
+        /* Header */
+        header {
+            background-color: var(--color-negro);
+            color: var(--color-blanco);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .logo-img {
+            height: 40px;
+            width: auto;
+            max-width: 100%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            color: var(--color-blanco);
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem 3rem;
+        }
+        
+        /* Plan Selection */
+        .plan-selection {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+        
+        .plan-option {
+            border: 2px solid var(--color-gris-medio);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 280px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .plan-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .plan-option.selected {
+            border-color: var(--color-negro);
+            background-color: var(--color-gris-claro);
+        }
+        
+        .plan-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: var(--color-dorado);
+            color: var(--color-negro);
+            padding: 0.3rem 0.8rem;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .plan-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            color: var(--color-negro);
+        }
+        
+        .plan-price span {
+            font-size: 1rem;
+            font-weight: normal;
+        }
+        
+        .plan-description {
+            margin-bottom: 1rem;
+            min-height: 60px;
+            color: var(--color-gris-oscuro);
+        }
+        
+        .select-plan {
+            background-color: var(--color-negro);
+            color: var(--color-blanco);
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Libre Baskerville', serif;
+            transition: background-color 0.3s;
+        }
+        
+        .select-plan:hover {
+            background-color: var(--color-gris-oscuro);
+        }
+        
+        /* Plan Details */
+        .plan-details {
+            display: none;
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .plan-details.active {
+            display: block;
+        }
+        
+        .plan-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: var(--color-gris-claro);
+            border-radius: 8px;
+        }
+        
+        .plan-section h3 {
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--color-gris-medio);
+            color: var(--color-negro);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        
+        .feature-item {
+            background-color: var(--color-blanco);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .feature-item i {
+            color: var(--color-verde);
+            margin-top: 0.2rem;
+        }
+        
+        /* Form */
+        .affiliation-form {
+            background-color: var(--color-gris-claro);
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .form-header h2 {
+            margin-bottom: 0.5rem;
+            color: var(--color-negro);
+        }
+        
+        .form-header p {
+            color: var(--color-gris-oscuro);
+        }
+        
+        .form-section {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--color-blanco);
+            border-radius: 8px;
+        }
+        
+        .form-section h3 {
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--color-gris-medio);
+            color: var(--color-negro);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-section h3 i {
+            color: var(--color-verde);
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: var(--color-gris-oscuro);
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--color-gris-medio);
+            border-radius: 4px;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--color-negro);
+            outline: none;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .checkbox-item input[type="radio"] {
+            width: auto;
+        }
+        
+        .required-field::after {
+            content: " *";
+            color: var(--color-rojo);
+        }
+        
+        .submit-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+        
+        .submit-btn {
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .whatsapp-btn {
+            background-color: var(--color-verde);
+            color: white;
+        }
+        
+        .whatsapp-btn:hover {
+            background-color: #128C7E;
+            transform: translateY(-2px);
+        }
+        
+        .sms-btn {
+            background-color: var(--color-azul);
+            color: white;
+        }
+        
+        .sms-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        
+        .email-btn {
+            background-color: var(--color-rojo);
+            color: white;
+        }
+        
+        .email-btn:hover {
+            background-color: #bd2130;
+            transform: translateY(-2px);
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--color-negro);
+            color: var(--color-blanco);
+            padding: 15px 25px;
+            border-radius: 4px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: opacity 0.5s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification.error {
+            background-color: var(--color-rojo);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--color-negro);
+            color: var(--color-blanco);
+            padding: 2rem 1rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-section p, .footer-section a {
+            margin-bottom: 0.5rem;
+            color: var(--color-gris-medio);
+            text-decoration: none;
+            display: block;
+        }
+        
+        .footer-section a:hover {
+            color: var(--color-blanco);
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-icons a {
+            font-size: 1.5rem;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--color-gris-oscuro);
+            color: var(--color-gris-medio);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .plan-selection {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .submit-buttons {
+                flex-direction: column;
+            }
+            
+            .submit-btn {
+                width: 100%;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .affiliation-form {
+                padding: 1rem;
+            }
+            
+            .form-section {
+                padding: 1rem;
+            }
+            
+            .checkbox-group {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">
+                <img src="https://qrcontraentrega.com/img/c.jpg" alt="Logo Contraentrega" class="logo-img">
+                <span></span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Afiliación Colombia</h1>
+        <p>Potencie su negocio con nuestras soluciones profesionales de e-commerce</p>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Plan Selection -->
+        <div class="plan-selection">
+            <div class="plan-option" data-plan="emprendedor">
+                <div class="plan-badge">Popular</div>
+                <h2>Plan Emprendedor</h2>
+                <div class="plan-price">$250.000<span>/año</span></div>
+                <p class="plan-description">Solución básica para comenzar tu negocio online</p>
+                <button class="select-plan">Seleccionar</button>
+            </div>
+            
+            <div class="plan-option" data-plan="empresa">
+                <div class="plan-badge">Recomendado</div>
+                <h2>Plan Empresa</h2>
+                <div class="plan-price">$750.000<span>/año</span></div>
+                <p class="plan-description">Solución completa para potenciar su negocio</p>
+                <button class="select-plan">Seleccionar</button>
+            </div>
+        </div>
+
+        <!-- Plan Emprendedor Details -->
+        <div class="plan-details" id="emprendedor-details">
+            <div class="plan-section">
+                <h3><i class="fas fa-check-circle"></i> ¿Qué incluye el Plan Emprendedor?</h3>
+                <div class="features-grid">
+                    <div class="feature-item"><i class="fas fa-check"></i> Página en framework React diseñada para recibir órdenes</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Integración con WhatsApp, SMS y correo electrónico</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Subdominio corporativo (ej: sunegocio.qrcontraentrega.com)</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Diseño web responsive (adaptable a PC y móvil)</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Branding básico para empezar el negocio desde cero</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Publicidad orgánica en nuestra plataforma</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Presencia mapeada en nuestra plataforma</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Servicio de negocios verificados</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Capacitación inicial en video sobre el uso de la plataforma</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Soporte técnico especializado</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plan Empresa Details -->
+        <div class="plan-details" id="empresa-details">
+            <div class="plan-section">
+                <h3><i class="fas fa-check-circle"></i> ¿Qué incluye el Plan Empresa?</h3>
+                <div class="features-grid">
+                    <div class="feature-item"><i class="fas fa-check"></i> Tienda Profesional Activa x 365 días</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Dominio propio personalizado incluido (ej: sunegocio.com)</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Correo corporativo con dominio propio (ej: info@sunegocio.com)</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Hosting premium + certificado SSL de seguridad</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Plataforma WordPress + WooCommerce para gestión avanzada</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> App nativa para Android e iOS</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Pasarelas de pago configuradas sin costo adicional</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Aceptación de tarjetas (Visa, Mastercard), criptomonedas, efectivo y transferencias</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Integración con servicios de facturación electrónica</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> ERP integrado para generación de guías de transporte</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Almacenamiento desde $50.000/mes (primer estiba GRATIS por 1 mes)</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Envíos locales y globales con seguimiento en tiempo real</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Opción de Dropshipping para quienes no manejan inventario físico</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Creación de logo obsequiada si el cliente no tiene</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Publicidad orgánica y paga constante por diversos medios</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Integración con marketplaces (Mercado Libre, Amazon, etc.)</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Asesoría mensual de 30 minutos con expertos en e-commerce</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> 0% de comisión por cada venta generada</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Configuración sin costo de todas las pasarelas de pago</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Informes mensuales de analytics con métricas de desempeño</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Blog integrado para estrategias de contenido SEO</div>
+                </div>
+            </div>
+            
+            <div class="plan-section">
+                <h3><i class="fas fa-star"></i> Ventajas Exclusivas</h3>
+                <div class="features-grid">
+                    <div class="feature-item"><i class="fas fa-check"></i> 0% de comisión de nuestra plataforma por cada venta generada</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Configuración sin costo de todas las pasarelas de pago y servicios adicionales</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> ERP integrado para gestión de envíos y logística con aliados comerciales</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Servicio de dropshipping con diversos productos si no cuenta con stock propio</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Branding completo incluido para quienes empiezan desde cero</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Publicidad constante que da un plus en ventas y visibilidad</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Soporte técnico especializado disponible para resolver dudas y problemas</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Informes mensuales de analytics con métricas de desempeño</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Blog integrado para estrategias de contenido SEO</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Affiliation Form -->
+        <div class="affiliation-form">
+            <div class="form-header">
+                <h2>Formulario de Afiliación</h2>
+                <p>Complete la información para procesar su solicitud de afiliación</p>
+            </div>
+            
+            <form id="affiliationForm">
+                <input type="hidden" id="selectedPlan" name="selectedPlan" value="">
+                
+                <div class="form-section">
+                    <h3><i class="fas fa-building"></i> Información del Negocio</h3>
+                    
+                    <div class="form-group">
+                        <label for="businessName" class="required-field">Nombre comercial</label>
+                        <input type="text" id="businessName" name="businessName" required placeholder="Ingrese el nombre de su negocio">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="businessDescription" class="required-field">Descripción de la empresa</label>
+                        <textarea id="businessDescription" name="businessDescription" placeholder="Describa su negocio o idea de negocio, productos que ofrece, etc." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="businessCountry" class="required-field">País de domicilio</label>
+                        <select id="businessCountry" name="businessCountry" required>
+                            <option value="">Seleccione un país</option>
+                            <option value="Colombia" selected>Colombia</option>
+                            <option value="Otro">Otro país</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="businessDepartment" class="required-field">Departamento</label>
+                        <input type="text" id="businessDepartment" name="businessDepartment" required placeholder="Ingrese su departamento">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="businessCity" class="required-field">Ciudad</label>
+                        <input type="text" id="businessCity" name="businessCity" required placeholder="Ingrese su ciudad">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="businessAddress" class="required-field">Dirección</label>
+                        <input type="text" id="businessAddress" name="businessAddress" required placeholder="Ingrese su dirección completa">
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3><i class="fas fa-user-tie"></i> Información del Representante Legal</h3>
+                    
+                    <div class="form-group">
+                        <label for="legalName" class="required-field">Nombre del representante legal</label>
+                        <input type="text" id="legalName" name="legalName" required placeholder="Nombre completo del representante">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required-field">Tipo de identificación</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="radio" id="idTypeCedula" name="idType" value="Cédula" required>
+                                <label for="idTypeCedula">Cédula</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="radio" id="idTypePasaporte" name="idType" value="Pasaporte">
+                                <label for="idTypePasaporte">Pasaporte</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="radio" id="idTypeExtranjeria" name="idType" value="Cédula de extranjería">
+                                <label for="idTypeExtranjeria">Cédula de extranjería</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="idNumber" class="required-field">Número de identificación</label>
+                        <input type="text" id="idNumber" name="idNumber" required placeholder="Número completo de identificación">
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3><i class="fas fa-address-card"></i> Información de Contacto</h3>
+                    
+                    <div class="form-group">
+                        <label for="contactPhone" class="required-field">WhatsApp/Teléfono</label>
+                        <input type="tel" id="contactPhone" name="contactPhone" required placeholder="Ej: +57 3146824438">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactEmail" class="required-field">Correo electrónico</label>
+                        <input type="email" id="contactEmail" name="contactEmail" required placeholder="Ej: info@sunegocio.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactPassword" class="required-field">Crear contraseña</label>
+                        <input type="password" id="contactPassword" name="contactPassword" required placeholder="Cree una contraseña segura">
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3><i class="fas fa-palette"></i> Preferencias</h3>
+                    
+                    <div class="form-group">
+                        <label class="required-field">Color Preferido (captcha)</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="radio" id="colorWhite" name="colorPreference" value="Blanco" required>
+                                <label for="colorWhite">Blanco</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="radio" id="colorBlack" name="colorPreference" value="Negro">
+                                <label for="colorBlack">Negro</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+    <p style="margin: 10px 0; font-size: 14px; line-height: 1.4;">
+        Acepto los términos y condiciones del 
+        <a href="https://calivalle.qrcontraentrega.com/acuerdo-comercial" 
+           target="_blank" 
+           style="color: #007bff; text-decoration: underline;">
+            Acuerdo Comercial
+        </a>
+    </p>
+</div>
+                
+                <div class="submit-buttons">
+                    <button type="button" class="submit-btn whatsapp-btn" id="submitWhatsApp">
+                        <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
+                    </button>
+                    <button type="button" class="submit-btn sms-btn" id="submitSMS">
+                        <i class="fas fa-sms"></i> Enviar por SMS
+                    </button>
+                    <button type="button" class="submit-btn email-btn" id="submitEmail">
+                        <i class="fas fa-envelope"></i> Enviar por Correo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Acerca de Nosotros</h3>
+                <p>Somos Contraentrega. La revolución en logística y comercio electrónico de Colombia. Conectamos vendedores y compradores con una red de entrega confiable y el sistema de pago contraentrega más seguro.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contacto</h3>
+                <p><i class="fas fa-phone"></i> +57 3146824438</p>
+                <p><i class="fas fa-envelope"></i> calivalle@qrcontraentrega.com</p>
+                <p><i class="fas fa-map-marker-alt"></i> Carrera 16 # 9 - 44, Cali, Colombia</p>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/share/17Dmzvi5ei/?mibextid=wwXIfr"><i class="fab fa-facebook"></i></a>
+                    <a href="instagram.com/calivalle_qrcontraentrega"><i class="fab fa-instagram"></i></a>
+                    <a href="wa.me/573146824438"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Enlaces Rápidos</h3>
+                <a href="#">Inicio</a>
+                <a href="#">Categorías</a>
+                <a href="#">Términos y Condiciones</a>
+                <a href="#">Política de Privacidad</a>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; Contraentrega. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Plan selection functionality
+            const planOptions = document.querySelectorAll('.plan-option');
+            const planEmprendedor = document.getElementById('emprendedor-details');
+            const planEmpresa = document.getElementById('empresa-details');
+            const selectedPlanInput = document.getElementById('selectedPlan');
+            
+            // Select Plan Empresa by default
+            document.querySelector('[data-plan="empresa"]').classList.add('selected');
+            planEmpresa.classList.add('active');
+            selectedPlanInput.value = 'Plan Empresa - $750.000/año';
+            
+            planOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const planType = this.getAttribute('data-plan');
+                    
+                    // Remove selected class from all options
+                    planOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    
+                    // Show the corresponding plan details
+                    if (planType === 'emprendedor') {
+                        planEmprendedor.classList.add('active');
+                        planEmpresa.classList.remove('active');
+                        selectedPlanInput.value = 'Plan Emprendedor - $250.000/año';
+                    } else {
+                        planEmprendedor.classList.remove('active');
+                        planEmpresa.classList.add('active');
+                        selectedPlanInput.value = 'Plan Empresa - $750.000/año';
+                    }
+                });
+            });
+            
+            // Form submission handlers
+            const form = document.getElementById('affiliationForm');
+            
+            document.getElementById('submitWhatsApp').addEventListener('click', function() {
+                if (validateForm()) {
+                    const message = generateWhatsAppMessage();
+                    window.open(`https://wa.me/573146824438?text=${encodeURIComponent(message)}`, '_blank');
+                }
+            });
+            
+            document.getElementById('submitSMS').addEventListener('click', function() {
+                if (validateForm()) {
+                    const message = generateSMSMessage();
+                    window.open(`sms:+573146824438?body=${encodeURIComponent(message)}`, '_blank');
+                }
+            });
+            
+            document.getElementById('submitEmail').addEventListener('click', function() {
+                if (validateForm()) {
+                    const subject = 'Solicitud de Afiliación - ' + document.getElementById('businessName').value;
+                    const message = generateEmailMessage();
+                    window.open(`mailto:calivalle@qrcontraentrega.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`, '_blank');
+                }
+            });
+            
+            // Form validation
+            function validateForm() {
+                if (!selectedPlanInput.value) {
+                    showNotification('Por favor seleccione un plan de afiliación', true);
+                    return false;
+                }
+                
+                // Check all required fields
+                const requiredFields = form.querySelectorAll('[required]');
+                let valid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        valid = false;
+                        field.style.borderColor = 'red';
+                        
+                        // Remove error style when user starts typing
+                        field.addEventListener('input', function() {
+                            this.style.borderColor = '';
+                        });
+                    }
+                });
+                
+                // Check if at least one radio button is selected for idType
+                const idTypeSelected = document.querySelector('input[name="idType"]:checked');
+                if (!idTypeSelected) {
+                    valid = false;
+                    showNotification('Por favor seleccione un tipo de identificación', true);
+                }
+                
+                // Check if at least one radio button is selected for colorPreference
+                const colorSelected = document.querySelector('input[name="colorPreference"]:checked');
+                if (!colorSelected) {
+                    valid = false;
+                    showNotification('Por favor seleccione un color preferido', true);
+                }
+                
+                if (!valid) {
+                    showNotification('Por favor complete todos los campos obligatorios', true);
+                    return false;
+                }
+                
+                showNotification('Formulario validado correctamente. Redirigiendo...');
+                return true;
+            }
+            
+            // Show notification
+            function showNotification(message, isError = false) {
+                // Remove existing notification if any
+                const existingNotification = document.querySelector('.notification');
+                if (existingNotification) {
+                    existingNotification.remove();
+                }
+                
+                const notification = document.createElement('div');
+                notification.className = isError ? 'notification error' : 'notification';
+                notification.innerHTML = `
+                    <i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+                    <span>${message}</span>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 500);
+                }, 3000);
+            }
+            
+            // Message generators
+            function generateWhatsAppMessage() {
+                let message = "¡Hola! Quiero solicitar afiliación con el siguiente plan:\n\n";
+                
+                message += `*Plan:* ${selectedPlanInput.value}\n\n`;
+                message += "*Información del negocio:*\n";
+                message += `• Nombre: ${document.getElementById('businessName').value}\n`;
+                message += `• Descripción: ${document.getElementById('businessDescription').value}\n`;
+                message += `• País: ${document.getElementById('businessCountry').value}\n`;
+                message += `• Departamento: ${document.getElementById('businessDepartment').value}\n`;
+                message += `• Ciudad: ${document.getElementById('businessCity').value}\n`;
+                message += `• Dirección: ${document.getElementById('businessAddress').value}\n\n`;
+                
+                message += "*Información del representante legal:*\n";
+                message += `• Nombre: ${document.getElementById('legalName').value}\n`;
+                message += `• Tipo de ID: ${document.querySelector('input[name="idType"]:checked').value}\n`;
+                message += `• Número de ID: ${document.getElementById('idNumber').value}\n\n`;
+                
+                message += "*Información de contacto:*\n";
+                message += `• Teléfono: ${document.getElementById('contactPhone').value}\n`;
+                message += `• Email: ${document.getElementById('contactEmail').value}\n`;
+                message += `• Color preferido: ${document.querySelector('input[name="colorPreference"]:checked').value}\n`;
+                
+                return message;
+            }
+            
+            function generateSMSMessage() {
+                let message = "Solicitud de Afiliación:\n";
+                
+                message += `Plan: ${selectedPlanInput.value}\n`;
+                message += `Negocio: ${document.getElementById('businessName').value}\n`;
+                message += `Representante: ${document.getElementById('legalName').value}\n`;
+                message += `Tel: ${document.getElementById('contactPhone').value}\n`;
+                message += `Email: ${document.getElementById('contactEmail').value}`;
+                
+                return message;
+            }
+            
+            function generateEmailMessage() {
+                let message = "SOLICITUD DE AFILIACIÓN\n\n";
+                
+                message += `Plan seleccionado: ${selectedPlanInput.value}\n\n`;
+                
+                message += "INFORMACIÓN DEL NEGOCIO:\n";
+                message += `• Nombre comercial: ${document.getElementById('businessName').value}\n`;
+                message += `• Descripción: ${document.getElementById('businessDescription').value}\n`;
+                message += `• País: ${document.getElementById('businessCountry').value}\n`;
+                message += `• Departamento: ${document.getElementById('businessDepartment').value}\n`;
+                message += `• Ciudad: ${document.getElementById('businessCity').value}\n`;
+                message += `• Dirección: ${document.getElementById('businessAddress').value}\n\n`;
+                
+                message += "INFORMACIÓN DEL REPRESENTANTE LEGAL:\n";
+                message += `• Nombre: ${document.getElementById('legalName').value}\n`;
+                message += `• Tipo de identificación: ${document.querySelector('input[name="idType"]:checked').value}\n`;
+                message += `• Número de identificación: ${document.getElementById('idNumber').value}\n\n`;
+                
+                message += "INFORMACIÓN DE CONTACTO:\n";
+                message += `• Teléfono: ${document.getElementById('contactPhone').value}\n`;
+                message += `• Email: ${document.getElementById('contactEmail').value}\n`;
+                message += `• Color preferido: ${document.querySelector('input[name="colorPreference"]:checked').value}\n\n`;
+                
+                message += "FECHA: " + new Date().toLocaleDateString('es-CO');
+                
+                return message;
+            }
+        });
+    </script>
+</body>
+</html>
