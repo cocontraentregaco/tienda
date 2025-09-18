@@ -126,15 +126,6 @@
       box-shadow: var(--box-shadow);
     }
 
-    /* MODIFICACIÓN: Selector de mapa en la parte inferior izquierda */
-    .leaflet-control-layers {
-      position: absolute;
-      left: 10px;
-      bottom: 30px;
-      top: auto !important;
-      right: auto !important;
-    }
-
     .whatsapp-icon {
       width: 16px;
       height: 16px;
@@ -211,6 +202,20 @@
       animation: spin 1s ease-in-out infinite;
     }
 
+    .gm-style .gm-style-iw-c {
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .gm-style .gm-style-iw-d {
+      overflow: auto !important;
+    }
+
+    .gm-ui-hover-effect {
+      top: 8px !important;
+      right: 8px !important;
+    }
+
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
@@ -235,18 +240,24 @@
         margin-top: 5px;
         align-self: flex-end;
       }
+    }
 
-      /* MODIFICACIÓN: Ajuste para móviles */
-      .leaflet-control-layers {
-        bottom: 10px;
-        left: 5px;
-      }
+    .google-maps-btn {
+      position: absolute;
+      bottom: 20px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      cursor: pointer;
+      font-size: 14px;
     }
   </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
 </head>
 <body>
   <div id="contenedor-mapa">
@@ -261,20 +272,19 @@
       <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://leticiaamazonas.qrcontraentrega.com', '_blank')">MARKETPLACE</button>
     </div>
     <div id="mapa"></div>
+    <div class="google-maps-btn" id="google-maps-btn">Ver en Google Maps</div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
   <script>
     // Variables globales
     let mapa;
     let userMarker;
-    let rutaControl = null;
-    let rutaActiva = false;
     let marcadoresOriginales = [];
     let destinoMarker = null;
     let buscadorTimeout;
+    let googleMapsLayer;
 
     // Datos de ubicaciones en Leticia (solo socios)
     const UBICACIONES = [
@@ -309,6 +319,9 @@
       // Evento para el botón centrar
       document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
       
+      // Evento para el botón de Google Maps
+      document.getElementById('google-maps-btn').addEventListener('click', abrirGoogleMaps);
+      
       // Eventos para el buscador
       const searchInput = document.getElementById('buscador');
       searchInput.addEventListener('input', handleSearchInput);
@@ -323,41 +336,27 @@
     });
 
     function initializeMap() {
-      // Configuración de capas - Maxar WorldView Legion (alta definición)
-      const capas = {
-        "Maxar WorldView Legion": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-          attribution: 'Satellite: Maxar WorldView Legion',
-          maxZoom: 19,
-          maxNativeZoom: 19,
-          detectRetina: true
-        }),
-        "OpenStreetMap": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-          maxZoom: 19
-        })
-      };
-
       // Inicializar mapa
       mapa = L.map('mapa', {
         center: [-4.21528, -69.94056], // Coordenadas de Leticia
         zoom: 15,
-        layers: [capas["Maxar WorldView Legion"]],
         zoomControl: false
       });
+
+      // Añadir control de zoom
+      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+
+      // Añadir capa de Google Maps
+      googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+      }).addTo(mapa);
 
       // Asegurar que el mapa ocupe todo el espacio disponible
       setTimeout(() => {
         mapa.invalidateSize();
       }, 0);
-
-      // Controles del mapa
-      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
-      
-      // MODIFICACIÓN: Selector de capas en la parte inferior izquierda
-      L.control.layers(capas, null, { 
-        position: 'bottomleft', // Cambiado de 'topright' a 'bottomleft'
-        collapsed: false
-      }).addTo(mapa);
 
       // Sistema de marcadores
       const clusters = L.markerClusterGroup({
@@ -394,7 +393,7 @@
                 </button>
               </div>
               <div class="popup-button-row">
-                <button class="btn btn-ruta" onclick="calcularRutaUbicacion('${loc.id}')">Cómo llegar</button>
+                <button class="btn btn-ruta" onclick="abrirGoogleMapsConDireccion('${loc.latlng[0]}', '${loc.latlng[1]}', '${loc.nombre}')">Cómo llegar</button>
                 <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">Más información</button>
               </div>
             </div>
@@ -420,6 +419,29 @@
       obtenerUbicacionUsuario();
     }
 
+    // Función para abrir Google Maps con una dirección específica
+    function abrirGoogleMapsConDireccion(lat, lng, nombre) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`;
+      window.open(url, '_blank');
+    }
+
+    // Función para abrir Google Maps con la ubicación actual
+    function abrirGoogleMaps() {
+      if (userMarker) {
+        const latlng = userMarker.getLatLng();
+        const url = `https://www.google.com/maps/@?api=1&map_action=map&center=${latlng.lat},${latlng.lng}&zoom=15`;
+        window.open(url, '_blank');
+      } else {
+        obtenerUbicacionUsuario().then(() => {
+          if (userMarker) {
+            const latlng = userMarker.getLatLng();
+            const url = `https://www.google.com/maps/@?api=1&map_action=map&center=${latlng.lat},${latlng.lng}&zoom=15`;
+            window.open(url, '_blank');
+          }
+        });
+      }
+    }
+
     // Función para manejar la búsqueda
     function handleSearchInput(e) {
       clearTimeout(buscadorTimeout);
@@ -436,12 +458,12 @@
       sugerenciasContainer.style.display = 'block';
       
       buscadorTimeout = setTimeout(() => {
-        buscarConNominatim(termino);
+        buscarConGoogle(termino);
       }, 500);
     }
 
-    // Función para buscar usando Nominatim API
-    function buscarConNominatim(consulta) {
+    // Función para buscar usando Google Places API (simulación)
+    function buscarConGoogle(consulta) {
       const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
       
       // Primero buscar en puntos locales
@@ -450,111 +472,116 @@
         return;
       }
       
-      // Si no hay resultados locales, usar Nominatim para búsqueda de direcciones
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(consulta + ', Leticia, Amazonas, Colombia')}&limit=5&countrycodes=co`;
-      
-      fetch(url)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Error en la API de Nominatim');
+      // Simular búsqueda en Google Places
+      setTimeout(() => {
+        // En una implementación real, aquí se conectaría con la API de Google Places
+        sugerenciasContainer.innerHTML = '';
+        
+        // Simular algunos resultados de búsqueda
+        const resultadosSimulados = [
+          {
+            name: "Aeropuerto Internacional Alfredo Vásquez Cobo",
+            lat: -4.1936,
+            lng: -69.9432,
+            formatted_address: "Aeropuerto, Leticia, Amazonas, Colombia"
+          },
+          {
+            name: "Parque Santander",
+            lat: -4.2150,
+            lng: -69.9400,
+            formatted_address: "Cl. 8 #10-40, Leticia, Amazonas, Colombia"
+          },
+          {
+            name: "Malecón de Leticia",
+            lat: -4.2136,
+            lng: -69.9414,
+            formatted_address: "Malecón, Leticia, Amazonas, Colombia"
           }
-          return response.json();
-        })
-        .then(data => {
-          sugerenciasContainer.innerHTML = '';
-          
-          if (data && data.length > 0) {
-            data.forEach(lugar => {
-              const item = document.createElement('div');
-              item.className = 'sugerencia-item';
+        ];
+        
+        if (resultadosSimulados.length > 0) {
+          resultadosSimulados.forEach(lugar => {
+            const item = document.createElement('div');
+            item.className = 'sugerencia-item';
+            
+            const lat = lugar.lat;
+            const lng = lugar.lng;
+            const nombre = lugar.name;
+            
+            item.innerHTML = `
+              <div class="sugerencia-texto">
+                <strong>📍 ${nombre}</strong><br>
+                <small>${lugar.formatted_address}</small>
+              </div>
+              <button class="sugerencia-boton" data-lat="${lat}" data-lng="${lng}" data-nombre="${nombre}">
+                Cómo llegar
+              </button>
+            `;
+            
+            // Agregar evento al botón "Cómo llegar"
+            const boton = item.querySelector('.sugerencia-boton');
+            boton.addEventListener('click', function(e) {
+              e.stopPropagation();
+              const lat = parseFloat(this.getAttribute('data-lat'));
+              const lng = parseFloat(this.getAttribute('data-lng'));
+              const nombre = this.getAttribute('data-nombre');
               
-              const lat = lugar.lat;
-              const lon = lugar.lon;
-              const nombre = lugar.display_name;
-              let nombreCorto = lugar.display_name.split(',')[0];
+              // Mover el mapa a la ubicación seleccionada
+              const latlng = [lat, lng];
+              mapa.setView(latlng, 17);
               
-              item.innerHTML = `
-                <div class="sugerencia-texto">
-                  <strong>📍 ${nombreCorto}</strong><br>
-                  <small>${lugar.display_name.replace('Leticia, Amazonas, Colombia', 'Leticia')}</small>
-                </div>
-                <button class="sugerencia-boton" data-lat="${lat}" data-lon="${lon}" data-nombre="${nombre}">
-                  Cómo llegar
-                </button>
-              `;
+              // Crear o actualizar marcador de destino
+              if (destinoMarker) {
+                mapa.removeLayer(destinoMarker);
+              }
+              destinoMarker = L.marker(latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-red'
+                })
+              }).addTo(mapa)
+                .bindPopup(`<strong>${nombre}</strong>`);
               
-              // Agregar evento al botón "Cómo llegar"
-              const boton = item.querySelector('.sugerencia-boton');
-              boton.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const lat = parseFloat(this.getAttribute('data-lat'));
-                const lon = parseFloat(this.getAttribute('data-lon'));
-                const nombre = this.getAttribute('data-nombre');
-                
-                // Mover el mapa a la ubicación seleccionada
-                const latlng = [lat, lon];
-                mapa.setView(latlng, 18);
-                
-                // Crear o actualizar marcador de destino
-                if (destinoMarker) {
-                  mapa.removeLayer(destinoMarker);
-                }
-                destinoMarker = L.marker(latlng, {
-                  icon: L.icon({
-                    iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-                    iconSize: [32, 32],
-                    className: 'marker-icon-red'
-                  })
-                }).addTo(mapa)
-                  .bindPopup(`<strong>${nombre}</strong>`);
-                
-                destinoMarker.openPopup();
-                document.getElementById('buscador').value = nombre.split(',')[0];
-                sugerenciasContainer.style.display = 'none';
-                
-                // Calcular ruta si tenemos ubicación del usuario
-                calcularRutaADestino(latlng);
-              });
-              
-              // Agregar evento al item completo
-              item.addEventListener('click', function() {
-                const lat = parseFloat(boton.getAttribute('data-lat'));
-                const lon = parseFloat(boton.getAttribute('data-lon'));
-                const nombre = boton.getAttribute('data-nombre');
-                
-                const latlng = [lat, lon];
-                mapa.setView(latlng, 18);
-                
-                if (destinoMarker) {
-                  mapa.removeLayer(destinoMarker);
-                }
-                destinoMarker = L.marker(latlng, {
-                  icon: L.icon({
-                    iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-                    iconSize: [32, 32],
-                    className: 'marker-icon-red'
-                  })
-                }).addTo(mapa)
-                  .bindPopup(`<strong>${nombre}</strong>`);
-                
-                destinoMarker.openPopup();
-                document.getElementById('buscador').value = nombre.split(',')[0];
-                sugerenciasContainer.style.display = 'none';
-              });
-              
-              sugerenciasContainer.appendChild(item);
+              destinoMarker.openPopup();
+              document.getElementById('buscador').value = nombre;
+              sugerenciasContainer.style.display = 'none';
             });
-            sugerenciasContainer.style.display = 'block';
-          } else {
-            sugerenciasContainer.innerHTML = '<div class="sugerencia-item">No se encontraron resultados para: ' + consulta + '</div>';
-            sugerenciasContainer.style.display = 'block';
-          }
-        })
-        .catch(error => {
-          console.error("Error con Nominatim:", error);
-          sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Error al buscar. Intenta con otra formulación.</div>';
+            
+            // Agregar evento al item completo
+            item.addEventListener('click', function() {
+              const lat = parseFloat(boton.getAttribute('data-lat'));
+              const lng = parseFloat(boton.getAttribute('data-lng'));
+              const nombre = boton.getAttribute('data-nombre');
+              
+              const latlng = [lat, lng];
+              mapa.setView(latlng, 17);
+              
+              if (destinoMarker) {
+                mapa.removeLayer(destinoMarker);
+              }
+              destinoMarker = L.marker(latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-red'
+                })
+              }).addTo(mapa)
+                .bindPopup(`<strong>${nombre}</strong>`);
+              
+              destinoMarker.openPopup();
+              document.getElementById('buscador').value = nombre;
+              sugerenciasContainer.style.display = 'none';
+            });
+            
+            sugerenciasContainer.appendChild(item);
+          });
           sugerenciasContainer.style.display = 'block';
-        });
+        } else {
+          sugerenciasContainer.innerHTML = '<div class="sugerencia-item">No se encontraron resultados para: ' + consulta + '</div>';
+          sugerenciasContainer.style.display = 'block';
+        }
+      }, 800);
     }
 
     // Función para buscar en los puntos locales
@@ -587,7 +614,7 @@
           boton.addEventListener('click', function(e) {
             e.stopPropagation();
             const id = this.getAttribute('data-id');
-            calcularRutaUbicacion(id);
+            abrirGoogleMapsConDireccionUbicacion(id);
             sugerenciasContainer.style.display = 'none';
           });
           
@@ -607,67 +634,23 @@
       return false;
     }
 
+    // Función para abrir Google Maps con una ubicación específica
+    function abrirGoogleMapsConDireccionUbicacion(idPunto) {
+      const punto = UBICACIONES.find(p => p.id === idPunto);
+      if (!punto) return;
+      
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${punto.latlng[0]},${punto.latlng[1]}&travelmode=driving&dir_action=navigate`;
+      window.open(url, '_blank');
+    }
+
     // Función para manejar teclas en el buscador
     function handleSearchKeydown(e) {
       if (e.key === 'Enter') {
         e.preventDefault();
         const termino = document.getElementById('buscador').value.trim();
         if (termino) {
-          buscarConNominatim(termino);
+          buscarConGoogle(termino);
         }
-      }
-    }
-
-    // Función para calcular ruta a un destino específico (coordenadas)
-    function calcularRutaADestino(destinoLatLng) {
-      // Limpiar ruta existente
-      if (rutaControl) {
-        mapa.removeControl(rutaControl);
-        rutaControl = null;
-      }
-      
-      // Obtener ubicación actual del usuario
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            
-            // Calcular ruta desde la ubicación actual hasta el destino
-            rutaControl = L.Routing.control({
-              waypoints: [
-                L.latLng(latitude, longitude),
-                L.latLng(destinoLatLng[0], destinoLatLng[1])
-              ],
-              routeWhileDragging: false,
-              show: true,
-              addWaypoints: false,
-              draggableWaypoints: false,
-              fitSelectedRoutes: true,
-              lineOptions: {
-                styles: [{color: '#9b59b6', opacity: 0.7, weight: 5}]
-              },
-              router: L.Routing.osrmv1({
-                serviceUrl: 'https://router.project-osrm.org/route/v1',
-                profile: 'car'
-              }),
-              createMarker: function() { return null; }
-            }).addTo(mapa);
-            
-            rutaActiva = true;
-            
-            // Acercar el zoom después de calcular la ruta
-            setTimeout(() => {
-              mapa.setZoom(15);
-            }, 1000);
-          },
-          (error) => {
-            console.log(`Error al obtener ubicación: ${error.message}`);
-            alert('No se pudo obtener tu ubicación para calcular la ruta.');
-          },
-          { enableHighAccuracy: true }
-        );
-      } else {
-        alert('Tu navegador no soporta geolocalización.');
       }
     }
 
@@ -687,106 +670,56 @@
       }
     }
 
-    // Función para calcular ruta a una ubicación
-    function calcularRutaUbicacion(idPunto) {
-      const punto = UBICACIONES.find(p => p.id === idPunto);
-      if (!punto) return;
-      
-      // Limpiar ruta existente
-      if (rutaControl) {
-        mapa.removeControl(rutaControl);
-        rutaControl = null;
-      }
-      
-      // Obtener ubicación actual del usuario
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            
-            // Calcular ruta desde la ubicación actual hasta el punto seleccionado
-            rutaControl = L.Routing.control({
-              waypoints: [
-                L.latLng(latitude, longitude),
-                L.latLng(punto.latlng[0], punto.latlng[1])
-              ],
-              routeWhileDragging: false,
-              show: true,
-              addWaypoints: false,
-              draggableWaypoints: false,
-              fitSelectedRoutes: true,
-              lineOptions: {
-                styles: [{color: '#9b59b6', opacity: 0.7, weight: 5}]
-              },
-              router: L.Routing.osrmv1({
-                serviceUrl: 'https://router.project-osrm.org/route/v1',
-                profile: 'car'
-              }),
-              createMarker: function() { return null; }
-            }).addTo(mapa);
-            
-            rutaActiva = true;
-            
-            // Acercar el zoom después de calcular la ruta
-            setTimeout(() => {
-              mapa.setZoom(15);
-            }, 1000);
-          },
-          (error) => {
-            console.log(`Error al obtener ubicación: ${error.message}`);
-            alert('No se pudo obtener tu ubicación para calcular la ruta.');
-          },
-          { enableHighAccuracy: true }
-        );
-      } else {
-        alert('Tu navegador no soporta geolocalización.');
-      }
-    }
-
     // Función para obtener ubicación del usuario
     function obtenerUbicacionUsuario() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            
-            // Verificar si está en Leticia (aproximadamente)
-            const distanciaALeticia = calcularDistancia(
-              latitude, longitude,
-              -4.21528, -69.94056
-            );
-            
-            if (distanciaALeticia > 30) {
-              alert('El servicio solo está disponible en Leticia y sus alrededores');
-              return;
-            }
-            
-            // Eliminar marcador anterior si existe
-            if (userMarker) {
-              mapa.removeLayer(userMarker);
-            }
-            
-            // Crear nuevo marcador de usuario (azul)
-            userMarker = L.marker([latitude, longitude], {
-              icon: L.icon({
-                iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
-                iconSize: [32, 32],
-                className: 'marker-icon-blue'
-              })
-            }).addTo(mapa)
-              .bindPopup('¡Tu ubicación actual!');
+      return new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
               
-            // Centrar mapa en la ubicación del usuario avec zoom cercano
-            mapa.setView([latitude, longitude], 17);
-          },
-          (error) => {
-            console.log(`Error al obtener ubicación: ${error.message}`);
-          },
-          { enableHighAccuracy: true }
-        );
-      } else {
-        console.log("Tu navegador no soporta geolocalización.");
-      }
+              // Verificar si está en Leticia (aproximadamente)
+              const distanciaALeticia = calcularDistancia(
+                latitude, longitude,
+                -4.21528, -69.94056
+              );
+              
+              if (distanciaALeticia > 30) {
+                alert('El servicio solo está disponible en Leticia y sus alrededores');
+                reject();
+                return;
+              }
+              
+              // Eliminar marcador anterior si existe
+              if (userMarker) {
+                mapa.removeLayer(userMarker);
+              }
+              
+              // Crear nuevo marcador de usuario (azul)
+              userMarker = L.marker([latitude, longitude], {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-blue'
+                })
+              }).addTo(mapa)
+                .bindPopup('¡Tu ubicación actual!');
+                
+              // Centrar mapa en la ubicación del usuario avec zoom cercano
+              mapa.setView([latitude, longitude], 17);
+              resolve();
+            },
+            (error) => {
+              console.log(`Error al obtener ubicación: ${error.message}`);
+              reject();
+            },
+            { enableHighAccuracy: true }
+          );
+        } else {
+          console.log("Tu navegador no soporta geolocalización.");
+          reject();
+        }
+      });
     }
 
     // Función para calcular distancia en km (fórmula Haversine)
