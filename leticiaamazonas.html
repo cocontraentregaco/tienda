@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contraentrega Leticia, Amazonas, Colombia.</title>
+  <title>Contraentrega Cali, Valle Del Cauca, Colombia.</title>
   <style>
     :root {
       --primary-color: #1a1a1a;
@@ -107,7 +107,6 @@
       flex: 1; 
       background: #f0f0f0; 
       width: 100%;
-      min-height: 400px; /* Asegura que el mapa tenga una altura mínima */
     }
     
     .cluster-marcadores { 
@@ -253,15 +252,15 @@
   <div id="contenedor-mapa">
     <div id="barra-superior">
       <div class="contenedor-buscador">
-        <input type="search" id="buscador" placeholder="Buscar Afiliados en Leticia…" enterkeyhint="search">
+        <input type="search" id="buscador" placeholder="Buscar Afiliados en Cali…" enterkeyhint="search">
         <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
       </div>
-      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://leticia.qrcontraentrega.com/afiliacion', '_blank')">AFILIARSE</button>
-      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://leticia.qrcontraentrega.com/solicitar-envio', '_blank')">SOLICITAR ENVÍO</button>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://calivalle.qrcontraentrega.com/afiliacion', '_blank')">AFILIARSE</button>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://calivalle.qrcontraentrega.com/solicitar-envio', '_blank')">SOLICITAR ENVÍO</button>
       <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
-      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://leticia.qrcontraentrega.com', '_blank')">MARKETPLACE</button>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://calivalle.qrcontraentrega.com', '_blank')">MARKETPLACE</button>
     </div>
-    <div id="mapa">Cargando mapa...</div>
+    <div id="mapa"></div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -277,13 +276,24 @@
     let destinoMarker = null;
     let buscadorTimeout;
 
-    // Datos de ubicaciones en Leticia (solo socios)
+    // Datos de ubicaciones en Cali (solo socios)
     const UBICACIONES = [
+      { 
+        "id": "leticiaamazonas",
+        "nombre": "Leticia Amazonas", 
+        "direccion": "Calle 10 # 42-35, Barrio Granada, Cali", 
+        "latlng": [3.4516, -76.5320], 
+        "url": "https://leticiaamazonas.qrcontraentrega.com/",
+        "telefono": "+573001234567",
+        "horario": "L - S 08:00 a 18:00",
+        "servicios": "Productos naturales y suplementos dietarios",
+        "tipo": "socio"
+      },
       { 
         "id": "hermanosdreams",
         "nombre": "@hermanosdreams", 
-        "direccion": "Cl. 8 #9-50, Leticia, Amazonas", 
-        "latlng": [-4.215278, -69.940556], 
+        "direccion": "Av 46 Oeste # 3 - 4 Sector Ambulancias Montebello, Cali", 
+        "latlng": [3.484443, -76.544682], 
         "url": "https://hermanosdreams.qrcontraentrega.com/",
         "telefono": "+573041146297",
         "horario": "L - V 09:00 a 17:00",
@@ -293,8 +303,8 @@
       { 
         "id": "tiendasaludable",
         "nombre": "Tienda Saludable", 
-        "direccion": "Cra. 11 #10-32, Leticia, Amazonas", 
-        "latlng": [-4.212500, -69.938611], 
+        "direccion": "Av. 5N # 20-30, Cali", 
+        "latlng": [3.464841, -76.525159], 
         "url": "https://tiendasaludable.qrcontraentrega.com/",
         "telefono": "+573124567890",
         "horario": "L - D 07:00 a 22:00",
@@ -340,7 +350,7 @@
 
       // Inicializar mapa
       mapa = L.map('mapa', {
-        center: [-4.215278, -69.940556], // Coordenadas de Leticia
+        center: [3.484941, -76.545259], // Coordenadas de Cali
         zoom: 15,
         layers: [capas["Maxar WorldView Legion"]],
         zoomControl: false
@@ -349,7 +359,7 @@
       // Asegurar que el mapa ocupe todo el espacio disponible
       setTimeout(() => {
         mapa.invalidateSize();
-      }, 100);
+      }, 0);
 
       // Controles del mapa
       L.control.zoom({ position: 'bottomright' }).addTo(mapa);
@@ -452,7 +462,7 @@
       }
       
       // Si no hay resultados locales, usar Nominatim para búsqueda de direcciones
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(consulta + ', Leticia, Colombia')}&limit=5&countrycodes=co`;
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(consulta + ', Cali, Colombia')}&limit=5&countrycodes=co`;
       
       fetch(url)
         .then(response => {
@@ -477,7 +487,7 @@
               item.innerHTML = `
                 <div class="sugerencia-texto">
                   <strong>📍 ${nombreCorto}</strong><br>
-                  <small>${lugar.display_name.replace('Leticia, Amazonas, Colombia', 'Leticia')}</small>
+                  <small>${lugar.display_name.replace('Cali, Valle del Cauca, Colombia', 'Cali')}</small>
                 </div>
                 <button class="sugerencia-boton" data-lat="${lat}" data-lon="${lon}" data-nombre="${nombre}">
                   Cómo llegar
@@ -751,14 +761,14 @@
           (position) => {
             const { latitude, longitude } = position.coords;
             
-            // Verificar si está en Leticia (aproximadamente)
-            const distanciaALeticia = calcularDistancia(
+            // Verificar si está en Cali (aproximadamente)
+            const distanciaACali = calcularDistancia(
               latitude, longitude,
-              -4.215278, -69.940556
+              3.484941, -76.545259
             );
             
-            if (distanciaALeticia > 30) {
-              alert('El servicio solo está disponible en Leticia y sus alrededores');
+            if (distanciaACali > 30) {
+              alert('El servicio solo está disponible en Cali y sus alrededores');
               return;
             }
             
