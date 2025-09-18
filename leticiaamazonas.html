@@ -35,6 +35,7 @@
       height: 100vh; 
       display: flex; 
       flex-direction: column; 
+      position: relative;
     }
     
     #barra-superior { 
@@ -43,6 +44,7 @@
       padding: 0.8rem; 
       background: var(--bg-light); 
       width: 100%;
+      z-index: 1000;
     }
     
     #buscador { 
@@ -115,17 +117,10 @@
       color: white;
       display: flex;
       align-items: center;
-      justify-content: center;
+  justify-content: center;
       font-weight: bold;
     }
     
-    .leaflet-control-layers { 
-      background: #fff; 
-      padding: 5px; 
-      border-radius: var(--border-radius); 
-      box-shadow: var(--box-shadow);
-    }
-
     .whatsapp-icon {
       width: 16px;
       height: 16px;
@@ -216,6 +211,47 @@
       right: 8px !important;
     }
 
+    .map-type-selector {
+      position: absolute;
+      bottom: 20px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      display: flex;
+      gap: 10px;
+    }
+
+    .map-type-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #f1f1f1;
+      transition: background 0.3s;
+    }
+
+    .map-type-btn.active {
+      background: #0066cc;
+      color: white;
+    }
+
+    .google-maps-btn {
+      position: absolute;
+      bottom: 60px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
@@ -240,19 +276,18 @@
         margin-top: 5px;
         align-self: flex-end;
       }
-    }
 
-    .google-maps-btn {
-      position: absolute;
-      bottom: 20px;
-      left: 10px;
-      z-index: 1000;
-      background: white;
-      padding: 8px 12px;
-      border-radius: 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      cursor: pointer;
-      font-size: 14px;
+      .map-type-selector {
+        bottom: 10px;
+        left: 5px;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .google-maps-btn {
+        bottom: 100px;
+        left: 5px;
+      }
     }
   </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -272,7 +307,11 @@
       <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://leticiaamazonas.qrcontraentrega.com', '_blank')">MARKETPLACE</button>
     </div>
     <div id="mapa"></div>
-    <div class="google-maps-btn" id="google-maps-btn">Ver en Google Maps</div>
+    <div class="map-type-selector">
+      <button class="map-type-btn active" id="map-btn">Mapa</button>
+      <button class="map-type-btn" id="satellite-btn">Satélite</button>
+    </div>
+    <div class="google-maps-btn" id="google-maps-btn">Abrir en Google Maps</div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -285,6 +324,8 @@
     let destinoMarker = null;
     let buscadorTimeout;
     let googleMapsLayer;
+    let googleSatelliteLayer;
+    let currentLayer;
 
     // Datos de ubicaciones en Leticia (solo socios)
     const UBICACIONES = [
@@ -322,6 +363,15 @@
       // Evento para el botón de Google Maps
       document.getElementById('google-maps-btn').addEventListener('click', abrirGoogleMaps);
       
+      // Eventos para cambiar tipo de mapa
+      document.getElementById('map-btn').addEventListener('click', function() {
+        switchToMapView();
+      });
+      
+      document.getElementById('satellite-btn').addEventListener('click', function() {
+        switchToSatelliteView();
+      });
+      
       // Eventos para el buscador
       const searchInput = document.getElementById('buscador');
       searchInput.addEventListener('input', handleSearchInput);
@@ -346,12 +396,22 @@
       // Añadir control de zoom
       L.control.zoom({ position: 'bottomright' }).addTo(mapa);
 
-      // Añadir capa de Google Maps
+      // Crear capas de Google Maps
       googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
         maxZoom: 20,
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
         attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
-      }).addTo(mapa);
+      });
+
+      googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+      });
+
+      // Inicialmente usar la vista de mapa
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
 
       // Asegurar que el mapa ocupe todo el espacio disponible
       setTimeout(() => {
@@ -417,6 +477,26 @@
 
       // Solicitar ubicación al cargar la página
       obtenerUbicacionUsuario();
+    }
+
+    // Función para cambiar a vista de mapa
+    function switchToMapView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      
+      document.getElementById('map-btn').classList.add('active');
+      document.getElementById('satellite-btn').classList.remove('active');
+    }
+
+    // Función para cambiar a vista de satélite
+    function switchToSatelliteView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleSatelliteLayer;
+      currentLayer.addTo(mapa);
+      
+      document.getElementById('satellite-btn').classList.add('active');
+      document.getElementById('map-btn').classList.remove('active');
     }
 
     // Función para abrir Google Maps con una dirección específica
