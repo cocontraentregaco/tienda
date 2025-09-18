@@ -117,7 +117,7 @@
       color: white;
       display: flex;
       align-items: center;
-  justify-content: center;
+      justify-content: center;
       font-weight: bold;
     }
     
@@ -239,19 +239,6 @@
       color: white;
     }
 
-    .google-maps-btn {
-      position: absolute;
-      bottom: 60px;
-      left: 10px;
-      z-index: 1000;
-      background: white;
-      padding: 8px 12px;
-      border-radius: 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      cursor: pointer;
-      font-size: 14px;
-    }
-
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
@@ -283,11 +270,6 @@
         flex-direction: column;
         gap: 5px;
       }
-
-      .google-maps-btn {
-        bottom: 100px;
-        left: 5px;
-      }
     }
   </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -311,7 +293,6 @@
       <button class="map-type-btn active" id="map-btn">Mapa</button>
       <button class="map-type-btn" id="satellite-btn">Satélite</button>
     </div>
-    <div class="google-maps-btn" id="google-maps-btn">Abrir en Google Maps</div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -330,25 +311,25 @@
     // Datos de ubicaciones en Leticia (solo socios)
     const UBICACIONES = [
       { 
-        "id": "tiendaamazonica",
-        "nombre": "Tienda Amazónica", 
-        "direccion": "Carrera 11 # 9-43, Centro, Leticia", 
+        "id": "hermanosdreams",
+        "nombre": "@hermanosdreams", 
+        "direccion": "Av. Internacional # 12-34, Leticia, Amazonas", 
         "latlng": [-4.21528, -69.94056], 
-        "url": "https://tiendaamazonica.qrcontraentrega.com/",
-        "telefono": "+573001234567",
-        "horario": "L - S 08:00 a 18:00",
-        "servicios": "Productos regionales y artesanías",
+        "url": "https://hermanosdreams.qrcontraentrega.com/",
+        "telefono": "+573041146297",
+        "horario": "L - V 09:00 a 17:00",
+        "servicios": "Tienda de productos nutricionales",
         "tipo": "socio"
       },
       { 
-        "id": "deliveryamazonas",
-        "nombre": "Delivery Amazonas", 
-        "direccion": "Calle 8 # 10-25, Barrio El Porvenir, Leticia", 
-        "latlng": [-4.2125, -69.9386], 
-        "url": "https://deliveryamazonas.qrcontraentrega.com/",
-        "telefono": "+573002345678",
-        "horario": "L - D 07:00 a 21:00",
-        "servicios": "Servicio de entrega rápida",
+        "id": "tiendasaludable",
+        "nombre": "Tienda Saludable", 
+        "direccion": "Calle 8 # 10-25, Leticia, Amazonas", 
+        "latlng": [-4.2125, -69.9389], 
+        "url": "https://tiendasaludable.qrcontraentrega.com/",
+        "telefono": "+573124567890",
+        "horario": "L - D 07:00 a 22:00",
+        "servicios": "Productos orgánicos and suplementos",
         "tipo": "socio"
       }
     ];
@@ -359,9 +340,6 @@
       
       // Evento para el botón centrar
       document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
-      
-      // Evento para el botón de Google Maps
-      document.getElementById('google-maps-btn').addEventListener('click', abrirGoogleMaps);
       
       // Eventos para cambiar tipo de mapa
       document.getElementById('map-btn').addEventListener('click', function() {
@@ -389,7 +367,7 @@
       // Inicializar mapa
       mapa = L.map('mapa', {
         center: [-4.21528, -69.94056], // Coordenadas de Leticia
-        zoom: 15,
+        zoom: 13,
         zoomControl: false
       });
 
@@ -505,23 +483,6 @@
       window.open(url, '_blank');
     }
 
-    // Función para abrir Google Maps con la ubicación actual
-    function abrirGoogleMaps() {
-      if (userMarker) {
-        const latlng = userMarker.getLatLng();
-        const url = `https://www.google.com/maps/@?api=1&map_action=map&center=${latlng.lat},${latlng.lng}&zoom=15`;
-        window.open(url, '_blank');
-      } else {
-        obtenerUbicacionUsuario().then(() => {
-          if (userMarker) {
-            const latlng = userMarker.getLatLng();
-            const url = `https://www.google.com/maps/@?api=1&map_action=map&center=${latlng.lat},${latlng.lng}&zoom=15`;
-            window.open(url, '_blank');
-          }
-        });
-      }
-    }
-
     // Función para manejar la búsqueda
     function handleSearchInput(e) {
       clearTimeout(buscadorTimeout);
@@ -557,25 +518,25 @@
         // En una implementación real, aquí se conectaría con la API de Google Places
         sugerenciasContainer.innerHTML = '';
         
-        // Simular algunos resultados de búsqueda
+        // Simular algunos resultados de búsqueda en Leticia
         const resultadosSimulados = [
           {
             name: "Aeropuerto Internacional Alfredo Vásquez Cobo",
-            lat: -4.1936,
-            lng: -69.9432,
-            formatted_address: "Aeropuerto, Leticia, Amazonas, Colombia"
+            lat: -4.19361,
+            lng: -69.94306,
+            formatted_address: "Leticia, Amazonas, Colombia"
           },
           {
             name: "Parque Santander",
-            lat: -4.2150,
-            lng: -69.9400,
-            formatted_address: "Cl. 8 #10-40, Leticia, Amazonas, Colombia"
+            lat: -4.21500,
+            lng: -69.94000,
+            formatted_address: "Cl. 8, Leticia, Amazonas, Colombia"
           },
           {
-            name: "Malecón de Leticia",
-            lat: -4.2136,
-            lng: -69.9414,
-            formatted_address: "Malecón, Leticia, Amazonas, Colombia"
+            name: "Mercado Municipal de Leticia",
+            lat: -4.21333,
+            lng: -69.93917,
+            formatted_address: "Cra. 11, Leticia, Amazonas, Colombia"
           }
         ];
         
