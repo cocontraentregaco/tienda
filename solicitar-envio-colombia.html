@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitar Envío - Contraentrega Cali</title>
+  <style>
+    :root {
+      --primary-color: #1a1a1a;
+      --secondary-color: #333;
+      --accent-color: #0066cc;
+      --text-color: #333;
+      --light-text: #fff;
+      --bg-light: #f8f8f8;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    body { 
+      font-family: 'Roboto', sans-serif; 
+      color: var(--text-color); 
+      line-height: 1.6; 
+      touch-action: manipulation;
+      overflow-x: hidden;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 20px;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--accent-color);
+    }
+    
+    .form-section {
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .section-title {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+    }
+    
+    .section-title span {
+      background: var(--accent-color);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+      font-size: 0.9rem;
+    }
+    
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .form-group {
+      flex: 1;
+      min-width: 250px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-family: 'Roboto', sans-serif;
+      font-size: 16px;
+      transition: var(--transition);
+    }
+    
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+    }
+    
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .btn { 
+      background: var(--primary-color); 
+      color: var(--light-text); 
+      padding: 12px 24px; 
+      border-radius: 24px; 
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-size: 16px;
+      width: 100%;
+      margin-top: 10px;
+    }
+    
+    .btn:hover {
+      background: var(--secondary-color);
+      transform: translateY(-2px);
+    }
+    
+    .btn-whatsapp {
+      background-color: #25D366;
+    }
+    
+    .btn-whatsapp:hover {
+      background-color: #128C7E;
+    }
+    
+    .btn-email {
+      background-color: #EA4335;
+    }
+    
+    .btn-email:hover {
+      background-color: #D33426;
+    }
+    
+    .btn-sms {
+      background-color: #34A853;
+    }
+    
+    .btn-sms:hover {
+      background-color: #2E944B;
+    }
+    
+    .whatsapp-icon, .email-icon, .sms-icon {
+      width: 20px;
+      height: 20px;
+      filter: invert(1);
+    }
+    
+    .send-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .option-title {
+      text-align: center;
+      margin: 15px 0 5px;
+      font-weight: 500;
+      color: var(--secondary-color);
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      
+      .container {
+        padding: 15px;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .form-group {
+        min-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Solicitar Servicio de Envío</h1>
+    
+    <form id="solicitud-form">
+      <!-- Información del Remitente -->
+      <div class="form-section">
+        <h2 class="section-title"><span>1</span> Información del Remitente</h2>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="remitente-nombre">Nombre completo *</label>
+            <input type="text" id="remitente-nombre" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="remitente-telefono">Teléfono *</label>
+            <input type="tel" id="remitente-telefono" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="remitente-direccion">Dirección de recogida *</label>
+          <input type="text" id="remitente-direccion" required>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="recogida-fecha">Fecha de recogida *</label>
+            <input type="date" id="recogida-fecha" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="recogida-hora">Hora de recogida *</label>
+            <input type="time" id="recogida-hora" required>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Información del Destinatario -->
+      <div class="form-section">
+        <h2 class="section-title"><span>2</span> Información del Destinatario</h2>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="destinatario-nombre">Nombre completo *</label>
+            <input type="text" id="destinatario-nombre" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="destinatario-telefono">Teléfono *</label>
+            <input type="tel" id="destinatario-telefono" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="destinatario-direccion">Dirección de entrega *</label>
+          <input type="text" id="destinatario-direccion" required>
+        </div>
+      </div>
+      
+      <!-- Información del Paquete -->
+      <div class="form-section">
+        <h2 class="section-title"><span>3</span> Información del Paquete</h2>
+        
+        <div class="form-group">
+          <label for="paquete-descripcion">Descripción del contenido *</label>
+          <textarea id="paquete-descripcion" placeholder="Describa qué contiene el paquete o caja..." required></textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="paquete-valor">Valor declarado (opcional)</label>
+            <input type="number" id="paquete-valor" placeholder="$">
+          </div>
+          
+          <div class="form-group">
+            <label for="paquete-instructions">Instrucciones especiales (opcional)</label>
+            <input type="text" id="paquete-instructions" placeholder="Frágil, manejar con cuidado, etc.">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Opciones de envío -->
+      <div class="send-options">
+        <p class="option-title">Seleccione cómo desea enviar su solicitud:</p>
+        
+        <button type="button" class="btn btn-whatsapp" id="enviar-whatsapp">
+          <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
+          Enviar por WhatsApp
+        </button>
+        
+        <button type="button" class="btn btn-email" id="enviar-email">
+          <img src="https://cdn-icons-png.flaticon.com/512/281/281769.png" class="email-icon" alt="Email">
+          Enviar por Correo Electrónico
+        </button>
+        
+        <button type="button" class="btn btn-sms" id="enviar-sms">
+          <img src="https://cdn-icons-png.flaticon.com/512/2040/2040505.png" class="sms-icon" alt="SMS">
+          Enviar por SMS
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Establecer fecha mínima como hoy
+      const hoy = new Date();
+      const fechaInput = document.getElementById('recogida-fecha');
+      fechaInput.min = hoy.toISOString().split('T')[0];
+      
+      // Establecer hora por defecto (próxima hora en punto)
+      const horaInput = document.getElementById('recogida-hora');
+      const siguienteHora = new Date();
+      siguienteHora.setHours(siguienteHora.getHours() + 1, 0, 0, 0);
+      horaInput.value = siguienteHora.toTimeString().substring(0, 5);
+      
+      // Manejar el envío del formulario por WhatsApp
+      document.getElementById('enviar-whatsapp').addEventListener('click', function() {
+        if (!validarFormulario()) {
+          alert('Por favor complete todos los campos obligatorios.');
+          return;
+        }
+        
+        enviarPorWhatsApp();
+      });
+      
+      // Manejar el envío del formulario por Email
+      document.getElementById('enviar-email').addEventListener('click', function() {
+        if (!validarFormulario()) {
+          alert('Por favor complete todos los campos obligatorios.');
+          return;
+        }
+        
+        enviarPorEmail();
+      });
+      
+      // Manejar el envío del formulario por SMS
+      document.getElementById('enviar-sms').addEventListener('click', function() {
+        if (!validarFormulario()) {
+          alert('Por favor complete todos los campos obligatorios.');
+          return;
+        }
+        
+        enviarPorSMS();
+      });
+    });
+    
+    function validarFormulario() {
+      const camposRequeridos = [
+        'remitente-nombre',
+        'remitente-telefono',
+        'remitente-direccion',
+        'recogida-fecha',
+        'recogida-hora',
+        'destinatario-nombre',
+        'destinatario-telefono',
+        'destinatario-direccion',
+        'paquete-descripcion'
+      ];
+      
+      for (let id of camposRequeridos) {
+        const campo = document.getElementById(id);
+        if (!campo.value.trim()) {
+          campo.focus();
+          return false;
+        }
+      }
+      
+      return true;
+    }
+    
+    function obtenerDatosFormulario() {
+      return {
+        remitenteNombre: document.getElementById('remitente-nombre').value,
+        remitenteTelefono: document.getElementById('remitente-telefono').value,
+        remitenteDireccion: document.getElementById('remitente-direccion').value,
+        recogidaFecha: document.getElementById('recogida-fecha').value,
+        recogidaHora: document.getElementById('recogida-hora').value,
+        destinatarioNombre: document.getElementById('destinatario-nombre').value,
+        destinatarioTelefono: document.getElementById('destinatario-telefono').value,
+        destinatarioDireccion: document.getElementById('destinatario-direccion').value,
+        paqueteDescripcion: document.getElementById('paquete-descripcion').value,
+        paqueteValor: document.getElementById('paquete-valor').value,
+        paqueteInstructions: document.getElementById('paquete-instructions').value
+      };
+    }
+    
+    function formatearMensaje(datos) {
+      // Formatear fecha
+      const fecha = new Date(datos.recogidaFecha);
+      const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      // Crear mensaje
+      let mensaje = "¡Hola! Necesito solicitar un servicio de envío.\n\n";
+      mensaje += "*INFORMACIÓN DEL REMITENTE:*\n";
+      mensaje += `📦 Nombre: ${datos.remitenteNombre}\n`;
+      mensaje += `📞 Teléfono: ${datos.remitenteTelefono}\n`;
+      mensaje += `🏠 Dirección: ${datos.remitenteDireccion}\n`;
+      mensaje += `⏰ Fecha/Hora recogida: ${fechaFormateada} a las ${datos.recogidaHora}\n\n`;
+      
+      mensaje += "*INFORMACIÓN DEL DESTINATARIO:*\n";
+      mensaje += `👤 Nombre: ${datos.destinatarioNombre}\n`;
+      mensaje += `📞 Teléfono: ${datos.destinatarioTelefono}\n`;
+      mensaje += `🏠 Dirección: ${datos.destinatarioDireccion}\n\n`;
+      
+      mensaje += "*INFORMACIÓN DEL PAQUETE:*\n";
+      mensaje += `📋 Descripción: ${datos.paqueteDescripcion}\n`;
+      if (datos.paqueteValor) mensaje += `💰 Valor declarado: $${datos.paqueteValor}\n`;
+      if (datos.paqueteInstructions) mensaje += `⚡ Instrucciones: ${datos.paqueteInstructions}\n`;
+      
+      return mensaje;
+    }
+    
+    function enviarPorWhatsApp() {
+      // Número de WhatsApp de la empresa (cambiar por el número real)
+      const telefonoEmpresa = "573041146297";
+      
+      // Obtener datos y formatear mensaje
+      const datos = obtenerDatosFormulario();
+      const mensaje = formatearMensaje(datos);
+      
+      // Codificar el mensaje para URL
+      const mensajeCodificado = encodeURIComponent(mensaje);
+      
+      // Abrir WhatsApp
+      window.open(`https://wa.me/${telefonoEmpresa}?text=${mensajeCodificado}`, '_blank');
+    }
+    
+    function enviarPorEmail() {
+      // Dirección de correo de la empresa (cambiar por el correo real)
+      const emailEmpresa = "envios@contraentrega.com";
+      
+      // Obtener datos y formatear mensaje
+      const datos = obtenerDatosFormulario();
+      const mensaje = formatearMensaje(datos);
+      
+      // Asunto del correo
+      const asunto = "Solicitud de Servicio de Envío - " + datos.remitenteNombre;
+      
+      // Codificar para URL
+      const asuntoCodificado = encodeURIComponent(asunto);
+      const mensajeCodificado = encodeURIComponent(mensaje);
+      
+      // Abrir cliente de correo
+      window.open(`mailto:${emailEmpresa}?subject=${asuntoCodificado}&body=${mensajeCodificado}`, '_blank');
+    }
+    
+    function enviarPorSMS() {
+      // Número para SMS (cambiar por el número real)
+      const numeroEmpresa = "573041146297";
+      
+      // Obtener datos y formatear mensaje
+      const datos = obtenerDatosFormulario();
+      const mensaje = formatearMensaje(datos);
+      
+      // Codificar para URL
+      const mensajeCodificado = encodeURIComponent(mensaje);
+      
+      // Abrir aplicación de mensajes
+      window.open(`sms:${numeroEmpresa}?body=${mensajeCodificado}`, '_blank');
+    }
+  </script>
+</body>
+</html>
