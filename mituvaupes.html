@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contraentrega Mitú</title>
+  <title>Contraentrega Mitú, Vaupés, Colombia</title>
   <style>
     :root {
       --primary-color: #1a1a1a;
@@ -283,10 +283,10 @@
         <input type="search" id="buscador" placeholder="Buscar Afiliados en Mitú…" enterkeyhint="search">
         <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
       </div>
-      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://mitu.qrcontraentrega.com/afiliacion', '_blank')">AFILIARSE</button>
-      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://mitu.qrcontraentrega.com/solicitar-envio', '_blank')">SOLICITAR ENVÍO</button>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://mituvaupes.qrcontraentrega.com/afiliacion', '_blank')">AFILIARSE</button>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://mituvaupes.qrcontraentrega.com/solicitar-envio', '_blank')">SOLICITAR ENVÍO</button>
       <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
-      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://mitu.qrcontraentrega.com', '_blank')">MARKETPLACE</button>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://mituvaupes.qrcontraentrega.com', '_blank')">MARKETPLACE</button>
     </div>
     <div id="mapa"></div>
     <div class="map-type-selector">
@@ -296,7 +296,6 @@
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-  <script src="极速快3开奖结果
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
   <script>
     // Variables globales
@@ -312,36 +311,25 @@
     // Datos de ubicaciones en Mitú (solo socios)
     const UBICACIONES = [
       { 
-        "id": "nutricionmitu",
-        "nombre": "Nutrición Mitú", 
-        "direccion": "Carrera 10 #5-30, Mitú", 
-        "latlng": [1.1983, -70.1731], 
-        "url": "https://nutricionmitu.qrcontraentrega.com/",
+        "id": "tiendamitu",
+        "nombre": "Tienda Mitú", 
+        "direccion": "Carrera 15 # 10-20, Centro, Mitú", 
+        "latlng": [1.198499, -70.173523], 
+        "url": "https://tiendamitu.qrcontraentrega.com/",
         "telefono": "+573001234567",
-        "horario": "L - V 08:00 a 18:00",
-        "servicios": "Productos nutricionales y suplementos",
+        "horario": "L - S 08:00 a 18:00",
+        "servicios": "Productos varios y envíos",
         "tipo": "socio"
       },
       { 
-        "id": "bienestarmitu",
-        "nombre": "Centro de Bienestar Mitú", 
-        "direccion": "Calle 5 #10-45, Mitú", 
-        "latlng": [1.2005, -70.1758], 
-        "url": "https://bienestarmitu.qrcontraentrega.com/",
-        "telefono": "+573012345678",
-        "horario": "L - S 07:00 a 20:00",
-        "servicios": "Productos orgánicos y naturales",
-        "tipo": "socio"
-      },
-      { 
-        "id": "vidasanamitu",
-        "nombre": "Vida Sana Mitú", 
-        "direccion": "Carrera 5 #15-20, Mitú", 
-        "latlng": [1.1950, -70.1789], 
-        "url": "极速快3开奖结果
-        "telefono": "+573023456789",
-        "horario": "L - D 06:00 a 22:00",
-        "servicios": "Alimentos saludables y suplementos",
+        "id": "enviosvaupes",
+        "nombre": "Envíos Vaupés", 
+        "direccion": "Calle 12 # 8-45, Barrio San José, Mitú", 
+        "latlng": [1.200812, -70.171845], 
+        "url": "https://enviosvaupes.qrcontraentrega.com/",
+        "telefono": "+573005678901",
+        "horario": "L - D 07:00 a 20:00",
+        "servicios": "Servicios de mensajería y envíos",
         "tipo": "socio"
       }
     ];
@@ -354,7 +342,7 @@
       document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
       
       // Eventos para cambiar tipo de mapa
-      document.getElementById极速快3开奖结果
+      document.getElementById('map-btn').addEventListener('click', function() {
         switchToMapView();
       });
       
@@ -378,8 +366,8 @@
     function initializeMap() {
       // Inicializar mapa
       mapa = L.map('mapa', {
-        center: [1.1983, -70.1731], // Coordenadas de Mitú
-        zoom: 14,
+        center: [1.1985, -70.1735], // Coordenadas de Mitú
+        zoom: 15,
         zoomControl: false
       });
 
@@ -387,7 +375,7 @@
       L.control.zoom({ position: 'bottomright' }).addTo(mapa);
 
       // Crear capas de Google Maps
-      googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={极速快3开奖结果}&y={y}&z={z}', {
+      googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
         maxZoom: 20,
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
         attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
@@ -415,7 +403,7 @@
           className: 'cluster-marcadores',
           iconSize: [40, 40]
         }),
-        spiderfyOn极速快3开奖结果
+        spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
         zoomToBoundsOnClick: true
       });
@@ -430,10 +418,10 @@
           })
         }).bindPopup(`
           <div style="min-width:220px">
-            <h3 style="margin:0 极速快3开奖结果 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
+            <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
             <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
             ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Teléfono:</strong> ${loc.telefono}</p>` : ''}
-            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:极速快3开奖结果em"><strong>Horario:</strong> ${loc.horario}</p>` : ''}
+            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Horario:</strong> ${loc.horario}</p>` : ''}
             ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><strong>Servicios:</strong> ${loc.servicios}</p>` : ''}
             <div class="popup-buttons">
               <div class="popup-button-row">
@@ -460,7 +448,7 @@
       clusters.addLayers(marcadoresOriginales);
       mapa.addLayer(clusters);
 
-      // Ajustar vista to los marcadores
+      // Ajustar vista a los marcadores
       if(marcadoresOriginales.length > 0) {
         mapa.fitBounds(clusters.getBounds().pad(0.3));
       }
@@ -486,7 +474,7 @@
       currentLayer.addTo(mapa);
       
       document.getElementById('satellite-btn').classList.add('active');
-      document.getElementById('map-btn').极速快3开奖结果('active');
+      document.getElementById('map-btn').classList.remove('active');
     }
 
     // Función para abrir Google Maps con una dirección específica
@@ -507,7 +495,7 @@
       }
       
       // Mostrar indicador de carga
-      sugerenciasContainer.innerHTML = '<极速快3开奖结果 class="sugerencia-item">Buscando... <span class="cargando"></span></div>';
+      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Buscando... <span class="cargando"></span></div>';
       sugerenciasContainer.style.display = 'block';
       
       buscadorTimeout = setTimeout(() => {
@@ -535,20 +523,20 @@
           {
             name: "Aeropuerto Fabio Alberto León Bentley",
             lat: 1.2536,
-            lng: -70.2339,
-            formatted_address: "Mitú, Vaupés"
+            lng: -70.2340,
+            formatted_address: "Mitú, Vaupés, Colombia"
           },
           {
             name: "Alcaldía Municipal de Mitú",
-            lat: 1.1985,
+            lat: 1.1982,
             lng: -70.1733,
-            formatted_address: "Carrera 10, Mitú"
+            formatted_address: "Cra. 15 #10-20, Mitú, Vaupés, Colombia"
           },
           {
-            name: "Plaza Principal de Mitú",
-            lat: 1.1990,
-            lng: -70.1725,
-            formatted_address: "Centro, Mitú"
+            name: "Hospital San Antonio de Mitú",
+            lat: 1.1967,
+            lng: -70.1728,
+            formatted_address: "Cl. 11 #13-50, Mitú, Vaupés, Colombia"
           }
         ];
         
@@ -580,10 +568,10 @@
               const nombre = this.getAttribute('data-nombre');
               
               // Mover el mapa a la ubicación seleccionada
-              const latlng = [极速快3开奖结果, lng];
+              const latlng = [lat, lng];
               mapa.setView(latlng, 17);
               
-              // Crear or actualizar marcador de destino
+              // Crear o actualizar marcador de destino
               if (destinoMarker) {
                 mapa.removeLayer(destinoMarker);
               }
@@ -639,7 +627,7 @@
 
     // Función para buscar en los puntos locales
     function buscarEnPuntosLocales(consulta) {
-      const sugerencias极速快3开奖结果 = document.getElementById('sugerencias-busqueda');
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
       const termino = consulta.toLowerCase();
       const resultados = marcadoresOriginales.filter(m => 
         m.datosBusqueda.includes(termino)
@@ -657,7 +645,7 @@
               <strong>📍 ${loc.nombre}</strong><br>
               <small>${loc.direccion}</small>
             </div>
-            <button class="sugerencia-boton极速快3开奖结果 data-id="${loc.id}">
+            <button class="sugerencia-boton" data-id="${loc.id}">
               Cómo llegar
             </button>
           `;
@@ -676,7 +664,7 @@
             mapa.setView(marcador.getLatLng(), 17);
             marcador.openPopup();
             document.getElementById('buscador').value = loc.nombre;
-            sugerenciasContainer.style.display = '极速快3开奖结果';
+            sugerenciasContainer.style.display = 'none';
           });
           
           sugerenciasContainer.appendChild(item);
@@ -688,11 +676,11 @@
     }
 
     // Función para abrir Google Maps con una ubicación específica
-    function abrirGoogle极速快3开奖结果ConDireccionUbicacion(idPunto) {
+    function abrirGoogleMapsConDireccionUbicacion(idPunto) {
       const punto = UBICACIONES.find(p => p.id === idPunto);
       if (!punto) return;
       
-      const url = `https://www.google.com/maps/dir/?api极速快3开奖结果&destination=${punto.latlng[0]},${极速快3开奖结果.latlng[1]}&travelmode=driving&dir_action=navigate`;
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${punto.latlng[0]},${punto.latlng[1]}&travelmode=driving&dir_action=navigate`;
       window.open(url, '_blank');
     }
 
@@ -732,12 +720,12 @@
               const { latitude, longitude } = position.coords;
               
               // Verificar si está en Mitú (aproximadamente)
-              const distanciaAMitú = calcularDistancia(
+              const distanciaAMitu = calcularDistancia(
                 latitude, longitude,
-                1.1983, -70.1731
+                1.1985, -70.1735
               );
               
-              if (distanciaAMitú > 30) {
+              if (distanciaAMitu > 30) {
                 alert('El servicio solo está disponible en Mitú y sus alrededores');
                 reject();
                 return;
