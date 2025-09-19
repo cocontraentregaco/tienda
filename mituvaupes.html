@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QRContraentrega - Mitú, Vaupés, Colombia</title>
+  <title>Contraentrega Mitú</title>
   <style>
     :root {
       --primary-color: #1a1a1a;
@@ -35,6 +35,7 @@
       height: 100vh; 
       display: flex; 
       flex-direction: column; 
+      position: relative;
     }
     
     #barra-superior { 
@@ -43,6 +44,7 @@
       padding: 0.8rem; 
       background: var(--bg-light); 
       width: 100%;
+      z-index: 1000;
     }
     
     #buscador { 
@@ -72,6 +74,10 @@
       border: none;
       cursor: pointer;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
     }
     
     .btn:hover {
@@ -79,9 +85,30 @@
       transform: translateY(-1px);
     }
     
+    .btn-centrar {
+      background-color: #0066cc;
+    }
+    
+    .btn-ruta {
+      background-color: #9b59b6;
+    }
+    
+    .btn-info {
+      background-color: #3498db;
+    }
+    
+    .btn-whatsapp {
+      background-color: #25D366;
+    }
+    
+    .btn-solicitar {
+      background-color: #e74c3c;
+    }
+    
     #mapa { 
       flex: 1; 
       background: #f0f0f0; 
+      width: 100%;
     }
     
     .cluster-marcadores { 
@@ -94,17 +121,154 @@
       font-weight: bold;
     }
     
-    .leaflet-control-layers { 
-      background: #fff; 
-      padding: 5px; 
-      border-radius: var(--border-radius); 
-      box-shadow: var(--box-shadow);
+    .whatsapp-icon {
+      width: 16px;
+      height: 16px;
+      filter: invert(1);
     }
-    
+
+    .popup-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .popup-button-row {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+    }
+
+    .sugerencias-busqueda {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .sugerencia-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sugerencia-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    .sugerencia-texto {
+      flex: 1;
+    }
+
+    .sugerencia-boton {
+      margin-left: 10px;
+      padding: 5px 10px;
+      background-color: #9b59b6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .contenedor-buscador {
+      position: relative;
+      flex: 1;
+    }
+
+    .cargando {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    .gm-style .gm-style-iw-c {
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .gm-style .gm-style-iw-d {
+      overflow: auto !important;
+    }
+
+    .gm-ui-hover-effect {
+      top: 8px !important;
+      right: 8px !important;
+    }
+
+    .map-type-selector {
+      position: absolute;
+      bottom: 20px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      display: flex;
+      gap: 10px;
+    }
+
+    .map-type-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #f1f1f1;
+      transition: background 0.3s;
+    }
+
+    .map-type-btn.active {
+      background: #0066cc;
+      color: white;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     @media (max-width: 768px) { 
       #barra-superior { 
         flex-direction: column; 
         gap: 0.6rem;
+      }
+      
+      .popup-button-row {
+        flex-direction: column;
+      }
+
+      .sugerencia-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .sugerencia-boton {
+        margin-left: 0;
+        margin-top: 5px;
+        align-self: flex-end;
+      }
+
+      .map-type-selector {
+        bottom: 10px;
+        left: 5px;
+        flex-direction: column;
+        gap: 5px;
       }
     }
   </style>
@@ -115,44 +279,134 @@
 <body>
   <div id="contenedor-mapa">
     <div id="barra-superior">
-      <input type="search" id="buscador" placeholder="Buscar Productos y Servicios en Mitú..." enterkeyhint="search">
-      <button class="btn" id="b2b-btn">VER TODO</button>
+      <div class="contenedor-buscador">
+        <input type="search" id="buscador" placeholder="Buscar Afiliados en Mitú…" enterkeyhint="search">
+        <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+      </div>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://mitu.qrcontraentrega.com/afiliacion', '_blank')">AFILIARSE</button>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://mitu.qrcontraentrega.com/solicitar-envio', '_blank')">SOLICITAR ENVÍO</button>
+      <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://mitu.qrcontraentrega.com', '_blank')">MARKETPLACE</button>
     </div>
     <div id="mapa"></div>
+    <div class="map-type-selector">
+      <button class="map-type-btn active" id="map-btn">Mapa</button>
+      <button class="map-type-btn" id="satellite-btn">Satélite</button>
+    </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="极速快3开奖结果
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
   <script>
-    function initializeMap() {
-      // Configuración de capas
-      const capas = {
-        "Maxar": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-          attribution: 'Satellite: Maxar WorldView Legion',
-          maxZoom: 18,
-          maxNativeZoom: 18,
-          detectRetina: true
-        }),
-        "OSM": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors',
-          maxZoom: 19
-        })
-      };
+    // Variables globales
+    let mapa;
+    let userMarker;
+    let marcadoresOriginales = [];
+    let destinoMarker = null;
+    let buscadorTimeout;
+    let googleMapsLayer;
+    let googleSatelliteLayer;
+    let currentLayer;
 
+    // Datos de ubicaciones en Mitú (solo socios)
+    const UBICACIONES = [
+      { 
+        "id": "nutricionmitu",
+        "nombre": "Nutrición Mitú", 
+        "direccion": "Carrera 10 #5-30, Mitú", 
+        "latlng": [1.1983, -70.1731], 
+        "url": "https://nutricionmitu.qrcontraentrega.com/",
+        "telefono": "+573001234567",
+        "horario": "L - V 08:00 a 18:00",
+        "servicios": "Productos nutricionales y suplementos",
+        "tipo": "socio"
+      },
+      { 
+        "id": "bienestarmitu",
+        "nombre": "Centro de Bienestar Mitú", 
+        "direccion": "Calle 5 #10-45, Mitú", 
+        "latlng": [1.2005, -70.1758], 
+        "url": "https://bienestarmitu.qrcontraentrega.com/",
+        "telefono": "+573012345678",
+        "horario": "L - S 07:00 a 20:00",
+        "servicios": "Productos orgánicos y naturales",
+        "tipo": "socio"
+      },
+      { 
+        "id": "vidasanamitu",
+        "nombre": "Vida Sana Mitú", 
+        "direccion": "Carrera 5 #15-20, Mitú", 
+        "latlng": [1.1950, -70.1789], 
+        "url": "极速快3开奖结果
+        "telefono": "+573023456789",
+        "horario": "L - D 06:00 a 22:00",
+        "servicios": "Alimentos saludables y suplementos",
+        "tipo": "socio"
+      }
+    ];
+
+    // Inicializar el mapa cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeMap();
+      
+      // Evento para el botón centrar
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
+      
+      // Eventos para cambiar tipo de mapa
+      document.getElementById极速快3开奖结果
+        switchToMapView();
+      });
+      
+      document.getElementById('satellite-btn').addEventListener('click', function() {
+        switchToSatelliteView();
+      });
+      
+      // Eventos para el buscador
+      const searchInput = document.getElementById('buscador');
+      searchInput.addEventListener('input', handleSearchInput);
+      searchInput.addEventListener('keydown', handleSearchKeydown);
+      
+      // Cerrar sugerencias al hacer clic fuera
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.contenedor-buscador')) {
+          document.getElementById('sugerencias-busqueda').style.display = 'none';
+        }
+      });
+    });
+
+    function initializeMap() {
       // Inicializar mapa
-      const mapa = L.map('mapa', {
-        center: [1.1983, -70.1732], // Coordenadas de Mitú
+      mapa = L.map('mapa', {
+        center: [1.1983, -70.1731], // Coordenadas de Mitú
         zoom: 14,
-        layers: [capas["Maxar"]],
         zoomControl: false
       });
 
-      // Controles del mapa
+      // Añadir control de zoom
       L.control.zoom({ position: 'bottomright' }).addTo(mapa);
-      L.control.layers(capas, null, { 
-        position: 'topright',
-        collapsed: false
-      }).addTo(mapa);
+
+      // Crear capas de Google Maps
+      googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={极速快3开奖结果}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+      });
+
+      googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+      });
+
+      // Inicialmente usar la vista de mapa
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+
+      // Asegurar que el mapa ocupe todo el espacio disponible
+      setTimeout(() => {
+        mapa.invalidateSize();
+      }, 0);
 
       // Sistema de marcadores
       const clusters = L.markerClusterGroup({
@@ -161,108 +415,378 @@
           className: 'cluster-marcadores',
           iconSize: [40, 40]
         }),
-        spiderfyOnMaxZoom: true,
+        spiderfyOn极速快3开奖结果
         showCoverageOnHover: false,
         zoomToBoundsOnClick: true
       });
 
-      // Datos de ubicaciones en Mitú
-      const ubicaciones = [
-        { 
-          "nombre": "@nanostore", 
-          "direccion": "Carrera 10 #5-25, Centro, Mitú", 
-          "latlng": [1.1953, -70.1702], 
-          "url": "https://nanostore.contraentregaco.com/",
-          "telefono": "+57 3041146297",
-          "horario": "L-V 8:00 am - 5:00 pm",
-          "servicios": "Tienda para mascotas"
-        }, 
-        { 
-          "nombre": "@isolinatienda", 
-          "direccion": "Calle 5 #10-15, Barrio El Porvenir, Mitú", 
-          "latlng": [1.1983, -70.1732], 
-          "url": "https://isolinatienda.contraentregaco.com/",
-          "telefono": "+57 3041146297",
-          "horario": "L-V 8:00 am - 5:00 pm",
-          "servicios": "Tienda para el hogar"
-        },
-        { 
-          "nombre": "@hermanosdreams", 
-          "direccion": "Av. Vaupés #8-40, Mitú", 
-          "latlng": [1.2013, -70.1762], 
-          "url": "https://hermanosdreams.qrcontraentrega.com/",
-          "telefono": "+57 3041146297",
-          "horario": "L-V 8:00 am - 4:00 pm",
-          "servicios": "Productos nutricionales"
-        },
-      ];
-
-      // Crear marcadores
-      const todosMarcadores = [];
-      ubicaciones.forEach(loc => {
-        const marcador = L.marker(loc.latlng).bindPopup(`
+      // Crear marcadores (solo socios)
+      UBICACIONES.forEach(loc => {
+        const marcador = L.marker(loc.latlng, {
+          icon: L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+            iconSize: [32, 32],
+            className: 'marker-icon-orange'
+          })
+        }).bindPopup(`
           <div style="min-width:220px">
-            <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
+            <h3 style="margin:0 极速快3开奖结果 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
             <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
-            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><i class="fas fa-phone" style="margin-right:5px"></i> ${loc.telefono}</p>` : ''}
-            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><i class="fas fa-clock" style="margin-right:5px"></i> ${loc.horario}</p>` : ''}
-            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><i class="fas fa-boxes" style="margin-right:5px"></i> ${loc.servicios}</p>` : ''}
-            <a href="${loc.url}" style="display:inline-block;background:var(--accent-color);color:white;padding:6px 12px;border-radius:4px;text-decoration:none;margin-top:5px;font-size:0.9em">Más información</a>
+            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Teléfono:</strong> ${loc.telefono}</p>` : ''}
+            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:极速快3开奖结果em"><strong>Horario:</strong> ${loc.horario}</p>` : ''}
+            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><strong>Servicios:</strong> ${loc.servicios}</p>` : ''}
+            <div class="popup-buttons">
+              <div class="popup-button-row">
+                <button class="btn btn-whatsapp" onclick="abrirWhatsApp('${loc.telefono}', '${loc.nombre}')">
+                  <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
+                  Chatear por WhatsApp
+                </button>
+              </div>
+              <div class="popup-button-row">
+                <button class="btn btn-ruta" onclick="abrirGoogleMapsConDireccion('${loc.latlng[0]}', '${loc.latlng[1]}', '${loc.nombre}')">Cómo llegar</button>
+                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">Más información</button>
+              </div>
+            </div>
           </div>
         `);
         
+        // Guardar todos los datos de la ubicación en el marcador
+        marcador.datosUbicacion = loc;
         marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
-        todosMarcadores.push(marcador);
+        marcadoresOriginales.push(marcador);
       });
 
       // Añadir marcadores al mapa
-      clusters.addLayers(todosMarcadores);
+      clusters.addLayers(marcadoresOriginales);
       mapa.addLayer(clusters);
 
-      // Búsqueda
-      const searchInput = document.getElementById('buscador');
-      let searchTimeout;
-
-      const handleSearch = () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-          const termino = searchInput.value.toLowerCase().trim();
-          clusters.clearLayers();
-          
-          if(termino === '') {
-            clusters.addLayers(todosMarcadores);
-            return;
-          }
-          
-          const filtrados = todosMarcadores.filter(m => 
-            m.datosBusqueda.includes(termino)
-          );
-          
-          clusters.addLayers(filtrados);
-          
-          if(filtrados.length > 0) {
-            mapa.fitBounds(clusters.getBounds().pad(0.3));
-          }
-        }, 300);
-      };
-
-      searchInput.addEventListener('input', handleSearch);
-      searchInput.addEventListener('search', handleSearch);
-
-      // Ajustar vista a los marcadores
-      if(todosMarcadores.length > 0) {
+      // Ajustar vista to los marcadores
+      if(marcadoresOriginales.length > 0) {
         mapa.fitBounds(clusters.getBounds().pad(0.3));
+      }
+
+      // Solicitar ubicación al cargar la página
+      obtenerUbicacionUsuario();
+    }
+
+    // Función para cambiar a vista de mapa
+    function switchToMapView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      
+      document.getElementById('map-btn').classList.add('active');
+      document.getElementById('satellite-btn').classList.remove('active');
+    }
+
+    // Función para cambiar a vista de satélite
+    function switchToSatelliteView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleSatelliteLayer;
+      currentLayer.addTo(mapa);
+      
+      document.getElementById('satellite-btn').classList.add('active');
+      document.getElementById('map-btn').极速快3开奖结果('active');
+    }
+
+    // Función para abrir Google Maps con una dirección específica
+    function abrirGoogleMapsConDireccion(lat, lng, nombre) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`;
+      window.open(url, '_blank');
+    }
+
+    // Función para manejar la búsqueda
+    function handleSearchInput(e) {
+      clearTimeout(buscadorTimeout);
+      const termino = e.target.value.trim();
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      if (termino.length < 3) {
+        sugerenciasContainer.style.display = 'none';
+        return;
+      }
+      
+      // Mostrar indicador de carga
+      sugerenciasContainer.innerHTML = '<极速快3开奖结果 class="sugerencia-item">Buscando... <span class="cargando"></span></div>';
+      sugerenciasContainer.style.display = 'block';
+      
+      buscadorTimeout = setTimeout(() => {
+        buscarConGoogle(termino);
+      }, 500);
+    }
+
+    // Función para buscar usando Google Places API (simulación)
+    function buscarConGoogle(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      // Primero buscar en puntos locales
+      const resultadosLocales = buscarEnPuntosLocales(consulta);
+      if (resultadosLocales) {
+        return;
+      }
+      
+      // Simular búsqueda en Google Places
+      setTimeout(() => {
+        // En una implementación real, aquí se conectaría con la API de Google Places
+        sugerenciasContainer.innerHTML = '';
+        
+        // Simular algunos resultados de búsqueda en Mitú
+        const resultadosSimulados = [
+          {
+            name: "Aeropuerto Fabio Alberto León Bentley",
+            lat: 1.2536,
+            lng: -70.2339,
+            formatted_address: "Mitú, Vaupés"
+          },
+          {
+            name: "Alcaldía Municipal de Mitú",
+            lat: 1.1985,
+            lng: -70.1733,
+            formatted_address: "Carrera 10, Mitú"
+          },
+          {
+            name: "Plaza Principal de Mitú",
+            lat: 1.1990,
+            lng: -70.1725,
+            formatted_address: "Centro, Mitú"
+          }
+        ];
+        
+        if (resultadosSimulados.length > 0) {
+          resultadosSimulados.forEach(lugar => {
+            const item = document.createElement('div');
+            item.className = 'sugerencia-item';
+            
+            const lat = lugar.lat;
+            const lng = lugar.lng;
+            const nombre = lugar.name;
+            
+            item.innerHTML = `
+              <div class="sugerencia-texto">
+                <strong>📍 ${nombre}</strong><br>
+                <small>${lugar.formatted_address}</small>
+              </div>
+              <button class="sugerencia-boton" data-lat="${lat}" data-lng="${lng}" data-nombre="${nombre}">
+                Cómo llegar
+              </button>
+            `;
+            
+            // Agregar evento al botón "Cómo llegar"
+            const boton = item.querySelector('.sugerencia-boton');
+            boton.addEventListener('click', function(e) {
+              e.stopPropagation();
+              const lat = parseFloat(this.getAttribute('data-lat'));
+              const lng = parseFloat(this.getAttribute('data-lng'));
+              const nombre = this.getAttribute('data-nombre');
+              
+              // Mover el mapa a la ubicación seleccionada
+              const latlng = [极速快3开奖结果, lng];
+              mapa.setView(latlng, 17);
+              
+              // Crear or actualizar marcador de destino
+              if (destinoMarker) {
+                mapa.removeLayer(destinoMarker);
+              }
+              destinoMarker = L.marker(latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-red'
+                })
+              }).addTo(mapa)
+                .bindPopup(`<strong>${nombre}</strong>`);
+              
+              destinoMarker.openPopup();
+              document.getElementById('buscador').value = nombre;
+              sugerenciasContainer.style.display = 'none';
+            });
+            
+            // Agregar evento al item completo
+            item.addEventListener('click', function() {
+              const lat = parseFloat(boton.getAttribute('data-lat'));
+              const lng = parseFloat(boton.getAttribute('data-lng'));
+              const nombre = boton.getAttribute('data-nombre');
+              
+              const latlng = [lat, lng];
+              mapa.setView(latlng, 17);
+              
+              if (destinoMarker) {
+                mapa.removeLayer(destinoMarker);
+              }
+              destinoMarker = L.marker(latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-red'
+                })
+              }).addTo(mapa)
+                .bindPopup(`<strong>${nombre}</strong>`);
+              
+              destinoMarker.openPopup();
+              document.getElementById('buscador').value = nombre;
+              sugerenciasContainer.style.display = 'none';
+            });
+            
+            sugerenciasContainer.appendChild(item);
+          });
+          sugerenciasContainer.style.display = 'block';
+        } else {
+          sugerenciasContainer.innerHTML = '<div class="sugerencia-item">No se encontraron resultados para: ' + consulta + '</div>';
+          sugerenciasContainer.style.display = 'block';
+        }
+      }, 800);
+    }
+
+    // Función para buscar en los puntos locales
+    function buscarEnPuntosLocales(consulta) {
+      const sugerencias极速快3开奖结果 = document.getElementById('sugerencias-busqueda');
+      const termino = consulta.toLowerCase();
+      const resultados = marcadoresOriginales.filter(m => 
+        m.datosBusqueda.includes(termino)
+      );
+      
+      if (resultados.length > 0) {
+        sugerenciasContainer.innerHTML = '';
+        
+        resultados.forEach(marcador => {
+          const loc = marcador.datosUbicacion;
+          const item = document.createElement('div');
+          item.className = 'sugerencia-item';
+          item.innerHTML = `
+            <div class="sugerencia-texto">
+              <strong>📍 ${loc.nombre}</strong><br>
+              <small>${loc.direccion}</small>
+            </div>
+            <button class="sugerencia-boton极速快3开奖结果 data-id="${loc.id}">
+              Cómo llegar
+            </button>
+          `;
+          
+          // Agregar evento al botón "Cómo llegar"
+          const boton = item.querySelector('.sugerencia-boton');
+          boton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = this.getAttribute('data-id');
+            abrirGoogleMapsConDireccionUbicacion(id);
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          // Agregar evento al item completo
+          item.addEventListener('click', function() {
+            mapa.setView(marcador.getLatLng(), 17);
+            marcador.openPopup();
+            document.getElementById('buscador').value = loc.nombre;
+            sugerenciasContainer.style.display = '极速快3开奖结果';
+          });
+          
+          sugerenciasContainer.appendChild(item);
+        });
+        sugerenciasContainer.style.display = 'block';
+        return true;
+      }
+      return false;
+    }
+
+    // Función para abrir Google Maps con una ubicación específica
+    function abrirGoogle极速快3开奖结果ConDireccionUbicacion(idPunto) {
+      const punto = UBICACIONES.find(p => p.id === idPunto);
+      if (!punto) return;
+      
+      const url = `https://www.google.com/maps/dir/?api极速快3开奖结果&destination=${punto.latlng[0]},${极速快3开奖结果.latlng[1]}&travelmode=driving&dir_action=navigate`;
+      window.open(url, '_blank');
+    }
+
+    // Función para manejar teclas en el buscador
+    function handleSearchKeydown(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const termino = document.getElementById('buscador').value.trim();
+        if (termino) {
+          buscarConGoogle(termino);
+        }
       }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-      initializeMap();
-      
-      // Redirección al hacer clic en el botón B2B
-      document.getElementById('b2b-btn').addEventListener('click', function() {
-        window.location.href = "https://co.qrcontraentrega.com/sucursal/mituvaupes/";
+    // Función para abrir WhatsApp
+    function abrirWhatsApp(telefono, nombre) {
+      const numeroLimpio = telefono.replace(/\D/g, '');
+      const mensaje = `Hola ${nombre}, me interesa conocer más sobre sus servicios de contraentrega.`;
+      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
+    }
+
+    // Función para centrar el mapa en la ubicación actual
+    function centrarMapa() {
+      if (userMarker) {
+        mapa.setView(userMarker.getLatLng(), 17);
+      } else {
+        obtenerUbicacionUsuario();
+      }
+    }
+
+    // Función para obtener ubicación del usuario
+    function obtenerUbicacionUsuario() {
+      return new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              
+              // Verificar si está en Mitú (aproximadamente)
+              const distanciaAMitú = calcularDistancia(
+                latitude, longitude,
+                1.1983, -70.1731
+              );
+              
+              if (distanciaAMitú > 30) {
+                alert('El servicio solo está disponible en Mitú y sus alrededores');
+                reject();
+                return;
+              }
+              
+              // Eliminar marcador anterior si existe
+              if (userMarker) {
+                mapa.removeLayer(userMarker);
+              }
+              
+              // Crear nuevo marcador de usuario (azul)
+              userMarker = L.marker([latitude, longitude], {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-blue'
+                })
+              }).addTo(mapa)
+                .bindPopup('¡Tu ubicación actual!');
+                
+              // Centrar mapa en la ubicación del usuario avec zoom cercano
+              mapa.setView([latitude, longitude], 17);
+              resolve();
+            },
+            (error) => {
+              console.log(`Error al obtener ubicación: ${error.message}`);
+              reject();
+            },
+            { enableHighAccuracy: true }
+          );
+        } else {
+          console.log("Tu navegador no soporta geolocalización.");
+          reject();
+        }
       });
-    });
+    }
+
+    // Función para calcular distancia en km (fórmula Haversine)
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
   </script>
 </body>
 </html>
