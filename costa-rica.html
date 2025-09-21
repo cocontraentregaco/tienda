@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - Costa Rica</title>
+    <title>Contraentrega Costa Rica</title>
     <style>
         :root {
-            --primary-color: #002B7F; /* Costa Rica blue */
-            --secondary-color: #CE1126; /* Costa Rica red */
+            --blue: #002B7F; /* Azul de Costa Rica */
+            --white: #FFFFFF; /* Blanco de Costa Rica */
+            --red: #CE1126;   /* Rojo de Costa Rica (similar al anterior) */
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -36,18 +37,28 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--blue) 0%, var(--white) 50%, var(--red) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
         }
 
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--primary-color);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .spanish-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         p.subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: rgba(255,255,255,0.9);
             max-width: 700px;
             margin: 0 auto;
         }
@@ -66,13 +77,13 @@
             transition: var(--transition);
             text-align: center;
             cursor: pointer;
-            border-top: 4px solid var(--secondary-color);
+            border-top: 4px solid var(--blue);
         }
 
         .state-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            border-color: var(--primary-color);
+            border-color: var(--red);
         }
 
         .flag-container {
@@ -92,7 +103,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            background: linear-gradient(90deg, var(--blue) 0%, var(--white) 50%, var(--red) 100%);
         }
 
         .flag-image {
@@ -109,7 +120,13 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
-            color: var(--primary-color);
+            color: var(--blue);
+        }
+
+        .spanish-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
         }
 
         .state-type {
@@ -140,8 +157,8 @@
         }
 
         #state-search:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0, 43, 127, 0.2);
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(206, 17, 38, 0.2);
         }
 
         footer {
@@ -159,6 +176,10 @@
 
             h1 {
                 font-size: 2rem;
+            }
+
+            .spanish-title {
+                font-size: 1.8rem;
             }
 
             .flag-container {
@@ -183,54 +204,83 @@
             .state-name {
                 font-size: 1rem;
             }
+            
+            .spanish-name {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>QRContraentrega - Costa Rica</h1>
-            <p class="subtitle">Seleccione su provincia | Select your province</p>
+            <h1>Contraentrega</h1>
+            <div class="spanish-title">Costa Rica</div>
+            <div>Sucursales</div>
+            <p class="subtitle">Selecciona tu provincia o ciudad / Select your city</p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="state-search" placeholder="Buscar provincia... | Search province..." aria-label="Search province">
+            <input type="text" id="state-search" placeholder="Busca una ciudad / Search for city..." aria-label="Busca una ciudad">
         </div>
 
         <div class="states-grid" id="states-container">
-            <!-- Provinces will appear here -->
+            <!-- States and cities will appear here -->
         </div>
 
         <footer>
-            <p>© QRContraentrega. Todos los derechos reservados. | All rights reserved.</p>
+            <p>© Contraentrega. Todos los derechos reservados / All rights reserved.</p>
         </footer>
     </div>
 
     <script>
-        // List of Costa Rican provinces and major cities
+        // List of Costa Rican provinces and capitals with both languages
         const states = [
-            // Provinces
-            { "name": "San José", "nameEs": "San José", "type": "Provincia", "typeEn": "Province", "url": "https://qrcontraentrega.com/san-jose" },
-            { "name": "Alajuela", "nameEs": "Alajuela", "type": "Provincia", "typeEn": "Province", "url": "https://qrcontraentrega.com/alajuela" },
-            { "name": "Cartago", "nameEs": "Cartago", "type": "Provincia", "typeEn": "Province", "url": "https://qrcontraentrega.com/cartago" },
-            { "name": "Heredia", "nameEs": "Heredia", "type": "Provincia", "typeEn": "Province", "url": "https://qrcontraentrega.com/heredia" },
-            { "name": "Guanacaste", "nameEs": "Guanacaste", "type": "Provincia", "typeEn": "Province", "url": "https://qrcontraentrega.com/guanacaste" },
-            { "name": "Puntarenas", "nameEs": "Puntarenas", "type": "Provincia", "typeEn": "Province", "url": "https://qrcontraentrega.com/puntarenas" },
-            { "name": "Limón", "nameEs": "Limón", "type": "Provincia", "typeEn": "Province", "url": "https://qrcontraentrega.com/limon" },
-            
-            // Major cities
-            { "name": "San José", "nameEs": "San José", "type": "Capital", "typeEn": "Capital", "url": "https://qrcontraentrega.com/san-jose-city" },
-            { "name": "Alajuela", "nameEs": "Alajuela", "type": "Ciudad", "typeEn": "City", "url": "https://qrcontraentrega.com/alajuela-city" },
-            { "name": "Cartago", "nameEs": "Cartago", "type": "Ciudad", "typeEn": "City", "url": "https://qrcontraentrega.com/cartago-city" },
-            { "name": "Heredia", "nameEs": "Heredia", "type": "Ciudad", "typeEn": "City", "url": "https://qrcontraentrega.com/heredia-city" },
-            { "name": "Liberia", "nameEs": "Liberia", "type": "Ciudad", "typeEn": "City", "url": "https://qrcontraentrega.com/liberia" },
-            { "name": "Puntarenas", "nameEs": "Puntarenas", "type": "Ciudad", "typeEn": "City", "url": "https://qrcontraentrega.com/puntarenas-city" },
-            { "name": "Limón", "nameEs": "Limón", "type": "Ciudad", "typeEn": "City", "url": "https://qrcontraentrega.com/limon-city" },
-            { "name": "San Isidro", "nameEs": "San Isidro", "type": "Ciudad", "typeEn": "City", "url": "https://qrcontraentrega.com/san-isidro" },
-            { "name": "Quesada", "nameEs": "Quesada", "type": "Ciudad", "typeEn": "City", "url": "https://qrcontraentrega.com/quesada" }
+            { 
+                "name": { "es": "San José", "en": "San Jose" }, 
+                "type": { "es": "Capital de San José", "en": "Capital of San Jose" }, 
+                "url": "sanjose.html", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Alajuela", "en": "Alajuela" }, 
+                "type": { "es": "Capital de Alajuela", "en": "Capital of Alajuela" }, 
+                "url": "alajuela.html", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Cartago", "en": "Cartago" }, 
+                "type": { "es": "Capital de Cartago", "en": "Capital of Cartago" }, 
+                "url": "cartago.html", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Heredia", "en": "Heredia" }, 
+                "type": { "es": "Capital de Heredia", "en": "Capital of Heredia" }, 
+                "url": "heredia.html", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Liberia", "en": "Liberia" }, 
+                "type": { "es": "Capital de Guanacaste", "en": "Capital of Guanacaste" }, 
+                "url": "liberia.html", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Puntarenas", "en": "Puntarenas" }, 
+                "type": { "es": "Capital de Puntarenas", "en": "Capital of Puntarenas" }, 
+                "url": "puntarenas.html", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Limón", "en": "Limon" }, 
+                "type": { "es": "Capital de Limón", "en": "Capital of Limon" }, 
+                "url": "limon.html", 
+                "image": "img/c.jpg" 
+            }
         ];
 
-        // Function to display provinces
+        // Function to display states and cities
         function renderStates(stateList) {
             const container = document.getElementById('states-container');
             container.innerHTML = '';
@@ -240,11 +290,12 @@
                 stateCard.className = 'state-card';
                 stateCard.innerHTML = `
                     <div class="flag-container">
-                        <img src="img/c.jpg" alt="${state.nameEs}" class="flag-image">
+                        <img src="${state.image}" alt="${state.name.es}" class="flag-image">
                     </div>
                     <div class="state-info">
-                        <div class="state-name">${state.nameEs} | ${state.name}</div>
-                        <div class="state-type">${state.type} | ${state.typeEn}</div>
+                        <div class="spanish-name">${state.name.es}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.es} • ${state.type.en}</div>
                     </div>
                 `;
                 
@@ -256,14 +307,14 @@
             });
         }
 
-        // Function to search provinces
+        // Function to search states and cities
         function searchStates() {
             const searchTerm = document.getElementById('state-search').value.toLowerCase();
             const filteredStates = states.filter(state => 
-                state.nameEs.toLowerCase().includes(searchTerm) || 
-                state.name.toLowerCase().includes(searchTerm) ||
-                state.type.toLowerCase().includes(searchTerm) ||
-                state.typeEn.toLowerCase().includes(searchTerm)
+                state.name.es.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.es.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
             );
             renderStates(filteredStates);
         }
@@ -271,7 +322,7 @@
         // Event listeners
         document.getElementById('state-search').addEventListener('input', searchStates);
 
-        // Display all provinces when page loads
+        // Display all states and cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
             renderStates(states);
         });
