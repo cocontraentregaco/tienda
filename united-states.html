@@ -6,9 +6,9 @@
     <title>Contraentrega USA</title>
     <style>
         :root {
-            --blue: #3C3B6E; /* USA blue */
-            --red: #B22234; /* USA red */
-            --white: #FFFFFF; /* USA white */
+            --blue: #3C3B6E;
+            --red: #B22234;
+            --white: #FFFFFF;
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
@@ -234,7 +234,7 @@
     </div>
 
     <script>
-        // List of US counties
+        // Lista simplificada de condados para pruebas
         const counties = [
     { 
         "name": "Autauga County", 
@@ -12622,91 +12622,75 @@
     }
 ];
 
-    // Function to display counties
-    function renderCounties(countyList) {
-        const container = document.getElementById('counties-container');
-        if (!container) {
-            console.error('counties-container not found');
-            return;
-        }
-        
-        container.innerHTML = '';
+        // Function to display counties
+        function renderCounties(countyList) {
+            const container = document.getElementById('counties-container');
+            container.innerHTML = '';
 
-        if (countyList.length === 0) {
-            container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; padding: 2rem; color: #666;">No counties found matching your search</p>';
-            return;
+            if (countyList.length === 0) {
+                container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; padding: 2rem; color: #666;">No counties found matching your search</p>';
+                return;
+            }
+
+            countyList.forEach(county => {
+                const countyCard = document.createElement('div');
+                countyCard.className = 'county-card';
+                countyCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="${county.image}" alt="${county.name}" class="flag-image" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"%23333\"><path d=\"M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z\"/></svg>'">
+                    </div>
+                    <div class="county-info">
+                        <div class="english-name">${county.name}</div>
+                        <div class="county-type">${county.type}</div>
+                    </div>
+                `;
+                
+                countyCard.addEventListener('click', () => {
+                    window.open(county.url, '_blank');
+                });
+
+                container.appendChild(countyCard);
+            });
         }
 
-        countyList.forEach(county => {
-            const countyCard = document.createElement('div');
-            countyCard.className = 'county-card';
-            countyCard.innerHTML = `
-                <div class="flag-container">
-                    <img src="${county.image}" alt="${county.name}" class="flag-image" onerror="this.src='img/c.jpg'">
-                </div>
-                <div class="county-info">
-                    <div class="english-name">${county.name}</div>
-                    <div class="county-type">${county.type}</div>
-                </div>
-            `;
+        // Function to search counties
+        function searchCounties() {
+            const searchTerm = document.getElementById('county-search').value.toLowerCase().trim();
             
-            countyCard.addEventListener('click', () => {
-                window.open(county.url, '_blank');
+            if (searchTerm === '') {
+                renderCounties(counties);
+                return;
+            }
+            
+            const filteredCounties = counties.filter(county => 
+                county.name.toLowerCase().includes(searchTerm) || 
+                county.type.toLowerCase().includes(searchTerm)
+            );
+            
+            renderCounties(filteredCounties);
+        }
+
+        // Initialize the application
+        function initApp() {
+            const searchInput = document.getElementById('county-search');
+            
+            // Set up event listeners
+            searchInput.addEventListener('input', searchCounties);
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchCounties();
+                }
             });
 
-            container.appendChild(countyCard);
-        });
-    }
-
-    // Function to search counties
-    function searchCounties() {
-        const searchTerm = document.getElementById('county-search').value.toLowerCase().trim();
-        console.log('Searching for:', searchTerm); // Para debug
-        
-        const filteredCounties = counties.filter(county => 
-            county.name.toLowerCase().includes(searchTerm) || 
-            county.type.toLowerCase().includes(searchTerm)
-        );
-        
-        console.log('Found:', filteredCounties.length, 'counties'); // Para debug
-        renderCounties(filteredCounties);
-    }
-
-    // Initialize the application
-    function initApp() {
-        console.log('Initializing app...'); // Para debug
-        
-        const searchInput = document.getElementById('county-search');
-        const countiesContainer = document.getElementById('counties-container');
-        
-        if (!searchInput || !countiesContainer) {
-            console.error('Required elements not found');
-            return;
+            // Display all counties initially
+            renderCounties(counties);
+            
+            // Focus on search input
+            searchInput.focus();
         }
 
-        // Set up event listeners
-        searchInput.addEventListener('input', searchCounties);
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchCounties();
-            }
-        });
-
-        // Display all counties initially
-        renderCounties(counties);
-        
-        // Focus on search input
-        searchInput.focus();
-        
-        console.log('App initialized successfully');
-    }
-
-    // Wait for DOM to be fully loaded
-    if (document.readyState === 'loading') {
+        // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', initApp);
-    } else {
-        initApp();
-    }
-</script>
+    </script>
 </body>
 </html>
