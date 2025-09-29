@@ -12622,70 +12622,67 @@
     }
 ];
 
-    // Function to display states and cities
-        function renderStates(stateList) {
-            const container = document.getElementById('states-container');
-            container.innerHTML = '';
+    // Function to display counties
+    function renderCounties(countyList) {
+        const container = document.getElementById('counties-container');
+        container.innerHTML = '';
 
-            if (stateList.length === 0) {
-                container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; padding: 2rem; color: #666;">No se encontraron resultados / No results found</p>';
-                return;
-            }
-
-            stateList.forEach(state => {
-                const stateCard = document.createElement('div');
-                stateCard.className = 'state-card';
-                stateCard.innerHTML = `
-                    <div class="flag-container">
-                        <img src="${state.image}" alt="${state.name.es}" class="flag-image" onerror="this.src='img/c.jpg'">
-                    </div>
-                    <div class="state-info">
-                        <div class="spanish-name">${state.name.es}</div>
-                        <div class="state-name">${state.name.en}</div>
-                        <div class="state-type">${state.type.es} • ${state.type.en}</div>
-                    </div>
-                `;
-                
-                stateCard.addEventListener('click', () => {
-                    window.open(state.url, '_blank');
-                });
-
-                container.appendChild(stateCard);
-            });
+        if (countyList.length === 0) {
+            container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; padding: 2rem; color: #666;">No counties found matching your search</p>';
+            return;
         }
 
-        // Function to search states and cities
-        function searchStates() {
-            const searchTerm = document.getElementById('state-search').value.toLowerCase().trim();
-            const filteredStates = states.filter(state => 
-                state.name.es.toLowerCase().includes(searchTerm) || 
-                state.name.en.toLowerCase().includes(searchTerm) ||
-                state.type.es.toLowerCase().includes(searchTerm) ||
-                state.type.en.toLowerCase().includes(searchTerm)
-            );
-            renderStates(filteredStates);
-        }
-
-        // Event listeners
-        document.getElementById('state-search').addEventListener('input', searchStates);
-        document.getElementById('state-search').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchStates();
-            }
-        });
-
-        // Display all states and cities when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            renderStates(states);
+        countyList.forEach(county => {
+            const countyCard = document.createElement('div');
+            countyCard.className = 'county-card';
+            countyCard.innerHTML = `
+                <div class="flag-container">
+                    <img src="${county.image}" alt="${county.name}" class="flag-image" onerror="this.src='img/c.jpg'">
+                </div>
+                <div class="county-info">
+                    <div class="english-name">${county.name}</div>
+                    <div class="county-type">${county.type}</div>
+                </div>
+            `;
             
-            // Focus on search input
-            document.getElementById('state-search').focus();
-        });
+            countyCard.addEventListener('click', () => {
+                window.open(county.url, '_blank');
+            });
 
-        // Clear search when page is refreshed
-        window.addEventListener('beforeunload', () => {
-            document.getElementById('state-search').value = '';
+            container.appendChild(countyCard);
         });
-    </script>
+    }
+
+    // Function to search counties
+    function searchCounties() {
+        const searchTerm = document.getElementById('county-search').value.toLowerCase().trim();
+        const filteredCounties = counties.filter(county => 
+            county.name.toLowerCase().includes(searchTerm) || 
+            county.type.toLowerCase().includes(searchTerm)
+        );
+        renderCounties(filteredCounties);
+    }
+
+    // Event listeners
+    document.getElementById('county-search').addEventListener('input', searchCounties);
+    document.getElementById('county-search').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchCounties();
+        }
+    });
+
+    // Display all counties when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        renderCounties(counties);
+        
+        // Focus on search input
+        document.getElementById('county-search').focus();
+    });
+
+    // Clear search when page is refreshed
+    window.addEventListener('beforeunload', () => {
+        document.getElementById('county-search').value = '';
+    });
+</script>
 </body>
 </html>
