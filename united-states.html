@@ -12653,36 +12653,91 @@
         });
     }
 
+    // Function to display counties
+    function renderCounties(countyList) {
+        const container = document.getElementById('counties-container');
+        if (!container) {
+            console.error('counties-container not found');
+            return;
+        }
+        
+        container.innerHTML = '';
+
+        if (countyList.length === 0) {
+            container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; padding: 2rem; color: #666;">No counties found matching your search</p>';
+            return;
+        }
+
+        countyList.forEach(county => {
+            const countyCard = document.createElement('div');
+            countyCard.className = 'county-card';
+            countyCard.innerHTML = `
+                <div class="flag-container">
+                    <img src="${county.image}" alt="${county.name}" class="flag-image" onerror="this.src='img/c.jpg'">
+                </div>
+                <div class="county-info">
+                    <div class="english-name">${county.name}</div>
+                    <div class="county-type">${county.type}</div>
+                </div>
+            `;
+            
+            countyCard.addEventListener('click', () => {
+                window.open(county.url, '_blank');
+            });
+
+            container.appendChild(countyCard);
+        });
+    }
+
     // Function to search counties
     function searchCounties() {
         const searchTerm = document.getElementById('county-search').value.toLowerCase().trim();
+        console.log('Searching for:', searchTerm); // Para debug
+        
         const filteredCounties = counties.filter(county => 
             county.name.toLowerCase().includes(searchTerm) || 
             county.type.toLowerCase().includes(searchTerm)
         );
+        
+        console.log('Found:', filteredCounties.length, 'counties'); // Para debug
         renderCounties(filteredCounties);
     }
 
-    // Event listeners
-    document.getElementById('county-search').addEventListener('input', searchCounties);
-    document.getElementById('county-search').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            searchCounties();
+    // Initialize the application
+    function initApp() {
+        console.log('Initializing app...'); // Para debug
+        
+        const searchInput = document.getElementById('county-search');
+        const countiesContainer = document.getElementById('counties-container');
+        
+        if (!searchInput || !countiesContainer) {
+            console.error('Required elements not found');
+            return;
         }
-    });
 
-    // Display all counties when page loads
-    document.addEventListener('DOMContentLoaded', () => {
+        // Set up event listeners
+        searchInput.addEventListener('input', searchCounties);
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchCounties();
+            }
+        });
+
+        // Display all counties initially
         renderCounties(counties);
         
         // Focus on search input
-        document.getElementById('county-search').focus();
-    });
+        searchInput.focus();
+        
+        console.log('App initialized successfully');
+    }
 
-    // Clear search when page is refreshed
-    window.addEventListener('beforeunload', () => {
-        document.getElementById('county-search').value = '';
-    });
+    // Wait for DOM to be fully loaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+        initApp();
+    }
 </script>
 </body>
 </html>
