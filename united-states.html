@@ -12622,52 +12622,49 @@
     }
 ];
 
-        // Function to display states and cities
-        function renderStates(stateList) {
-            const container = document.getElementById('states-container');
-            container.innerHTML = '';
+    // Function to display counties
+    function renderCounties(countyList) {
+        const container = document.getElementById('counties-container');
+        container.innerHTML = '';
 
-            stateList.forEach(state => {
-                const stateCard = document.createElement('div');
-                stateCard.className = 'state-card';
-                stateCard.innerHTML = `
-                    <div class="flag-container">
-                        <img src="${state.image}" alt="${state.name.es}" class="flag-image">
-                    </div>
-                    <div class="state-info">
-                        <div class="spanish-name">${state.name.es}</div>
-                        <div class="state-name">${state.name.en}</div>
-                        <div class="state-type">${state.type.es} • ${state.type.en}</div>
-                    </div>
-                `;
-                
-                stateCard.addEventListener('click', () => {
-                    window.location.href = state.url;
-                });
-
-                container.appendChild(stateCard);
+        countyList.forEach(county => {
+            const countyCard = document.createElement('div');
+            countyCard.className = 'county-card';
+            countyCard.innerHTML = `
+                <div class="flag-container">
+                    <img src="${county.image}" alt="${county.name}" class="flag-image">
+                </div>
+                <div class="county-info">
+                    <div class="county-name">${county.name}</div>
+                    <div class="county-type">${county.type}</div>
+                </div>
+            `;
+            
+            countyCard.addEventListener('click', () => {
+                window.location.href = county.url;
             });
-        }
 
-        // Function to search states and cities
-        function searchStates() {
-            const searchTerm = document.getElementById('state-search').value.toLowerCase();
-            const filteredStates = states.filter(state => 
-                state.name.es.toLowerCase().includes(searchTerm) || 
-                state.name.en.toLowerCase().includes(searchTerm) ||
-                state.type.es.toLowerCase().includes(searchTerm) ||
-                state.type.en.toLowerCase().includes(searchTerm)
-            );
-            renderStates(filteredStates);
-        }
-
-        // Event listeners
-        document.getElementById('state-search').addEventListener('input', searchStates);
-
-        // Display all states and cities when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            renderStates(states);
+            container.appendChild(countyCard);
         });
-    </script>
+    }
+
+    // Function to search counties
+    function searchCounties() {
+        const searchTerm = document.getElementById('county-search').value.toLowerCase();
+        const filteredCounties = counties.filter(county => 
+            county.name.toLowerCase().includes(searchTerm) || 
+            county.type.toLowerCase().includes(searchTerm)
+        );
+        renderCounties(filteredCounties);
+    }
+
+    // Event listeners
+    document.getElementById('county-search').addEventListener('input', searchCounties);
+
+    // Display all counties when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        renderCounties(counties);
+    });
+</script>
 </body>
 </html>
