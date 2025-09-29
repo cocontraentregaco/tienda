@@ -1,8 +1,3 @@
-Código para Condados de Estados Unidos
-
-Aquí tienes el código modificado para mostrar todos los condados de Estados Unidos con los colores de la bandera estadounidense y en inglés:
-
-```html
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -12614,7 +12609,65 @@ Aquí tienes el código modificado para mostrar todos los condados de Estados Un
         "image": "img/c.jpg" 
     },
     { 
-        "name": "Defiance County", 
-        "type": "County of Ohio", 
-        "url": "https://defiance-ohio.qrcontraentrega.com", 
-        "image": "img/c.jpg"
+        "name": { "es": "Woods County", "en": "Woods County" }, 
+        "type": { "es": "Condado de Oklahoma", "en": "County of Oklahoma" }, 
+        "url": "https://woods-oklahoma.qrcontraentrega.com", 
+        "image": "img/c.jpg" 
+    },
+    { 
+        "name": { "es": "Woodward County", "en": "Woodward County" }, 
+        "type": { "es": "Condado de Oklahoma", "en": "County of Oklahoma" }, 
+        "url": "https://woodward-oklahoma.qrcontraentrega.com", 
+        "image": "img/c.jpg" 
+    }
+];
+
+        // Function to display states and cities
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
+            container.innerHTML = '';
+
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="${state.image}" alt="${state.name.es}" class="flag-image">
+                    </div>
+                    <div class="state-info">
+                        <div class="spanish-name">${state.name.es}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.es} • ${state.type.en}</div>
+                    </div>
+                `;
+                
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
+                });
+
+                container.appendChild(stateCard);
+            });
+        }
+
+        // Function to search states and cities
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.es.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.es.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
+            );
+            renderStates(filteredStates);
+        }
+
+        // Event listeners
+        document.getElementById('state-search').addEventListener('input', searchStates);
+
+        // Display all states and cities when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStates(states);
+        });
+    </script>
+</body>
+</html>
