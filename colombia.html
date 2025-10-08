@@ -169,9 +169,43 @@
             color: #777;
         }
 
+        /* Auto-detection notification */
+        .auto-detection {
+            background-color: #e8f4fd;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .auto-detection-message {
+            font-size: 0.95rem;
+            color: #0c5460;
+        }
+
+        .auto-detection-action {
+            background: var(--blue);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .auto-detection-action:hover {
+            background: #002a6e;
+        }
+
         @media (max-width: 768px) {
             .states-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
             }
 
             h1 {
@@ -185,6 +219,16 @@
             .flag-container {
                 height: 100px;
             }
+            
+            .auto-detection {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .auto-detection-action {
+                align-self: flex-end;
+            }
         }
 
         @media (max-width: 480px) {
@@ -193,7 +237,7 @@
             }
 
             .states-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                grid-template-columns: 1fr;
                 gap: 1rem;
             }
 
@@ -219,6 +263,13 @@
             <div>Sucursales</div>
             <p class="subtitle">Selecciona tu departamento o ciudad / Select your city</p>
         </header>
+
+        <div class="auto-detection" id="auto-detection" style="display: none;">
+            <div class="auto-detection-message">
+                <strong>Ubicación detectada:</strong> <span id="detected-city"></span>
+            </div>
+            <button class="auto-detection-action" id="go-to-detected-city">Ir a esta ciudad</button>
+        </div>
 
         <div class="search-container">
             <input type="text" id="state-search" placeholder="Busca una ciudad / Search for city..." aria-label="Busca una ciudad">
@@ -502,6 +553,15 @@
     }
 ];
 
+        // Function to normalize text for search (remove accents, trim, lowercase)
+        function normalizeText(text) {
+            return text
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .trim()
+                .toLowerCase();
+        }
+
         // Function to display states and cities
         function renderStates(stateList) {
             const container = document.getElementById('states-container');
@@ -529,24 +589,75 @@
             });
         }
 
-        // Function to search states and cities
+        // Function to search states and cities with intelligent filtering
         function searchStates() {
-            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const searchTerm = document.getElementById('state-search').value;
+            const normalizedSearch = normalizeText(searchTerm);
             const filteredStates = states.filter(state => 
-                state.name.es.toLowerCase().includes(searchTerm) || 
-                state.name.en.toLowerCase().includes(searchTerm) ||
-                state.type.es.toLowerCase().includes(searchTerm) ||
-                state.type.en.toLowerCase().includes(searchTerm)
+                normalizeText(state.name.es).includes(normalizedSearch) || 
+                normalizeText(state.name.en).includes(normalizedSearch) ||
+                normalizeText(state.type.es).includes(normalizedSearch) ||
+                normalizeText(state.type.en).includes(normalizedSearch)
             );
             renderStates(filteredStates);
+            
+            // Return first result for Enter key functionality
+            return filteredStates.length > 0 ? filteredStates[0] : null;
         }
 
-        // Event listeners
-        document.getElementById('state-search').addEventListener('input', searchStates);
+        // Auto-detection of user's location
+        function detectUserLocation() {
+            fetch('https://ipapi.co/json/')
+                .then(response => response.json())
+                .then(data => {
+                    const city = data.city;
+                    const country = data.country_name;
+                    
+                    if (country === "Colombia" && city) {
+                        // Try to find a matching city in our list
+                        const normalizedCity = normalizeText(city);
+                        const detectedCity = states.find(state => 
+                            normalizeText(state.name.es).includes(normalizedCity) || 
+                            normalizeText(state.name.en).includes(normalizedCity)
+                        );
+                        
+                        if (detectedCity) {
+                            document.getElementById('detected-city').textContent = `${detectedCity.name.es}, ${detectedCity.type.es}`;
+                            document.getElementById('auto-detection').style.display = 'flex';
+                            
+                            // Set up the button to go to the detected city
+                            document.getElementById('go-to-detected-city').addEventListener('click', () => {
+                                window.location.href = detectedCity.url;
+                            });
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.log('Could not detect location:', error);
+                });
+        }
 
-        // Display all states and cities when page loads
+        // Initialize the page
         document.addEventListener('DOMContentLoaded', () => {
+            // Display all states and cities when page loads
             renderStates(states);
+            
+            // Set up search functionality
+            const searchInput = document.getElementById('state-search');
+            searchInput.addEventListener('input', searchStates);
+            
+            // Add Enter key functionality
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const firstResult = searchStates();
+                    if (firstResult) {
+                        window.location.href = firstResult.url;
+                    }
+                }
+            });
+            
+            // Try to detect user's location
+            detectUserLocation();
         });
     </script>
 </body>
