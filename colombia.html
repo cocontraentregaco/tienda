@@ -266,7 +266,7 @@
 
         <div class="auto-detection" id="auto-detection" style="display: none;">
             <div class="auto-detection-message">
-                <strong>Ubicación detectada:</strong> <span id="detected-city"></span>
+                <strong>📍 Ubicación detectada:</strong> <span id="detected-city"></span>
             </div>
             <button class="auto-detection-action" id="go-to-detected-city">Ir a esta ciudad</button>
         </div>
@@ -605,36 +605,134 @@
             return filteredStates.length > 0 ? filteredStates[0] : null;
         }
 
-        // Auto-detection of user's location
+        // Precise location detection using multiple APIs for better accuracy
         function detectUserLocation() {
-            fetch('https://ipapi.co/json/')
+            // Try multiple geolocation APIs for better accuracy
+            const apis = [
+                'https://api.ipgeolocation.io/ipgeo?apiKey=',
+                'https://ipapi.co/json/',
+                'https://api.ipify.org?format=json',
+                'https://extreme-ip-lookup.com/json/'
+            ];
+            
+            // First try HTML5 Geolocation API for most precise location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        // Use coordinates to get city name
+                        getCityFromCoordinates(position.coords.latitude, position.coords.longitude);
+                    },
+                    (error) => {
+                        // Fallback to IP-based detection
+                        detectLocationByIP();
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 60000
+                    }
+                );
+            } else {
+                // Fallback to IP-based detection
+                detectLocationByIP();
+            }
+        }
+
+        // Get city name from coordinates using reverse geocoding
+        function getCityFromCoordinates(lat, lng) {
+            fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=es`)
                 .then(response => response.json())
                 .then(data => {
-                    const city = data.city;
-                    const country = data.country_name;
-                    
-                    if (country === "Colombia" && city) {
-                        // Try to find a matching city in our list
-                        const normalizedCity = normalizeText(city);
-                        const detectedCity = states.find(state => 
-                            normalizeText(state.name.es).includes(normalizedCity) || 
-                            normalizeText(state.name.en).includes(normalizedCity)
-                        );
-                        
-                        if (detectedCity) {
-                            document.getElementById('detected-city').textContent = `${detectedCity.name.es}, ${detectedCity.type.es}`;
-                            document.getElementById('auto-detection').style.display = 'flex';
-                            
-                            // Set up the button to go to the detected city
-                            document.getElementById('go-to-detected-city').addEventListener('click', () => {
-                                window.location.href = detectedCity.url;
-                            });
-                        }
+                    if (data.city && data.countryName === "Colombia") {
+                        findMatchingCity(data.city, data.locality);
+                    } else {
+                        detectLocationByIP();
                     }
                 })
                 .catch(error => {
-                    console.log('Could not detect location:', error);
+                    console.log('Reverse geocoding failed:', error);
+                    detectLocationByIP();
                 });
+        }
+
+        // IP-based location detection as fallback
+        function detectLocationByIP() {
+            // Try multiple IP geolocation services
+            const services = [
+                'https://api.ipgeolocation.io/ipgeo?apiKey=',
+                'https://ipapi.co/json/',
+                'https://api.db-ip.com/v2/free/self'
+            ];
+            
+            // Try first service
+            fetch('https://api.ipgeolocation.io/ipgeo?apiKey=')
+                .then(response => {
+                    if (!response.ok) throw new Error('Service 1 failed');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.country_name === "Colombia" && data.city) {
+                        findMatchingCity(data.city, data.district);
+                    } else {
+                        throw new Error('Not in Colombia or no city data');
+                    }
+                })
+                .catch(error => {
+                    // Try second service
+                    fetch('https://ipapi.co/json/')
+                        .then(response => {
+                            if (!response.ok) throw new Error('Service 2 failed');
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.country_name === "Colombia" && data.city) {
+                                findMatchingCity(data.city, data.region);
+                            } else {
+                                throw new Error('Not in Colombia or no city data');
+                            }
+                        })
+                        .catch(error => {
+                            console.log('All location services failed:', error);
+                        });
+                });
+        }
+
+        // Find matching city in our list
+        function findMatchingCity(city, region) {
+            const normalizedCity = normalizeText(city);
+            
+            // First try exact city match
+            let detectedCity = states.find(state => 
+                normalizeText(state.name.es) === normalizedCity || 
+                normalizeText(state.name.en) === normalizedCity
+            );
+            
+            // If no exact match, try partial match
+            if (!detectedCity) {
+                detectedCity = states.find(state => 
+                    normalizeText(state.name.es).includes(normalizedCity) || 
+                    normalizeText(state.name.en).includes(normalizedCity)
+                );
+            }
+            
+            // If still no match, try region/department match
+            if (!detectedCity && region) {
+                const normalizedRegion = normalizeText(region);
+                detectedCity = states.find(state => 
+                    normalizeText(state.type.es).includes(normalizedRegion) ||
+                    normalizeText(state.type.en).includes(normalizedRegion)
+                );
+            }
+            
+            if (detectedCity) {
+                document.getElementById('detected-city').textContent = `${detectedCity.name.es}, ${detectedCity.type.es}`;
+                document.getElementById('auto-detection').style.display = 'flex';
+                
+                // Set up the button to go to the detected city
+                document.getElementById('go-to-detected-city').addEventListener('click', () => {
+                    window.location.href = detectedCity.url;
+                });
+            }
         }
 
         // Initialize the page
@@ -656,7 +754,7 @@
                 }
             });
             
-            // Try to detect user's location
+            // Try to detect user's location with precise methods
             detectUserLocation();
         });
     </script>
