@@ -366,13 +366,13 @@
             min-width: 200px;
         }
         
-        .email-btn {
-            background-color: var(--color-rojo);
+        .whatsapp-btn {
+            background-color: var(--color-verde);
             color: white;
         }
         
-        .email-btn:hover {
-            background-color: #bd2130;
+        .whatsapp-btn:hover {
+            background-color: #128C7E;
             transform: translateY(-2px);
         }
         
@@ -837,8 +837,8 @@
 </div>
                 
                 <div class="submit-buttons">
-                    <button type="button" class="submit-btn email-btn" id="submitEmail">
-                        <i class="fas fa-envelope"></i> Enviar por Correo
+                    <button type="button" class="submit-btn whatsapp-btn" id="submitWhatsApp">
+                        <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
                     </button>
                 </div>
             </form>
@@ -927,11 +927,10 @@
             // Form submission handlers
             const form = document.getElementById('affiliationForm');
             
-            document.getElementById('submitEmail').addEventListener('click', function() {
+            document.getElementById('submitWhatsApp').addEventListener('click', function() {
                 if (validateForm()) {
-                    const subject = 'Solicitud de Afiliación - ' + document.getElementById('businessName').value;
-                    const message = generateEmailMessage();
-                    window.open(`mailto:colombia@qrcontraentrega.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`, '_blank');
+                    const message = generateWhatsAppMessage();
+                    window.open(`https://wa.me/573215343562?text=${encodeURIComponent(message)}`, '_blank');
                 }
             });
             
@@ -1007,30 +1006,27 @@
             }
             
             // Message generators
-            function generateEmailMessage() {
-                let message = "SOLICITUD DE AFILIACIÓN\n\n";
+            function generateWhatsAppMessage() {
+                let message = "¡Hola! Quiero solicitar afiliación con el siguiente plan:\n\n";
                 
-                message += `Plan seleccionado: ${selectedPlanInput.value}\n\n`;
-                
-                message += "INFORMACIÓN DEL NEGOCIO:\n";
-                message += `• Nombre comercial: ${document.getElementById('businessName').value}\n`;
+                message += `*Plan:* ${selectedPlanInput.value}\n\n`;
+                message += "*Información del negocio:*\n";
+                message += `• Nombre: ${document.getElementById('businessName').value}\n`;
                 message += `• Descripción: ${document.getElementById('businessDescription').value}\n`;
                 message += `• País: ${document.getElementById('businessCountry').value}\n`;
                 message += `• Departamento: ${document.getElementById('businessDepartment').value}\n`;
                 message += `• Ciudad: ${document.getElementById('businessCity').value}\n`;
                 message += `• Dirección: ${document.getElementById('businessAddress').value}\n\n`;
                 
-                message += "INFORMACIÓN DEL REPRESENTANTE LEGAL:\n";
+                message += "*Información del representante legal:*\n";
                 message += `• Nombre: ${document.getElementById('legalName').value}\n`;
-                message += `• Tipo de identificación: ${document.querySelector('input[name="idType"]:checked').value}\n`;
-                message += `• Número de identificación: ${document.getElementById('idNumber').value}\n\n`;
+                message += `• Tipo de ID: ${document.querySelector('input[name="idType"]:checked').value}\n`;
+                message += `• Número de ID: ${document.getElementById('idNumber').value}\n\n`;
                 
-                message += "INFORMACIÓN DE CONTACTO:\n";
+                message += "*Información de contacto:*\n";
                 message += `• Teléfono: ${document.getElementById('contactPhone').value}\n`;
                 message += `• Email: ${document.getElementById('contactEmail').value}\n`;
-                message += `• Color preferido: ${document.querySelector('input[name="colorPreference"]:checked').value}\n\n`;
-                
-                message += "FECHA: " + new Date().toLocaleDateString('es-CO');
+                message += `• Color preferido: ${document.querySelector('input[name="colorPreference"]:checked').value}\n`;
                 
                 return message;
             }
