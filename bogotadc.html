@@ -6,11 +6,11 @@
   <title>Contraentrega Bogotá, Colombia</title>
   <style>
     :root {
-      --primary-color: #1a1a1a;
-      --secondary-color: #333;
-      --accent-color: #0066cc;
-      --text-color: #333;
-      --light-text: #fff;
+      --primary-color: #000000;
+      --secondary-color: #333333;
+      --accent-color: #666666;
+      --text-color: #333333;
+      --light-text: #ffffff;
       --bg-light: #f8f8f8;
       --border-radius: 8px;
       --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -60,7 +60,7 @@
     #buscador:focus {
       outline: none;
       border-color: var(--accent-color);
-      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+      box-shadow: 0 0 0 2px rgba(102,102,102,0.2);
     }
     
     .btn { 
@@ -83,26 +83,6 @@
     .btn:hover {
       background: var(--secondary-color);
       transform: translateY(-1px);
-    }
-    
-    .btn-centrar {
-      background-color: #0066cc;
-    }
-    
-    .btn-ruta {
-      background-color: #9b59b6;
-    }
-    
-    .btn-info {
-      background-color: #3498db;
-    }
-    
-    .btn-whatsapp {
-      background-color: #25D366;
-    }
-    
-    .btn-solicitar {
-      background-color: #e74c3c;
     }
     
     #mapa { 
@@ -174,7 +154,7 @@
     .sugerencia-boton {
       margin-left: 10px;
       padding: 5px 10px;
-      background-color: #9b59b6;
+      background-color: #000000;
       color: white;
       border: none;
       border-radius: 4px;
@@ -235,7 +215,7 @@
     }
 
     .map-type-btn.active {
-      background: #0066cc;
+      background: #000000;
       color: white;
     }
 
@@ -280,13 +260,11 @@
   <div id="contenedor-mapa">
     <div id="barra-superior">
       <div class="contenedor-buscador">
-        <input type="search" id="buscador" placeholder="Buscar Afiliados en Bogotá…" enterkeyhint="search">
+        <input type="search" id="buscador" placeholder="Buscar Afiliados Contraentrega en Bogotá…" enterkeyhint="search">
         <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
       </div>
-      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://bogota.qrcontraentrega.com/afiliacion', '_blank')">AFILIARSE</button>
-      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://bogota.qrcontraentrega.com/solicitar-envio', '_blank')">SOLICITAR ENVÍO</button>
-      <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
-      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://bogota.qrcontraentrega.com', '_blank')">MARKETPLACE</button>
+      <button class="btn" id="centrar-btn">CENTRAR</button>
+      <button class="btn" id="afiliarse-btn" onclick="window.open('https://qrcontraentrega.com/afiliacion-colombia', '_blank')">AFILIARSE</button>
     </div>
     <div id="mapa"></div>
     <div class="map-type-selector">
@@ -311,39 +289,38 @@
     // Datos de ubicaciones en Bogotá (solo socios)
     const UBICACIONES = [
       { 
-        "id": "nutricionbogota",
-        "nombre": "Nutrición Bogotá", 
-        "direccion": "Cra. 15 #88-64, Bogotá", 
-        "latlng": [4.6710, -74.0559], 
-        "url": "https://nutricionbogota.qrcontraentrega.com/",
-        "telefono": "+573001234567",
-        "horario": "L - V 08:00 a 18:00",
-        "servicios": "Productos nutricionales y suplementos",
+        "id": "1",
+        "nombre": "@hermanosdreamsco (Bronce)",
+        "direccion": "Av 46 Oeste # 3 - 4 Montebello, Bogotá", 
+        "latlng": [4.7110, -74.0721], 
+        "url": "https://hermanosdreamsco.qrcontraentrega.com",
+        "telefono": "+573041146297",
+        "horario": "L - V 09:00 a 17:00",
+        "servicios": "Nutrición y Belleza Productos de Omnilife y Seytú",
         "tipo": "socio"
       },
       { 
-        "id": "saludybienestar",
-        "nombre": "Salud y Bienestar", 
-        "direccion": "Cl. 72 #12-45, Bogotá", 
-        "latlng": [4.6564, -74.0598], 
-        "url": "https://saludybienestar.qrcontraentrega.com/",
-        "telefono": "+573012345678",
-        "horario": "L - S 07:00 a 20:00",
-        "servicios": "Productos orgánicos y naturales",
-        "tipo": "socio"
-      },
-      { 
-        "id": "vidasana",
-        "nombre": "Vida Sana", 
-        "direccion": "Ak. 15 #123-42, Bogotá", 
-        "latlng": [4.6909, -74.0445], 
-        "url": "https://vidasana.qrcontraentrega.com/",
-        "telefono": "+573023456789",
-        "horario": "L - D 06:00 a 22:00",
-        "servicios": "Alimentos saludables y suplementos",
+        "id": "2",
+        "nombre": "@distriyoxbogota (Bronce)", 
+        "direccion": "Calle 23 # 30 - 26, Bogotá", 
+        "latlng": [4.6980, -74.0834], 
+        "url": "https://distriyoxbogota.qrcontraentrega.com",
+        "telefono": "+573146824438",
+        "horario": "L - D 07:00 a 17:00",
+        "servicios": "bodega de productos importados de china",
         "tipo": "socio"
       }
     ];
+
+    // Función para normalizar texto (eliminar tildes, convertir a minúsculas, eliminar espacios extra)
+    function normalizarTexto(texto) {
+      return texto
+        .normalize("NFD") // Descomponer caracteres con acentos
+        .replace(/[\u0300-\u036f]/g, "") // Eliminar diacríticos (tildes)
+        .toLowerCase() // Convertir a minúsculas
+        .trim() // Eliminar espacios al inicio y final
+        .replace(/\s+/g, ' '); // Reemplazar múltiples espacios por uno solo
+    }
 
     // Inicializar el mapa cuando el DOM esté listo
     document.addEventListener('DOMContentLoaded', function() {
@@ -378,7 +355,7 @@
       // Inicializar mapa
       mapa = L.map('mapa', {
         center: [4.7110, -74.0721], // Coordenadas de Bogotá
-        zoom: 12,
+        zoom: 13,
         zoomControl: false
       });
 
@@ -429,21 +406,21 @@
           })
         }).bindPopup(`
           <div style="min-width:220px">
-            <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
+            <h3 style="margin:0 0 5px 0;color:#333">${loc.nombre}</h3>
             <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
             ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Teléfono:</strong> ${loc.telefono}</p>` : ''}
             ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Horario:</strong> ${loc.horario}</p>` : ''}
             ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><strong>Servicios:</strong> ${loc.servicios}</p>` : ''}
             <div class="popup-buttons">
               <div class="popup-button-row">
-                <button class="btn btn-whatsapp" onclick="abrirWhatsApp('${loc.telefono}', '${loc.nombre}')">
+                <button class="btn" onclick="abrirWhatsApp('${loc.telefono}', '${loc.nombre}')">
                   <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
                   Chatear por WhatsApp
                 </button>
               </div>
               <div class="popup-button-row">
-                <button class="btn btn-ruta" onclick="abrirGoogleMapsConDireccion('${loc.latlng[0]}', '${loc.latlng[1]}', '${loc.nombre}')">Cómo llegar</button>
-                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">Más información</button>
+                <button class="btn" onclick="abrirGoogleMapsConDireccion('${loc.latlng[0]}', '${loc.latlng[1]}', '${loc.nombre}')">Cómo llegar</button>
+                <button class="btn" onclick="window.open('${loc.url}', '_blank')">Ver Afiliado</button>
               </div>
             </div>
           </div>
@@ -451,7 +428,8 @@
         
         // Guardar todos los datos de la ubicación en el marcador
         marcador.datosUbicacion = loc;
-        marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
+        // Normalizar datos para búsqueda
+        marcador.datosBusqueda = normalizarTexto(`${loc.nombre} ${loc.direccion} ${loc.telefono || ''} ${loc.servicios || ''}`);
         marcadoresOriginales.push(marcador);
       });
 
@@ -497,10 +475,11 @@
     // Función para manejar la búsqueda
     function handleSearchInput(e) {
       clearTimeout(buscadorTimeout);
-      const termino = e.target.value.trim();
+      const termino = e.target.value;
+      const terminoNormalizado = normalizarTexto(termino);
       const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
       
-      if (termino.length < 3) {
+      if (terminoNormalizado.length < 3) {
         sugerenciasContainer.style.display = 'none';
         return;
       }
@@ -510,7 +489,7 @@
       sugerenciasContainer.style.display = 'block';
       
       buscadorTimeout = setTimeout(() => {
-        buscarConGoogle(termino);
+        buscarConGoogle(terminoNormalizado);
       }, 500);
     }
 
@@ -532,22 +511,22 @@
         // Simular algunos resultados de búsqueda en Bogotá
         const resultadosSimulados = [
           {
-            name: "Centro Comercial Andino",
-            lat: 4.6674,
-            lng: -74.0549,
-            formatted_address: "Cra. 11 #82-71, Bogotá"
+            name: "Centro Comercial Santafé",
+            lat: 4.7824,
+            lng: -74.0454,
+            formatted_address: "Autopista Norte #245-60, Bogotá, Colombia"
           },
           {
-            name: "Parque 93",
-            lat: 4.6774,
-            lng: -74.0502,
-            formatted_address: "Cl. 93A #11A-51, Bogotá"
+            name: "Plaza de Bolívar",
+            lat: 4.5981,
+            lng: -74.0760,
+            formatted_address: "Cl. 10 #, Bogotá, Colombia"
           },
           {
-            name: "Aeropuerto El Dorado",
+            name: "Aeropuerto Internacional El Dorado",
             lat: 4.7016,
             lng: -74.1469,
-            formatted_address: "Av. El Dorado #103-09, Bogotá"
+            formatted_address: "Av. El Dorado #103-09, Bogotá, Colombia"
           }
         ];
         
@@ -639,9 +618,8 @@
     // Función para buscar en los puntos locales
     function buscarEnPuntosLocales(consulta) {
       const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
-      const termino = consulta.toLowerCase();
       const resultados = marcadoresOriginales.filter(m => 
-        m.datosBusqueda.includes(termino)
+        m.datosBusqueda.includes(consulta)
       );
       
       if (resultados.length > 0) {
@@ -701,7 +679,7 @@
         e.preventDefault();
         const termino = document.getElementById('buscador').value.trim();
         if (termino) {
-          buscarConGoogle(termino);
+          buscarConGoogle(normalizarTexto(termino));
         }
       }
     }
