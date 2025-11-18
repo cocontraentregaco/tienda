@@ -842,6 +842,8 @@
             // Verificar si el navegador soporta geolocalización
             if (!navigator.geolocation) {
                 detectedCityElement.innerHTML = "Geolocalización no soportada";
+                // Intentar con IP como fallback
+                detectUserCityByIP();
                 return;
             }
             
@@ -863,6 +865,7 @@
                         
                         if (nearestCity) {
                             detectedCityElement.textContent = nearestCity.name;
+                            // Guardar la URL específica de la ciudad detectada
                             detectedCityElement.dataset.cityUrl = nearestCity.url;
                             
                             // Ocultar el mensaje de permiso
@@ -872,6 +875,8 @@
                             showLocationSuccess(nearestCity.name);
                         } else {
                             detectedCityElement.textContent = "Ubicación no reconocida";
+                            // Intentar con IP como fallback
+                            detectUserCityByIP();
                         }
                     },
                     function(error) {
@@ -902,6 +907,9 @@
                     }
                 );
             });
+
+            // También intentar detectar por IP inmediatamente como respaldo
+            detectUserCityByIP();
         }
 
         // Función para mostrar éxito en la detección de ubicación
@@ -939,23 +947,28 @@
                 const data = await response.json();
                 
                 if (data.city) {
-                    detectedCityElement.textContent = data.city;
-                    
-                    // Intentar encontrar una ciudad coincidente
+                    // Buscar la ciudad en nuestra lista que coincida
                     const matchedCity = cities.find(city => 
                         city.name.toLowerCase().includes(data.city.toLowerCase()) || 
                         data.city.toLowerCase().includes(city.name.toLowerCase())
                     );
                     
                     if (matchedCity) {
+                        detectedCityElement.textContent = matchedCity.name;
                         detectedCityElement.dataset.cityUrl = matchedCity.url;
+                    } else {
+                        detectedCityElement.textContent = data.city;
+                        // Si no hay coincidencia exacta, usar la primera ciudad como fallback
+                        detectedCityElement.dataset.cityUrl = cities[0].url;
                     }
                 } else {
                     detectedCityElement.textContent = "Ubicación no detectada";
+                    detectedCityElement.dataset.cityUrl = cities[0].url;
                 }
             } catch (error) {
                 console.error("Error detectando ubicación por IP:", error);
                 detectedCityElement.textContent = "Error en detección";
+                detectedCityElement.dataset.cityUrl = cities[0].url;
             }
         }
 
