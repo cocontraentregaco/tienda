@@ -292,6 +292,51 @@
             font-size: 0.95rem;
         }
 
+        /* Estilos para la sección de ubicación por IP */
+        .location-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .location-text {
+            font-size: 1.1rem;
+            color: #333;
+            margin-right: 10px;
+        }
+
+        .location-city {
+            font-weight: bold;
+            color: var(--blue);
+            background-color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .location-enter {
+            background-color: var(--red);
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            margin-left: 10px;
+        }
+
+        .location-enter:hover {
+            background-color: #a00d1e;
+        }
+
         @media (max-width: 768px) {
             .cities-grid {
                 grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -317,6 +362,15 @@
                 columns: 1;
                 -webkit-columns: 1;
                 -moz-columns: 1;
+            }
+            
+            .location-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .location-enter {
+                margin-left: 0;
             }
         }
 
@@ -349,6 +403,10 @@
             .qr-content {
                 padding: 15px;
             }
+            
+            .location-text {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -359,8 +417,6 @@
             <div class="colombia-title">Contraentrega</div>
             
         </header>
-
-        
 
         <!-- Sección QR Contraentrega -->
         <div class="qr-section">
@@ -407,6 +463,13 @@
                     <p>Políticas de garantía extendida en todos nuestros productos. Tu satisfacción está garantizada.</p>
                 </div>
             </div>
+        </div>
+        
+        <!-- Sección de ubicación por IP -->
+        <div class="location-container">
+            <span class="location-text">IP: Colombia</span>
+            <span class="location-city" id="detected-city">Detectando...</span>
+            <button class="location-enter" id="location-enter">Enter</button>
         </div>
         
         <div class="search-container">
@@ -625,6 +688,59 @@
             }
         ];
 
+        // Function to detect user's city based on IP
+        async function detectUserCity() {
+            const detectedCityElement = document.getElementById('detected-city');
+            
+            try {
+                // Using ipapi.co API to get location data
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                
+                if (data.city) {
+                    // Check if the detected city is in our list
+                    const matchedCity = cities.find(city => 
+                        city.name.toLowerCase().includes(data.city.toLowerCase()) || 
+                        data.city.toLowerCase().includes(city.name.toLowerCase())
+                    );
+                    
+                    if (matchedCity) {
+                        detectedCityElement.textContent = matchedCity.name;
+                        // Store the detected city for later use
+                        detectedCityElement.dataset.cityUrl = matchedCity.url;
+                    } else {
+                        detectedCityElement.textContent = data.city;
+                        // If city not in our list, try to find the closest match
+                        const closestMatch = findClosestCity(data.city);
+                        if (closestMatch) {
+                            detectedCityElement.dataset.cityUrl = closestMatch.url;
+                        }
+                    }
+                } else {
+                    detectedCityElement.textContent = "No detectada";
+                }
+            } catch (error) {
+                console.error("Error detecting location:", error);
+                detectedCityElement.textContent = "Error en detección";
+            }
+        }
+
+        // Function to find the closest city match
+        function findClosestCity(cityName) {
+            // Simple implementation - you could use more sophisticated matching
+            const normalizedCityName = cityName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            
+            for (const city of cities) {
+                const normalizedCity = city.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                if (normalizedCityName.includes(normalizedCity) || normalizedCity.includes(normalizedCityName)) {
+                    return city;
+                }
+            }
+            
+            // If no direct match, return the first city as fallback
+            return cities[0];
+        }
+
         // Function to display cities
         function renderCities(cityList) {
             const container = document.getElementById('cities-container');
@@ -676,6 +792,7 @@
         // Initialize the application
         function initApp() {
             const searchInput = document.getElementById('city-search');
+            const locationEnterButton = document.getElementById('location-enter');
             
             // Set up event listeners
             searchInput.addEventListener('input', searchCities);
@@ -684,9 +801,25 @@
                     searchCities();
                 }
             });
+            
+            // Set up location enter button
+            locationEnterButton.addEventListener('click', function() {
+                const detectedCityElement = document.getElementById('detected-city');
+                const cityUrl = detectedCityElement.dataset.cityUrl;
+                
+                if (cityUrl) {
+                    window.open(cityUrl, '_blank');
+                } else {
+                    // If no specific city URL, redirect to the main site
+                    window.open('https://qrcontraentrega.com', '_blank');
+                }
+            });
 
             // Display all cities initially
             renderCities(cities);
+            
+            // Detect user's city based on IP
+            detectUserCity();
             
             // Focus on search input
             searchInput.focus();
