@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - Colombia / Colombia</title>
+    <title>QRContraentrega - Colombia</title>
     <style>
         :root {
-            --yellow: #FCD116; /* Colombia yellow */
-            --blue: #003893; /* Colombia blue */
-            --red: #CE1126; /* Colombia red */
+            --yellow: #FCD116;
+            --blue: #003893;
+            --red: #CE1126;
             --white: #FFFFFF;
             --background-color: #f9f9f9;
             --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -228,6 +228,27 @@
         .loading {
             color: #666;
             font-style: italic;
+        }
+
+        .location-error {
+            color: var(--red);
+            background-color: rgba(206, 17, 38, 0.1);
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .location-error button {
+            background: var(--red);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
         }
 
         footer {
@@ -613,6 +634,7 @@
         // Global variable to store detected city URL
         let detectedCityUrl = null;
         let detectedCityName = null;
+        let locationTimeout = null;
 
         // Function to display cities
         function renderStates(stateList) {
@@ -678,8 +700,8 @@
             const locationInfo = document.getElementById('location-info');
             
             locationInfo.innerHTML = `
-                <span>IP: ${cityName}</span>
-                <button class="enter-button" id="location-enter-btn">Enter</button>
+                <span>Ubicación detectada: ${cityName}</span>
+                <button class="enter-button" id="location-enter-btn">Entrar</button>
             `;
             
             // Add event listener to the button
@@ -690,29 +712,54 @@
             });
         }
 
+        // Function to show location error
+        function showLocationError(message) {
+            const locationInfo = document.getElementById('location-info');
+            locationInfo.innerHTML = `
+                <div class="location-error">
+                    <span>${message}</span>
+                    <button id="retry-location">Reintentar</button>
+                </div>
+            `;
+            
+            document.getElementById('retry-location').addEventListener('click', getUserLocation);
+        }
+
         // Function to get user location - OPTIMIZED
         function getUserLocation() {
             const locationInfo = document.getElementById('location-info');
             
+            // Clear any existing timeout
+            if (locationTimeout) {
+                clearTimeout(locationTimeout);
+            }
+            
             // Show loading immediately
             locationInfo.innerHTML = '<div class="loading">Detectando tu ubicación...</div>';
             
+            // Set a timeout to prevent infinite loading
+            locationTimeout = setTimeout(() => {
+                showLocationError('Tiempo de espera agotado. No se pudo obtener la ubicación.');
+            }, 10000); // 10 seconds timeout
+            
             // Check if geolocation is available
             if (!navigator.geolocation) {
-                locationInfo.innerHTML = 'La geolocalización no es compatible con este navegador.';
+                clearTimeout(locationTimeout);
+                showLocationError('La geolocalización no es compatible con este navegador.');
                 return;
             }
             
             // Request location permission immediately with optimized options
             const geoOptions = {
                 enableHighAccuracy: false, // Faster response
-                timeout: 10000, // 10 seconds timeout
+                timeout: 8000, // 8 seconds timeout
                 maximumAge: 300000 // Accept cached location from last 5 minutes
             };
             
             navigator.geolocation.getCurrentPosition(
                 // Success callback
                 async (position) => {
+                    clearTimeout(locationTimeout);
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
                     
@@ -735,36 +782,42 @@
                                 detectedCityUrl = matchedState.url;
                                 createLocationInfo(detectedCity);
                             } else {
-                                createLocationInfo(detectedCity);
-                                // If city not in list, still show button but it won't work
+                                // If city not in list, show message and allow manual selection
+                                locationInfo.innerHTML = `
+                                    <div class="location-error">
+                                        <span>Ubicación detectada: ${detectedCity} (no disponible)</span>
+                                        <span>Selecciona una ciudad manualmente</span>
+                                    </div>
+                                `;
                                 detectedCityUrl = null;
                             }
                         } else {
-                            locationInfo.innerHTML = 'No se pudo detectar la ciudad.';
+                            showLocationError('No se pudo detectar la ciudad.');
                         }
                     } catch (error) {
                         console.error('Error al obtener la ubicación:', error);
-                        locationInfo.innerHTML = 'Error al obtener la ubicación.';
+                        showLocationError('Error al obtener la ubicación.');
                     }
                 },
                 // Error callback
                 (error) => {
+                    clearTimeout(locationTimeout);
                     console.error('Error de geolocalización:', error);
                     let errorMessage = 'Error al obtener la ubicación.';
                     
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage = 'Permiso de ubicación denegado.';
+                            errorMessage = 'Permiso de ubicación denegado. Por favor, selecciona una ciudad manualmente.';
                             break;
                         case error.POSITION_UNAVAILABLE:
                             errorMessage = 'Información de ubicación no disponible.';
                             break;
                         case error.TIMEOUT:
-                            errorMessage = 'Tiempo de espera agotado.';
+                            errorMessage = 'Tiempo de espera agotado. No se pudo obtener la ubicación.';
                             break;
                     }
                     
-                    locationInfo.innerHTML = errorMessage;
+                    showLocationError(errorMessage);
                 },
                 geoOptions
             );
@@ -780,14 +833,6 @@
             // Start location detection immediately
             getUserLocation();
         });
-
-        // Alternative: Start location detection even before DOM is fully loaded
-        // This makes it even faster
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', getUserLocation);
-        } else {
-            getUserLocation();
-        }
     </script>
 </body>
 </html>
