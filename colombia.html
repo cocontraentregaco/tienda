@@ -1,899 +1,776 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Contraentrega Colombia - Marketplace</title>
-    <style>
-        .contraentrega-container {
-            --yellow: #FCD116;
-            --blue: #003893;
-            --red: #CE1126;
-            --background-color: #f9f9f9;
-            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Contraentrega Colombia</title>
+  <style>
+    :root {
+      --primary-color: #1a1a1a;
+      --secondary-color: #333;
+      --accent-color: #0066cc;
+      --text-color: #333;
+      --light-text: #fff;
+      --bg-light: #f8f8f8;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    body { 
+      font-family: 'Roboto', sans-serif; 
+      color: var(--text-color); 
+      line-height: 1.6; 
+      touch-action: manipulation;
+      overflow-x: hidden;
+    }
+    
+    #contenedor-mapa { 
+      height: 100vh; 
+      display: flex; 
+      flex-direction: column; 
+      position: relative;
+    }
+    
+    #barra-superior { 
+      display: flex; 
+      gap: 0.8rem; 
+      padding: 0.8rem; 
+      background: var(--bg-light); 
+      width: 100%;
+      z-index: 1000;
+    }
+    
+    #buscador { 
+      flex: 1; 
+      padding: 0.6rem 1.2rem; 
+      border: 1px solid #ddd; 
+      border-radius: 24px; 
+      appearance: none; 
+      font-size: 16px;
+      transition: var(--transition);
+    }
+    
+    #buscador:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+    }
+    
+    .btn { 
+      background: var(--primary-color); 
+      color: var(--light-text); 
+      padding: 0.6rem 1.2rem; 
+      border-radius: 24px; 
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    
+    .btn:hover {
+      background: var(--secondary-color);
+      transform: translateY(-1px);
+    }
+    
+    .btn-centrar {
+      background-color: #0066cc;
+    }
+    
+    .btn-ruta {
+      background-color: #9b59b6;
+    }
+    
+    .btn-info {
+      background-color: #3498db;
+    }
+    
+    .btn-whatsapp {
+      background-color: #25D366;
+    }
+    
+    .btn-solicitar {
+      background-color: #e74c3c;
+    }
+    
+    #mapa { 
+      flex: 1; 
+      background: #f0f0f0; 
+      width: 100%;
+    }
+    
+    .cluster-marcadores { 
+      background: rgba(40,40,40,0.7); 
+      border-radius: 50%; 
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    .whatsapp-icon {
+      width: 16px;
+      height: 16px;
+      filter: invert(1);
+    }
 
-        .contraentrega-container * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    .popup-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
 
-        body {
-            background-color: var(--background-color);
-            line-height: 1.6;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+    .popup-button-row {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+    }
 
-        .contraentrega-container .header {
-            text-align: center;
-            margin-bottom: 3rem;
-            background: linear-gradient(135deg, var(--yellow) 0%, var(--blue) 50%, var(--red) 100%);
-            padding: 2rem;
-            border-radius: 10px;
-            color: white;
-        }
+    .sugerencias-busqueda {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
 
-        .contraentrega-container h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: white;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-        }
+    .sugerencia-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        .contraentrega-container .spanish-title {
-            font-size: 2.2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
+    .sugerencia-item:hover {
+      background-color: #f5f5f5;
+    }
 
-        .contraentrega-container .subtitle {
-            font-size: 1.2rem;
-            color: rgba(255,255,255,0.9);
-            max-width: 700px;
-            margin: 0 auto;
-        }
+    .sugerencia-texto {
+      flex: 1;
+    }
 
-        .contraentrega-container .states-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
+    .sugerencia-boton {
+      margin-left: 10px;
+      padding: 5px 10px;
+      background-color: #9b59b6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
 
-        .contraentrega-container .state-card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            text-align: center;
-            cursor: pointer;
-            border-top: 4px solid var(--yellow);
-        }
+    .contenedor-buscador {
+      position: relative;
+      flex: 1;
+    }
 
-        .contraentrega-container .state-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            border-color: var(--blue);
-        }
+    .cargando {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
 
-        .contraentrega-container .flag-container {
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f0f0f0;
-            position: relative;
-            overflow: hidden;
-        }
+    .gm-style .gm-style-iw-c {
+      border-radius: 8px;
+      padding: 10px;
+    }
 
-        .contraentrega-container .flag-container::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--yellow) 0%, var(--blue) 50%, var(--red) 100%);
-        }
+    .gm-style .gm-style-iw-d {
+      overflow: auto !important;
+    }
 
-        .contraentrega-container .flag-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
+    .gm-ui-hover-effect {
+      top: 8px !important;
+      right: 8px !important;
+    }
 
-        .contraentrega-container .state-info {
-            padding: 1.5rem 1rem;
-        }
+    .map-type-selector {
+      position: absolute;
+      bottom: 20px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      display: flex;
+      gap: 10px;
+    }
 
-        .contraentrega-container .state-name {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-            color: var(--blue);
-        }
+    .map-type-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #f1f1f1;
+      transition: background 0.3s;
+    }
 
-        .contraentrega-container .spanish-name {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
+    .map-type-btn.active {
+      background: #0066cc;
+      color: white;
+    }
 
-        .contraentrega-container .state-type {
-            color: #666;
-            font-size: 0.9rem;
-        }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
-        .contraentrega-container .search-container {
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            position: relative;
-        }
+    @media (max-width: 768px) { 
+      #barra-superior { 
+        flex-direction: column; 
+        gap: 0.6rem;
+      }
+      
+      .popup-button-row {
+        flex-direction: column;
+      }
 
-        .contraentrega-container #state-search {
-            width: 100%;
-            padding: 12px 20px 12px 45px;
-            border: 1px solid #ddd;
-            border-radius: 50px;
-            font-size: 1rem;
-            outline: none;
-            transition: var(--transition);
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: 15px center;
-            background-size: 20px;
-        }
+      .sugerencia-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
 
-        .contraentrega-container #state-search:focus {
-            border-color: var(--red);
-            box-shadow: 0 0 0 3px rgba(206, 17, 38, 0.2);
-        }
+      .sugerencia-boton {
+        margin-left: 0;
+        margin-top: 5px;
+        align-self: flex-end;
+      }
 
-        .contraentrega-container .auto-detection {
-            background-color: #e8f4fd;
-            border: 1px solid #bee5eb;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin-bottom: 1.5rem;
-            display: none;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-
-        .contraentrega-container .auto-detection-message {
-            font-size: 0.95rem;
-            color: #0c5460;
-        }
-
-        .contraentrega-container .auto-detection-action {
-            background: var(--blue);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: background 0.3s;
-        }
-
-        .contraentrega-container .auto-detection-action:hover {
-            background: #002a6e;
-        }
-
-        .contraentrega-container .location-permission {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            text-align: center;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .contraentrega-container .location-permission button {
-            background-color: var(--blue);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-            transition: var(--transition);
-        }
-
-        .contraentrega-container .location-permission button:hover {
-            background-color: #002a6e;
-        }
-
-        .contraentrega-container .location-loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(0, 56, 147, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--blue);
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 10px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Estilos para la sección de servicios */
-        .services-section {
-            background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            margin: 3rem 0;
-            box-shadow: var(--card-shadow);
-        }
-
-        .services-section h2 {
-            color: var(--blue);
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 2rem;
-        }
-
-        .payment-methods {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .payment-methods h3 {
-            color: var(--red);
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-        .payment-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            list-style: none;
-        }
-
-        .payment-list li {
-            background: white;
-            padding: 0.8rem;
-            border-radius: 6px;
-            text-align: center;
-            border-left: 4px solid var(--yellow);
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .feature-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: var(--card-shadow);
-            border-top: 4px solid var(--blue);
-        }
-
-        .feature-card h4 {
-            color: var(--blue);
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-
-        .feature-card.free-shipping {
-            border-top-color: var(--yellow);
-        }
-
-        .feature-card.fast-logistics {
-            border-top-color: var(--red);
-        }
-
-        .guarantee-section {
-            background: linear-gradient(135deg, var(--blue) 0%, #002a6e 100%);
-            color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            text-align: center;
-            margin-top: 2rem;
-        }
-
-        .guarantee-section h3 {
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .contraentrega-container .states-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-
-            .contraentrega-container h1 {
-                font-size: 2rem;
-            }
-
-            .contraentrega-container .spanish-title {
-                font-size: 1.8rem;
-            }
-
-            .contraentrega-container .flag-container {
-                height: 100px;
-            }
-            
-            .contraentrega-container .auto-detection {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .contraentrega-container .auto-detection-action {
-                align-self: flex-end;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .payment-list {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .contraentrega-container .states-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .contraentrega-container .state-info {
-                padding: 1rem 0.5rem;
-            }
-
-            .contraentrega-container .state-name {
-                font-size: 1rem;
-            }
-            
-            .contraentrega-container .spanish-name {
-                font-size: 1.1rem;
-            }
-
-            .services-section {
-                padding: 1rem;
-            }
-        }
-    </style>
+      .map-type-selector {
+        bottom: 10px;
+        left: 5px;
+        flex-direction: column;
+        gap: 5px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
 </head>
 <body>
-    <div class="contraentrega-container">
-        <div class="header">
-            <h1>QR CONTRAENTREGA</h1>
-            <div class="spanish-title">COLOMBIA</div>
-            <p class="subtitle">Marketplace</p>
-        </div>
-        
-        <!-- Sección de permiso de geolocalización -->
-        <div class="location-permission" id="location-permission">
-            <p>📍 <strong>Detección de ubicación precisa</strong><br>
-            Para ofrecerte los mejores servicios en tu ciudad, necesitamos tu permiso para acceder a tu ubicación actual.</p>
-            <button id="enable-location">📍 Permitir acceso a mi ubicación</button>
-        </div>
-
-        <!-- Sección de detección automática -->
-        <div class="auto-detection" id="auto-detection">
-            <div class="auto-detection-message">
-                <strong>📍 Ubicación detectada:</strong> <span id="detected-city"><span class="location-loading"></span>Detectando tu ciudad...</span>
-            </div>
-            <button class="auto-detection-action" id="go-to-detected-city">🚀 Ir a mi ciudad</button>
-        </div>
-
-        <div class="search-container">
-            <input type="text" id="state-search" placeholder="Busca tu ciudad o municipio..." aria-label="Busca una ciudad">
-        </div>
-
-        <div class="states-grid" id="states-container">
-            <!-- States and cities will appear here -->
-        </div>
-
-        <!-- Sección de Servicios y Características -->
-        <div class="services-section">
-            <h2>¿Por qué elegir QR Contraentrega?</h2>
-            
-            <div class="payment-methods">
-                <h3>Medios de Pago Disponibles</h3>
-                <ul class="payment-list">
-                    <li>💵 Efectivo al recibir</li>
-                    <li>💳 Datáfono - Tarjetas débito/crédito</li>
-                    <li>🏦 PSE (Pagos Seguros en Línea)</li>
-                    <li>🔑 Llaves BRE-B</li>
-                    <li>🏛️ QR Bancolombia</li>
-                    <li>📱 QR Contraentrega</li>
-                    <li>📲 Nequi y Daviplata</li>
-                    <li>💎 Pago con criptomonedas</li>
-                </ul>
-            </div>
-
-            <div class="features-grid">
-                <div class="feature-card free-shipping">
-                    <h4>🚚 ENVÍO GRATIS</h4>
-                    <p>En todos tus pedidos a nivel nacional sin costos adicionales de envío</p>
-                </div>
-                
-                <div class="feature-card">
-                    <h4>⚡ LOGÍSTICA RÁPIDA</h4>
-                    <p>Entrega express en todo Colombia con seguimiento en tiempo real</p>
-                </div>
-                
-                <div class="feature-card fast-logistics">
-                    <h4>💰 PRECIOS DE BODEGA</h4>
-                    <p>Los mejores precios directos del proveedor sin intermediarios</p>
-                </div>
-
-                <div class="feature-card">
-                    <h4>🛡️ COMPRA SEGURA</h4>
-                    <p>Paga contraentrega solo cuando recibas y verifiques tu producto</p>
-                </div>
-            </div>
-
-            <div class="guarantee-section">
-                <h3>✅ GARANTÍA ASEGURADA</h3>
-                <p>Políticas de garantía extendida en todos nuestros productos. Tu satisfacción está 100% garantizada con soporte post-venta especializado.</p>
-            </div>
-        </div>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="contenedor-buscador">
+        <input type="search" id="buscador" placeholder="Buscar afiliados en Colombia…" enterkeyhint="search">
+        <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+      </div>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://co.qrcontraentrega.com/afiliacion', '_blank')">AFILIARSE</button>
+      <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://co.qrcontraentrega.com/marketplace', '_blank')">MARKETPLACE</button>
     </div>
+    <div id="mapa"></div>
+    <div class="map-type-selector">
+      <button class="map-type-btn active" id="map-btn">Mapa</button>
+      <button class="map-type-btn" id="satellite-btn">Satélite</button>
+    </div>
+  </div>
 
-    <script>
-        // List of Colombian departments and major cities with both languages
-        const states = [
-            { 
-                "name": { "es": "Salento", "en": "Salento" }, 
-                "type": { "es": "Ciudad del Quindío", "en": "City of Quindío" }, 
-                "url": "https://qrcontraentrega.com/salentoquindio", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Leticia", "en": "Leticia" }, 
-                "type": { "es": "Capital de Amazonas", "en": "Capital of Amazonas" }, 
-                "url": "https://qrcontraentrega.com/leticiaamazonas", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Medellín", "en": "Medellin" }, 
-                "type": { "es": "Capital de Antioquia", "en": "Capital of Antioquia" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/medellin-antioquia", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Arauca", "en": "Arauca" }, 
-                "type": { "es": "Capital de Arauca", "en": "Capital of Arauca" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/arauca-arauca", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Barranquilla", "en": "Barranquilla" }, 
-                "type": { "es": "Capital del Atlántico", "en": "Capital of Atlantico" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/barranquilla-atlantico", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Bogotá", "en": "Bogota" }, 
-                "type": { "es": "Capital de Cundinamarca", "en": "Capital of Cundinamarca" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/bogota-cundinamarca", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Cartagena", "en": "Cartagena" }, 
-                "type": { "es": "Capital de Bolívar", "en": "Capital of Bolivar" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/cartagena-bolivar", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Tunja", "en": "Tunja" }, 
-                "type": { "es": "Capital de Boyacá", "en": "Capital of Boyaca" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/tunja-boyaca", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Manizales", "en": "Manizales" }, 
-                "type": { "es": "Capital de Caldas", "en": "Capital of Caldas" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/manizales-caldas", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Florencia", "en": "Florencia" }, 
-                "type": { "es": "Capital de Caquetá", "en": "Capital of Caqueta" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/florencia-caqueta", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Yopal", "en": "Yopal" }, 
-                "type": { "es": "Capital de Casanare", "en": "Capital of Casanare" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/yopal-casanare", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Popayán", "en": "Popayan" }, 
-                "type": { "es": "Capital de Cauca", "en": "Capital of Cauca" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/popayan-cauca", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Valledupar", "en": "Valledupar" }, 
-                "type": { "es": "Capital de Cesar", "en": "Capital of Cesar" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/valledupar-cesar", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Quibdó", "en": "Quibdo" }, 
-                "type": { "es": "Capital de Chocó", "en": "Capital of Choco" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/quibdo-choco", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Montería", "en": "Monteria" }, 
-                "type": { "es": "Capital de Córdoba", "en": "Capital of Cordoba" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/monteria-cordoba", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Bogotá", "en": "Bogota" }, 
-                "type": { "es": "Capital de Bogotá D.C.", "en": "Capital of Bogota D.C." }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/bogota-dc", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Agua de Dios", "en": "Agua de Dios" }, 
-                "type": { "es": "Capital de Cundinamarca", "en": "Capital of Cundinamarca" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/agua-de-dios-cundinamarca", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Inírida", "en": "Inirida" }, 
-                "type": { "es": "Capital de Guainía", "en": "Capital of Guainia" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/inirida-guainia", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "San José del Guaviare", "en": "San Jose del Guaviare" }, 
-                "type": { "es": "Capital de Guaviare", "en": "Capital of Guaviare" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/san-jose-del-guaviare", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Neiva", "en": "Neiva" }, 
-                "type": { "es": "Capital de Huila", "en": "Capital of Huila" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/neiva-huila", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Riohacha", "en": "Riohacha" }, 
-                "type": { "es": "Capital de La Guajira", "en": "Capital of La Guajira" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/riohacha-la-guajira", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Santa Marta", "en": "Santa Marta" }, 
-                "type": { "es": "Capital de Magdalena", "en": "Capital of Magdalena" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/santa-marta-magdalena", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Villavicencio", "en": "Villavicencio" }, 
-                "type": { "es": "Capital de Meta", "en": "Capital of Meta" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/villavicencio-meta", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Pasto", "en": "Pasto" }, 
-                "type": { "es": "Capital de Nariño", "en": "Capital of Narino" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/pasto-narino", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Cúcuta", "en": "Cucuta" }, 
-                "type": { "es": "Capital de Norte de Santander", "en": "Capital of Norte de Santander" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/cucuta-norte-de-santander", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Mocoa", "en": "Mocoa" }, 
-                "type": { "es": "Capital de Putumayo", "en": "Capital of Putumayo" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/mocoa-putumayo", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Armenia", "en": "Armenia" }, 
-                "type": { "es": "Capital de Quindío", "en": "Capital of Quindio" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/armenia-quindio", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Pereira", "en": "Pereira" }, 
-                "type": { "es": "Capital de Risaralda", "en": "Capital of Risaralda" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/pereira-risaralda", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "San Andrés", "en": "San Andres" }, 
-                "type": { "es": "Capital de San Andrés", "en": "Capital of San Andres" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/san-andres", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Bucaramanga", "en": "Bucaramanga" }, 
-                "type": { "es": "Capital de Santander", "en": "Capital of Santander" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/bucaramanga-santander", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Sincelejo", "en": "Sincelejo" }, 
-                "type": { "es": "Capital de Sucre", "en": "Capital of Sucre" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/sincelejo-sucre", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Ibagué", "en": "Ibague" }, 
-                "type": { "es": "Capital de Tolima", "en": "Capital of Tolima" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/ibague-tolima", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Cali", "en": "Cali" }, 
-                "type": { "es": "Capital de Valle del Cauca", "en": "Capital of Valle del Cauca" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/cali-valle-del-cauca", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Mitú", "en": "Mitu" }, 
-                "type": { "es": "Capital de Vaupés", "en": "Capital of Vaupes" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/mitu-vaupes", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Puerto Carreño", "en": "Puerto Carreno" }, 
-                "type": { "es": "Capital de Vichada", "en": "Capital of Vichada" }, 
-                "url": "https://co.qrcontraentrega.com/sucursal/puerto-carreno-vichada", 
-                "image": "https://qrcontraentrega.com/img/c.jpg" 
-            }
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    // Variables globales
+    let mapa;
+    let userMarker;
+    let marcadoresOriginales = [];
+    let destinoMarker = null;
+    let buscadorTimeout;
+    let googleMapsLayer;
+    let googleSatelliteLayer;
+    let currentLayer;
+
+    // Datos de ubicaciones en Colombia (solo socios)
+    const UBICACIONES = [
+      { 
+        "id": "wscdistribuidora",
+        "nombre": "@wscdistribuidora", 
+        "direccion": "CLL 8 #14-25, Bogotá", 
+        "latlng": [4.598191, -74.076151], 
+        "url": "https://wscdistribuidora.com/",
+        "telefono": "+573156120321",
+        "horario": "L - V 09:00 a 17:00",
+        "servicios": "Somos una empresa que distribuimos mercancia importada de china . Como linea hogar jugeteria flores ortopedicos accesorios de bicicleta iluminacion y trabajamos las temporadas de halloween y diciembre",
+        "tipo": "socio",
+        "ciudad": "Bogotá"
+      }
+    ];
+
+    // Inicializar el mapa cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeMap();
+      
+      // Evento para el botón centrar - CORREGIDO
+      document.getElementById('centrar-btn').addEventListener('click', function() {
+        obtenerUbicacionUsuario();
+      });
+      
+      // Eventos para cambiar tipo de mapa
+      document.getElementById('map-btn').addEventListener('click', function() {
+        switchToMapView();
+      });
+      
+      document.getElementById('satellite-btn').addEventListener('click', function() {
+        switchToSatelliteView();
+      });
+      
+      // Eventos para el buscador
+      const searchInput = document.getElementById('buscador');
+      searchInput.addEventListener('input', handleSearchInput);
+      searchInput.addEventListener('keydown', handleSearchKeydown);
+      
+      // Cerrar sugerencias al hacer clic fuera
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.contenedor-buscador')) {
+          document.getElementById('sugerencias-busqueda').style.display = 'none';
+        }
+      });
+    });
+
+    function initializeMap() {
+      // Inicializar mapa centrado en Colombia
+      mapa = L.map('mapa', {
+        center: [4.570868, -74.297333], // Coordenadas centrales de Colombia
+        zoom: 6,
+        zoomControl: false
+      });
+
+      // Añadir control de zoom
+      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+
+      // Crear capas de Google Maps
+      googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+      });
+
+      googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+      });
+
+      // Inicialmente usar la vista de mapa
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+
+      // Asegurar que el mapa ocupe todo el espacio disponible
+      setTimeout(() => {
+        mapa.invalidateSize();
+      }, 0);
+
+      // Sistema de marcadores
+      const clusters = L.markerClusterGroup({
+        iconCreateFunction: cluster => L.divIcon({
+          html: `<div>${cluster.getChildCount()}</div>`,
+          className: 'cluster-marcadores',
+          iconSize: [40, 40]
+        }),
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true
+      });
+
+      // Crear marcadores (solo socios)
+      UBICACIONES.forEach(loc => {
+        const marcador = L.marker(loc.latlng, {
+          icon: L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+            iconSize: [32, 32],
+            className: 'marker-icon-orange'
+          })
+        }).bindPopup(`
+          <div style="min-width:220px">
+            <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
+            <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
+            <p style="margin:0 0 5px 0;font-size:0.9em"><strong>Ciudad:</strong> ${loc.ciudad}</p>
+            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Teléfono:</strong> ${loc.telefono}</p>` : ''}
+            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Horario:</strong> ${loc.horario}</p>` : ''}
+            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><strong>Servicios:</strong> ${loc.servicios}</p>` : ''}
+            <div class="popup-buttons">
+              <div class="popup-button-row">
+                <button class="btn btn-whatsapp" onclick="abrirWhatsApp('${loc.telefono}', '${loc.nombre}')">
+                  <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
+                  Chatear por WhatsApp
+                </button>
+              </div>
+              <div class="popup-button-row">
+                <button class="btn btn-ruta" onclick="abrirGoogleMapsConDireccion('${loc.latlng[0]}', '${loc.latlng[1]}', '${loc.nombre}')">Cómo llegar</button>
+                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">Más información</button>
+              </div>
+            </div>
+          </div>
+        `);
+        
+        // Guardar todos los datos de la ubicación en el marcador
+        marcador.datosUbicacion = loc;
+        marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.ciudad} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
+        marcadoresOriginales.push(marcador);
+      });
+
+      // Añadir marcadores al mapa
+      clusters.addLayers(marcadoresOriginales);
+      mapa.addLayer(clusters);
+
+      // Ajustar vista a los marcadores
+      if(marcadoresOriginales.length > 0) {
+        mapa.fitBounds(clusters.getBounds().pad(0.3));
+      }
+
+      // Solicitar ubicación al cargar la página
+      obtenerUbicacionUsuario();
+    }
+
+    // Función para cambiar a vista de mapa
+    function switchToMapView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      
+      document.getElementById('map-btn').classList.add('active');
+      document.getElementById('satellite-btn').classList.remove('active');
+    }
+
+    // Función para cambiar a vista de satélite
+    function switchToSatelliteView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleSatelliteLayer;
+      currentLayer.addTo(mapa);
+      
+      document.getElementById('satellite-btn').classList.add('active');
+      document.getElementById('map-btn').classList.remove('active');
+    }
+
+    // Función para abrir Google Maps con una dirección específica
+    function abrirGoogleMapsConDireccion(lat, lng, nombre) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`;
+      window.open(url, '_blank');
+    }
+
+    // Función para manejar la búsqueda
+    function handleSearchInput(e) {
+      clearTimeout(buscadorTimeout);
+      const termino = e.target.value.trim();
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      if (termino.length < 3) {
+        sugerenciasContainer.style.display = 'none';
+        return;
+      }
+      
+      // Mostrar indicador de carga
+      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Buscando... <span class="cargando"></span></div>';
+      sugerenciasContainer.style.display = 'block';
+      
+      buscadorTimeout = setTimeout(() => {
+        buscarConGoogle(termino);
+      }, 500);
+    }
+
+    // Función para buscar usando Google Places API (simulación)
+    function buscarConGoogle(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      // Primero buscar en puntos locales
+      const resultadosLocales = buscarEnPuntosLocales(consulta);
+      if (resultadosLocales) {
+        return;
+      }
+      
+      // Simular búsqueda en Google Places
+      setTimeout(() => {
+        // En una implementación real, aquí se conectaría con la API de Google Places
+        sugerenciasContainer.innerHTML = '';
+        
+        // Simular algunos resultados de búsqueda en Colombia
+        const resultadosSimulados = [
+          {
+            name: "Centro Comercial Santafé Medellín",
+            lat: 6.197943,
+            lng: -75.578316,
+            formatted_address: "Cra. 43A #7 Sur-170, Medellín, Antioquia"
+          },
+          {
+            name: "Centro Comercial Andino Bogotá",
+            lat: 4.667222,
+            lng: -74.055833,
+            formatted_address: "Cra. 11 #82-71, Bogotá"
+          },
+          {
+            name: "Centro Comercial Unicentro Cali",
+            lat: 3.368889,
+            lng: -76.530833,
+            formatted_address: "Cl. 5 #50-00, Cali, Valle"
+          },
+          {
+            name: "Aeropuerto Internacional El Dorado",
+            lat: 4.701389,
+            lng: -74.146944,
+            formatted_address: "Bogotá, Colombia"
+          }
         ];
-
-        // Function to normalize text for search (remove accents, trim, lowercase)
-        function normalizeText(text) {
-            return text
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .trim()
-                .toLowerCase();
-        }
-
-        // Function to display states and cities
-        function renderStates(stateList) {
-            const container = document.getElementById('states-container');
-            container.innerHTML = '';
-
-            stateList.forEach(state => {
-                const stateCard = document.createElement('div');
-                stateCard.className = 'state-card';
-                stateCard.innerHTML = `
-                    <div class="flag-container">
-                        <img src="${state.image}" alt="${state.name.es}" class="flag-image">
-                    </div>
-                    <div class="state-info">
-                        <div class="spanish-name">${state.name.es}</div>
-                        <div class="state-name">${state.name.en}</div>
-                        <div class="state-type">${state.type.es}</div>
-                    </div>
-                `;
-                
-                stateCard.addEventListener('click', () => {
-                    window.location.href = state.url;
-                });
-
-                container.appendChild(stateCard);
-            });
-        }
-
-        // Function to search states and cities with intelligent filtering
-        function searchStates() {
-            const searchTerm = document.getElementById('state-search').value;
-            const normalizedSearch = normalizeText(searchTerm);
-            const filteredStates = states.filter(state => 
-                normalizeText(state.name.es).includes(normalizedSearch) || 
-                normalizeText(state.name.en).includes(normalizedSearch) ||
-                normalizeText(state.type.es).includes(normalizedSearch) ||
-                normalizeText(state.type.en).includes(normalizedSearch)
-            );
-            renderStates(filteredStates);
+        
+        if (resultadosSimulados.length > 0) {
+          resultadosSimulados.forEach(lugar => {
+            const item = document.createElement('div');
+            item.className = 'sugerencia-item';
             
-            // Return first result for Enter key functionality
-            return filteredStates.length > 0 ? filteredStates[0] : null;
-        }
-
-        // Precise location detection using Geolocation API
-        function detectUserLocation() {
-            const detectedCityElement = document.getElementById('detected-city');
-            const locationPermissionElement = document.getElementById('location-permission');
-            const autoDetectionElement = document.getElementById('auto-detection');
+            const lat = lugar.lat;
+            const lng = lugar.lng;
+            const nombre = lugar.name;
             
-            // Mostrar sección de permiso
-            locationPermissionElement.style.display = 'block';
+            item.innerHTML = `
+              <div class="sugerencia-texto">
+                <strong>📍 ${nombre}</strong><br>
+                <small>${lugar.formatted_address}</small>
+              </div>
+              <button class="sugerencia-boton" data-lat="${lat}" data-lng="${lng}" data-nombre="${nombre}">
+                Cómo llegar
+              </button>
+            `;
             
-            // Configurar botón para solicitar permiso
-            document.getElementById('enable-location').addEventListener('click', function() {
-                detectedCityElement.innerHTML = '<span class="location-loading"></span>Detectando ubicación precisa...';
-                locationPermissionElement.style.display = 'none';
-                autoDetectionElement.style.display = 'flex';
-                
-                // Solicitar ubicación precisa
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            // Usar coordenadas para obtener nombre de la ciudad
-                            getCityFromCoordinates(position.coords.latitude, position.coords.longitude);
-                        },
-                        (error) => {
-                            // Fallback a detección por IP
-                            handleLocationError(error);
-                        },
-                        {
-                            enableHighAccuracy: true,
-                            timeout: 10000,
-                            maximumAge: 60000
-                        }
-                    );
-                } else {
-                    // Navegador no soporta geolocalización
-                    detectedCityElement.textContent = "Geolocalización no soportada";
-                    detectLocationByIP();
-                }
-            });
-        }
-
-        // Manejar errores de geolocalización
-        function handleLocationError(error) {
-            const detectedCityElement = document.getElementById('detected-city');
-            
-            let errorMessage = "Error al obtener ubicación";
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    errorMessage = "Permiso de ubicación denegado";
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    errorMessage = "Información de ubicación no disponible";
-                    break;
-                case error.TIMEOUT:
-                    errorMessage = "Tiempo de espera agotado";
-                    break;
-            }
-            
-            detectedCityElement.textContent = errorMessage;
-            detectLocationByIP();
-        }
-
-        // Get city name from coordinates using reverse geocoding
-        function getCityFromCoordinates(lat, lng) {
-            const detectedCityElement = document.getElementById('detected-city');
-            
-            fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=es`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.city && data.countryName === "Colombia") {
-                        findMatchingCity(data.city, data.locality);
-                    } else {
-                        detectedCityElement.textContent = "Ubicación fuera de Colombia";
-                        detectLocationByIP();
-                    }
+            // Agregar evento al botón "Cómo llegar"
+            const boton = item.querySelector('.sugerencia-boton');
+            boton.addEventListener('click', function(e) {
+              e.stopPropagation();
+              const lat = parseFloat(this.getAttribute('data-lat'));
+              const lng = parseFloat(this.getAttribute('data-lng'));
+              const nombre = this.getAttribute('data-nombre');
+              
+              // Mover el mapa a la ubicación seleccionada
+              const latlng = [lat, lng];
+              mapa.setView(latlng, 17);
+              
+              // Crear o actualizar marcador de destino
+              if (destinoMarker) {
+                mapa.removeLayer(destinoMarker);
+              }
+              destinoMarker = L.marker(latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-red'
                 })
-                .catch(error => {
-                    console.log('Reverse geocoding failed:', error);
-                    detectedCityElement.textContent = "Error en geocodificación";
-                    detectLocationByIP();
-                });
-        }
-
-        // IP-based location detection as fallback
-        function detectLocationByIP() {
-            const detectedCityElement = document.getElementById('detected-city');
-            
-            // Try IP geolocation service
-            fetch('https://ipapi.co/json/')
-                .then(response => {
-                    if (!response.ok) throw new Error('Service failed');
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.country_name === "Colombia" && data.city) {
-                        findMatchingCity(data.city, data.region);
-                    } else {
-                        detectedCityElement.textContent = "Ubicación no detectada";
-                    }
-                })
-                .catch(error => {
-                    console.log('Location service failed:', error);
-                    detectedCityElement.textContent = "Servicio no disponible";
-                });
-        }
-
-        // Find matching city in our list
-        function findMatchingCity(city, region) {
-            const detectedCityElement = document.getElementById('detected-city');
-            const normalizedCity = normalizeText(city);
-            
-            // First try exact city match
-            let detectedCity = states.find(state => 
-                normalizeText(state.name.es) === normalizedCity || 
-                normalizeText(state.name.en) === normalizedCity
-            );
-            
-            // If no exact match, try partial match
-            if (!detectedCity) {
-                detectedCity = states.find(state => 
-                    normalizeText(state.name.es).includes(normalizedCity) || 
-                    normalizeText(state.name.en).includes(normalizedCity)
-                );
-            }
-            
-            // If still no match, try region/department match
-            if (!detectedCity && region) {
-                const normalizedRegion = normalizeText(region);
-                detectedCity = states.find(state => 
-                    normalizeText(state.type.es).includes(normalizedRegion) ||
-                    normalizeText(state.type.en).includes(normalizedRegion)
-                );
-            }
-            
-            if (detectedCity) {
-                detectedCityElement.textContent = `${detectedCity.name.es}, ${detectedCity.type.es}`;
-                
-                // Set up the button to go to the detected city
-                const goButton = document.getElementById('go-to-detected-city');
-                goButton.onclick = () => {
-                    window.location.href = detectedCity.url;
-                };
-            } else {
-                detectedCityElement.textContent = `${city} (no encontrada en lista)`;
-            }
-        }
-
-        // Initialize the page
-        document.addEventListener('DOMContentLoaded', () => {
-            // Display all states and cities when page loads
-            renderStates(states);
-            
-            // Set up search functionality
-            const searchInput = document.getElementById('state-search');
-            searchInput.addEventListener('input', searchStates);
-            
-            // Add Enter key functionality
-            searchInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    const firstResult = searchStates();
-                    if (firstResult) {
-                        window.location.href = firstResult.url;
-                    }
-                }
+              }).addTo(mapa)
+                .bindPopup(`<strong>${nombre}</strong>`);
+              
+              destinoMarker.openPopup();
+              document.getElementById('buscador').value = nombre;
+              sugerenciasContainer.style.display = 'none';
             });
             
-            // Try to detect user's location with precise methods
-            detectUserLocation();
+            // Agregar evento al item completo
+            item.addEventListener('click', function() {
+              const lat = parseFloat(boton.getAttribute('data-lat'));
+              const lng = parseFloat(boton.getAttribute('data-lng'));
+              const nombre = boton.getAttribute('data-nombre');
+              
+              const latlng = [lat, lng];
+              mapa.setView(latlng, 17);
+              
+              if (destinoMarker) {
+                mapa.removeLayer(destinoMarker);
+              }
+              destinoMarker = L.marker(latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-red'
+                })
+              }).addTo(mapa)
+                .bindPopup(`<strong>${nombre}</strong>`);
+              
+              destinoMarker.openPopup();
+              document.getElementById('buscador').value = nombre;
+              sugerenciasContainer.style.display = 'none';
+            });
+            
+            sugerenciasContainer.appendChild(item);
+          });
+          sugerenciasContainer.style.display = 'block';
+        } else {
+          sugerenciasContainer.innerHTML = '<div class="sugerencia-item">No se encontraron resultados para: ' + consulta + '</div>';
+          sugerenciasContainer.style.display = 'block';
+        }
+      }, 800);
+    }
+
+    // Función para buscar en los puntos locales
+    function buscarEnPuntosLocales(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      const termino = consulta.toLowerCase();
+      const resultados = marcadoresOriginales.filter(m => 
+        m.datosBusqueda.includes(termino)
+      );
+      
+      if (resultados.length > 0) {
+        sugerenciasContainer.innerHTML = '';
+        
+        resultados.forEach(marcador => {
+          const loc = marcador.datosUbicacion;
+          const item = document.createElement('div');
+          item.className = 'sugerencia-item';
+          item.innerHTML = `
+            <div class="sugerencia-texto">
+              <strong>📍 ${loc.nombre}</strong><br>
+              <small>${loc.direccion}</small><br>
+              <small><strong>Ciudad:</strong> ${loc.ciudad}</small>
+            </div>
+            <button class="sugerencia-boton" data-id="${loc.id}">
+              Cómo llegar
+            </button>
+          `;
+          
+          // Agregar evento al botón "Cómo llegar"
+          const boton = item.querySelector('.sugerencia-boton');
+          boton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = this.getAttribute('data-id');
+            abrirGoogleMapsConDireccionUbicacion(id);
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          // Agregar evento al item completo
+          item.addEventListener('click', function() {
+            mapa.setView(marcador.getLatLng(), 17);
+            marcador.openPopup();
+            document.getElementById('buscador').value = loc.nombre;
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          sugerenciasContainer.appendChild(item);
         });
-    </script>
+        sugerenciasContainer.style.display = 'block';
+        return true;
+      }
+      return false;
+    }
+
+    // Función para abrir Google Maps con una ubicación específica
+    function abrirGoogleMapsConDireccionUbicacion(idPunto) {
+      const punto = UBICACIONES.find(p => p.id === idPunto);
+      if (!punto) return;
+      
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${punto.latlng[0]},${punto.latlng[1]}&travelmode=driving&dir_action=navigate`;
+      window.open(url, '_blank');
+    }
+
+    // Función para manejar teclas en el buscador
+    function handleSearchKeydown(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const termino = document.getElementById('buscador').value.trim();
+        if (termino) {
+          buscarConGoogle(termino);
+        }
+      }
+    }
+
+    // Función para abrir WhatsApp
+    function abrirWhatsApp(telefono, nombre) {
+      const numeroLimpio = telefono.replace(/\D/g, '');
+      const mensaje = `Hola ${nombre}, me interesa conocer más sobre sus servicios de contraentrega.`;
+      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
+    }
+
+    // Función para obtener ubicación del usuario - CORREGIDA
+    function obtenerUbicacionUsuario() {
+      return new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              
+              // Verificar si está en Colombia (aproximadamente)
+              const distanciaAColombia = calcularDistancia(
+                latitude, longitude,
+                4.570868, -74.297333
+              );
+              
+              if (distanciaAColombia > 500) {
+                alert('El servicio solo está disponible en Colombia');
+                reject();
+                return;
+              }
+              
+              // Eliminar marcador anterior si existe
+              if (userMarker) {
+                mapa.removeLayer(userMarker);
+              }
+              
+              // Crear nuevo marcador de usuario (azul)
+              userMarker = L.marker([latitude, longitude], {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-blue'
+                })
+              }).addTo(mapa)
+                .bindPopup('¡Tu ubicación actual!');
+                
+              // Centrar mapa en la ubicación del usuario con zoom cercano
+              mapa.setView([latitude, longitude], 17);
+              resolve();
+            },
+            (error) => {
+              console.log(`Error al obtener ubicación: ${error.message}`);
+              alert('No se pudo obtener tu ubicación. Asegúrate de haber permitido el acceso a la geolocalización.');
+              reject();
+            },
+            { 
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 60000
+            }
+          );
+        } else {
+          console.log("Tu navegador no soporta geolocalización.");
+          alert("Tu navegador no soporta geolocalización.");
+          reject();
+        }
+      });
+    }
+
+    // Función para calcular distancia en km (fórmula Haversine)
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+  </script>
 </body>
 </html>
