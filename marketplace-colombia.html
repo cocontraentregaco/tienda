@@ -1,1 +1,694 @@
-h
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - Colombia / Colombia</title>
+    <style>
+        :root {
+            --yellow: #FCD116; /* Colombia yellow */
+            --blue: #003893; /* Colombia blue */
+            --red: #CE1126; /* Colombia red */
+            --white: #FFFFFF;
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(252, 209, 22, 0.05) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--yellow) 0%, var(--blue) 50%, var(--red) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, var(--white) 30%, transparent 31%);
+            opacity: 0.2;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--white);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .spanish-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--white);
+            position: relative;
+            z-index: 1;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: var(--white);
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            opacity: 0.9;
+        }
+
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .state-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+            border-top: 4px solid var(--yellow);
+        }
+
+        .state-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--blue);
+        }
+
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--yellow) 0%, var(--blue) 50%, var(--red) 100%);
+        }
+
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .state-info {
+            padding: 1.5rem 1rem;
+        }
+
+        .state-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--blue);
+        }
+
+        .spanish-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--blue);
+        }
+
+        .state-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        #state-search {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
+        }
+
+        #state-search:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(0, 56, 147, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .spanish-title {
+                font-size: 1.8rem;
+            }
+
+            .flag-container {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+
+            .state-info {
+                padding: 1rem 0.5rem;
+            }
+
+            .state-name {
+                font-size: 1rem;
+            }
+            
+            .spanish-name {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QRContraentrega</h1>
+            <div class="spanish-title">Colombia</div>
+            <div>Colombia</div>
+            <p class="subtitle">Selecciona tu departamento o ciudad / Select your department or city</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="state-search" placeholder="Busca un departamento o ciudad / Search for department or city..." aria-label="Busca un departamento o ciudad">
+        </div>
+
+        <div class="states-grid" id="states-container">
+            <!-- States and cities will appear here -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. Todos los derechos reservados / All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // List of Colombian departments and major cities with both languages
+        const states = [
+            // Departments
+            { 
+                "name": { "es": "Amazonas", "en": "Amazonas" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/amazonas", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Antioquia", "en": "Antioquia" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/antioquia", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Arauca", "en": "Arauca" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/arauca", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Atlántico", "en": "Atlántico" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/atlantico", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Bolívar", "en": "Bolívar" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/bolivar", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Boyacá", "en": "Boyacá" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/boyaca", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Caldas", "en": "Caldas" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/caldas", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Caquetá", "en": "Caquetá" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/caqueta", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Casanare", "en": "Casanare" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/casanare", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Cauca", "en": "Cauca" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/cauca", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Cesar", "en": "Cesar" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/cesar", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Chocó", "en": "Chocó" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/choco", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Córdoba", "en": "Córdoba" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/cordoba", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Cundinamarca", "en": "Cundinamarca" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/cundinamarca", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Guainía", "en": "Guainía" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/guainia", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Guaviare", "en": "Guaviare" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/guaviare", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Huila", "en": "Huila" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/huila", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "La Guajira", "en": "La Guajira" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/la-guajira", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Magdalena", "en": "Magdalena" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/magdalena", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Meta", "en": "Meta" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/meta", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Nariño", "en": "Nariño" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/narino", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Norte de Santander", "en": "Norte de Santander" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/norte-de-santander", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Putumayo", "en": "Putumayo" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/putumayo", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Quindío", "en": "Quindío" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/quindio", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Risaralda", "en": "Risaralda" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/risaralda", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "San Andrés y Providencia", "en": "San Andrés and Providencia" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/san-andres", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Santander", "en": "Santander" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/santander", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Sucre", "en": "Sucre" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/sucre", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Tolima", "en": "Tolima" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/tolima", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Valle del Cauca", "en": "Valle del Cauca" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/valle-del-cauca", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Vaupés", "en": "Vaupés" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/vaupes", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Vichada", "en": "Vichada" }, 
+                "type": { "es": "Departamento", "en": "Department" }, 
+                "url": "https://qrcontraentrega.com/vichada", 
+                "image": "img/c.jpg" 
+            },
+            // Capital District
+            { 
+                "name": { "es": "Bogotá D.C.", "en": "Bogotá D.C." }, 
+                "type": { "es": "Distrito Capital", "en": "Capital District" }, 
+                "url": "https://qrcontraentrega.com/bogota", 
+                "image": "img/c.jpg" 
+            },
+            // Major cities (capital cities of departments)
+            { 
+                "name": { "es": "Medellín", "en": "Medellín" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/medellin", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Cali", "en": "Cali" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/cali", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Barranquilla", "en": "Barranquilla" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/barranquilla", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Cartagena", "en": "Cartagena" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/cartagena", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Cúcuta", "en": "Cúcuta" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/cucuta", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Bucaramanga", "en": "Bucaramanga" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/bucaramanga", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Pereira", "en": "Pereira" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/pereira", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Santa Marta", "en": "Santa Marta" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/santa-marta", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Ibagué", "en": "Ibagué" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/ibague", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Pasto", "en": "Pasto" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/pasto", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Manizales", "en": "Manizales" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/manizales", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Neiva", "en": "Neiva" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/neiva", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Villavicencio", "en": "Villavicencio" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/villavicencio", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Armenia", "en": "Armenia" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/armenia", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Valledupar", "en": "Valledupar" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/valledupar", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Montería", "en": "Montería" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/monteria", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Sincelejo", "en": "Sincelejo" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/sincelejo", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Popayán", "en": "Popayán" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/popayan", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Riohacha", "en": "Riohacha" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/riohacha", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Tunja", "en": "Tunja" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/tunja", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Quibdó", "en": "Quibdó" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/quibdo", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Florencia", "en": "Florencia" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/florencia", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Yopal", "en": "Yopal" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/yopal", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Mocoa", "en": "Mocoa" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/mocoa", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "San José del Guaviare", "en": "San José del Guaviare" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/san-jose-del-guaviare", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Mitú", "en": "Mitú" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/mitu", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Puerto Carreño", "en": "Puerto Carreño" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/puerto-carreno", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Leticia", "en": "Leticia" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/leticia", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Inírida", "en": "Inírida" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/inirida", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "San Andrés", "en": "San Andrés" }, 
+                "type": { "es": "Ciudad", "en": "City" }, 
+                "url": "https://qrcontraentrega.com/san-andres-city", 
+                "image": "img/c.jpg" 
+            }
+        ];
+
+        // Function to display states and cities
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
+            container.innerHTML = '';
+
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="${state.image}" alt="${state.name.es}" class="flag-image">
+                    </div>
+                    <div class="state-info">
+                        <div class="spanish-name">${state.name.es}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.es} • ${state.type.en}</div>
+                    </div>
+                `;
+                
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
+                });
+
+                container.appendChild(stateCard);
+            });
+        }
+
+        // Function to search states and cities
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.es.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.es.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
+            );
+            renderStates(filteredStates);
+        }
+
+        // Event listeners
+        document.getElementById('state-search').addEventListener('input', searchStates);
+
+        // Display all states and cities when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStates(states);
+        });
+    </script>
+</body>
+</html>
