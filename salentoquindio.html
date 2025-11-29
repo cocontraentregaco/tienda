@@ -1374,6 +1374,7 @@
         let cart = [];
         let currentDirectProduct = null;
         let selectedShipping = 0; // Costo de envío seleccionado
+        let selectedPayment = "contraentrega"; // Método de pago seleccionado
         const ADMIN_KEY = "proveedor2024"; // Clave estática para acceso a precios de proveedor
         
         const cartIcon = document.getElementById('cartIcon');
@@ -1485,6 +1486,11 @@
             document.getElementById('direct-shipping-priority').checked = true;
             selectedShipping = 0;
             updateShippingOptions();
+            
+            // Resetear opción de pago
+            document.getElementById('direct-payment-contraentrega').checked = true;
+            selectedPayment = "contraentrega";
+            updatePaymentOptions();
             
             // Mostrar modal
             directPurchaseModal.style.display = 'flex';
@@ -1623,6 +1629,19 @@
             updateCart();
         }
 
+        // Actualizar opciones de pago visualmente
+        function updatePaymentOptions() {
+            // Para el modal del carrito
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+                const radio = option.querySelector('.payment-radio');
+                if (radio.checked) {
+                    option.classList.add('selected');
+                    selectedPayment = option.getAttribute('data-payment');
+                }
+            });
+        }
+
         // Validar si se puede habilitar los botones de checkout
         function validateCheckoutButton() {
             const hasItems = cart.length > 0;
@@ -1666,25 +1685,8 @@
             }, 3000);
         }
 
-        // Obtener información del remitente desde el footer
-        function getRemitenteInfo() {
-            const contactoSection = document.querySelector('.footer-section:nth-child(2)');
-            const telefono = contactoSection.querySelector('p:nth-child(2)').textContent.replace('+57 ', '');
-            const correo = contactoSection.querySelector('p:nth-child(3)').textContent;
-            const direccion = contactoSection.querySelector('p:nth-child(4)').textContent;
-            
-            return {
-                nombre: "@hermanosdreams",
-                correo: correo,
-                direccion: direccion,
-                telefono: telefono
-            };
-        }
-
         // Generar mensaje de WhatsApp para el carrito
         function generateWhatsAppMessage() {
-            const remitente = getRemitenteInfo();
-            
             let message = "¡Hola! Quiero realizar la siguiente compra:\n\n";
             
             cart.forEach(item => {
@@ -1700,26 +1702,25 @@
             
             const total = cart.reduce((total, item) => total + (item.price * item.quantity), 0) + selectedShipping;
             message += `\nTotal: ${formatPrice(total)}`;
+            
+            // Añadir método de pago
+            if (selectedPayment === "contraentrega") {
+                message += `\n\nMétodo de pago: Pago Contraentrega`;
+            } else {
+                message += `\n\nMétodo de pago: Pago Anticipado (Tarjetas, PSE, Bancolombia, Nequi, cuotas sin intereses, Lightning Network)`;
+            }
+            
             message += `\n\nMi información de envío es:\n`;
             message += `Nombre: ${customerName.value}\n`;
             message += `Teléfono: ${customerPhone.value}\n`;
             message += `Dirección: ${customerAddress.value}\n`;
             message += `Ciudad: ${customerCity.value}`;
             
-            // Añadir información del remitente
-            message += `\n\nInformación del remitente:\n`;
-            message += `Negocio: ${remitente.nombre}\n`;
-            message += `Correo: ${remitente.correo}\n`;
-            message += `Dirección: ${remitente.direccion}\n`;
-            message += `Teléfono: ${remitente.telefono}`;
-            
             return encodeURIComponent(message);
         }
 
         // Generar mensaje de WhatsApp para compra directa
         function generateDirectWhatsAppMessage() {
-            const remitente = getRemitenteInfo();
-            
             let message = "¡Hola! Quiero comprar el siguiente producto:\n\n";
             
             message += `- ${currentDirectProduct.title}: ${formatPrice(currentDirectProduct.price)}\n`;
@@ -1733,18 +1734,19 @@
             
             const total = currentDirectProduct.price + selectedShipping;
             message += `\nTotal: ${formatPrice(total)}`;
+            
+            // Añadir método de pago
+            if (selectedPayment === "contraentrega") {
+                message += `\n\nMétodo de pago: Pago Contraentrega`;
+            } else {
+                message += `\n\nMétodo de pago: Pago Anticipado (Tarjetas, PSE, Bancolombia, Nequi, cuotas sin intereses, Lightning Network)`;
+            }
+            
             message += `\n\nMi información de envío es:\n`;
             message += `Nombre: ${directCustomerName.value}\n`;
             message += `Teléfono: ${directCustomerPhone.value}\n`;
             message += `Dirección: ${directCustomerAddress.value}\n`;
             message += `Ciudad: ${directCustomerCity.value}`;
-            
-            // Añadir información del remitente
-            message += `\n\nInformación del remitente:\n`;
-            message += `Negocio: ${remitente.nombre}\n`;
-            message += `Correo: ${remitente.correo}\n`;
-            message += `Dirección: ${remitente.direccion}\n`;
-            message += `Teléfono: ${remitente.telefono}`;
             
             return encodeURIComponent(message);
         }
@@ -1829,6 +1831,15 @@
                 const radio = option.querySelector('.shipping-radio');
                 radio.checked = true;
                 updateShippingOptions();
+            });
+        });
+
+        // Event listeners para opciones de pago
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                const radio = option.querySelector('.payment-radio');
+                radio.checked = true;
+                updatePaymentOptions();
             });
         });
 
