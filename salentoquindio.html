@@ -400,6 +400,67 @@
             border-top: 2px solid var(--color-gris-medio);
         }
         
+        /* Payment Options */
+        .payment-options {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: var(--color-gris-claro);
+            border-radius: 8px;
+        }
+        
+        .payment-options h3 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .payment-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            border: 2px solid var(--color-gris-medio);
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .payment-option:hover {
+            border-color: var(--color-negro);
+        }
+        
+        .payment-option.selected {
+            border-color: var(--color-negro);
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .payment-option:last-child {
+            margin-bottom: 0;
+        }
+        
+        .payment-info {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        
+        .payment-name {
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .payment-description {
+            font-size: 0.9rem;
+            color: var(--color-gris-oscuro);
+            margin-top: 0.3rem;
+        }
+        
+        .payment-radio {
+            margin-right: 0.8rem;
+        }
+        
         /* Shipping Options */
         .shipping-options {
             margin-bottom: 1.5rem;
@@ -990,28 +1051,41 @@
                 <span id="cartTotal">$0.00</span>
             </div>
             
+            <!-- Payment Options -->
+            <div class="payment-options">
+                <h3>Método de Pago</h3>
+                <div class="payment-option" data-payment="contraentrega">
+                    <input type="radio" id="payment-contraentrega" name="payment" class="payment-radio" checked>
+                    <div class="payment-info">
+                        <span class="payment-name">
+                            <i class="fas fa-money-bill-wave"></i> Pago Contraentrega
+                        </span>
+                        <span class="payment-description">Paga cuando recibas tu pedido</span>
+                    </div>
+                </div>
+                <div class="payment-option" data-payment="anticipado">
+                    <input type="radio" id="payment-anticipado" name="payment" class="payment-radio">
+                    <div class="payment-info">
+                        <span class="payment-name">
+                            <i class="fas fa-credit-card"></i> Pago Anticipado
+                        </span>
+                        <span class="payment-description">Tarjetas, PSE, Bancolombia, Nequi, cuotas sin intereses, Lightning Network</span>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Shipping Options -->
             <div class="shipping-options">
-                <h3>Opciones de Envío</h3>
+                <h3>Opción de Envío</h3>
                 <div class="shipping-option" data-shipping="0">
                     <input type="radio" id="shipping-priority" name="shipping" class="shipping-radio" checked>
                     <div class="shipping-info">
                         <span class="shipping-name">
-                            <i class="fas fa-shipping-fast"></i> Envío Prioritario
+                            <i class="fas fa-shipping-fast"></i> QRContraentrega Logística
                         </span>
-                        <span class="shipping-description">Tu pedido sale en menos de 24 horas hábiles</span>
+                        <span class="shipping-description">Tu pedido será enviado a tu dirección de manera inmediata. Envío gratis</span>
                     </div>
                     <span class="shipping-price shipping-free">Gratis</span>
-                </div>
-                <div class="shipping-option" data-shipping="6000">
-                    <input type="radio" id="shipping-standard" name="shipping" class="shipping-radio">
-                    <div class="shipping-info">
-                        <span class="shipping-name">
-                            <i class="fas fa-truck"></i> Envío Estándar
-                        </span>
-                        <span class="shipping-description">Entrega en 3-5 días hábiles</span>
-                    </div>
-                    <span class="shipping-price">$6.000,00</span>
                 </div>
             </div>
             
@@ -1040,9 +1114,6 @@
                 <button class="checkout-btn whatsapp-btn" id="whatsappBtn" disabled>
                     <i class="fab fa-whatsapp"></i> Enviar pedido por WhatsApp
                 </button>
-                <button class="checkout-btn email-btn" id="emailBtn" disabled>
-                    <i class="fas fa-envelope"></i> Enviar pedido por Correo
-                </button>
                 <button class="checkout-btn continue-shopping" id="continueShopping">Seguir comprando</button>
             </div>
         </div>
@@ -1060,20 +1131,43 @@
                 <!-- Información del producto se cargará dinámicamente -->
             </div>
             
+            <!-- Payment Options -->
+            <div class="payment-options">
+                <h3>Método de Pago</h3>
+                <div class="payment-option" data-payment="contraentrega">
+                    <input type="radio" id="direct-payment-contraentrega" name="direct-payment" class="payment-radio" checked>
+                    <div class="payment-info">
+                        <span class="payment-name">
+                            <i class="fas fa-money-bill-wave"></i> Pago Contraentrega
+                        </span>
+                        <span class="payment-description">Paga cuando recibas tu pedido</span>
+                    </div>
+                </div>
+                <div class="payment-option" data-payment="anticipado">
+                    <input type="radio" id="direct-payment-anticipado" name="direct-payment" class="payment-radio">
+                    <div class="payment-info">
+                        <span class="payment-name">
+                            <i class="fas fa-credit-card"></i> Pago Anticipado
+                        </span>
+                        <span class="payment-description">Tarjetas, PSE, Bancolombia, Nequi, cuotas sin intereses, Lightning Network</span>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Shipping Options -->
-<div class="shipping-options">
-    <h3>Opciones de Envío</h3>
-    <div class="shipping-option" data-shipping="0">
-        <input type="radio" id="direct-shipping-priority" name="direct-shipping" class="shipping-radio" checked>
-        <div class="shipping-info">
-            <span class="shipping-name">
-                <i class="fas fa-truck"></i> QRContraentrega Logistica
-            </span>
-            <span class="shipping-description">Tu pedido sera entregado de manera inmediata a tu direccion</span>
-        </div>
-        <span class="shipping-price shipping-free">Gratis</span>
-    </div>
-</div>
+            <div class="shipping-options">
+                <h3>Opción de Envío</h3>
+                <div class="shipping-option" data-shipping="0">
+                    <input type="radio" id="direct-shipping-priority" name="direct-shipping" class="shipping-radio" checked>
+                    <div class="shipping-info">
+                        <span class="shipping-name">
+                            <i class="fas fa-shipping-fast"></i> QRContraentrega Logística
+                        </span>
+                        <span class="shipping-description">Tu pedido será enviado a tu dirección de manera inmediata. Envío gratis</span>
+                    </div>
+                    <span class="shipping-price shipping-free">Gratis</span>
+                </div>
+            </div>
             
             <!-- Customer Information Form -->
             <div class="customer-info">
@@ -1137,2114 +1231,8 @@
     </footer>
 
     <script>
-        // Base de datos de productos (simulada) - TODOS CON LA IMAGEN DE GOOGLE DRIVE
+        // Base de datos de productos (simulada) - SOLO LOS PRIMEROS 10 PRODUCTOS
         const products = [
-            {
-        "id": 142,
-        "title": "EGO PLANT BOTELLA 200 ML",
-        "price": 12800,
-        "description": "Opción de pago a 6 cuotas de 2.133 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 8192,
-        "productUrl": "https://ejemplo.com/productos/ego-plant-200ml",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 143,
-        "title": "OMNILIFE F PLUS",
-        "price": 134750,
-        "description": "Opción de pago a 6 cuotas de 22.458 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 86240,
-        "productUrl": "https://ejemplo.com/productos/omnilife-f-plus",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 144,
-        "title": "FIBER'N PLUS SUPREME SACHET 450 G",
-        "price": 159550,
-        "description": "Opción de pago a 6 cuotas de 26.592 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 102112,
-        "productUrl": "https://ejemplo.com/productos/fiber-n-plus-supreme",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 145,
-        "title": "ESTOP PLUS CAJA 30 SACHETS 450G",
-        "price": 251500,
-        "description": "Opción de pago a 6 cuotas de 41.917 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 160960,
-        "productUrl": "https://ejemplo.com/productos/estop-plus",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 146,
-        "title": "HOMO PLUS CAJA 30 SACHETS 195 G",
-        "price": 134750,
-        "description": "Opción de pago a 6 cuotas de 22.458 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 86240,
-        "productUrl": "https://ejemplo.com/productos/homo-plus",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 147,
-        "title": "OMNILIFE KOLINA BOTELLA 200 ML",
-        "price": 12800,
-        "description": "Opción de pago a 6 cuotas de 2.133 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 8192,
-        "productUrl": "https://ejemplo.com/productos/omnilife-kolina",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 148,
-        "title": "BIOCROS SUPREME CAJA 30 SOBRES 240G",
-        "price": 120050,
-        "description": "Opción de pago a 6 cuotas de 20.008 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 76832,
-        "productUrl": "https://ejemplo.com/productos/biocros-supreme",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 149,
-        "title": "OMNIPLUS FRUTAS EVOLUCION 30 SACHES",
-        "price": 184550,
-        "description": "Opción de pago a 6 cuotas de 30.758 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 118112,
-        "productUrl": "https://ejemplo.com/productos/omniplus-frutas-evolucion",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 150,
-        "title": "OMNIPLUS NARANJA SUPREME CAJA 30 SOBRES",
-        "price": 184550,
-        "description": "Opción de pago a 6 cuotas de 30.758 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 118112,
-        "productUrl": "https://ejemplo.com/productos/omniplus-naranja-supreme",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 151,
-        "title": "COGNOS EVOLUCION CAJA",
-        "price": 125750,
-        "description": "Opción de pago a 6 cuotas de 20.958 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 80480,
-        "productUrl": "https://ejemplo.com/productos/cognos-evolucion",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 152,
-        "title": "POWER MAKER EVOLUCION",
-        "price": 206850,
-        "description": "Opción de pago a 6 cuotas de 34.475 con 0% interés. Código 2603201 - Puntos 110",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 132384,
-        "productUrl": "https://ejemplo.com/productos/power-maker-evolucion",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 153,
-        "title": "TMGN COFFEE DE OLLA EVOLUCION",
-        "price": 90500,
-        "description": "Opción de pago a 6 cuotas de 15.083 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 57920,
-        "productUrl": "https://ejemplo.com/productos/tmgn-coffee-olla-evolucion",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 154,
-        "title": "STARBIEN EVOLUCIÓN CAJA 30 SOBRES 615 GRS",
-        "price": 118750,
-        "description": "Opción de pago a 6 cuotas de 19.792 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 76000,
-        "productUrl": "https://ejemplo.com/productos/starbien-evolucion",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 155,
-        "title": "SUPER MIX SUPREME VAINILLA CAJA 510",
-        "price": 157050,
-        "description": "Opción de pago a 6 cuotas de 26.175 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 100512,
-        "productUrl": "https://ejemplo.com/productos/super-mix-supreme-vainilla",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 156,
-        "title": "TMGN COFFEE EVOLUCION",
-        "price": 90500,
-        "description": "Opción de pago a 6 cuotas de 15.083 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 57920,
-        "productUrl": "https://ejemplo.com/productos/tmgn-coffee-evolucion",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 157,
-        "title": "THERMOGEN TEA LIMÓN SUPREME C/30 SACHET",
-        "price": 135250,
-        "description": "Opción de pago a 6 cuotas de 22.542 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 86560,
-        "productUrl": "https://ejemplo.com/productos/thermogen-tea-limon",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 158,
-        "title": "THERMOGEN TEA MARACUYA SUPREME 30 SACHES",
-        "price": 203950,
-        "description": "Opción de pago a 6 cuotas de 33.992 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 130528,
-        "productUrl": "https://ejemplo.com/productos/thermogen-tea-maracuya",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 159,
-        "title": "UZO EVOLUCION 240 GR",
-        "price": 322300,
-        "description": "Opción de pago a 6 cuotas de 53.717 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 206272,
-        "productUrl": "https://ejemplo.com/productos/uzo-evolucion",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 160,
-        "title": "AQUA SUPREME CAJA 30 SACHETS",
-        "price": 193650,
-        "description": "Opción de pago a 6 cuotas de 32.275 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 123936,
-        "productUrl": "https://ejemplo.com/productos/aqua-supreme",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 161,
-        "title": "AGUA BLU SUPREME 1.5 LTS",
-        "price": 6400,
-        "description": "Opción de pago a 6 cuotas de 1.067 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 4096,
-        "productUrl": "https://ejemplo.com/productos/agua-blu-supreme-1.5l",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 162,
-        "title": "AGUA BLU SUPREME 600 ML",
-        "price": 3250,
-        "description": "Opción de pago a 6 cuotas de 542 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 2080,
-        "productUrl": "https://ejemplo.com/productos/agua-blu-supreme-600ml",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 163,
-        "title": "ALOE BETA PIÑA 960 ML",
-        "price": 62200,
-        "description": "Opción de pago a 6 cuotas de 10.367 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 39808,
-        "productUrl": "https://ejemplo.com/productos/aloe-beta-pina-960ml",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 164,
-        "title": "ALOE BETA PIÑA 200 ML",
-        "price": 12800,
-        "description": "Opción de pago a 6 cuotas de 2.133 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 8192,
-        "productUrl": "https://ejemplo.com/productos/aloe-beta-pina-200ml",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 165,
-        "title": "DOLCE VITA SUPREME TORONJA CAJA 30 SACHETS",
-        "price": 152450,
-        "description": "Opción de pago a 6 cuotas de 25.408 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 97568,
-        "productUrl": "https://ejemplo.com/productos/dolce-vita-supreme-toronja",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 166,
-        "title": "EGO 10 BOTELLA 200 ML",
-        "price": 12800,
-        "description": "Opción de pago a 6 cuotas de 2.133 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 8192,
-        "productUrl": "https://ejemplo.com/productos/ego-10-200ml",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 167,
-        "title": "EGO FRUTAS DEL BOSQUE EVOLUCIÓN LATA 355 ML",
-        "price": 95350,
-        "description": "Opción de pago a 6 cuotas de 15.892 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 61024,
-        "productUrl": "https://ejemplo.com/productos/ego-frutas-bosque",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 168,
-        "title": "EGO LIFE SUPREME CAJA 30 SOBRES",
-        "price": 83200,
-        "description": "Opción de pago a 6 cuotas de 13.867 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 53248,
-        "productUrl": "https://ejemplo.com/productos/ego-life-supreme",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 169,
-        "title": "OMNILIFE VKIDS DOYPACK 400G",
-        "price": 160100,
-        "description": "Opción de pago a 6 cuotas de 26.683 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 102464,
-        "productUrl": "https://ejemplo.com/productos/omnilife-vkids",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 170,
-        "title": "CAFELIFE PLUS CAJA 30 SOBRES 150 G",
-        "price": 112300,
-        "description": "Opción de pago a 6 cuotas de 18.717 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 71872,
-        "productUrl": "https://ejemplo.com/productos/cafeline-plus",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 171,
-        "title": "FX NARANJA EVOLUCIÓN",
-        "price": 34350,
-        "description": "Opción de pago a 6 cuotas de 5.725 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 21984,
-        "productUrl": "https://ejemplo.com/productos/fx-naranja-evolucion",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 172,
-        "title": "FX MANZANA EVOLUCIÓN",
-        "price": 34350,
-        "description": "Opción de pago a 6 cuotas de 5.725 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 21984,
-        "productUrl": "https://ejemplo.com/productos/fx-manzana-evolucion",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 173,
-        "title": "OMNILIFE PUMP SUPREME CAJA 12 SOBRES",
-        "price": 151650,
-        "description": "Opción de pago a 6 cuotas de 25.275 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 97056,
-        "productUrl": "https://ejemplo.com/productos/omnilife-pump-supreme",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 174,
-        "title": "OMNIVIU SUPREME CAJA C/30 SACHETS",
-        "price": 126300,
-        "description": "Opción de pago a 6 cuotas de 21.050 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 80832,
-        "productUrl": "https://ejemplo.com/productos/omniviu-supreme",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 175,
-        "title": "ONE C MIX PLUS CAJA",
-        "price": 103700,
-        "description": "Opción de pago a 6 cuotas de 17.283 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 66368,
-        "productUrl": "https://ejemplo.com/productos/one-c-mix-plus",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 176,
-        "title": "OMNIOST EVOLUCION 300GR",
-        "price": 147150,
-        "description": "Opción de pago a 6 cuotas de 24.525 con 0% interés.",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 94176,
-        "productUrl": "https://ejemplo.com/productos/omniost-evolucion",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 177,
-        "title": "OMNILIFE PROBIOTIC CAJA 30 SOBRES",
-        "price": 156400,
-        "description": "Opción de pago a 6 cuotas de 26.067 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 100096,
-        "productUrl": "https://ejemplo.com/productos/omnilife-probiotic",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 178,
-        "title": "OMNILIFE SHAKE SUPREME FRESA",
-        "price": 160750,
-        "description": "Opción de pago a 6 cuotas de 26.792 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 102880,
-        "productUrl": "https://ejemplo.com/productos/omnilife-shake-supreme-fresa",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 179,
-        "title": "OMNILIFE SHAKE SUPREME CAJA 12 SOBRES",
-        "price": 160750,
-        "description": "Opción de pago a 6 cuotas de 26.792 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 102880,
-        "productUrl": "https://ejemplo.com/productos/omnilife-shake-supreme",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 180,
-        "title": "FLU-Y BOTE 60 CAPSULAS",
-        "price": 101050,
-        "description": "Opción de pago a 6 cuotas de 16.842 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 64672,
-        "productUrl": "https://ejemplo.com/productos/flu-y-capsulas",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 181,
-        "title": "KIT 500 PUNTOS NUTRICIONAL",
-        "price": 887000,
-        "description": "Opción de pago a 6 cuotas de 147.833 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 567680,
-        "productUrl": "https://ejemplo.com/productos/kit-500-puntos-nutricional",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 182,
-        "title": "KIT BIMARCA 2024",
-        "price": 137500,
-        "description": "Opción de pago a 6 cuotas de 22.917 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 88000,
-        "productUrl": "https://ejemplo.com/productos/kit-bimarca-2024",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 183,
-        "title": "GUIA OMNILIFE-SEYTU 2025",
-        "price": 5500,
-        "description": "Opción de pago a 6 cuotas de 917 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Omnilife Colombia",
-        "warehousePrice": 3520,
-        "productUrl": "https://ejemplo.com/productos/guia-omnilife-seytu-2025",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 22,
-        "title": "SET DE BROCHAS PARA OJOS Y LABIOS",
-        "price": 112900,
-        "description": "Opción de pago a 6 cuotas de 18.817 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 72256,
-        "productUrl": "https://ejemplo.com/productos/set-brochas-ojos-labios",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 23,
-        "title": "ESPONJA PARA MAQUILLAJE LANZAMIENTO",
-        "price": 40300,
-        "description": "Opción de pago a 6 cuotas de 6.717 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 25792,
-        "productUrl": "https://ejemplo.com/productos/esponja-maquillaje",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 24,
-        "title": "SACAPUNTAS SEYTU",
-        "price": 17000,
-        "description": "Opción de pago a 6 cuotas de 2.833 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 10880,
-        "productUrl": "https://ejemplo.com/productos/sacapuntas-seytu",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 25,
-        "title": "KIT BIMARCA ",
-        "price": 137500,
-        "description": "Opción de pago a 6 cuotas de 22.917 con 0% interés.",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 88000,
-        "productUrl": "https://ejemplo.com/productos/kit-bimarca-2024",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 26,
-        "title": "GUIA OMNILIFE-SEYTU 2025",
-        "price": 5500,
-        "description": "Opción de pago a 6 cuotas de 917 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 3520,
-        "productUrl": "https://ejemplo.com/productos/guia-omnilife-seytu-2025",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 27,
-        "title": "TINTE PERMANENTE MOKA 6.34",
-        "price": 67700,
-        "description": "Opción de pago a 6 cuotas de 11.283 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 43328,
-        "productUrl": "https://ejemplo.com/productos/tinte-moka",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 28,
-        "title": "TINTE PERMANENTE RUBIO CLARO 7",
-        "price": 67700,
-        "description": "Opción de pago a 6 cuotas de 11.283 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 43328,
-        "productUrl": "https://ejemplo.com/productos/tinte-rubio-claro",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 29,
-        "title": "ESPUMA LIMPIADORA FACIAL",
-        "price": 70000,
-        "description": "Opción de pago a 6 cuotas de 11.667 con 0% interés.",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 44800,
-        "productUrl": "https://ejemplo.com/productos/espuma-limpiadora-facial",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 30,
-        "title": "BROCHA MAQUILLAJE LIQUIDO",
-        "price": 44500,
-        "description": "Opción de pago a 6 cuotas de 7.417 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 28480,
-        "productUrl": "https://ejemplo.com/productos/brocha-maquillaje-liquido",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 31,
-        "title": "SET DE BROCHAS PARA ROSTRO",
-        "price": 117600,
-        "description": "Opción de pago a 6 cuotas de 19.600 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 75264,
-        "productUrl": "https://ejemplo.com/productos/set-brochas-rostro",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 32,
-        "title": "TINTE PERMANENTE CASTAÑO OSCURO",
-        "price": 67700,
-        "description": "Opción de pago a 6 cuotas de 11.283 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 43328,
-        "productUrl": "https://ejemplo.com/productos/tinte-castano-oscuro",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 33,
-        "title": "TINTE PERMANENTE CASTAÑO CLARO",
-        "price": 67700,
-        "description": "Opción de pago a 6 cuotas de 11.283 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 43328,
-        "productUrl": "https://ejemplo.com/productos/tinte-castano-claro",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 34,
-        "title": "TINTE PERMANENTE NEGRO NATURAL",
-        "price": 67700,
-        "description": "Opción de pago a 6 cuotas de 11.283 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 43328,
-        "productUrl": "https://ejemplo.com/productos/tinte-negro-natural",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 35,
-        "title": "TINTE PERMANENTE ROJO",
-        "price": 67700,
-        "description": "Opción de pago a 6 cuotas de 11.283 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 43328,
-        "productUrl": "https://ejemplo.com/productos/tinte-rojo",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 36,
-        "title": "TINTE PERMANENTE RUBIO EXTRA CLARO 9",
-        "price": 67700,
-        "description": "Opción de pago a 6 cuotas de 11.283 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 43328,
-        "productUrl": "https://ejemplo.com/productos/tinte-rubio-extra-claro",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 37,
-        "title": "LABIAL LIQUIDO MATE KALAHARI",
-        "price": 74900,
-        "description": "Opción de pago a 6 cuotas de 12.483 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 47936,
-        "productUrl": "https://ejemplo.com/productos/labial-mate-kalahari",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 38,
-        "title": "LABIAL LIQUIDO MATE MASAI",
-        "price": 74900,
-        "description": "Opción de pago a 6 cuotas de 12.483 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 47936,
-        "productUrl": "https://ejemplo.com/productos/labial-mate-masai",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 39,
-        "title": "LABIAL LIQUIDO MATE SAHARA",
-        "price": 74900,
-        "description": "Opción de pago a 6 cuotas de 12.483 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 47936,
-        "productUrl": "https://ejemplo.com/productos/labial-mate-sahara",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 40,
-        "title": "LABIAL LIQUIDO MATE NAIROBI",
-        "price": 74900,
-        "description": "Opción de pago a 6 cuotas de 12.483 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 47936,
-        "productUrl": "https://ejemplo.com/productos/labial-mate-nairobi",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 41,
-        "title": "LABIAL LIQUIDO MATE SAMBURU",
-        "price": 74900,
-        "description": "Opción de pago a 6 cuotas de 12.483 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 47936,
-        "productUrl": "https://ejemplo.com/productos/labial-mate-samburu",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 42,
-        "title": "LABIAL HIDRATANTE SWEET CORAL FPS15",
-        "price": 58900,
-        "description": "Opción de pago a 6 cuotas de 9.817 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 37696,
-        "productUrl": "https://ejemplo.com/productos/labial-hidratante-sweet-coral",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 43,
-        "title": "LABIAL HIDRATANTE SEYTÚ RED FPS15",
-        "price": 58900,
-        "description": "Opción de pago a 6 cuotas de 9.817 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 37696,
-        "productUrl": "https://ejemplo.com/productos/labial-hidratante-seytu-red",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 44,
-        "title": "LABIAL HIDRATANTE FLASH RED FPS15",
-        "price": 58900,
-        "description": "Opción de pago a 6 cuotas de 9.817 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 37696,
-        "productUrl": "https://ejemplo.com/productos/labial-hidratante-flash-red",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 45,
-        "title": "LABIAL HIDRATANTE CANDY RED FPS15",
-        "price": 58900,
-        "description": "Opción de pago a 6 cuotas de 9.817 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 37696,
-        "productUrl": "https://ejemplo.com/productos/labial-hidratante-candy-red",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 46,
-        "title": "LABIAL HIDRATANTE ICON VIOLET FPS15",
-        "price": 58900,
-        "description": "Opción de pago a 6 cuotas de 9.817 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 37696,
-        "productUrl": "https://ejemplo.com/productos/labial-hidratante-icon-violet",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 47,
-        "title": "LABIAL HIDRATANTE HOT PINK FPS15",
-        "price": 58900,
-        "description": "Opción de pago a 6 cuotas de 9.817 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 37696,
-        "productUrl": "https://ejemplo.com/productos/labial-hidratante-hot-pink",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 48,
-        "title": "LABIAL HIDRATANTE LIGHT PINK FPS15",
-        "price": 58900,
-        "description": "Opción de pago a 6 cuotas de 9.817 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 37696,
-        "productUrl": "https://ejemplo.com/productos/labial-hidratante-light-pink",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 49,
-        "title": "LABIAL HIDRATANTE SAND NUDE FPS15",
-        "price": 58900,
-        "description": "Opción de pago a 6 cuotas de 9.817 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 37696,
-        "productUrl": "https://ejemplo.com/productos/labial-hidratante-sand-nude",
-        "images": [
-            "ihttps://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 50,
-        "title": "LABIAL HIDRATANTE ROSE NUDE FPS15",
-        "price": 58900,
-        "description": "Opción de pago a 6 cuotas de 9.817 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 37696,
-        "productUrl": "https://ejemplo.com/productos/labial-hidratante-rose-nude",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 51,
-        "title": "LABIAL HIDRATANTE FLAME CORAL FPS15",
-        "price": 58900,
-        "description": "Opción de pago a 6 cuotas de 9.817 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 37696,
-        "productUrl": "https://ejemplo.com/productos/labial-hidratante-flame-coral",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 52,
-        "title": "BRILLO LABIAL AMBAR",
-        "price": 70700,
-        "description": "Opción de pago a 6 cuotas de 11.783 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 45248,
-        "productUrl": "https://ejemplo.com/productos/brillo-labial-ambar",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 53,
-        "title": "BRILLO LABIAL TOPAZ",
-        "price": 70700,
-        "description": "Opción de pago a 6 cuotas de 11.783 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 45248,
-        "productUrl": "https://ejemplo.com/productos/brillo-labial-topaz",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 54,
-        "title": "BRILLO LABIAL AGATA",
-        "price": 70700,
-        "description": "Opción de pago a 6 cuotas de 11.783 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 45248,
-        "productUrl": "https://ejemplo.com/productos/brillo-labial-agata",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 55,
-        "title": "BRILLO LABIAL ZAFIRO",
-        "price": 70700,
-        "description": "Opción de pago a 6 cuotas de 11.783 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 45248,
-        "productUrl": "https://ejemplo.com/productos/brillo-labial-zafiro",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 56,
-        "title": "BRILLO LABIAL RUBI",
-        "price": 70700,
-        "description": "Opción de pago a 6 cuotas de 11.783 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 45248,
-        "productUrl": "https://ejemplo.com/productos/brillo-labial-rubi",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 57,
-        "title": "PALETA DE SOMBRAS ROSAS 2023",
-        "price": 146900,
-        "description": "Opción de pago a 6 cuotas de 24.483 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 94016,
-        "productUrl": "https://ejemplo.com/productos/paleta-sombras-rosas",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 58,
-        "title": "LABIAL LIQUIDO MATE WIFEY",
-        "price": 74900,
-        "description": "Opción de pago a 6 cuotas de 12.483 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 47936,
-        "productUrl": "https://ejemplo.com/productos/labial-mate-wifey",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 59,
-        "title": "LABIAL LIQUIDO MATE THIRTIES",
-        "price": 74900,
-        "description": "Opción de pago a 6 cuotas de 12.483 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 47936,
-        "productUrl": "https://ejemplo.com/productos/labial-mate-thirties",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 60,
-        "title": "LABIAL LIQUIDO MATE 90'S BABY",
-        "price": 74900,
-        "description": "Opción de pago a 6 cuotas de 12.483 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 47936,
-        "productUrl": "https://ejemplo.com/productos/labial-mate-90s-baby",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 61,
-        "title": "BRILLO LABIAL OPALO",
-        "price": 70700,
-        "description": "Opción de pago a 6 cuotas de 11.783 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 45248,
-        "productUrl": "https://ejemplo.com/productos/brillo-labial-opalo",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 62,
-        "title": "MAQUILLAJE COMPACTO 2 EN1 C NATURAL",
-        "price": 100300,
-        "description": "Opción de pago a 6 cuotas de 16.717 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 64192,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-compacto-c-natural",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 63,
-        "title": "MAQUILLAJE COMPACTO 2 EN1 SUN BEIGE",
-        "price": 100300,
-        "description": "Opción de pago a 6 cuotas de 16.717 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 64192,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-compacto-sun-beige",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 64,
-        "title": "MAQUILLAJE COMPACTO 2 EN1 CARAMEL",
-        "price": 100300,
-        "description": "Opción de pago a 6 cuotas de 16.717 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 64192,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-compacto-caramel",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 65,
-        "title": "MASCARA PARA PESTAÑAS",
-        "price": 63300,
-        "description": "Opción de pago a 6 cuotas de 10.550 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 40512,
-        "productUrl": "https://ejemplo.com/productos/mascara-pestanas",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 66,
-        "title": "PALETA DE SOMBRAS MARRONES 2023",
-        "price": 146900,
-        "description": "Opción de pago a 6 cuotas de 24.483 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 94016,
-        "productUrl": "https://ejemplo.com/productos/paleta-sombras-marrones",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 67,
-        "title": "MAQUILLAJE COMPACTO 2 EN1 FAIR",
-        "price": 100300,
-        "description": "Opción de pago a 6 cuotas de 16.717 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 64192,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-compacto-fair",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 68,
-        "title": "MAQUILLAJE COMPACTO 2 EN1 L SAND",
-        "price": 100300,
-        "description": "Opción de pago a 6 cuotas de 16.717 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 64192,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-compacto-l-sand",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 69,
-        "title": "MAQUILLAJE COMPACTO 2 EN1 S HONEY",
-        "price": 100300,
-        "description": "Opción de pago a 6 cuotas de 16.717 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 64192,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-compacto-s-honey",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 70,
-        "title": "MAQUILLAJE COMPACTO 2 EN1 NAT BEIGE",
-        "price": 100300,
-        "description": "Opción de pago a 6 cuotas de 16.717 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 64192,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-compacto-nat-beige",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 71,
-        "title": "MAQUILLAJE COMPACTO 2 EN1 W BEIGE",
-        "price": 100300,
-        "description": "Opción de pago a 6 cuotas de 16.717 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 64192,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-compacto-w-beige",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 72,
-        "title": "RUBOR COMPACTO PEACH",
-        "price": 57000,
-        "description": "Opción de pago a 6 cuotas de 9.500 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 36480,
-        "productUrl": "https://ejemplo.com/productos/rubor-compacto-peach",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 73,
-        "title": "RUBOR COMPACTO PLUM",
-        "price": 57000,
-        "description": "Opción de pago a 6 cuotas de 9.500 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 36480,
-        "productUrl": "https://ejemplo.com/productos/rubor-compacto-plum",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 74,
-        "title": "FRAGANCIA SUCCESI FOR HIM",
-        "price": 151400,
-        "description": "Opción de pago a 6 cuotas de 25.233 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 96896,
-        "productUrl": "https://ejemplo.com/productos/fragancia-successi-him",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 75,
-        "title": "FRAGANCIA SUCCESI FOR HER",
-        "price": 151400,
-        "description": "Opción de pago a 6 cuotas de 25.233 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 96896,
-        "productUrl": "https://ejemplo.com/productos/fragancia-successi-her",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 76,
-        "title": "FRAGANCIA KENYA VERGARA",
-        "price": 138500,
-        "description": "Opción de pago a 6 cuotas de 23.083 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 88640,
-        "productUrl": "https://ejemplo.com/productos/fragancia-kenya-vergara",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 77,
-        "title": "MAQUILLAJE LIQ UP+ FPS15 40G C NATURAL",
-        "price": 124500,
-        "description": "Opción de pago a 6 cuotas de 20.750 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 79680,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-liq-c-natural",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 78,
-        "title": "MAQUILLAJE LIQ UP+ FPS15 40G SUN BEIGE",
-        "price": 124500,
-        "description": "Opción de pago a 6 cuotas de 20.750 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 79680,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-liq-sun-beige",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 79,
-        "title": "MAQUILLAJE LIQ UP+ FPS15 40G CARAMEL",
-        "price": 124500,
-        "description": "Opción de pago a 6 cuotas de 20.750 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 79680,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-liq-caramel",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 80,
-        "title": "MAQUILLAJE LIQUIDO UP+ FPS 15 COCOA",
-        "price": 124500,
-        "description": "Opción de pago a 6 cuotas de 20.750 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 79680,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-liq-cocoa",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 81,
-        "title": "RUBOR COMPACTO APRICOT",
-        "price": 57000,
-        "description": "Opción de pago a 6 cuotas de 9.500 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 36480,
-        "productUrl": "https://ejemplo.com/productos/rubor-compacto-apricot",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 82,
-        "title": "MAQUILLAJE LIQ UP+ FPS15 40G FAIR",
-        "price": 124500,
-        "description": "Opción de pago a 6 cuotas de 20.750 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 79680,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-liq-fair",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 83,
-        "title": "MAQUILLAJE LIQ UP+ FPS15 40G L SAND",
-        "price": 124500,
-        "description": "Opción de pago a 6 cuotas de 20.750 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 79680,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-liq-l-sand",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 84,
-        "title": "MAQUILLAJE LIQ UP+ FPS15 40G S HONEY",
-        "price": 124500,
-        "description": "Opción de pago a 6 cuotas de 20.750 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 79680,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-liq-s-honey",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 85,
-        "title": "MAQUILLAJE LIQ UP+ FPS15 40G NAT BEIGE",
-        "price": 124500,
-        "description": "Opción de pago a 6 cuotas de 20.750 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 79680,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-liq-nat-beige",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 86,
-        "title": "MAQUILLAJE LIQ UP+ FPS15 40G W BEIGE",
-        "price": 124500,
-        "description": "Opción de pago a 6 cuotas de 20.750 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 79680,
-        "productUrl": "https://ejemplo.com/productos/maquillaje-liq-w-beige",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 87,
-        "title": "GEL FIJADOR PARA EL CABELLO",
-        "price": 35400,
-        "description": "Opción de pago a 6 cuotas de 5.900 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 22656,
-        "productUrl": "https://ejemplo.com/productos/gel-fijador-cabello",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 88,
-        "title": "ACONDICIONADOR CON EXTRACTOS HERBALES 300 ML",
-        "price": 43800,
-        "description": "Opción de pago a 6 cuotas de 7.300 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 28032,
-        "productUrl": "https://ejemplo.com/productos/acondicionador-herbal",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 89,
-        "title": "DELINEADOR PARA OJOS PENLINER",
-        "price": 47700,
-        "description": "Opción de pago a 6 cuotas de 7.950 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 30528,
-        "productUrl": "https://ejemplo.com/productos/delineador-penliner",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 90,
-        "title": "DELINEADOR LIQUIDO PARA OJOS NEGRO MATE",
-        "price": 56100,
-        "description": "Opción de pago a 6 cuotas de 9.350 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 35904,
-        "productUrl": "https://ejemplo.com/productos/delineador-liquido-negro",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 91,
-        "title": "SET DELINEADOR COMPACTO DE CEJAS",
-        "price": 108700,
-        "description": "Opción de pago a 6 cuotas de 18.117 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 69568,
-        "productUrl": "https://ejemplo.com/productos/set-delineador-cejas",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 92,
-        "title": "SHAMPOO FORTIFICANTE",
-        "price": 107400,
-        "description": "Opción de pago a 6 cuotas de 17.900 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 68736,
-        "productUrl": "https://ejemplo.com/productos/shampoo-fortificante",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 93,
-        "title": "ACONDICIONADOR CON EXTRACTOS HERBALES",
-        "price": 37400,
-        "description": "Opción de pago a 6 cuotas de 6.233 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 23936,
-        "productUrl": "https://ejemplo.com/productos/acondicionador-herbal-2",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 94,
-        "title": "SHAMPOO CUIDADO ESPECIAL CABELLO DÉBIL",
-        "price": 57900,
-        "description": "Opción de pago a 6 cuotas de 9.650 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 37056,
-        "productUrl": "https://ejemplo.com/productos/shampoo-cabello-debil",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 95,
-        "title": "SHAMPOO COLOR PROTECT",
-        "price": 57900,
-        "description": "Opción de pago a 6 cuotas de 9.650 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 37056,
-        "productUrl": "https://ejemplo.com/productos/shampoo-color-protect",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 96,
-        "title": "COMPLEJO MULTIVITAMÍNICO CAPILAR",
-        "price": 124800,
-        "description": "Opción de pago a 6 cuotas de 20.800 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 79872,
-        "productUrl": "https://ejemplo.com/productos/complejo-multivitaminico-capilar",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 97,
-        "title": "BALSAMO LABIAL OMNIPLUS FPS 15",
-        "price": 64800,
-        "description": "Opción de pago a 6 cuotas de 10.800 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 41472,
-        "productUrl": "https://ejemplo.com/productos/balsamo-labial-omniplus",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 98,
-        "title": "MICRO-EXFOLIANTE FACIAL",
-        "price": 66000,
-        "description": "Opción de pago a 6 cuotas de 11.000 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 42240,
-        "productUrl": "https://ejemplo.com/productos/micro-exfoliante-facial",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 99,
-        "title": "PROTECTOR SOLAR FACIAL FPS 50+",
-        "price": 87000,
-        "description": "Opción de pago a 6 cuotas de 14.500 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 55680,
-        "productUrl": "https://ejemplo.com/productos/protector-solar-facial",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 100,
-        "title": "PROTECTOR SOLAR CORPORAL FPS 50+",
-        "price": 118800,
-        "description": "Opción de pago a 6 cuotas de 19.800 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 76032,
-        "productUrl": "https://ejemplo.com/productos/protector-solar-corporal",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 101,
-        "title": "DESMAQUILLANTE PARA OJOS",
-        "price": 57800,
-        "description": "Opción de pago a 6 cuotas de 9.633 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 36992,
-        "productUrl": "https://ejemplo.com/productos/desmaquillante-ojos",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 102,
-        "title": "MASCARILLA FACIAL",
-        "price": 83700,
-        "description": "Opción de pago a 6 cuotas de 13.950 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 53568,
-        "productUrl": "https://ejemplo.com/productos/mascarilla-facial",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 103,
-        "title": "GEL ANTI-MANCHAS",
-        "price": 135500,
-        "description": "Opción de pago a 6 cuotas de 22.583 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 86720,
-        "productUrl": "https://ejemplo.com/productos/gel-anti-manchas",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 104,
-        "title": "CREMA PARA MANOS CUELLO Y ESCOTE",
-        "price": 125700,
-        "description": "Opción de pago a 6 cuotas de 20.950 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 80448,
-        "productUrl": "https://ejemplo.com/productos/crema-manos-cuello-escote",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 105,
-        "title": "TÓNICO HIDRATANTE",
-        "price": 123100,
-        "description": "Opción de pago a 6 cuotas de 20.517 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 78784,
-        "productUrl": "https://ejemplo.com/productos/tonico-hidratante",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 106,
-        "title": "CREMA LIMPIADORA FACIAL",
-        "price": 68100,
-        "description": "Opción de pago a 6 cuotas de 11.350 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 43584,
-        "productUrl": "https://ejemplo.com/productos/crema-limpiadora-facial",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 107,
-        "title": "LOCION CAPILAR FORTIFICANTE",
-        "price": 146500,
-        "description": "Opción de pago a 6 cuotas de 24.417 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 93760,
-        "productUrl": "https://ejemplo.com/productos/locion-capilar-fortificante",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 108,
-        "title": "GEL-CREMA PARA ESTRIAS",
-        "price": 108600,
-        "description": "Opción de pago a 6 cuotas de 18.100 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 69504,
-        "productUrl": "https://ejemplo.com/productos/gel-crema-estrias",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 109,
-        "title": "DERMOLIMPIADOR FACIAL",
-        "price": 84000,
-        "description": "Opción de pago a 6 cuotas de 14.000 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 53760,
-        "productUrl": "https://ejemplo.com/productos/dermolimpiador-facial",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 110,
-        "title": "GEL LOCALIZADO",
-        "price": 83000,
-        "description": "Opción de pago a 6 cuotas de 13.833 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 53120,
-        "productUrl": "https://ejemplo.com/productos/gel-localizado",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 111,
-        "title": "SUERO PERFECCIONADOR",
-        "price": 109000,
-        "description": "Opción de pago a 6 cuotas de 18.167 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 69760,
-        "productUrl": "https://ejemplo.com/productos/suero-perfeccionador",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 112,
-        "title": "CREMA HIDRATANTE DE NOCHE",
-        "price": 96900,
-        "description": "Opción de pago a 6 cuotas de 16.150 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 62016,
-        "productUrl": "https://ejemplo.com/productos/crema-hidratante-noche",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 113,
-        "title": "CREMA HIDRATANTE DE DÍA FPS20",
-        "price": 96900,
-        "description": "Opción de pago a 6 cuotas de 16.150 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 62016,
-        "productUrl": "https://ejemplo.com/productos/crema-hidratante-dia",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 114,
-        "title": "CREMA PARA CONTORNO DE OJOS SYSTEM 15ml",
-        "price": 99400,
-        "description": "Opción de pago a 6 cuotas de 16.567 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 63616,
-        "productUrl": "https://ejemplo.com/productos/crema-contorno-ojos",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 115,
-        "title": "CREMA DE DIA FPS30 SYSTEM 50ml",
-        "price": 154600,
-        "description": "Opción de pago a 6 cuotas de 25.767 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 98944,
-        "productUrl": "https://ejemplo.com/productos/crema-dia-fps30",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 116,
-        "title": "SUERO DE NOCHE SYSTEM 30ml",
-        "price": 154800,
-        "description": "Opción de pago a 6 cuotas de 25.800 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 99072,
-        "productUrl": "https://ejemplo.com/productos/suero-noche",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 117,
-        "title": "SHAMPOO CON EXTRACTOS HERBALES 300 ML",
-        "price": 43800,
-        "description": "Opción de pago a 6 cuotas de 7.300 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 28032,
-        "productUrl": "https://ejemplo.com/productos/shampoo-herbal",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 118,
-        "title": "CORRECTOR LIQUIDO FAIR",
-        "price": 54900,
-        "description": "Opción de pago a 6 cuotas de 9.150 con 0% interés. ",
-        "category": "todo",
-        "supplier": "be",
-        "warehousePrice": 35136,
-        "productUrl": "https://ejemplo.com/productos/corrector-liquido-fair",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 119,
-        "title": "CORRECTOR LIQUIDO LIGHT",
-        "price": 54900,
-        "description": "Opción de pago a 6 cuotas de 9.150 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 35136,
-        "productUrl": "https://ejemplo.com/productos/corrector-liquido-light",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 120,
-        "title": "CORRECTOR LIQUIDO MEDIUM",
-        "price": 54900,
-        "description": "Opción de pago a 6 cuotas de 9.150 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 35136,
-        "productUrl": "https://ejemplo.com/productos/corrector-liquido-medium",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 121,
-        "title": "CORRECTOR LIQUIDO DEEP",
-        "price": 54900,
-        "description": "Opción de pago a 6 cuotas de 9.150 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 35136,
-        "productUrl": "https://ejemplo.com/productos/corrector-liquido-deep",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 122,
-        "title": "CREMA DE MANOS ANTIBACTERIAL SANDÍA-MELÓN",
-        "price": 13700,
-        "description": "Opción de pago a 6 cuotas de 2.283 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 8768,
-        "productUrl": "https://ejemplo.com/productos/crema-manos-sandia-melon",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 123,
-        "title": "SUERO FACIAL HIDRATACIÓN PROFUNDA CON ALOE VERA",
-        "price": 87300,
-        "description": "Opción de pago a 6 cuotas de 14.550 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 55872,
-        "productUrl": "https://ejemplo.com/productos/suero-facial-aloe-vera",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 124,
-        "title": "OMNIPLUS GEL PREMIUM",
-        "price": 60200,
-        "description": "Opción de pago a 6 cuotas de 10.033 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 38528,
-        "productUrl": "https://ejemplo.com/productos/omniplus-gel-premium",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 125,
-        "title": "MASCARILLA REPARADORA CAPILAR",
-        "price": 68000,
-        "description": "Opción de pago a 6 cuotas de 11.333 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 43520,
-        "productUrl": "https://ejemplo.com/productos/mascarilla-reparadora-capilar",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 126,
-        "title": "SUERO CONTORNO DE OJOS HIDRATACIÓN PROFUNDA CON ALOE VERA",
-        "price": 55900,
-        "description": "Opción de pago a 6 cuotas de 9.317 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 35776,
-        "productUrl": "https://ejemplo.com/productos/suero-contorno-ojos-aloe",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 127,
-        "title": "JABON CORPORAL FRUTOS ROJOS",
-        "price": 52700,
-        "description": "Opción de pago a 6 cuotas de 8.783 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 33728,
-        "productUrl": "https://ejemplo.com/productos/jabon-corporal-frutos-rojos",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 128,
-        "title": "KIT 500 PUNTOS BELLEZA",
-        "price": 887000,
-        "description": "Opción de pago a 6 cuotas de 147.833 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 567680,
-        "productUrl": "https://ejemplo.com/productos/kit-500-puntos-belleza",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 129,
-        "title": "CREMA CORPORAL PARA PIEL DE NARANJA",
-        "price": 112000,
-        "description": "Opción de pago a 6 cuotas de 18.667 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 71680,
-        "productUrl": "https://ejemplo.com/productos/crema-corporal-piel-naranja",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 130,
-        "title": "CREMA DE MANOS ANTIBACTERIAL MANZANA-PERA",
-        "price": 13700,
-        "description": "Opción de pago a 6 cuotas de 2.283 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 8768,
-        "productUrl": "https://ejemplo.com/productos/crema-manos-manzana-pera",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 131,
-        "title": "CREMA DE MANOS ANTIBACTERIAL VAINILLA",
-        "price": 13700,
-        "description": "Opción de pago a 6 cuotas de 2.283 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 8768,
-        "productUrl": "https://ejemplo.com/productos/crema-manos-vainilla",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 132,
-        "title": "POLVO TRASLUCIDO",
-        "price": 67100,
-        "description": "Opción de pago a 6 cuotas de 11.183 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 42944,
-        "productUrl": "https://ejemplo.com/productos/polvo-traslucido",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 133,
-        "title": "CREMA MANOS COCO VAINILLA",
-        "price": 20600,
-        "description": "Opción de pago a 6 cuotas de 3.433 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 13184,
-        "productUrl": "https://ejemplo.com/productos/crema-manos-coco-vainilla",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 134,
-        "title": "CREMA MANOS FRUTOS ROJOS",
-        "price": 20600,
-        "description": "Opción de pago a 6 cuotas de 3.433 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza ",
-        "warehousePrice": 13184,
-        "productUrl": "https://ejemplo.com/productos/crema-manos-frutos-rojos",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 135,
-        "title": "LOCION CORPORAL COCO VAINILLA",
-        "price": 56300,
-        "description": "Opción de pago a 6 cuotas de 9.383 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 36032,
-        "productUrl": "https://ejemplo.com/productos/locion-corporal-coco-vainilla",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 136,
-        "title": "LOCION CORPORAL FRUTOS ROJOS",
-        "price": 56300,
-        "description": "Opción de pago a 6 cuotas de 9.383 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 36032,
-        "productUrl": "https://ejemplo.com/productos/locion-corporal-frutos-rojos",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 137,
-        "title": "POLVO ILUMINADOR DESERT SUNSET",
-        "price": 47600,
-        "description": "Opción de pago a 6 cuotas de 7.933 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 30464,
-        "productUrl": "https://ejemplo.com/productos/polvo-iluminador-desert-sunset",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 138,
-        "title": "POLVO ILUMINADOR DESERT ROSE",
-        "price": 47600,
-        "description": "Opción de pago a 6 cuotas de 7.933 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 30464,
-        "productUrl": "https://ejemplo.com/productos/polvo-iluminador-desert-rose",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 139,
-        "title": "POLVO ILUMINADOR DESERT SAND",
-        "price": 47600,
-        "description": "Opción de pago a 6 cuotas de 7.933 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 30464,
-        "productUrl": "https://ejemplo.com/productos/polvo-iluminador-desert-sand",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 140,
-        "title": "LAPIZ PARA CEJAS UNIVERSAL",
-        "price": 39300,
-        "description": "Opción de pago a 6 cuotas de 6.550 con 0% interés. ",
-        "category": "todo",
-        "supplier": "belleza",
-        "warehousePrice": 25152,
-        "productUrl": "https://ejemplo.com/productos/lapiz-cejas-universal",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
-    {
-        "id": 141,
-        "title": "LAPIZ PARA CEJAS BROWN",
-        "price": 39300,
-        "description": "Opción de pago a 6 cuotas de 6.550 con 0% interés. ",
-        "category": "todo",
-        "supplier": "Seytú",
-        "warehousePrice": 25152,
-        "productUrl": "https://ejemplo.com/productos/lapiz-cejas-brown",
-        "images": [
-            "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
-        ]
-    },
             {
                 "id": 142,
                 "title": "EGO PLANT BOTELLA 200 ML",
@@ -3272,27 +1260,105 @@
                 ]
             },
             {
-                "id": 22,
-                "title": "SET DE BROCHAS PARA OJOS Y LABIOS",
-                "price": 112900,
-                "description": "Opción de pago a 6 cuotas de 18.817 con 0% interés.",
+                "id": 144,
+                "title": "FIBER'N PLUS SUPREME SACHET 450 G",
+                "price": 159550,
+                "description": "Opción de pago a 6 cuotas de 26.592 con 0% interés.",
                 "category": "todo",
-                "supplier": "Seytú",
-                "warehousePrice": 72256,
-                "productUrl": "https://ejemplo.com/productos/set-brochas-ojos-labios",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 102112,
+                "productUrl": "https://ejemplo.com/productos/fiber-n-plus-supreme",
                 "images": [
                     "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
                 ]
             },
             {
-                "id": 23,
-                "title": "ESPONJA PARA MAQUILLAJE LANZAMIENTO",
-                "price": 40300,
-                "description": "Opción de pago a 6 cuotas de 6.717 con 0% interés.",
+                "id": 145,
+                "title": "ESTOP PLUS CAJA 30 SACHETS 450G",
+                "price": 251500,
+                "description": "Opción de pago a 6 cuotas de 41.917 con 0% interés.",
                 "category": "todo",
-                "supplier": "Seytú",
-                "warehousePrice": 25792,
-                "productUrl": "https://ejemplo.com/productos/esponja-maquillaje",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 160960,
+                "productUrl": "https://ejemplo.com/productos/estop-plus",
+                "images": [
+                    "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
+                ]
+            },
+            {
+                "id": 146,
+                "title": "HOMO PLUS CAJA 30 SACHETS 195 G",
+                "price": 134750,
+                "description": "Opción de pago a 6 cuotas de 22.458 con 0% interés.",
+                "category": "todo",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 86240,
+                "productUrl": "https://ejemplo.com/productos/homo-plus",
+                "images": [
+                    "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
+                ]
+            },
+            {
+                "id": 147,
+                "title": "OMNILIFE KOLINA BOTELLA 200 ML",
+                "price": 12800,
+                "description": "Opción de pago a 6 cuotas de 2.133 con 0% interés.",
+                "category": "todo",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 8192,
+                "productUrl": "https://ejemplo.com/productos/omnilife-kolina",
+                "images": [
+                    "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
+                ]
+            },
+            {
+                "id": 148,
+                "title": "BIOCROS SUPREME CAJA 30 SOBRES 240G",
+                "price": 120050,
+                "description": "Opción de pago a 6 cuotas de 20.008 con 0% interés.",
+                "category": "todo",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 76832,
+                "productUrl": "https://ejemplo.com/productos/biocros-supreme",
+                "images": [
+                    "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
+                ]
+            },
+            {
+                "id": 149,
+                "title": "OMNIPLUS FRUTAS EVOLUCION 30 SACHES",
+                "price": 184550,
+                "description": "Opción de pago a 6 cuotas de 30.758 con 0% interés.",
+                "category": "todo",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 118112,
+                "productUrl": "https://ejemplo.com/productos/omniplus-frutas-evolucion",
+                "images": [
+                    "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
+                ]
+            },
+            {
+                "id": 150,
+                "title": "OMNIPLUS NARANJA SUPREME CAJA 30 SOBRES",
+                "price": 184550,
+                "description": "Opción de pago a 6 cuotas de 30.758 con 0% interés.",
+                "category": "todo",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 118112,
+                "productUrl": "https://ejemplo.com/productos/omniplus-naranja-supreme",
+                "images": [
+                    "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
+                ]
+            },
+            {
+                "id": 151,
+                "title": "COGNOS EVOLUCION CAJA",
+                "price": 125750,
+                "description": "Opción de pago a 6 cuotas de 20.958 con 0% interés.",
+                "category": "todo",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 80480,
+                "productUrl": "https://ejemplo.com/productos/cognos-evolucion",
                 "images": [
                     "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
                 ]
@@ -3317,7 +1383,6 @@
         const cartItems = document.getElementById('cartItems');
         const cartTotal = document.getElementById('cartTotal');
         const whatsappBtn = document.getElementById('whatsappBtn');
-        const emailBtn = document.getElementById('emailBtn');
         const continueShopping = document.getElementById('continueShopping');
         const productsGrid = document.getElementById('productsGrid');
         const searchInput = document.getElementById('searchInput');
@@ -3336,7 +1401,6 @@
         const directCustomerAddress = document.getElementById('directCustomerAddress');
         const directCustomerCity = document.getElementById('directCustomerCity');
         const directWhatsappBtn = document.getElementById('directWhatsappBtn');
-        const directEmailBtn = document.getElementById('directEmailBtn');
         const cancelDirectPurchase = document.getElementById('cancelDirectPurchase');
         
         // Elementos para acceso de administrador
@@ -3416,7 +1480,6 @@
             directCustomerAddress.value = '';
             directCustomerCity.value = '';
             directWhatsappBtn.disabled = true;
-            directEmailBtn.disabled = true;
             
             // Resetear opción de envío
             document.getElementById('direct-shipping-priority').checked = true;
@@ -3569,7 +1632,6 @@
             const hasCity = customerCity.value.trim() !== '';
             
             whatsappBtn.disabled = !(hasItems && hasName && hasPhone && hasAddress && hasCity);
-            emailBtn.disabled = !(hasItems && hasName && hasPhone && hasAddress && hasCity);
         }
 
         // Validar si se puede habilitar los botones de checkout para compra directa
@@ -3580,7 +1642,6 @@
             const hasCity = directCustomerCity.value.trim() !== '';
             
             directWhatsappBtn.disabled = !(hasName && hasPhone && hasAddress && hasCity);
-            directEmailBtn.disabled = !(hasName && hasPhone && hasAddress && hasCity);
         }
 
         // Mostrar notificación
@@ -3655,41 +1716,6 @@
             return encodeURIComponent(message);
         }
 
-        // Generar mensaje de correo para el carrito
-        function generateEmailMessage() {
-            const remitente = getRemitenteInfo();
-            
-            let message = `Tienes un nuevo pedido de ${customerName.value}:\n\n`;
-            
-            message += "PRODUCTOS:\n";
-            cart.forEach(item => {
-                message += `- ${item.title} x${item.quantity}: ${formatPrice(item.price * item.quantity)}\n`;
-            });
-            
-            // Añadir costo de envío
-            if (selectedShipping > 0) {
-                message += `- Envío: ${formatPrice(selectedShipping)}\n`;
-            } else {
-                message += `- Envío: Gratis\n`;
-            }
-            
-            const total = cart.reduce((total, item) => total + (item.price * item.quantity), 0) + selectedShipping;
-            message += `\nTOTAL: ${formatPrice(total)}\n\n`;
-            message += "INFORMACIÓN DEL CLIENTE:\n";
-            message += `Nombre: ${customerName.value}\n`;
-            message += `Teléfono: ${customerPhone.value}\n`;
-            message += `Dirección: ${customerAddress.value}\n`;
-            message += `Ciudad: ${customerCity.value}\n\n`;
-            
-            message += "INFORMACIÓN DEL REMITENTE:\n";
-            message += `Negocio: ${remitente.nombre}\n`;
-            message += `Correo: ${remitente.correo}\n`;
-            message += `Dirección: ${remitente.direccion}\n`;
-            message += `Teléfono: ${remitente.telefono}`;
-            
-            return encodeURIComponent(message);
-        }
-
         // Generar mensaje de WhatsApp para compra directa
         function generateDirectWhatsAppMessage() {
             const remitente = getRemitenteInfo();
@@ -3715,39 +1741,6 @@
             
             // Añadir información del remitente
             message += `\n\nInformación del remitente:\n`;
-            message += `Negocio: ${remitente.nombre}\n`;
-            message += `Correo: ${remitente.correo}\n`;
-            message += `Dirección: ${remitente.direccion}\n`;
-            message += `Teléfono: ${remitente.telefono}`;
-            
-            return encodeURIComponent(message);
-        }
-
-        // Generar mensaje de correo para compra directa
-        function generateDirectEmailMessage() {
-            const remitente = getRemitenteInfo();
-            
-            let message = `Tienes un nuevo pedido directo de ${directCustomerName.value}:\n\n`;
-            
-            message += "PRODUCTO:\n";
-            message += `- ${currentDirectProduct.title}: ${formatPrice(currentDirectProduct.price)}\n\n`;
-            
-            // Añadir costo de envío
-            if (selectedShipping > 0) {
-                message += `Envío: ${formatPrice(selectedShipping)}\n`;
-            } else {
-                message += `Envío: Gratis\n`;
-            }
-            
-            const total = currentDirectProduct.price + selectedShipping;
-            message += `\nTOTAL: ${formatPrice(total)}\n\n`;
-            message += "INFORMACIÓN DEL CLIENTE:\n";
-            message += `Nombre: ${directCustomerName.value}\n`;
-            message += `Teléfono: ${directCustomerPhone.value}\n`;
-            message += `Dirección: ${directCustomerAddress.value}\n`;
-            message += `Ciudad: ${directCustomerCity.value}\n\n`;
-            
-            message += "INFORMACIÓN DEL REMITENTE:\n";
             message += `Negocio: ${remitente.nombre}\n`;
             message += `Correo: ${remitente.correo}\n`;
             message += `Dirección: ${remitente.direccion}\n`;
@@ -3801,17 +1794,6 @@
             window.open(`https://wa.me/573215343562?text=${message}`, '_blank');
         });
 
-        emailBtn.addEventListener('click', () => {
-            if (cart.length === 0) {
-                showNotification('El carrito está vacío');
-                return;
-            }
-            
-            const subject = encodeURIComponent(`Nuevo Pedido de ${customerName.value}`);
-            const message = generateEmailMessage();
-            window.open(`mailto:calivalle@qrcontraentrega.com?subject=${subject}&body=${message}`, '_blank');
-        });
-
         // Event Listeners para compra directa
         closeDirectPurchase.addEventListener('click', () => {
             directPurchaseModal.style.display = 'none';
@@ -3829,17 +1811,6 @@
             
             const message = generateDirectWhatsAppMessage();
             window.open(`https://wa.me/573215343562?text=${message}`, '_blank');
-        });
-
-        directEmailBtn.addEventListener('click', () => {
-            if (!currentDirectProduct) {
-                showNotification('No hay producto seleccionado');
-                return;
-            }
-            
-            const subject = encodeURIComponent(`Nuevo Pedido Directo de ${directCustomerName.value}`);
-            const message = generateDirectEmailMessage();
-            window.open(`mailto:calivalle@qrcontraentrega.com?subject=${subject}&body=${message}`, '_blank');
         });
 
         searchInput.addEventListener('input', filterProducts);
