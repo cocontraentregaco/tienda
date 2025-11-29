@@ -1,1 +1,914 @@
-d
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Afiliación - Contraentrega Panamá</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --color-blanco: #ffffff;
+            --color-negro: #000000;
+            --color-gris-claro: #f5f5f5;
+            --color-gris-medio: #e0e0e0;
+            --color-gris-oscuro: #333333;
+            --color-verde: #25D366;
+            --color-azul: #007bff;
+            --color-rojo: #dc3545;
+            --color-dorado: #FFD700;
+            --color-naranja: #FF8C00;
+            --color-bronce: #CD7F32;
+            --color-plata: #C0C0C0;
+            --color-oro: #FFD700;
+            --color-platino: #E5E4E2;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Libre Baskerville', serif;
+            background-color: var(--color-blanco);
+            color: var(--color-negro);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        
+        /* Header */
+        header {
+            background-color: var(--color-negro);
+            color: var(--color-blanco);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .logo-img {
+            height: 40px;
+            width: auto;
+            max-width: 100%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            color: var(--color-blanco);
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem 3rem;
+        }
+        
+        /* Plan Selection */
+        .plan-selection {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+        
+        .plan-option {
+            border: 2px solid var(--color-gris-medio);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 250px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .plan-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .plan-option.selected {
+            border-color: var(--color-negro);
+            background-color: var(--color-gris-claro);
+        }
+        
+        .plan-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: var(--color-dorado);
+            color: var(--color-negro);
+            padding: 0.3rem 0.8rem;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .plan-badge.start {
+            background-color: var(--color-plata);
+            color: var(--color-negro);
+        }
+        
+        .plan-badge.pro {
+            background-color: var(--color-oro);
+            color: var(--color-negro);
+        }
+        
+        .plan-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            color: var(--color-negro);
+        }
+        
+        .plan-price span {
+            font-size: 1rem;
+            font-weight: normal;
+        }
+        
+        .plan-description {
+            margin-bottom: 1rem;
+            min-height: 60px;
+            color: var(--color-gris-oscuro);
+        }
+        
+        .select-plan {
+            background-color: var(--color-negro);
+            color: var(--color-blanco);
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Libre Baskerville', serif;
+            transition: background-color 0.3s;
+        }
+        
+        .select-plan:hover {
+            background-color: var(--color-gris-oscuro);
+        }
+        
+        /* Plan Details */
+        .plan-details {
+            display: none;
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .plan-details.active {
+            display: block;
+        }
+        
+        .plan-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: var(--color-gris-claro);
+            border-radius: 8px;
+        }
+        
+        .plan-section h3 {
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--color-gris-medio);
+            color: var(--color-negro);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        
+        .feature-item {
+            background-color: var(--color-blanco);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .feature-item i {
+            color: var(--color-verde);
+            margin-top: 0.2rem;
+        }
+        
+        /* Form */
+        .affiliation-form {
+            background-color: var(--color-gris-claro);
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .form-header h2 {
+            margin-bottom: 0.5rem;
+            color: var(--color-negro);
+        }
+        
+        .form-header p {
+            color: var(--color-gris-oscuro);
+        }
+        
+        .form-section {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--color-blanco);
+            border-radius: 8px;
+        }
+        
+        .form-section h3 {
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--color-gris-medio);
+            color: var(--color-negro);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-section h3 i {
+            color: var(--color-verde);
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: var(--color-gris-oscuro);
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--color-gris-medio);
+            border-radius: 4px;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--color-negro);
+            outline: none;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .checkbox-item input[type="radio"] {
+            width: auto;
+        }
+        
+        .required-field::after {
+            content: " *";
+            color: var(--color-rojo);
+        }
+        
+        .submit-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+        
+        .submit-btn {
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .whatsapp-btn {
+            background-color: var(--color-verde);
+            color: white;
+        }
+        
+        .whatsapp-btn:hover {
+            background-color: #128C7E;
+            transform: translateY(-2px);
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--color-negro);
+            color: var(--color-blanco);
+            padding: 15px 25px;
+            border-radius: 4px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: opacity 0.5s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification.error {
+            background-color: var(--color-rojo);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--color-negro);
+            color: var(--color-blanco);
+            padding: 2rem 1rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-section p, .footer-section a {
+            margin-bottom: 0.5rem;
+            color: var(--color-gris-medio);
+            text-decoration: none;
+            display: block;
+        }
+        
+        .footer-section a:hover {
+            color: var(--color-blanco);
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-icons a {
+            font-size: 1.5rem;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--color-gris-oscuro);
+            color: var(--color-gris-medio);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .plan-selection {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .submit-buttons {
+                flex-direction: column;
+            }
+            
+            .submit-btn {
+                width: 100%;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .affiliation-form {
+                padding: 1rem;
+            }
+            
+            .form-section {
+                padding: 1rem;
+            }
+            
+            .checkbox-group {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">
+                <img src="https://qrcontraentrega.com/img/c.jpg" alt="Logo Contraentrega" class="logo-img">
+                <span></span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Afiliación Panamá</h1>
+        <p>Potencie su negocio con nuestras soluciones profesionales de e-commerce</p>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Plan Selection -->
+        <div class="plan-selection">
+            <div class="plan-option" data-plan="start">
+                <div class="plan-badge start">Start</div>
+                <h2>Plan Start</h2>
+                <div class="plan-price">$100 USD<span>/año</span></div>
+                <p class="plan-description">Tienda profesional con integración a WhatsApp para finalizar compras</p>
+                <button class="select-plan">Seleccionar</button>
+            </div>
+            <div class="plan-option" data-plan="pro">
+                <div class="plan-badge pro">Pro</div>
+                <h2>Plan Pro</h2>
+                <div class="plan-price">$200 USD<span>/año</span></div>
+                <p class="plan-description">Solución avanzada para empresas en crecimiento</p>
+                <button class="select-plan">Seleccionar</button>
+            </div>
+        </div>
+        
+        <!-- Plan Start Details -->
+        <div class="plan-details" id="start-details">
+            <div class="plan-section">
+                <h3><i class="fas fa-check-circle"></i> ¿Qué incluye el Plan Start?</h3>
+                <div class="features-grid">
+                    <div class="feature-item"><i class="fas fa-check"></i> Tienda Profesional Activa x 365 días</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Dominio personalizado incluido</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Hosting optimizado para e-commerce</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Plataforma eCommerce personalizada</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Diseño adaptable a diversos tipos de negocio</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Carrito de compras o toma de reservas</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Integración completa con WhatsApp</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Envío automático de datos del cliente y productos por WhatsApp</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Finalización de compra por WhatsApp</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> SEO optimizado para atraer clientes</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Herramientas potentes para vender y atraer clientes</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Panel de administración fácil de usar</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Gestión de productos y categorías</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Soporte técnico básico</div>
+                </div>
+            </div>
+            
+            <div class="plan-section">
+                <h3><i class="fas fa-star"></i> Ventajas</h3>
+                <div class="features-grid">
+                    <div class="feature-item"><i class="fas fa-check"></i> Solución ideal para emprendedores y pequeños negocios</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Proceso de compra simplificado a través de WhatsApp</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Sin necesidad de integraciones complejas con ERP</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Fácil implementación y uso</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Atención personalizada directa con el cliente</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Herramienta potente para aumentar ventas</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Costo accesible con funcionalidades profesionales</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Plan Pro Details -->
+        <div class="plan-details active" id="pro-details">
+            <div class="plan-section">
+                <h3><i class="fas fa-check-circle"></i> ¿Qué incluye el Plan Pro?</h3>
+                <div class="features-grid">
+                    <div class="feature-item"><i class="fas fa-check"></i> Tienda Profesional Avanzada Activa x 365 días</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Dominio premium personalizado incluido</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Hosting empresarial de alta disponibilidad</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Plataforma eCommerce personalizada</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Apps nativas para Android e iOS con funciones avanzadas</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Múltiples pasarelas de pago integradas</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Sistema de facturación electrónica avanzado</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> ERP completo integrado</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> CRM para gestión de clientes</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Almacenamiento premium incluido (3 meses gratis)</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Logística y envíos nacionales e internacionales</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Sistema de inventario avanzado</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Branding y diseño corporativo completo</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Campañas de marketing digital incluidas</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Integración con múltiples marketplaces</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Asesoría empresarial mensual de 1 hora</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Reportes analíticos avanzados</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> SEO avanzado y posicionamiento web</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Soporte técnico prioritario 24/7</div>
+                </div>
+            </div>
+            
+            <div class="plan-section">
+                <h3><i class="fas fa-star"></i> Ventajas</h3>
+                <div class="features-grid">
+                    <div class="feature-item"><i class="fas fa-check"></i> Solución integral para empresas en crecimiento</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Tecnología de punta para optimizar operaciones</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Asesoramiento estratégico personalizado</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Herramientas avanzadas de analytics y business intelligence</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Integraciones con sistemas empresariales</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Maximización del ROI con estrategias probadas</div>
+                    <div class="feature-item"><i class="fas fa-check"></i> Escalabilidad garantizada para el crecimiento</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Affiliation Form -->
+        <div class="affiliation-form">
+            <div class="form-header">
+                <h2>Formulario de Afiliación</h2>
+                <p>Complete la información para procesar su solicitud de afiliación</p>
+            </div>
+            
+            <form id="affiliationForm">
+                <input type="hidden" id="selectedPlan" name="selectedPlan" value="Plan Pro - $200 USD/año">
+                
+                <div class="form-section">
+                    <h3><i class="fas fa-building"></i> Información del Negocio</h3>
+                    
+                    <div class="form-group">
+                        <label for="businessName" class="required-field">Nombre comercial</label>
+                        <input type="text" id="businessName" name="businessName" required placeholder="Ingrese el nombre de su negocio">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="businessDescription" class="required-field">Descripción de la empresa</label>
+                        <textarea id="businessDescription" name="businessDescription" placeholder="Describa su negocio o idea de negocio, productos que ofrece, etc." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="businessCountry" class="required-field">País de domicilio</label>
+                        <select id="businessCountry" name="businessCountry" required>
+                            <option value="">Seleccione un país</option>
+                            <option value="Panamá" selected>Panamá</option>
+                            <option value="Otro">Otro país</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="businessProvince" class="required-field">Provincia</label>
+                        <input type="text" id="businessProvince" name="businessProvince" required placeholder="Ingrese su provincia">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="businessCity" class="required-field">Ciudad</label>
+                        <input type="text" id="businessCity" name="businessCity" required placeholder="Ingrese su ciudad">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="businessAddress" class="required-field">Dirección</label>
+                        <input type="text" id="businessAddress" name="businessAddress" required placeholder="Ingrese su dirección completa">
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3><i class="fas fa-user-tie"></i> Información del Representante Legal</h3>
+                    
+                    <div class="form-group">
+                        <label for="legalName" class="required-field">Nombre del representante legal</label>
+                        <input type="text" id="legalName" name="legalName" required placeholder="Nombre completo del representante">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required-field">Tipo de identificación</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="radio" id="idTypeCedula" name="idType" value="Cédula" required>
+                                <label for="idTypeCedula">Cédula</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="radio" id="idTypePasaporte" name="idType" value="Pasaporte">
+                                <label for="idTypePasaporte">Pasaporte</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="radio" id="idTypeExtranjeria" name="idType" value="Cédula de extranjería">
+                                <label for="idTypeExtranjeria">Cédula de extranjería</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="idNumber" class="required-field">Número de identificación</label>
+                        <input type="text" id="idNumber" name="idNumber" required placeholder="Número completo de identificación">
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3><i class="fas fa-address-card"></i> Información de Contacto</h3>
+                    
+                    <div class="form-group">
+                        <label for="contactPhone" class="required-field">WhatsApp/Teléfono</label>
+                        <input type="tel" id="contactPhone" name="contactPhone" required placeholder="Ej: +507 6123-4567">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactEmail" class="required-field">Correo electrónico</label>
+                        <input type="email" id="contactEmail" name="contactEmail" required placeholder="Ej: info@sunegocio.com">
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3><i class="fas fa-palette"></i> Preferencias</h3>
+                    
+                    <div class="form-group">
+                        <label class="required-field">Color Preferido (captcha)</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="radio" id="colorWhite" name="colorPreference" value="Blanco" required>
+                                <label for="colorWhite">Blanco</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="radio" id="colorBlack" name="colorPreference" value="Negro">
+                                <label for="colorBlack">Negro</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+    <p style="margin: 10px 0; font-size: 14px; line-height: 1.4;">
+        Acepto los términos y condiciones del 
+        <a href="https://calivalle.qrcontraentrega.com/acuerdo-comercial" 
+           target="_blank" 
+           style="color: #007bff; text-decoration: underline;">
+            Acuerdo Comercial
+        </a>
+    </p>
+</div>
+                
+                <div class="submit-buttons">
+                    <button type="button" class="submit-btn whatsapp-btn" id="submitWhatsApp">
+                        <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Acerca de Nosotros</h3>
+                <p>Somos Contraentrega. La revolución en logística y comercio electrónico de Panamá. Conectamos vendedores y compradores con una red de entrega confiable y el sistema de pago contraentrega más seguro.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contacto</h3>
+                <p><i class="fas fa-phone"></i> +507 6123-4567</p>
+                <p><i class="fas fa-envelope"></i> panama@qrcontraentrega.com</p>
+                <p><i class="fas fa-map-marker-alt"></i> Ciudad de Panamá, Panamá</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/50761234567"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Enlaces Rápidos</h3>
+                <a href="#">Inicio</a>
+                <a href="#">Categorías</a>
+                <a href="#">Términos y Condiciones</a>
+                <a href="#">Política de Privacidad</a>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; Contraentrega. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Plan selection functionality
+            const planOptions = document.querySelectorAll('.plan-option');
+            const planStart = document.getElementById('start-details');
+            const planPro = document.getElementById('pro-details');
+            const selectedPlanInput = document.getElementById('selectedPlan');
+            
+            // Select Plan Pro by default
+            document.querySelector('[data-plan="pro"]').classList.add('selected');
+            planPro.classList.add('active');
+            selectedPlanInput.value = 'Plan Pro - $200 USD/año';
+            
+            planOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const planType = this.getAttribute('data-plan');
+                    
+                    // Remove selected class from all options
+                    planOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    
+                    // Hide all plan details
+                    planStart.classList.remove('active');
+                    planPro.classList.remove('active');
+                    
+                    // Show the corresponding plan details
+                    if (planType === 'start') {
+                        planStart.classList.add('active');
+                        selectedPlanInput.value = 'Plan Start - $100 USD/año';
+                    } else if (planType === 'pro') {
+                        planPro.classList.add('active');
+                        selectedPlanInput.value = 'Plan Pro - $200 USD/año';
+                    }
+                });
+            });
+            
+            // Form submission handlers
+            const form = document.getElementById('affiliationForm');
+            
+            document.getElementById('submitWhatsApp').addEventListener('click', function() {
+                if (validateForm()) {
+                    const message = generateWhatsAppMessage();
+                    window.open(`https://wa.me/50761234567?text=${encodeURIComponent(message)}`, '_blank');
+                }
+            });
+            
+            // Form validation
+            function validateForm() {
+                if (!selectedPlanInput.value) {
+                    showNotification('Por favor seleccione un plan de afiliación', true);
+                    return false;
+                }
+                
+                // Check all required fields
+                const requiredFields = form.querySelectorAll('[required]');
+                let valid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        valid = false;
+                        field.style.borderColor = 'red';
+                        
+                        // Remove error style when user starts typing
+                        field.addEventListener('input', function() {
+                            this.style.borderColor = '';
+                        });
+                    }
+                });
+                
+                // Check if at least one radio button is selected for idType
+                const idTypeSelected = document.querySelector('input[name="idType"]:checked');
+                if (!idTypeSelected) {
+                    valid = false;
+                    showNotification('Por favor seleccione un tipo de identificación', true);
+                }
+                
+                // Check if at least one radio button is selected for colorPreference
+                const colorSelected = document.querySelector('input[name="colorPreference"]:checked');
+                if (!colorSelected) {
+                    valid = false;
+                    showNotification('Por favor seleccione un color preferido', true);
+                }
+                
+                if (!valid) {
+                    showNotification('Por favor complete todos los campos obligatorios', true);
+                    return false;
+                }
+                
+                showNotification('Formulario validado correctamente. Redirigiendo...');
+                return true;
+            }
+            
+            // Show notification
+            function showNotification(message, isError = false) {
+                // Remove existing notification if any
+                const existingNotification = document.querySelector('.notification');
+                if (existingNotification) {
+                    existingNotification.remove();
+                }
+                
+                const notification = document.createElement('div');
+                notification.className = isError ? 'notification error' : 'notification';
+                notification.innerHTML = `
+                    <i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+                    <span>${message}</span>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 500);
+                }, 3000);
+            }
+            
+            // Message generators
+            function generateWhatsAppMessage() {
+                let message = "¡Hola! Quiero solicitar afiliación con el siguiente plan:\n\n";
+                
+                message += `*Plan:* ${selectedPlanInput.value}\n\n`;
+                message += "*Información del negocio:*\n";
+                message += `• Nombre: ${document.getElementById('businessName').value}\n`;
+                message += `• Descripción: ${document.getElementById('businessDescription').value}\n`;
+                message += `• País: ${document.getElementById('businessCountry').value}\n`;
+                message += `• Provincia: ${document.getElementById('businessProvince').value}\n`;
+                message += `• Ciudad: ${document.getElementById('businessCity').value}\n`;
+                message += `• Dirección: ${document.getElementById('businessAddress').value}\n\n`;
+                
+                message += "*Información del representante legal:*\n";
+                message += `• Nombre: ${document.getElementById('legalName').value}\n`;
+                message += `• Tipo de ID: ${document.querySelector('input[name="idType"]:checked').value}\n`;
+                message += `• Número de ID: ${document.getElementById('idNumber').value}\n\n`;
+                
+                message += "*Información de contacto:*\n";
+                message += `• Teléfono: ${document.getElementById('contactPhone').value}\n`;
+                message += `• Email: ${document.getElementById('contactEmail').value}\n`;
+                message += `• Color preferido: ${document.querySelector('input[name="colorPreference"]:checked').value}\n`;
+                
+                return message;
+            }
+        });
+    </script>
+</body>
+</html>
