@@ -187,24 +187,42 @@
 
         .location-info {
             text-align: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             font-size: 1.1rem;
             color: var(--blue);
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
         .location-info span {
             background-color: rgba(0, 56, 147, 0.1);
-            padding: 5px 10px;
+            padding: 8px 15px;
             border-radius: 5px;
         }
 
-        .enter-hint {
-            text-align: center;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            color: #666;
-            font-style: italic;
+        .enter-button {
+            background: linear-gradient(135deg, var(--yellow) 0%, var(--blue) 50%, var(--red) 100%);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .enter-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .enter-button:active {
+            transform: translateY(0);
         }
 
         footer {
@@ -230,6 +248,11 @@
 
             .flag-container {
                 height: 100px;
+            }
+
+            .location-info {
+                flex-direction: column;
+                gap: 10px;
             }
         }
 
@@ -272,9 +295,6 @@
 
         <div class="search-container">
             <input type="text" id="state-search" placeholder="Busca una ciudad / Search for a city..." aria-label="Busca una ciudad">
-            <div class="enter-hint" id="enter-hint" style="display: none;">
-                Presiona Enter para ir a <span id="city-name"></span>
-            </div>
         </div>
 
         <div class="states-grid" id="states-container">
@@ -587,6 +607,7 @@
 
         // Global variable to store detected city URL
         let detectedCityUrl = null;
+        let detectedCityName = null;
 
         // Function to display cities
         function renderStates(stateList) {
@@ -647,10 +668,26 @@
             }
         }
 
+        // Function to create location info with button
+        function createLocationInfo(cityName) {
+            const locationInfo = document.getElementById('location-info');
+            
+            locationInfo.innerHTML = `
+                <span>IP: ${cityName}</span>
+                <button class="enter-button" id="location-enter-btn">Enter</button>
+            `;
+            
+            // Add event listener to the button
+            document.getElementById('location-enter-btn').addEventListener('click', () => {
+                if (detectedCityUrl) {
+                    window.location.href = detectedCityUrl;
+                }
+            });
+        }
+
         // Function to get user location
         function getUserLocation() {
             const locationInfo = document.getElementById('location-info');
-            const enterHint = document.getElementById('enter-hint');
             
             // Check if geolocation is available
             if (!navigator.geolocation) {
@@ -672,7 +709,7 @@
                         
                         if (data.city) {
                             const detectedCity = data.city;
-                            locationInfo.innerHTML = `IP: <span>${detectedCity}</span>`;
+                            detectedCityName = detectedCity;
                             
                             // Check if detected city is in our list
                             const matchedState = states.find(state => 
@@ -682,8 +719,11 @@
                             
                             if (matchedState) {
                                 detectedCityUrl = matchedState.url;
-                                document.getElementById('city-name').textContent = matchedState.name.es;
-                                enterHint.style.display = 'block';
+                                createLocationInfo(detectedCity);
+                            } else {
+                                createLocationInfo(detectedCity);
+                                // If city not in list, still show button but it won't work
+                                detectedCityUrl = null;
                             }
                         } else {
                             locationInfo.innerHTML = 'No se pudo detectar la ciudad.';
