@@ -185,6 +185,20 @@
             box-shadow: 0 0 0 3px rgba(0, 56, 147, 0.2);
         }
 
+        .location-info {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: var(--blue);
+            font-weight: 600;
+        }
+
+        .location-info span {
+            background-color: rgba(0, 56, 147, 0.1);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
         footer {
             text-align: center;
             margin-top: 3rem;
@@ -243,6 +257,10 @@
             <div>Colombia</div>
             <p class="subtitle">Selecciona tu ciudad / Select your city</p>
         </header>
+
+        <div class="location-info" id="location-info">
+            <!-- Location info will appear here -->
+        </div>
 
         <div class="search-container">
             <input type="text" id="state-search" placeholder="Busca una ciudad / Search for a city..." aria-label="Busca una ciudad">
@@ -589,12 +607,69 @@
             renderStates(filteredStates);
         }
 
+        // Function to get user location
+        function getUserLocation() {
+            const locationInfo = document.getElementById('location-info');
+            
+            // Check if geolocation is available
+            if (!navigator.geolocation) {
+                locationInfo.innerHTML = 'La geolocalización no es compatible con este navegador.';
+                return;
+            }
+            
+            // Request location permission
+            navigator.geolocation.getCurrentPosition(
+                // Success callback
+                async (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    
+                    try {
+                        // Using a free geocoding service to get city from coordinates
+                        const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=es`);
+                        const data = await response.json();
+                        
+                        if (data.city) {
+                            const detectedCity = data.city;
+                            locationInfo.innerHTML = `IP: <span>${detectedCity}</span>`;
+                            
+                            // Check if detected city is in our list
+                            const matchedState = states.find(state => 
+                                state.name.es.toLowerCase().includes(detectedCity.toLowerCase()) ||
+                                state.name.en.toLowerCase().includes(detectedCity.toLowerCase())
+                            );
+                            
+                            if (matchedState) {
+                                // Add event listener for Enter key to redirect to detected city
+                                document.getElementById('state-search').addEventListener('keypress', function(e) {
+                                    if (e.key === 'Enter') {
+                                        window.location.href = matchedState.url;
+                                    }
+                                });
+                            }
+                        } else {
+                            locationInfo.innerHTML = 'No se pudo detectar la ciudad.';
+                        }
+                    } catch (error) {
+                        console.error('Error al obtener la ubicación:', error);
+                        locationInfo.innerHTML = 'Error al obtener la ubicación.';
+                    }
+                },
+                // Error callback
+                (error) => {
+                    console.error('Error de geolocalización:', error);
+                    locationInfo.innerHTML = 'Permiso de ubicación denegado o error al obtener la ubicación.';
+                }
+            );
+        }
+
         // Event listeners
         document.getElementById('state-search').addEventListener('input', searchStates);
 
         // Display all cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
             renderStates(states);
+            getUserLocation();
         });
     </script>
 </body>
