@@ -225,6 +225,11 @@
             transform: translateY(0);
         }
 
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+
         footer {
             text-align: center;
             margin-top: 3rem;
@@ -290,7 +295,7 @@
         </header>
 
         <div class="location-info" id="location-info">
-            <!-- Location info will appear here -->
+            <div class="loading">Detectando tu ubicación...</div>
         </div>
 
         <div class="search-container">
@@ -600,7 +605,7 @@
             { 
                 "name": { "es": "Salento", "en": "Salento" }, 
                 "type": { "es": "Pueblo", "en": "Town" }, 
-                "url": "salentoquindio.html", 
+                "url": "salento.html", 
                 "image": "img/c.jpg" 
             }
         ];
@@ -685,9 +690,12 @@
             });
         }
 
-        // Function to get user location
+        // Function to get user location - OPTIMIZED
         function getUserLocation() {
             const locationInfo = document.getElementById('location-info');
+            
+            // Show loading immediately
+            locationInfo.innerHTML = '<div class="loading">Detectando tu ubicación...</div>';
             
             // Check if geolocation is available
             if (!navigator.geolocation) {
@@ -695,7 +703,13 @@
                 return;
             }
             
-            // Request location permission
+            // Request location permission immediately with optimized options
+            const geoOptions = {
+                enableHighAccuracy: false, // Faster response
+                timeout: 10000, // 10 seconds timeout
+                maximumAge: 300000 // Accept cached location from last 5 minutes
+            };
+            
             navigator.geolocation.getCurrentPosition(
                 // Success callback
                 async (position) => {
@@ -736,8 +750,23 @@
                 // Error callback
                 (error) => {
                     console.error('Error de geolocalización:', error);
-                    locationInfo.innerHTML = 'Permiso de ubicación denegado o error al obtener la ubicación.';
-                }
+                    let errorMessage = 'Error al obtener la ubicación.';
+                    
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = 'Permiso de ubicación denegado.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = 'Información de ubicación no disponible.';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = 'Tiempo de espera agotado.';
+                            break;
+                    }
+                    
+                    locationInfo.innerHTML = errorMessage;
+                },
+                geoOptions
             );
         }
 
@@ -745,11 +774,20 @@
         document.getElementById('state-search').addEventListener('input', searchStates);
         document.getElementById('state-search').addEventListener('keypress', handleEnterKey);
 
-        // Display all cities when page loads
+        // Display all cities when page loads and request location IMMEDIATELY
         document.addEventListener('DOMContentLoaded', () => {
             renderStates(states);
+            // Start location detection immediately
             getUserLocation();
         });
+
+        // Alternative: Start location detection even before DOM is fully loaded
+        // This makes it even faster
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', getUserLocation);
+        } else {
+            getUserLocation();
+        }
     </script>
 </body>
 </html>
