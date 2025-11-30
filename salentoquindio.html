@@ -16,7 +16,6 @@
             --color-verde: #25D366;
             --color-azul: #007bff;
             --color-rojo: #dc3545;
-            --color-naranja: #ff6b00;
         }
         
         * {
@@ -30,7 +29,7 @@
             background-color: var(--color-blanco);
             color: var(--color-negro);
             line-height: 1.6;
-            font-size: 16px;
+            font-size: 16px; /* Tamaño de fuente base para evitar zoom */
         }
         
         /* Header */
@@ -118,7 +117,7 @@
         .filters {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 1rem;
+            margin-bottom: 2rem;
             flex-wrap: wrap;
             gap: 1rem;
         }
@@ -126,24 +125,15 @@
         .search-box {
             flex-grow: 1;
             max-width: 500px;
-            position: relative;
         }
         
         .search-box input {
             width: 100%;
-            padding: 0.8rem 3rem 0.8rem 1rem;
+            padding: 0.8rem;
             border: 1px solid var(--color-gris-medio);
             border-radius: 4px;
             font-family: 'Libre Baskerville', serif;
-            font-size: 16px;
-        }
-        
-        .search-icon {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--color-gris-oscuro);
+            font-size: 16px; /* Prevenir zoom en iOS */
         }
         
         .category-filter {
@@ -166,27 +156,6 @@
         .category-btn:hover, .category-btn.active {
             background-color: var(--color-negro);
             color: var(--color-blanco);
-        }
-        
-        /* Estado de búsqueda */
-        .search-status {
-            padding: 10px;
-            text-align: center;
-            background: #f8f9fa;
-            border-radius: 4px;
-            margin: 10px 0;
-            font-size: 0.9rem;
-        }
-        
-        /* Advertencia de rendimiento */
-        .performance-warning {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            padding: 10px;
-            border-radius: 4px;
-            margin: 10px 0;
-            font-size: 0.8rem;
-            display: none;
         }
         
         /* Product Grid */
@@ -223,6 +192,36 @@
             object-fit: cover;
             border-bottom: 1px solid var(--color-gris-medio);
             transition: opacity 0.3s;
+        }
+        
+        .image-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: none; /* Ocultar navegación de imágenes para simplificar */
+        }
+        
+        .product-image-container:hover .image-nav {
+            opacity: 1;
+        }
+        
+        .nav-btn {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .product-info {
@@ -300,27 +299,6 @@
             text-decoration: underline;
         }
         
-        /* Loading indicator */
-        .loading-indicator {
-            text-align: center;
-            padding: 2rem;
-            display: none;
-        }
-        
-        .loading-spinner {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            border-top-color: var(--color-negro);
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
         /* Cart Modal */
         .cart-modal {
             display: none;
@@ -359,12 +337,6 @@
             cursor: pointer;
             background: none;
             border: none;
-            color: var(--color-gris-oscuro);
-            transition: color 0.3s;
-        }
-        
-        .close-cart:hover {
-            color: var(--color-negro);
         }
         
         .cart-items {
@@ -587,7 +559,7 @@
             border: 1px solid var(--color-gris-medio);
             border-radius: 4px;
             font-family: 'Libre Baskerville', serif;
-            font-size: 16px;
+            font-size: 16px; /* Prevenir zoom en iOS */
         }
         
         .checkout-buttons {
@@ -686,12 +658,6 @@
             cursor: pointer;
             background: none;
             border: none;
-            color: var(--color-gris-oscuro);
-            transition: color 0.3s;
-        }
-        
-        .close-direct-purchase:hover {
-            color: var(--color-negro);
         }
         
         .direct-purchase-product {
@@ -902,6 +868,7 @@
                 flex-direction: column;
             }
             
+            /* Ajustes para evitar zoom en formularios móviles */
             input, select, textarea {
                 font-size: 16px !important;
             }
@@ -1025,37 +992,18 @@
         <!-- Filtros -->
         <div class="filters">
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Buscar entre millones de productos...">
-                <div class="search-icon">
-                    <i class="fas fa-search"></i>
-                </div>
+                <input type="text" id="searchInput" placeholder="Buscar productos y servicios de afiliados...">
             </div>
             <div class="category-filter">
                 <button class="category-btn active" data-category="todo">Todo</button>
             </div>
         </div>
 
-        <!-- Estado de búsqueda -->
-        <div class="search-status" id="searchStatus">
-            Mostrando todos los productos
-        </div>
-
-        <!-- Advertencia de rendimiento -->
-        <div class="performance-warning" id="performanceWarning">
-            ⚡ <strong>Modo rendimiento activado:</strong> Mostrando primeros 500 resultados. Usa filtros más específicos para ver más productos.
-        </div>
-
         <!-- Product Grid -->
         <div class="scroll-container">
             <div class="products-grid" id="productsGrid">
-                <!-- Los productos se cargarán dinámicamente -->
+                <!-- Los productos se cargarán dinámicamente con JavaScript -->
             </div>
-        </div>
-
-        <!-- Loading Indicator -->
-        <div class="loading-indicator" id="loadingIndicator">
-            <div class="loading-spinner"></div>
-            <p>Buscando productos...</p>
         </div>
 
         <!-- Admin Access Section -->
@@ -1075,7 +1023,6 @@
                         <th>ID</th>
                         <th>Producto</th>
                         <th>Categoría</th>
-                        <th>Tipo</th>
                         <th>Precio Proveedor</th>
                         <th>Precio Venta</th>
                         <th>Proveedor</th>
@@ -1127,8 +1074,8 @@
                 </div>
             </div>
             
-            <!-- Shipping Options - Solo para productos físicos -->
-            <div class="shipping-options" id="shippingOptions">
+            <!-- Shipping Options -->
+            <div class="shipping-options">
                 <h3>Opción de Envío</h3>
                 <div class="shipping-option" data-shipping="0">
                     <input type="radio" id="shipping-priority" name="shipping" class="shipping-radio" checked>
@@ -1153,15 +1100,13 @@
                     <label for="customerPhone">Teléfono *</label>
                     <input type="tel" id="customerPhone" placeholder="Ingresa tu número de teléfono" required>
                 </div>
-                <div id="shippingAddressFields">
-                    <div class="form-group">
-                        <label for="customerAddress">Dirección de Envío *</label>
-                        <input type="text" id="customerAddress" placeholder="Ingresa tu dirección completa" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="customerCity">Ciudad *</label>
-                        <input type="text" id="customerCity" placeholder="Ingresa tu ciudad" required>
-                    </div>
+                <div class="form-group">
+                    <label for="customerAddress">Dirección de Envío *</label>
+                    <input type="text" id="customerAddress" placeholder="Ingresa tu dirección completa" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerCity">Ciudad *</label>
+                    <input type="text" id="customerCity" placeholder="Ingresa tu ciudad" required>
                 </div>
             </div>
             
@@ -1209,8 +1154,8 @@
                 </div>
             </div>
             
-            <!-- Shipping Options - Solo para productos físicos -->
-            <div class="shipping-options" id="directShippingOptions">
+            <!-- Shipping Options -->
+            <div class="shipping-options">
                 <h3>Opción de Envío</h3>
                 <div class="shipping-option" data-shipping="0">
                     <input type="radio" id="direct-shipping-priority" name="direct-shipping" class="shipping-radio" checked>
@@ -1235,15 +1180,13 @@
                     <label for="directCustomerPhone">Teléfono *</label>
                     <input type="tel" id="directCustomerPhone" placeholder="Ingresa tu número de teléfono" required>
                 </div>
-                <div id="directShippingAddressFields">
-                    <div class="form-group">
-                        <label for="directCustomerAddress">Dirección de Envío *</label>
-                        <input type="text" id="directCustomerAddress" placeholder="Ingresa tu dirección completa" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="directCustomerCity">Ciudad *</label>
-                        <input type="text" id="directCustomerCity" placeholder="Ingresa tu ciudad" required>
-                    </div>
+                <div class="form-group">
+                    <label for="directCustomerAddress">Dirección de Envío *</label>
+                    <input type="text" id="directCustomerAddress" placeholder="Ingresa tu dirección completa" required>
+                </div>
+                <div class="form-group">
+                    <label for="directCustomerCity">Ciudad *</label>
+                    <input type="text" id="directCustomerCity" placeholder="Ingresa tu ciudad" required>
                 </div>
             </div>
             
@@ -1288,18 +1231,139 @@
     </footer>
 
     <script>
-        // CONFIGURACIÓN PARA GRANDES VOLÚMENES
-        const MAX_DISPLAY_RESULTS = 500;
-        const SEARCH_DEBOUNCE_TIME = 300;
-        const BATCH_SIZE = 50;
-
-        // Variables globales optimizadas
-        let allProducts = [];
-        let filteredProducts = [];
-        let displayedProducts = [];
-        let currentBatch = 0;
-        let searchTimeout;
-        let isSearching = false;
+        // Base de datos de productos (simulada) - SOLO LOS PRIMEROS 10 PRODUCTOS
+        const products = [
+            {
+                "id": 142,
+                "title": "EGO PLANT BOTELLA 200 ML",
+                "price": 12800,
+                "description": "Opción de pago a 6 cuotas de 2.133 con 0% interés.",
+                "category": "todo",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 8192,
+                "productUrl": "https://ejemplo.com/productos/ego-plant-200ml",
+                "images": [
+                    "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
+                ]
+            },
+            {
+                "id": 143,
+                "title": "OMNILIFE F PLUS",
+                "price": 134750,
+                "description": "Opción de pago a 6 cuotas de 22.458 con 0% interés.",
+                "category": "todo",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 86240,
+                "productUrl": "https://ejemplo.com/productos/omnilife-f-plus",
+                "images": [
+                    "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
+                ]
+            },
+            {
+                "id": 144,
+                "title": "FIBER'N PLUS SUPREME SACHET 450 G",
+                "price": 159550,
+                "description": "Opción de pago a 6 cuotas de 26.592 con 0% interés.",
+                "category": "todo",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 102112,
+                "productUrl": "https://ejemplo.com/productos/fiber-n-plus-supreme",
+                "images": [
+                    "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
+                ]
+            },
+            {
+                "id": 145,
+                "title": "ESTOP PLUS CAJA 30 SACHETS 450G",
+                "price": 251500,
+                "description": "Opción de pago a 6 cuotas de 41.917 con 0% interés.",
+                "category": "todo",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 160960,
+                "productUrl": "https://ejemplo.com/productos/estop-plus",
+                "images": [
+                    "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
+                ]
+            },
+            {
+                "id": 146,
+                "title": "HOMO PLUS CAJA 30 SACHETS 195 G",
+                "price": 134750,
+                "description": "Opción de pago a 6 cuotas de 22.458 con 0% interés.",
+                "category": "todo",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 86240,
+                "productUrl": "https://ejemplo.com/productos/homo-plus",
+                "images": [
+                    "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
+                ]
+            },
+            {
+                "id": 147,
+                "title": "OMNILIFE KOLINA BOTELLA 200 ML",
+                "price": 12800,
+                "description": "Opción de pago a 6 cuotas de 2.133 con 0% interés.",
+                "category": "todo",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 8192,
+                "productUrl": "https://ejemplo.com/productos/omnilife-kolina",
+                "images": [
+                    "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
+                ]
+            },
+            {
+                "id": 148,
+                "title": "BIOCROS SUPREME CAJA 30 SOBRES 240G",
+                "price": 120050,
+                "description": "Opción de pago a 6 cuotas de 20.008 con 0% interés.",
+                "category": "todo",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 76832,
+                "productUrl": "https://ejemplo.com/productos/biocros-supreme",
+                "images": [
+                    "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
+                ]
+            },
+            {
+                "id": 149,
+                "title": "OMNIPLUS FRUTAS EVOLUCION 30 SACHES",
+                "price": 184550,
+                "description": "Opción de pago a 6 cuotas de 30.758 con 0% interés.",
+                "category": "todo",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 118112,
+                "productUrl": "https://ejemplo.com/productos/omniplus-frutas-evolucion",
+                "images": [
+                    "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
+                ]
+            },
+            {
+                "id": 150,
+                "title": "OMNIPLUS NARANJA SUPREME CAJA 30 SOBRES",
+                "price": 184550,
+                "description": "Opción de pago a 6 cuotas de 30.758 con 0% interés.",
+                "category": "todo",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 118112,
+                "productUrl": "https://ejemplo.com/productos/omniplus-naranja-supreme",
+                "images": [
+                    "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
+                ]
+            },
+            {
+                "id": 151,
+                "title": "COGNOS EVOLUCION CAJA",
+                "price": 125750,
+                "description": "Opción de pago a 6 cuotas de 20.958 con 0% interés.",
+                "category": "todo",
+                "supplier": "Omnilife Colombia",
+                "warehousePrice": 80480,
+                "productUrl": "https://ejemplo.com/productos/cognos-evolucion",
+                "images": [
+                    "https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"
+                ]
+            }
+        ];
 
         // Función para formatear precios en formato COP
         function formatPrice(price) {
@@ -1309,10 +1373,9 @@
         // Variables globales
         let cart = [];
         let currentDirectProduct = null;
-        let selectedShipping = 0;
-        let selectedPayment = "contraentrega";
-        const ADMIN_KEY = "proveedor2024";
-        const WHATSAPP_NUMBER = "573215343562"; // Número de WhatsApp corregido
+        let selectedShipping = 0; // Costo de envío seleccionado
+        let selectedPayment = "contraentrega"; // Método de pago seleccionado
+        const ADMIN_KEY = "proveedor2024"; // Clave estática para acceso a precios de proveedor
         
         const cartIcon = document.getElementById('cartIcon');
         const cartCount = document.getElementById('cartCount');
@@ -1329,11 +1392,6 @@
         const customerPhone = document.getElementById('customerPhone');
         const customerAddress = document.getElementById('customerAddress');
         const customerCity = document.getElementById('customerCity');
-        const shippingAddressFields = document.getElementById('shippingAddressFields');
-        const shippingOptions = document.getElementById('shippingOptions');
-        const searchStatus = document.getElementById('searchStatus');
-        const performanceWarning = document.getElementById('performanceWarning');
-        const loadingIndicator = document.getElementById('loadingIndicator');
         
         // Elementos para compra directa
         const directPurchaseModal = document.getElementById('directPurchaseModal');
@@ -1345,8 +1403,6 @@
         const directCustomerCity = document.getElementById('directCustomerCity');
         const directWhatsappBtn = document.getElementById('directWhatsappBtn');
         const cancelDirectPurchase = document.getElementById('cancelDirectPurchase');
-        const directShippingAddressFields = document.getElementById('directShippingAddressFields');
-        const directShippingOptions = document.getElementById('directShippingOptions');
         
         // Elementos para acceso de administrador
         const adminKeyInput = document.getElementById('adminKey');
@@ -1354,474 +1410,39 @@
         const supplierTableContainer = document.getElementById('supplierTableContainer');
         const supplierTableBody = document.getElementById('supplierTableBody');
 
-        // BASE DE DATOS DE PRODUCTOS - 10 PRODUCTOS CON DIFERENTES CATEGORÍAS
-        const initialProducts = [
-            {
-                "id": 142,
-                "title": "EGO PLANT BOTELLA 200 ML",
-                "price": 12800,
-                "description": "Suplemento natural para el cuidado de la piel. Opción de pago a 6 cuotas de 2.133 con 0% interés.",
-                "category": "suplementos",
-                "supplier": "Omnilife Colombia",
-                "warehousePrice": 8192,
-                "productUrl": "https://ejemplo.com/productos/ego-plant-200ml",
-                "images": ["https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"],
-                "type": "fisico"
-            },
-            {
-                "id": 143,
-                "title": "OMNILIFE F PLUS",
-                "price": 134750,
-                "description": "Suplemento nutricional completo. Opción de pago a 6 cuotas de 22.458 con 0% interés.",
-                "category": "suplementos",
-                "supplier": "Omnilife Colombia",
-                "warehousePrice": 86240,
-                "productUrl": "https://ejemplo.com/productos/omnilife-f-plus",
-                "images": ["https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"],
-                "type": "fisico"
-            },
-            {
-                "id": 201,
-                "title": "CAMISETA PREMIUM ALGODÓN",
-                "price": 45000,
-                "description": "Camiseta 100% algodón de alta calidad. Disponible en todos los talles.",
-                "category": "ropa",
-                "supplier": "Textiles Colombia",
-                "warehousePrice": 25000,
-                "productUrl": "https://ejemplo.com/productos/camiseta-premium",
-                "images": ["https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"],
-                "type": "fisico"
-            },
-            {
-                "id": 202,
-                "title": "JEAN SLIM FIT",
-                "price": 89000,
-                "description": "Jean de corte slim fit, material elastizado para mayor comodidad.",
-                "category": "ropa",
-                "supplier": "Textiles Colombia",
-                "warehousePrice": 55000,
-                "productUrl": "https://ejemplo.com/productos/jean-slim",
-                "images": ["https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"],
-                "type": "fisico"
-            },
-            {
-                "id": 301,
-                "title": "SMARTPHONE ANDROID 128GB",
-                "price": 650000,
-                "description": "Smartphone Android con 128GB de almacenamiento, cámara triple 48MP.",
-                "category": "tecnologia",
-                "supplier": "TecnoStore",
-                "warehousePrice": 520000,
-                "productUrl": "https://ejemplo.com/productos/smartphone-android",
-                "images": ["https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"],
-                "type": "fisico"
-            },
-            {
-                "id": 302,
-                "title": "AUDÍFONOS INALÁMBRICOS",
-                "price": 120000,
-                "description": "Audífonos Bluetooth con cancelación de ruido y 20h de batería.",
-                "category": "tecnologia",
-                "supplier": "TecnoStore",
-                "warehousePrice": 80000,
-                "productUrl": "https://ejemplo.com/productos/audifonos-inalambricos",
-                "images": ["https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"],
-                "type": "fisico"
-            },
-            {
-                "id": 401,
-                "title": "CURSO MARKETING DIGITAL",
-                "price": 189000,
-                "description": "Curso completo de marketing digital con certificación internacional.",
-                "category": "digital",
-                "supplier": "Academia Digital",
-                "warehousePrice": 75000,
-                "productUrl": "https://ejemplo.com/productos/curso-marketing",
-                "images": ["https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"],
-                "type": "digital"
-            },
-            {
-                "id": 402,
-                "title": "EBOOK NUTRICIÓN AVANZADA",
-                "price": 45000,
-                "description": "Guía completa de nutrición para deportistas. Descarga inmediata.",
-                "category": "digital",
-                "supplier": "Editorial Salud",
-                "warehousePrice": 15000,
-                "productUrl": "https://ejemplo.com/productos/ebook-nutricion",
-                "images": ["https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"],
-                "type": "digital"
-            },
-            {
-                "id": 403,
-                "title": "PLANTILLAS EXCEL EMPRESARIAL",
-                "price": 35000,
-                "description": "Pack de 25 plantillas Excel para gestión empresarial.",
-                "category": "digital",
-                "supplier": "Soluciones Digitales",
-                "warehousePrice": 10000,
-                "productUrl": "https://ejemplo.com/productos/plantillas-excel",
-                "images": ["https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"],
-                "type": "digital"
-            },
-            {
-                "id": 404,
-                "title": "APLICACIÓN PRODUCTIVIDAD",
-                "price": 75000,
-                "description": "Aplicación premium para gestión de tareas y productividad.",
-                "category": "digital",
-                "supplier": "DevApps",
-                "warehousePrice": 25000,
-                "productUrl": "https://ejemplo.com/productos/app-productividad",
-                "images": ["https://drive.google.com/thumbnail?id=1CRCYhdnU2ZC16ze2dPqoCPREq6Sh5VVD&sz=w1000"],
-                "type": "digital"
-            }
-        ];
-
-        // Inicializar datos
-        function initializeData() {
-            allProducts = [...initialProducts];
-            filteredProducts = [...allProducts];
-            displayedProducts = [];
-            
-            updateSearchStatus();
-            loadFirstBatch();
-        }
-
-        // BÚSQUEDA INTELIGENTE - MEJORADA
-        function performSearch(searchTerm) {
-            clearTimeout(searchTimeout);
-            
-            isSearching = true;
-            loadingIndicator.style.display = 'block';
-            performanceWarning.style.display = 'none';
-            
-            searchTimeout = setTimeout(() => {
-                const startTime = performance.now();
-                
-                // Resetear estado
-                currentBatch = 0;
-                displayedProducts = [];
-                productsGrid.innerHTML = '';
-                
-                if (!searchTerm.trim()) {
-                    // Sin término de búsqueda - mostrar todos
-                    filteredProducts = [...allProducts];
-                } else {
-                    // BÚSQUEDA INTELIGENTE
-                    const term = normalizeText(searchTerm);
-                    
-                    filteredProducts = allProducts.filter(product => {
-                        // Normalizar todos los textos del producto
-                        const normalizedTitle = normalizeText(product.title);
-                        const normalizedDescription = normalizeText(product.description);
-                        const normalizedCategory = normalizeText(product.category);
-                        const normalizedSupplier = normalizeText(product.supplier);
-                        
-                        // Buscar en todos los campos con diferentes estrategias
-                        return (
-                            // Búsqueda exacta
-                            normalizedTitle.includes(term) ||
-                            normalizedDescription.includes(term) ||
-                            normalizedCategory.includes(term) ||
-                            normalizedSupplier.includes(term) ||
-                            
-                            // Búsqueda por palabras individuales
-                            searchByWords(term, normalizedTitle) ||
-                            searchByWords(term, normalizedDescription) ||
-                            
-                            // Búsqueda fonética aproximada
-                            phoneticSearch(term, normalizedTitle) ||
-                            phoneticSearch(term, normalizedDescription) ||
-                            
-                            // Búsqueda por similitud
-                            similaritySearch(term, normalizedTitle) ||
-                            similaritySearch(term, normalizedDescription)
-                        );
-                    });
-                    
-                    // Ordenar por relevancia
-                    filteredProducts.sort((a, b) => {
-                        const scoreA = calculateRelevanceScore(term, a);
-                        const scoreB = calculateRelevanceScore(term, b);
-                        return scoreB - scoreA;
-                    });
-                    
-                    // Limitar resultados para no saturar el navegador
-                    if (filteredProducts.length > MAX_DISPLAY_RESULTS) {
-                        filteredProducts = filteredProducts.slice(0, MAX_DISPLAY_RESULTS);
-                        performanceWarning.style.display = 'block';
-                    }
-                }
-                
-                const searchTime = performance.now() - startTime;
-                console.log(`Búsqueda completada en ${searchTime.toFixed(2)}ms - ${filteredProducts.length} resultados`);
-                
-                updateSearchStatus(searchTerm);
-                loadFirstBatch();
-                
-                isSearching = false;
-                loadingIndicator.style.display = 'none';
-                
-            }, SEARCH_DEBOUNCE_TIME);
-        }
-
-        // FUNCIONES DE BÚSQUEDA INTELIGENTE
-
-        // Normalizar texto: eliminar acentos, convertir a minúsculas, eliminar espacios extras
-        function normalizeText(text) {
-            return text
-                .toLowerCase()
-                .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Eliminar acentos
-                .replace(/\s+/g, ' ') // Reemplazar múltiples espacios por uno solo
-                .trim();
-        }
-
-        // Búsqueda por palabras individuales
-        function searchByWords(searchTerm, text) {
-            const searchWords = searchTerm.split(' ').filter(word => word.length > 2);
-            const textWords = text.split(' ');
-            
-            return searchWords.some(searchWord => 
-                textWords.some(textWord => textWord.includes(searchWord))
-            );
-        }
-
-        // Búsqueda fonética aproximada
-        function phoneticSearch(searchTerm, text) {
-            const searchSoundex = soundex(searchTerm);
-            const textSoundex = soundex(text);
-            
-            return textSoundex.includes(searchSoundex) || searchSoundex.includes(textSoundex);
-        }
-
-        // Algoritmo Soundex simplificado para español
-        function soundex(text) {
-            if (!text) return '';
-            
-            let s = text.toUpperCase();
-            
-            // Conservar solo la primera letra
-            let firstLetter = s.charAt(0);
-            
-            // Reemplazar letras por códigos numéricos
-            s = s.substring(1)
-                .replace(/[AEIOUHWY]/g, '0')
-                .replace(/[BFPV]/g, '1')
-                .replace(/[CGJKQSXZ]/g, '2')
-                .replace(/[DT]/g, '3')
-                .replace(/[L]/g, '4')
-                .replace(/[MN]/g, '5')
-                .replace(/[R]/g, '6');
-            
-            // Eliminar duplicados consecutivos
-            s = s.replace(/(\d)\1+/g, '$1');
-            
-            // Eliminar ceros
-            s = s.replace(/0/g, '');
-            
-            // Asegurar longitud de 3 caracteres
-            s = (s + '000').substring(0, 3);
-            
-            return firstLetter + s;
-        }
-
-        // Búsqueda por similitud (Levenshtein simplificada)
-        function similaritySearch(searchTerm, text) {
-            const searchWords = searchTerm.split(' ').filter(word => word.length > 2);
-            const textWords = text.split(' ');
-            
-            return searchWords.some(searchWord => 
-                textWords.some(textWord => {
-                    const distance = levenshteinDistance(searchWord, textWord);
-                    const maxLength = Math.max(searchWord.length, textWord.length);
-                    const similarity = 1 - (distance / maxLength);
-                    return similarity > 0.7; // 70% de similitud
-                })
-            );
-        }
-
-        // Distancia de Levenshtein
-        function levenshteinDistance(a, b) {
-            if (a.length === 0) return b.length;
-            if (b.length === 0) return a.length;
-
-            const matrix = [];
-
-            // Incrementar la primera columna
-            for (let i = 0; i <= b.length; i++) {
-                matrix[i] = [i];
-            }
-
-            // Incrementar la primera fila
-            for (let j = 0; j <= a.length; j++) {
-                matrix[0][j] = j;
-            }
-
-            // Llenar la matriz
-            for (let i = 1; i <= b.length; i++) {
-                for (let j = 1; j <= a.length; j++) {
-                    if (b.charAt(i - 1) === a.charAt(j - 1)) {
-                        matrix[i][j] = matrix[i - 1][j - 1];
-                    } else {
-                        matrix[i][j] = Math.min(
-                            matrix[i - 1][j - 1] + 1, // sustitución
-                            matrix[i][j - 1] + 1,     // inserción
-                            matrix[i - 1][j] + 1      // eliminación
-                        );
-                    }
-                }
-            }
-
-            return matrix[b.length][a.length];
-        }
-
-        // Calcular puntuación de relevancia
-        function calculateRelevanceScore(searchTerm, product) {
-            let score = 0;
-            const normalizedSearch = normalizeText(searchTerm);
-            const normalizedTitle = normalizeText(product.title);
-            const normalizedDescription = normalizeText(product.description);
-            
-            // Puntos por coincidencia exacta en título
-            if (normalizedTitle.includes(normalizedSearch)) {
-                score += 100;
-            }
-            
-            // Puntos por coincidencia exacta en descripción
-            if (normalizedDescription.includes(normalizedSearch)) {
-                score += 50;
-            }
-            
-            // Puntos por coincidencia de palabras en título
-            const searchWords = normalizedSearch.split(' ');
-            const titleWords = normalizedTitle.split(' ');
-            
-            searchWords.forEach(word => {
-                if (word.length > 2) {
-                    if (titleWords.some(titleWord => titleWord.includes(word))) {
-                        score += 30;
-                    }
-                }
-            });
-            
-            // Puntos por similitud fonética
-            if (phoneticSearch(normalizedSearch, normalizedTitle)) {
-                score += 20;
-            }
-            
-            return score;
-        }
-
-        // CARGA POR LOTES (LAZY LOADING)
-        function loadNextBatch() {
-            if (isSearching) return;
-            
-            const startIndex = currentBatch * BATCH_SIZE;
-            const endIndex = startIndex + BATCH_SIZE;
-            const batchProducts = filteredProducts.slice(startIndex, endIndex);
-            
-            if (batchProducts.length === 0) return;
-            
-            renderProductsBatch(batchProducts, startIndex > 0);
-            
-            displayedProducts = displayedProducts.concat(batchProducts);
-            currentBatch++;
-            
-            updateSearchStatus();
-        }
-
-        function loadFirstBatch() {
-            currentBatch = 0;
-            displayedProducts = [];
+        // Cargar productos en la página
+        function loadProducts(productsToLoad) {
             productsGrid.innerHTML = '';
-            loadNextBatch();
-        }
-
-        // RENDERIZADO EFICIENTE
-        function renderProductsBatch(products, append = false) {
-            const fragment = document.createDocumentFragment();
             
-            products.forEach(product => {
-                const productCard = createProductCard(product);
-                fragment.appendChild(productCard);
+            productsToLoad.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <a href="${product.productUrl}" class="product-link" target="_blank">
+                        <div class="product-image-container">
+                            <img src="${product.images[0]}" alt="${product.title}" class="product-image" data-product-id="${product.id}" data-image-index="0">
+                        </div>
+                    </a>
+                    <div class="product-info">
+                        <a href="${product.productUrl}" class="product-link" target="_blank">
+                            <h3 class="product-title">${product.title}</h3>
+                        </a>
+                        <p class="product-price">${formatPrice(product.price)}</p>
+                        <p class="product-description">${product.description}</p>
+                        <div class="product-actions">
+                            <button class="add-to-cart" data-id="${product.id}">
+                                <i class="fas fa-cart-plus"></i> Añadir al Carrito
+                            </button>
+                            <button class="buy-now" data-id="${product.id}">
+                                <i class="fas fa-shopping-bag"></i> Comprar Ahora
+                            </button>
+                        </div>
+                    </div>
+                `;
+                productsGrid.appendChild(productCard);
             });
             
-            if (append) {
-                productsGrid.appendChild(fragment);
-            } else {
-                productsGrid.innerHTML = '';
-                productsGrid.appendChild(fragment);
-            }
-            
-            addProductEventListeners();
-        }
-
-        function createProductCard(product) {
-            const productCard = document.createElement('div');
-            productCard.className = 'product-card';
-            productCard.innerHTML = `
-                <a href="${product.productUrl}" class="product-link" target="_blank">
-                    <div class="product-image-container">
-                        <img src="${product.images[0]}" alt="${product.title}" class="product-image">
-                    </div>
-                </a>
-                <div class="product-info">
-                    <a href="${product.productUrl}" class="product-link" target="_blank">
-                        <h3 class="product-title" id="title-${product.id}">${product.title}</h3>
-                    </a>
-                    <p class="product-price">${formatPrice(product.price)}</p>
-                    <p class="product-description" id="desc-${product.id}">${product.description}</p>
-                    <div class="product-actions">
-                        <button class="add-to-cart" data-id="${product.id}">
-                            <i class="fas fa-cart-plus"></i> Añadir al Carrito
-                        </button>
-                        <button class="buy-now" data-id="${product.id}">
-                            <i class="fas fa-shopping-bag"></i> Comprar Ahora
-                        </button>
-                    </div>
-                </div>
-            `;
-            return productCard;
-        }
-
-        // ACTUALIZAR ESTADO DE BÚSQUEDA
-        function updateSearchStatus(searchTerm = '') {
-            const total = filteredProducts.length;
-            const displayed = displayedProducts.length;
-            
-            if (searchTerm) {
-                if (displayed < total) {
-                    searchStatus.textContent = 
-                        `Mostrando ${displayed} de ${total} productos para "${searchTerm}"`;
-                } else {
-                    searchStatus.textContent = 
-                        `${total} productos encontrados para "${searchTerm}"`;
-                }
-            } else {
-                if (displayed < total) {
-                    searchStatus.textContent = 
-                        `Mostrando ${displayed} de ${total} productos`;
-                } else {
-                    searchStatus.textContent = 
-                        `Mostrando todos los productos (${total})`;
-                }
-            }
-        }
-
-        // SCROLL INFINITO OPTIMIZADO
-        function handleScroll() {
-            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-            
-            if (scrollTop + clientHeight >= scrollHeight - 100) {
-                if (displayedProducts.length < filteredProducts.length) {
-                    loadNextBatch();
-                }
-            }
-        }
-
-        // EVENT LISTENERS OPTIMIZADOS
-        function addProductEventListeners() {
+            // Agregar event listeners a los botones de agregar al carrito
             document.querySelectorAll('.add-to-cart').forEach(button => {
                 button.addEventListener('click', (e) => {
                     const productId = parseInt(e.target.closest('.add-to-cart').getAttribute('data-id'));
@@ -1829,6 +1450,7 @@
                 });
             });
             
+            // Agregar event listeners a los botones de comprar ahora
             document.querySelectorAll('.buy-now').forEach(button => {
                 button.addEventListener('click', (e) => {
                     const productId = parseInt(e.target.closest('.buy-now').getAttribute('data-id'));
@@ -1837,281 +1459,14 @@
             });
         }
 
-        // INICIALIZACIÓN
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeData();
-            
-            // Event listeners
-            searchInput.addEventListener('input', (e) => {
-                performSearch(e.target.value.trim());
-            });
-            
-            window.addEventListener('scroll', handleScroll);
-            
-            // Filtros por categoría - Solo "Todo"
-            categoryBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    categoryBtns.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Solo tenemos la categoría "todo"
-                    filteredProducts = [...allProducts];
-                    loadFirstBatch();
-                    updateSearchStatus();
-                });
-            });
-
-            // Carrito y modales
-            setupExistingEventListeners();
-        });
-
-        // FUNCIONES EXISTENTES DE CARRITO
-        function setupExistingEventListeners() {
-            // Botones para cerrar modales
-            closeCart.addEventListener('click', () => {
-                cartModal.style.display = 'none';
-            });
-
-            closeDirectPurchase.addEventListener('click', () => {
-                directPurchaseModal.style.display = 'none';
-            });
-
-            continueShopping.addEventListener('click', () => {
-                cartModal.style.display = 'none';
-            });
-
-            cancelDirectPurchase.addEventListener('click', () => {
-                directPurchaseModal.style.display = 'none';
-            });
-
-            // Validar formulario cuando cambian los campos
-            customerName.addEventListener('input', validateCheckoutButton);
-            customerPhone.addEventListener('input', validateCheckoutButton);
-            customerAddress.addEventListener('input', validateCheckoutButton);
-            customerCity.addEventListener('input', validateCheckoutButton);
-
-            // Validar formulario de compra directa cuando cambian los campos
-            directCustomerName.addEventListener('input', validateDirectCheckoutButton);
-            directCustomerPhone.addEventListener('input', validateDirectCheckoutButton);
-            directCustomerAddress.addEventListener('input', validateDirectCheckoutButton);
-            directCustomerCity.addEventListener('input', validateDirectCheckoutButton);
-
-            // Acceso de administrador
-            adminAccessBtn.addEventListener('click', () => {
-                if (adminKeyInput.value === ADMIN_KEY) {
-                    loadSupplierTable();
-                    showNotification('Acceso concedido. Tabla de proveedores cargada.');
-                } else {
-                    showNotification('Clave incorrecta. Intenta nuevamente.');
-                }
-            });
-
-            // Cerrar modal al hacer clic fuera de él
-            window.addEventListener('click', (e) => {
-                if (e.target === cartModal) {
-                    cartModal.style.display = 'none';
-                }
-                if (e.target === directPurchaseModal) {
-                    directPurchaseModal.style.display = 'none';
-                }
-            });
-
-            // Event listeners para opciones de pago
-            document.querySelectorAll('.payment-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    // Remover selección de todas las opciones
-                    document.querySelectorAll('.payment-option').forEach(opt => {
-                        opt.classList.remove('selected');
-                    });
-                    
-                    // Agregar selección a la opción clickeada
-                    this.classList.add('selected');
-                    
-                    // Actualizar el radio button
-                    const radio = this.querySelector('.payment-radio');
-                    radio.checked = true;
-                    
-                    // Actualizar el método de pago seleccionado
-                    selectedPayment = this.getAttribute('data-payment');
-                });
-            });
-
-            // Event listeners para opciones de envío
-            document.querySelectorAll('.shipping-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    // Remover selección de todas las opciones
-                    document.querySelectorAll('.shipping-option').forEach(opt => {
-                        opt.classList.remove('selected');
-                    });
-                    
-                    // Agregar selección a la opción clickeada
-                    this.classList.add('selected');
-                    
-                    // Actualizar el radio button
-                    const radio = this.querySelector('.shipping-radio');
-                    radio.checked = true;
-                    
-                    // Actualizar el costo de envío seleccionado
-                    selectedShipping = parseInt(this.getAttribute('data-shipping'));
-                    updateCart();
-                });
-            });
-
-            // Event listeners para botones de WhatsApp
-            whatsappBtn.addEventListener('click', sendCartOrderToWhatsApp);
-            directWhatsappBtn.addEventListener('click', sendDirectOrderToWhatsApp);
-        }
-
-        // FUNCIONES PARA ENVIAR PEDIDOS POR WHATSAPP
-        function sendCartOrderToWhatsApp() {
-            if (cart.length === 0) {
-                showNotification('El carrito está vacío');
-                return;
-            }
-
-            const name = customerName.value.trim();
-            const phone = customerPhone.value.trim();
-            const address = customerAddress.value.trim();
-            const city = customerCity.value.trim();
-
-            if (!name || !phone) {
-                showNotification('Por favor completa los campos obligatorios');
-                return;
-            }
-
-            // Construir mensaje
-            let message = `¡Hola! Quiero realizar un pedido:\n\n`;
-            message += `*Información del cliente:*\n`;
-            message += `📋 Nombre: ${name}\n`;
-            message += `📞 Teléfono: ${phone}\n`;
-            
-            if (address && city) {
-                message += `📍 Dirección: ${address}, ${city}\n`;
-            }
-            
-            message += `\n*Método de pago:* ${selectedPayment === 'contraentrega' ? 'Contraentrega' : 'Anticipado'}\n`;
-            
-            if (selectedShipping > 0) {
-                message += `🚚 Envío: ${formatPrice(selectedShipping)}\n`;
-            } else {
-                message += `🚚 Envío: Gratis\n`;
-            }
-            
-            message += `\n*Productos:*\n`;
-            
-            let subtotal = 0;
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                subtotal += itemTotal;
-                message += `• ${item.title} x${item.quantity} - ${formatPrice(itemTotal)}\n`;
-            });
-            
-            const total = subtotal + selectedShipping;
-            message += `\n*Subtotal:* ${formatPrice(subtotal)}\n`;
-            message += `*Total:* ${formatPrice(total)}\n\n`;
-            message += `¡Gracias!`;
-
-            // Codificar mensaje para URL
-            const encodedMessage = encodeURIComponent(message);
-            
-            // Crear enlace de WhatsApp
-            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
-            
-            // Abrir en nueva pestaña
-            window.open(whatsappUrl, '_blank');
-            
-            // Mostrar confirmación
-            showNotification('Redirigiendo a WhatsApp...');
-            
-            // Cerrar modal
-            cartModal.style.display = 'none';
-        }
-
-        function sendDirectOrderToWhatsApp() {
-            if (!currentDirectProduct) {
-                showNotification('No hay producto seleccionado');
-                return;
-            }
-
-            const name = directCustomerName.value.trim();
-            const phone = directCustomerPhone.value.trim();
-            const address = directCustomerAddress.value.trim();
-            const city = directCustomerCity.value.trim();
-
-            if (!name || !phone) {
-                showNotification('Por favor completa los campos obligatorios');
-                return;
-            }
-
-            // Construir mensaje
-            let message = `¡Hola! Quiero comprar este producto:\n\n`;
-            message += `*Producto:* ${currentDirectProduct.title}\n`;
-            message += `*Precio:* ${formatPrice(currentDirectProduct.price)}\n`;
-            message += `*Descripción:* ${currentDirectProduct.description}\n\n`;
-            
-            message += `*Información del cliente:*\n`;
-            message += `📋 Nombre: ${name}\n`;
-            message += `📞 Teléfono: ${phone}\n`;
-            
-            if (address && city) {
-                message += `📍 Dirección: ${address}, ${city}\n`;
-            }
-            
-            message += `\n*Método de pago:* ${selectedPayment === 'contraentrega' ? 'Contraentrega' : 'Anticipado'}\n`;
-            
-            if (currentDirectProduct.type === 'fisico') {
-                message += `🚚 Envío: Gratis\n`;
-            }
-            
-            const total = currentDirectProduct.price + (currentDirectProduct.type === 'fisico' ? selectedShipping : 0);
-            message += `\n*Total a pagar:* ${formatPrice(total)}\n\n`;
-            message += `¡Gracias!`;
-
-            // Codificar mensaje para URL
-            const encodedMessage = encodeURIComponent(message);
-            
-            // Crear enlace de WhatsApp
-            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
-            
-            // Abrir en nueva pestaña
-            window.open(whatsappUrl, '_blank');
-            
-            // Mostrar confirmación
-            showNotification('Redirigiendo a WhatsApp...');
-            
-            // Cerrar modal
-            directPurchaseModal.style.display = 'none';
-        }
-
-        function addToCart(productId) {
-            const product = allProducts.find(p => p.id === productId);
-            if (product) {
-                const existingItem = cart.find(item => item.id === productId);
-                
-                if (existingItem) {
-                    existingItem.quantity += 1;
-                } else {
-                    cart.push({
-                        id: product.id,
-                        title: product.title,
-                        price: product.price,
-                        quantity: 1,
-                        image: product.images[0],
-                        type: product.type
-                    });
-                }
-                
-                updateCart();
-                showNotification(`${product.title} agregado al carrito`);
-            }
-        }
-
+        // Abrir modal para compra directa
         function openDirectPurchase(productId) {
-            const product = allProducts.find(p => p.id === productId);
+            const product = products.find(p => p.id === productId);
             if (!product) return;
             
             currentDirectProduct = product;
             
+            // Mostrar información del producto en el modal
             directPurchaseProduct.innerHTML = `
                 <img src="${product.images[0]}" alt="${product.title}">
                 <div class="direct-purchase-info">
@@ -2120,27 +1475,86 @@
                 </div>
             `;
             
-            if (product.type === 'fisico') {
-                directShippingOptions.style.display = 'block';
-                directShippingAddressFields.style.display = 'block';
-                directCustomerAddress.required = true;
-                directCustomerCity.required = true;
-            } else {
-                directShippingOptions.style.display = 'none';
-                directShippingAddressFields.style.display = 'none';
-                directCustomerAddress.required = false;
-                directCustomerCity.required = false;
-            }
-            
+            // Limpiar formulario
             directCustomerName.value = '';
             directCustomerPhone.value = '';
             directCustomerAddress.value = '';
             directCustomerCity.value = '';
             directWhatsappBtn.disabled = true;
             
+            // Resetear opción de envío
+            document.getElementById('direct-shipping-priority').checked = true;
+            selectedShipping = 0;
+            updateShippingOptions();
+            
+            // Resetear opción de pago
+            document.getElementById('direct-payment-contraentrega').checked = true;
+            selectedPayment = "contraentrega";
+            updatePaymentOptions();
+            
+            // Mostrar modal
             directPurchaseModal.style.display = 'flex';
         }
 
+        // Filtrar productos
+        function filterProducts() {
+            const searchText = searchInput.value.toLowerCase();
+            const activeCategory = document.querySelector('.category-btn.active').getAttribute('data-category');
+            
+            const filteredProducts = products.filter(product => {
+                const matchesSearch = product.title.toLowerCase().includes(searchText) || 
+                                     product.description.toLowerCase().includes(searchText);
+                const matchesCategory = activeCategory === 'all' || product.category === activeCategory;
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            loadProducts(filteredProducts);
+        }
+
+        // Agregar producto al carrito
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    title: product.title,
+                    price: product.price,
+                    quantity: 1,
+                    image: product.images[0]
+                });
+            }
+            
+            updateCart();
+            showNotification(`${product.title} agregado al carrito`);
+        }
+
+        // Eliminar producto del carrito
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCart();
+        }
+
+        // Actualizar cantidad de producto en el carrito
+        function updateQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            
+            if (item) {
+                item.quantity += change;
+                
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    updateCart();
+                }
+            }
+        }
+
+        // Actualizar visualización del carrito
         function updateCart() {
             cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
             
@@ -2172,30 +1586,86 @@
             
             const total = subtotal + selectedShipping;
             cartTotal.textContent = formatPrice(total);
+            
+            // Agregar event listeners a los botones de cantidad y eliminar
+            document.querySelectorAll('.quantity-btn.minus').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.target.closest('.quantity-btn').getAttribute('data-id'));
+                    updateQuantity(id, -1);
+                });
+            });
+            
+            document.querySelectorAll('.quantity-btn.plus').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.target.closest('.quantity-btn').getAttribute('data-id'));
+                    updateQuantity(id, 1);
+                });
+            });
+            
+            document.querySelectorAll('.remove-item').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.target.closest('.remove-item').getAttribute('data-id'));
+                    removeFromCart(id);
+                });
+            });
+            
+            // Habilitar o deshabilitar el botón de WhatsApp según si hay productos y datos completos
+            validateCheckoutButton();
         }
 
+        // Actualizar opciones de envío visualmente
+        function updateShippingOptions() {
+            // Para el modal del carrito
+            document.querySelectorAll('.shipping-option').forEach(option => {
+                option.classList.remove('selected');
+                const radio = option.querySelector('.shipping-radio');
+                if (radio.checked) {
+                    option.classList.add('selected');
+                    selectedShipping = parseInt(option.getAttribute('data-shipping'));
+                }
+            });
+            
+            // Actualizar total
+            updateCart();
+        }
+
+        // Actualizar opciones de pago visualmente
+        function updatePaymentOptions() {
+            // Para el modal del carrito
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+                const radio = option.querySelector('.payment-radio');
+                if (radio.checked) {
+                    option.classList.add('selected');
+                    selectedPayment = option.getAttribute('data-payment');
+                }
+            });
+        }
+
+        // Validar si se puede habilitar los botones de checkout
         function validateCheckoutButton() {
             const hasItems = cart.length > 0;
             const hasName = customerName.value.trim() !== '';
             const hasPhone = customerPhone.value.trim() !== '';
+            const hasAddress = customerAddress.value.trim() !== '';
+            const hasCity = customerCity.value.trim() !== '';
             
-            const hasPhysical = cart.some(item => item.type === 'fisico');
-            const hasAddress = !hasPhysical || (customerAddress.value.trim() !== '' && customerCity.value.trim() !== '');
-            
-            whatsappBtn.disabled = !(hasItems && hasName && hasPhone && hasAddress);
+            whatsappBtn.disabled = !(hasItems && hasName && hasPhone && hasAddress && hasCity);
         }
 
+        // Validar si se puede habilitar los botones de checkout para compra directa
         function validateDirectCheckoutButton() {
             const hasName = directCustomerName.value.trim() !== '';
             const hasPhone = directCustomerPhone.value.trim() !== '';
+            const hasAddress = directCustomerAddress.value.trim() !== '';
+            const hasCity = directCustomerCity.value.trim() !== '';
             
-            const isPhysical = currentDirectProduct && currentDirectProduct.type === 'fisico';
-            const hasAddress = !isPhysical || (directCustomerAddress.value.trim() !== '' && directCustomerCity.value.trim() !== '');
-            
-            directWhatsappBtn.disabled = !(hasName && hasPhone && hasAddress);
+            directWhatsappBtn.disabled = !(hasName && hasPhone && hasAddress && hasCity);
         }
 
+        // Mostrar notificación
         function showNotification(message) {
+            // Eliminar notificación existente si hay una
             const existingNotification = document.querySelector('.notification');
             if (existingNotification) {
                 existingNotification.remove();
@@ -2215,17 +1685,83 @@
             }, 3000);
         }
 
+        // Generar mensaje de WhatsApp para el carrito
+        function generateWhatsAppMessage() {
+            let message = "¡Hola! Quiero realizar la siguiente compra:\n\n";
+            
+            cart.forEach(item => {
+                message += `- ${item.title} x${item.quantity}: ${formatPrice(item.price * item.quantity)}\n`;
+            });
+            
+            // Añadir costo de envío
+            if (selectedShipping > 0) {
+                message += `- Envío: ${formatPrice(selectedShipping)}\n`;
+            } else {
+                message += `- Envío: Gratis\n`;
+            }
+            
+            const total = cart.reduce((total, item) => total + (item.price * item.quantity), 0) + selectedShipping;
+            message += `\nTotal: ${formatPrice(total)}`;
+            
+            // Añadir método de pago
+            if (selectedPayment === "contraentrega") {
+                message += `\n\nMétodo de pago: Pago Contraentrega`;
+            } else {
+                message += `\n\nMétodo de pago: Pago Anticipado (Tarjetas, PSE, Bancolombia, Nequi, cuotas sin intereses, Lightning Network)`;
+            }
+            
+            message += `\n\nMi información de envío es:\n`;
+            message += `Nombre: ${customerName.value}\n`;
+            message += `Teléfono: ${customerPhone.value}\n`;
+            message += `Dirección: ${customerAddress.value}\n`;
+            message += `Ciudad: ${customerCity.value}`;
+            
+            return encodeURIComponent(message);
+        }
+
+        // Generar mensaje de WhatsApp para compra directa
+        function generateDirectWhatsAppMessage() {
+            let message = "¡Hola! Quiero comprar el siguiente producto:\n\n";
+            
+            message += `- ${currentDirectProduct.title}: ${formatPrice(currentDirectProduct.price)}\n`;
+            
+            // Añadir costo de envío
+            if (selectedShipping > 0) {
+                message += `- Envío: ${formatPrice(selectedShipping)}\n`;
+            } else {
+                message += `- Envío: Gratis\n`;
+            }
+            
+            const total = currentDirectProduct.price + selectedShipping;
+            message += `\nTotal: ${formatPrice(total)}`;
+            
+            // Añadir método de pago
+            if (selectedPayment === "contraentrega") {
+                message += `\n\nMétodo de pago: Pago Contraentrega`;
+            } else {
+                message += `\n\nMétodo de pago: Pago Anticipado (Tarjetas, PSE, Bancolombia, Nequi, cuotas sin intereses, Lightning Network)`;
+            }
+            
+            message += `\n\nMi información de envío es:\n`;
+            message += `Nombre: ${directCustomerName.value}\n`;
+            message += `Teléfono: ${directCustomerPhone.value}\n`;
+            message += `Dirección: ${directCustomerAddress.value}\n`;
+            message += `Ciudad: ${directCustomerCity.value}`;
+            
+            return encodeURIComponent(message);
+        }
+
+        // Cargar tabla de precios de proveedor
         function loadSupplierTable() {
             supplierTableBody.innerHTML = '';
             
-            allProducts.forEach(product => {
+            products.forEach(product => {
                 const margin = ((product.price - product.warehousePrice) / product.warehousePrice * 100).toFixed(2);
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${product.id}</td>
                     <td>${product.title}</td>
                     <td>${product.category}</td>
-                    <td>${product.type}</td>
                     <td>${formatPrice(product.warehousePrice)}</td>
                     <td>${formatPrice(product.price)}</td>
                     <td>${product.supplier}</td>
@@ -2236,6 +1772,117 @@
             
             supplierTableContainer.style.display = 'block';
         }
+
+        // Event Listeners
+        cartIcon.addEventListener('click', () => {
+            cartModal.style.display = 'flex';
+        });
+
+        closeCart.addEventListener('click', () => {
+            cartModal.style.display = 'none';
+        });
+
+        continueShopping.addEventListener('click', () => {
+            cartModal.style.display = 'none';
+        });
+
+        whatsappBtn.addEventListener('click', () => {
+            if (cart.length === 0) {
+                showNotification('El carrito está vacío');
+                return;
+            }
+            
+            const message = generateWhatsAppMessage();
+            window.open(`https://wa.me/573215343562?text=${message}`, '_blank');
+        });
+
+        // Event Listeners para compra directa
+        closeDirectPurchase.addEventListener('click', () => {
+            directPurchaseModal.style.display = 'none';
+        });
+
+        cancelDirectPurchase.addEventListener('click', () => {
+            directPurchaseModal.style.display = 'none';
+        });
+
+        directWhatsappBtn.addEventListener('click', () => {
+            if (!currentDirectProduct) {
+                showNotification('No hay producto seleccionado');
+                return;
+            }
+            
+            const message = generateDirectWhatsAppMessage();
+            window.open(`https://wa.me/573215343562?text=${message}`, '_blank');
+        });
+
+        searchInput.addEventListener('input', filterProducts);
+
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                filterProducts();
+            });
+        });
+
+        // Event listeners para opciones de envío
+        document.querySelectorAll('.shipping-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                const radio = option.querySelector('.shipping-radio');
+                radio.checked = true;
+                updateShippingOptions();
+            });
+        });
+
+        // Event listeners para opciones de pago
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                const radio = option.querySelector('.payment-radio');
+                radio.checked = true;
+                updatePaymentOptions();
+            });
+        });
+
+        // Validar formulario cuando cambian los campos
+        customerName.addEventListener('input', validateCheckoutButton);
+        customerPhone.addEventListener('input', validateCheckoutButton);
+        customerAddress.addEventListener('input', validateCheckoutButton);
+        customerCity.addEventListener('input', validateCheckoutButton);
+
+        // Validar formulario de compra directa cuando cambian los campos
+        directCustomerName.addEventListener('input', validateDirectCheckoutButton);
+        directCustomerPhone.addEventListener('input', validateDirectCheckoutButton);
+        directCustomerAddress.addEventListener('input', validateDirectCheckoutButton);
+        directCustomerCity.addEventListener('input', validateDirectCheckoutButton);
+
+        // Acceso de administrador
+        adminAccessBtn.addEventListener('click', () => {
+            if (adminKeyInput.value === ADMIN_KEY) {
+                loadSupplierTable();
+                showNotification('Acceso concedido. Tabla de proveedores cargada.');
+            } else {
+                showNotification('Clave incorrecta. Intenta nuevamente.');
+            }
+        });
+
+        adminKeyInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                adminAccessBtn.click();
+            }
+        });
+
+        // Cerrar modal al hacer clic fuera de él
+        window.addEventListener('click', (e) => {
+            if (e.target === cartModal) {
+                cartModal.style.display = 'none';
+            }
+            if (e.target === directPurchaseModal) {
+                directPurchaseModal.style.display = 'none';
+            }
+        });
+
+        // Inicializar la página
+        loadProducts(products);
     </script>
 </body>
 </html>
