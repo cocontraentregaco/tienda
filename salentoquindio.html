@@ -126,15 +126,24 @@
         .search-box {
             flex-grow: 1;
             max-width: 500px;
+            position: relative;
         }
         
         .search-box input {
             width: 100%;
-            padding: 0.8rem;
+            padding: 0.8rem 3rem 0.8rem 1rem;
             border: 1px solid var(--color-gris-medio);
             border-radius: 4px;
             font-family: 'Libre Baskerville', serif;
             font-size: 16px;
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-gris-oscuro);
         }
         
         .category-filter {
@@ -1017,6 +1026,9 @@
         <div class="filters">
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="Buscar entre millones de productos...">
+                <div class="search-icon">
+                    <i class="fas fa-search"></i>
+                </div>
             </div>
             <div class="category-filter">
                 <button class="category-btn active" data-category="todo">Todo</button>
@@ -1476,7 +1488,7 @@
             loadFirstBatch();
         }
 
-        // BÚSQUEDA OPTIMIZADA
+        // BÚSQUEDA INTELIGENTE - MEJORADA
         function performSearch(searchTerm) {
             clearTimeout(searchTimeout);
             
@@ -1496,13 +1508,43 @@
                     // Sin término de búsqueda - mostrar todos
                     filteredProducts = [...allProducts];
                 } else {
-                    // BÚSQUEDA OPTIMIZADA
-                    const term = searchTerm.toLowerCase();
+                    // BÚSQUEDA INTELIGENTE
+                    const term = normalizeText(searchTerm);
+                    
                     filteredProducts = allProducts.filter(product => {
-                        return product.title.toLowerCase().includes(term) ||
-                               product.description.toLowerCase().includes(term) ||
-                               product.category.toLowerCase().includes(term) ||
-                               product.supplier.toLowerCase().includes(term);
+                        // Normalizar todos los textos del producto
+                        const normalizedTitle = normalizeText(product.title);
+                        const normalizedDescription = normalizeText(product.description);
+                        const normalizedCategory = normalizeText(product.category);
+                        const normalizedSupplier = normalizeText(product.supplier);
+                        
+                        // Buscar en todos los campos con diferentes estrategias
+                        return (
+                            // Búsqueda exacta
+                            normalizedTitle.includes(term) ||
+                            normalizedDescription.includes(term) ||
+                            normalizedCategory.includes(term) ||
+                            normalizedSupplier.includes(term) ||
+                            
+                            // Búsqueda por palabras individuales
+                            searchByWords(term, normalizedTitle) ||
+                            searchByWords(term, normalizedDescription) ||
+                            
+                            // Búsqueda fonética aproximada
+                            phoneticSearch(term, normalizedTitle) ||
+                            phoneticSearch(term, normalizedDescription) ||
+                            
+                            // Búsqueda por similitud
+                            similaritySearch(term, normalizedTitle) ||
+                            similaritySearch(term, normalizedDescription)
+                        );
+                    });
+                    
+                    // Ordenar por relevancia
+                    filteredProducts.sort((a, b) => {
+                        const scoreA = calculateRelevanceScore(term, a);
+                        const scoreB = calculateRelevanceScore(term, b);
+                        return scoreB - scoreA;
                     });
                     
                     // Limitar resultados para no saturar el navegador
@@ -1522,6 +1564,153 @@
                 loadingIndicator.style.display = 'none';
                 
             }, SEARCH_DEBOUNCE_TIME);
+        }
+
+        // FUNCIONES DE BÚSQUEDA INTELIGENTE
+
+        // Normalizar texto: eliminar acentos, convertir a minúsculas, eliminar espacios extras
+        function normalizeText(text) {
+            return text
+                .toLowerCase()
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Eliminar acentos
+                .replace(/\s+/g, ' ') // Reemplazar múltiples espacios por uno solo
+                .trim();
+        }
+
+        // Búsqueda por palabras individuales
+        function searchByWords(searchTerm, text) {
+            const searchWords = searchTerm.split(' ').filter(word => word.length > 2);
+            const textWords = text.split(' ');
+            
+            return searchWords.some(searchWord => 
+                textWords.some(textWord => textWord.includes(searchWord))
+            );
+        }
+
+        // Búsqueda fonética aproximada
+        function phoneticSearch(searchTerm, text) {
+            const searchSoundex = soundex(searchTerm);
+            const textSoundex = soundex(text);
+            
+            return textSoundex.includes(searchSoundex) || searchSoundex.includes(textSoundex);
+        }
+
+        // Algoritmo Soundex simplificado para español
+        function soundex(text) {
+            if (!text) return '';
+            
+            let s = text.toUpperCase();
+            
+            // Conservar solo la primera letra
+            let firstLetter = s.charAt(0);
+            
+            // Reemplazar letras por códigos numéricos
+            s = s.substring(1)
+                .replace(/[AEIOUHWY]/g, '0')
+                .replace(/[BFPV]/g, '1')
+                .replace(/[CGJKQSXZ]/g, '2')
+                .replace(/[DT]/g, '3')
+                .replace(/[L]/g, '4')
+                .replace(/[MN]/g, '5')
+                .replace(/[R]/g, '6');
+            
+            // Eliminar duplicados consecutivos
+            s = s.replace(/(\d)\1+/g, '$1');
+            
+            // Eliminar ceros
+            s = s.replace(/0/g, '');
+            
+            // Asegurar longitud de 3 caracteres
+            s = (s + '000').substring(0, 3);
+            
+            return firstLetter + s;
+        }
+
+        // Búsqueda por similitud (Levenshtein simplificada)
+        function similaritySearch(searchTerm, text) {
+            const searchWords = searchTerm.split(' ').filter(word => word.length > 2);
+            const textWords = text.split(' ');
+            
+            return searchWords.some(searchWord => 
+                textWords.some(textWord => {
+                    const distance = levenshteinDistance(searchWord, textWord);
+                    const maxLength = Math.max(searchWord.length, textWord.length);
+                    const similarity = 1 - (distance / maxLength);
+                    return similarity > 0.7; // 70% de similitud
+                })
+            );
+        }
+
+        // Distancia de Levenshtein
+        function levenshteinDistance(a, b) {
+            if (a.length === 0) return b.length;
+            if (b.length === 0) return a.length;
+
+            const matrix = [];
+
+            // Incrementar la primera columna
+            for (let i = 0; i <= b.length; i++) {
+                matrix[i] = [i];
+            }
+
+            // Incrementar la primera fila
+            for (let j = 0; j <= a.length; j++) {
+                matrix[0][j] = j;
+            }
+
+            // Llenar la matriz
+            for (let i = 1; i <= b.length; i++) {
+                for (let j = 1; j <= a.length; j++) {
+                    if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                        matrix[i][j] = matrix[i - 1][j - 1];
+                    } else {
+                        matrix[i][j] = Math.min(
+                            matrix[i - 1][j - 1] + 1, // sustitución
+                            matrix[i][j - 1] + 1,     // inserción
+                            matrix[i - 1][j] + 1      // eliminación
+                        );
+                    }
+                }
+            }
+
+            return matrix[b.length][a.length];
+        }
+
+        // Calcular puntuación de relevancia
+        function calculateRelevanceScore(searchTerm, product) {
+            let score = 0;
+            const normalizedSearch = normalizeText(searchTerm);
+            const normalizedTitle = normalizeText(product.title);
+            const normalizedDescription = normalizeText(product.description);
+            
+            // Puntos por coincidencia exacta en título
+            if (normalizedTitle.includes(normalizedSearch)) {
+                score += 100;
+            }
+            
+            // Puntos por coincidencia exacta en descripción
+            if (normalizedDescription.includes(normalizedSearch)) {
+                score += 50;
+            }
+            
+            // Puntos por coincidencia de palabras en título
+            const searchWords = normalizedSearch.split(' ');
+            const titleWords = normalizedTitle.split(' ');
+            
+            searchWords.forEach(word => {
+                if (word.length > 2) {
+                    if (titleWords.some(titleWord => titleWord.includes(word))) {
+                        score += 30;
+                    }
+                }
+            });
+            
+            // Puntos por similitud fonética
+            if (phoneticSearch(normalizedSearch, normalizedTitle)) {
+                score += 20;
+            }
+            
+            return score;
         }
 
         // CARGA POR LOTES (LAZY LOADING)
