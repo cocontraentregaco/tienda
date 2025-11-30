@@ -16,6 +16,7 @@
             --color-verde: #25D366;
             --color-azul: #007bff;
             --color-rojo: #dc3545;
+            --color-naranja: #ff6b00;
         }
         
         * {
@@ -215,10 +216,16 @@
             transition: opacity 0.3s;
         }
         
-        .product-type-badge {
+        .product-badges {
             position: absolute;
             top: 10px;
             right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .product-type-badge {
             padding: 4px 8px;
             border-radius: 4px;
             font-size: 0.7rem;
@@ -234,6 +241,16 @@
         .product-type-digital {
             background-color: var(--color-verde);
             color: white;
+        }
+        
+        .product-category-badge {
+            background-color: var(--color-naranja);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
         }
         
         .product-info {
@@ -1028,7 +1045,9 @@
             </div>
             <div class="category-filter">
                 <button class="category-btn active" data-category="todo">Todo</button>
-                <button class="category-btn" data-category="fisico">Físico</button>
+                <button class="category-btn" data-category="suplementos">Suplementos</button>
+                <button class="category-btn" data-category="ropa">Ropa</button>
+                <button class="category-btn" data-category="tecnologia">Tecnología</button>
                 <button class="category-btn" data-category="digital">Digital</button>
             </div>
         </div>
@@ -1351,13 +1370,13 @@
         const supplierTableContainer = document.getElementById('supplierTableContainer');
         const supplierTableBody = document.getElementById('supplierTableBody');
 
-        // BASE DE DATOS DE PRODUCTOS - 10 PRODUCTOS DE EJEMPLO
+        // BASE DE DATOS DE PRODUCTOS - 10 PRODUCTOS CON DIFERENTES CATEGORÍAS
         const initialProducts = [
             {
                 "id": 142,
                 "title": "EGO PLANT BOTELLA 200 ML",
                 "price": 12800,
-                "description": "Opción de pago a 6 cuotas de 2.133 con 0% interés.",
+                "description": "Suplemento natural para el cuidado de la piel. Opción de pago a 6 cuotas de 2.133 con 0% interés.",
                 "category": "suplementos",
                 "supplier": "Omnilife Colombia",
                 "warehousePrice": 8192,
@@ -1369,7 +1388,7 @@
                 "id": 143,
                 "title": "OMNILIFE F PLUS",
                 "price": 134750,
-                "description": "Opción de pago a 6 cuotas de 22.458 con 0% interés.",
+                "description": "Suplemento nutricional completo. Opción de pago a 6 cuotas de 22.458 con 0% interés.",
                 "category": "suplementos",
                 "supplier": "Omnilife Colombia",
                 "warehousePrice": 86240,
@@ -1378,100 +1397,100 @@
                 "type": "fisico"
             },
             {
-                "id": 144,
-                "title": "FIBER'N PLUS SUPREME SACHET 450 G",
-                "price": 159550,
-                "description": "Opción de pago a 6 cuotas de 26.592 con 0% interés.",
-                "category": "suplementos",
-                "supplier": "Omnilife Colombia",
-                "warehousePrice": 102112,
-                "productUrl": "https://ejemplo.com/productos/fiber-n-plus-supreme",
-                "images": ["https://via.placeholder.com/300x200?text=FIBER+PLUS"],
+                "id": 201,
+                "title": "CAMISETA PREMIUM ALGODÓN",
+                "price": 45000,
+                "description": "Camiseta 100% algodón de alta calidad. Disponible en todos los talles.",
+                "category": "ropa",
+                "supplier": "Textiles Colombia",
+                "warehousePrice": 25000,
+                "productUrl": "https://ejemplo.com/productos/camiseta-premium",
+                "images": ["https://via.placeholder.com/300x200?text=CAMISETA"],
                 "type": "fisico"
             },
             {
-                "id": 145,
-                "title": "ESTOP PLUS CAJA 30 SACHETS 450G",
-                "price": 251500,
-                "description": "Opción de pago a 6 cuotas de 41.917 con 0% interés.",
-                "category": "suplementos",
-                "supplier": "Omnilife Colombia",
-                "warehousePrice": 160960,
-                "productUrl": "https://ejemplo.com/productos/estop-plus",
-                "images": ["https://via.placeholder.com/300x200?text=ESTOP+PLUS"],
+                "id": 202,
+                "title": "JEAN SLIM FIT",
+                "price": 89000,
+                "description": "Jean de corte slim fit, material elastizado para mayor comodidad.",
+                "category": "ropa",
+                "supplier": "Textiles Colombia",
+                "warehousePrice": 55000,
+                "productUrl": "https://ejemplo.com/productos/jean-slim",
+                "images": ["https://via.placeholder.com/300x200?text=JEAN"],
                 "type": "fisico"
             },
             {
-                "id": 146,
-                "title": "HOMO PLUS CAJA 30 SACHETS 195 G",
-                "price": 134750,
-                "description": "Opción de pago a 6 cuotas de 22.458 con 0% interés.",
-                "category": "suplementos",
-                "supplier": "Omnilife Colombia",
-                "warehousePrice": 86240,
-                "productUrl": "https://ejemplo.com/productos/homo-plus",
-                "images": ["https://via.placeholder.com/300x200?text=HOMO+PLUS"],
+                "id": 301,
+                "title": "SMARTPHONE ANDROID 128GB",
+                "price": 650000,
+                "description": "Smartphone Android con 128GB de almacenamiento, cámara triple 48MP.",
+                "category": "tecnologia",
+                "supplier": "TecnoStore",
+                "warehousePrice": 520000,
+                "productUrl": "https://ejemplo.com/productos/smartphone-android",
+                "images": ["https://via.placeholder.com/300x200?text=SMARTPHONE"],
                 "type": "fisico"
             },
             {
-                "id": 147,
-                "title": "OMNILIFE KOLINA BOTELLA 200 ML",
-                "price": 12800,
-                "description": "Opción de pago a 6 cuotas de 2.133 con 0% interés.",
-                "category": "suplementos",
-                "supplier": "Omnilife Colombia",
-                "warehousePrice": 8192,
-                "productUrl": "https://ejemplo.com/productos/omnilife-kolina",
-                "images": ["https://via.placeholder.com/300x200?text=KOLINA"],
+                "id": 302,
+                "title": "AUDÍFONOS INALÁMBRICOS",
+                "price": 120000,
+                "description": "Audífonos Bluetooth con cancelación de ruido y 20h de batería.",
+                "category": "tecnologia",
+                "supplier": "TecnoStore",
+                "warehousePrice": 80000,
+                "productUrl": "https://ejemplo.com/productos/audifonos-inalambricos",
+                "images": ["https://via.placeholder.com/300x200?text=AUDIFONOS"],
                 "type": "fisico"
             },
             {
-                "id": 148,
-                "title": "BIOCROS SUPREME CAJA 30 SOBRES 240G",
-                "price": 120050,
-                "description": "Opción de pago a 6 cuotas de 20.008 con 0% interés.",
-                "category": "suplementos",
-                "supplier": "Omnilife Colombia",
-                "warehousePrice": 76832,
-                "productUrl": "https://ejemplo.com/productos/biocros-supreme",
-                "images": ["https://via.placeholder.com/300x200?text=BIOCROS"],
-                "type": "fisico"
+                "id": 401,
+                "title": "CURSO MARKETING DIGITAL",
+                "price": 189000,
+                "description": "Curso completo de marketing digital con certificación internacional.",
+                "category": "digital",
+                "supplier": "Academia Digital",
+                "warehousePrice": 75000,
+                "productUrl": "https://ejemplo.com/productos/curso-marketing",
+                "images": ["https://via.placeholder.com/300x200?text=CURSO"],
+                "type": "digital"
             },
             {
-                "id": 149,
-                "title": "OMNIPLUS FRUTAS EVOLUCION 30 SACHES",
-                "price": 184550,
-                "description": "Opción de pago a 6 cuotas de 30.758 con 0% interés.",
-                "category": "suplementos",
-                "supplier": "Omnilife Colombia",
-                "warehousePrice": 118112,
-                "productUrl": "https://ejemplo.com/productos/omniplus-frutas-evolucion",
-                "images": ["https://via.placeholder.com/300x200?text=OMNIPLUS"],
-                "type": "fisico"
+                "id": 402,
+                "title": "EBOOK NUTRICIÓN AVANZADA",
+                "price": 45000,
+                "description": "Guía completa de nutrición para deportistas. Descarga inmediata.",
+                "category": "digital",
+                "supplier": "Editorial Salud",
+                "warehousePrice": 15000,
+                "productUrl": "https://ejemplo.com/productos/ebook-nutricion",
+                "images": ["https://via.placeholder.com/300x200?text=EBOOK"],
+                "type": "digital"
             },
             {
-                "id": 150,
-                "title": "OMNIPLUS NARANJA SUPREME CAJA 30 SOBRES",
-                "price": 184550,
-                "description": "Opción de pago a 6 cuotas de 30.758 con 0% interés.",
-                "category": "suplementos",
-                "supplier": "Omnilife Colombia",
-                "warehousePrice": 118112,
-                "productUrl": "https://ejemplo.com/productos/omniplus-naranja-supreme",
-                "images": ["https://via.placeholder.com/300x200?text=NARANJA"],
-                "type": "fisico"
+                "id": 403,
+                "title": "PLANTILLAS EXCEL EMPRESARIAL",
+                "price": 35000,
+                "description": "Pack de 25 plantillas Excel para gestión empresarial.",
+                "category": "digital",
+                "supplier": "Soluciones Digitales",
+                "warehousePrice": 10000,
+                "productUrl": "https://ejemplo.com/productos/plantillas-excel",
+                "images": ["https://via.placeholder.com/300x200?text=EXCEL"],
+                "type": "digital"
             },
             {
-                "id": 151,
-                "title": "COGNOS EVOLUCION CAJA",
-                "price": 125750,
-                "description": "Opción de pago a 6 cuotas de 20.958 con 0% interés.",
-                "category": "suplementos",
-                "supplier": "Omnilife Colombia",
-                "warehousePrice": 80480,
-                "productUrl": "https://ejemplo.com/productos/cognos-evolucion",
-                "images": ["https://via.placeholder.com/300x200?text=COGNOS"],
-                "type": "fisico"
+                "id": 404,
+                "title": "APLICACIÓN PRODUCTIVIDAD",
+                "price": 75000,
+                "description": "Aplicación premium para gestión de tareas y productividad.",
+                "category": "digital",
+                "supplier": "DevApps",
+                "warehousePrice": 25000,
+                "productUrl": "https://ejemplo.com/productos/app-productividad",
+                "images": ["https://via.placeholder.com/300x200?text=APP"],
+                "type": "digital"
             }
         ];
 
@@ -1584,7 +1603,10 @@
                 <a href="${product.productUrl}" class="product-link" target="_blank">
                     <div class="product-image-container">
                         <img src="${product.images[0]}" alt="${product.title}" class="product-image">
-                        <span class="product-type-badge product-type-${product.type}">${product.type}</span>
+                        <div class="product-badges">
+                            <span class="product-type-badge product-type-${product.type}">${product.type}</span>
+                            <span class="product-category-badge">${product.category}</span>
+                        </div>
                     </div>
                 </a>
                 <div class="product-info">
@@ -1696,7 +1718,7 @@
                 if (category === 'todo') {
                     filteredProducts = [...allProducts];
                 } else {
-                    filteredProducts = allProducts.filter(product => product.type === category);
+                    filteredProducts = allProducts.filter(product => product.category === category);
                     
                     if (filteredProducts.length > MAX_DISPLAY_RESULTS) {
                         filteredProducts = filteredProducts.slice(0, MAX_DISPLAY_RESULTS);
@@ -1794,6 +1816,7 @@
                     <h3>${product.title}</h3>
                     <p class="product-price">${formatPrice(product.price)}</p>
                     <span class="product-type-badge product-type-${product.type}">${product.type}</span>
+                    <span class="product-category-badge">${product.category}</span>
                 </div>
             `;
             
