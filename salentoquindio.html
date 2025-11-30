@@ -243,16 +243,6 @@
             color: white;
         }
         
-        .product-category-badge {
-            background-color: var(--color-naranja);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        
         .product-info {
             padding: 1rem;
         }
@@ -1045,10 +1035,6 @@
             </div>
             <div class="category-filter">
                 <button class="category-btn active" data-category="todo">Todo</button>
-                <button class="category-btn" data-category="suplementos">Suplementos</button>
-                <button class="category-btn" data-category="ropa">Ropa</button>
-                <button class="category-btn" data-category="tecnologia">Tecnología</button>
-                <button class="category-btn" data-category="digital">Digital</button>
             </div>
         </div>
 
@@ -1605,7 +1591,6 @@
                         <img src="${product.images[0]}" alt="${product.title}" class="product-image">
                         <div class="product-badges">
                             <span class="product-type-badge product-type-${product.type}">${product.type}</span>
-                            <span class="product-category-badge">${product.category}</span>
                         </div>
                     </div>
                 </a>
@@ -1691,48 +1676,22 @@
             
             window.addEventListener('scroll', handleScroll);
             
-            // Filtros por categoría
+            // Filtros por categoría - Solo "Todo"
             categoryBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     categoryBtns.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     
-                    const category = this.getAttribute('data-category');
-                    performCategoryFilter(category);
+                    // Solo tenemos la categoría "todo"
+                    filteredProducts = [...allProducts];
+                    loadFirstBatch();
+                    updateSearchStatus();
                 });
             });
 
             // Carrito y modales
             setupExistingEventListeners();
         });
-
-        // FILTRADO POR CATEGORÍA
-        function performCategoryFilter(category) {
-            isSearching = true;
-            loadingIndicator.style.display = 'block';
-            
-            setTimeout(() => {
-                currentBatch = 0;
-                displayedProducts = [];
-                
-                if (category === 'todo') {
-                    filteredProducts = [...allProducts];
-                } else {
-                    filteredProducts = allProducts.filter(product => product.category === category);
-                    
-                    if (filteredProducts.length > MAX_DISPLAY_RESULTS) {
-                        filteredProducts = filteredProducts.slice(0, MAX_DISPLAY_RESULTS);
-                        performanceWarning.style.display = 'block';
-                    }
-                }
-                
-                loadFirstBatch();
-                updateSearchStatus();
-                
-                isSearching = false;
-                loadingIndicator.style.display = 'none';
-            }, 100);
-        }
 
         // FUNCIONES EXISTENTES DE CARRITO
         function setupExistingEventListeners() {
@@ -1816,7 +1775,6 @@
                     <h3>${product.title}</h3>
                     <p class="product-price">${formatPrice(product.price)}</p>
                     <span class="product-type-badge product-type-${product.type}">${product.type}</span>
-                    <span class="product-category-badge">${product.category}</span>
                 </div>
             `;
             
