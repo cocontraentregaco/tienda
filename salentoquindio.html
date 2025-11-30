@@ -1288,6 +1288,7 @@
         let selectedShipping = 0;
         let selectedPayment = "contraentrega";
         const ADMIN_KEY = "proveedor2024";
+        const WHATSAPP_NUMBER = "573215343562"; // Número de WhatsApp corregido
         
         const cartIcon = document.getElementById('cartIcon');
         const cartCount = document.getElementById('cartCount');
@@ -1749,6 +1750,131 @@
                     updateCart();
                 });
             });
+
+            // Event listeners para botones de WhatsApp
+            whatsappBtn.addEventListener('click', sendCartOrderToWhatsApp);
+            directWhatsappBtn.addEventListener('click', sendDirectOrderToWhatsApp);
+        }
+
+        // FUNCIONES PARA ENVIAR PEDIDOS POR WHATSAPP
+        function sendCartOrderToWhatsApp() {
+            if (cart.length === 0) {
+                showNotification('El carrito está vacío');
+                return;
+            }
+
+            const name = customerName.value.trim();
+            const phone = customerPhone.value.trim();
+            const address = customerAddress.value.trim();
+            const city = customerCity.value.trim();
+
+            if (!name || !phone) {
+                showNotification('Por favor completa los campos obligatorios');
+                return;
+            }
+
+            // Construir mensaje
+            let message = `¡Hola! Quiero realizar un pedido:\n\n`;
+            message += `*Información del cliente:*\n`;
+            message += `📋 Nombre: ${name}\n`;
+            message += `📞 Teléfono: ${phone}\n`;
+            
+            if (address && city) {
+                message += `📍 Dirección: ${address}, ${city}\n`;
+            }
+            
+            message += `\n*Método de pago:* ${selectedPayment === 'contraentrega' ? 'Contraentrega' : 'Anticipado'}\n`;
+            
+            if (selectedShipping > 0) {
+                message += `🚚 Envío: ${formatPrice(selectedShipping)}\n`;
+            } else {
+                message += `🚚 Envío: Gratis\n`;
+            }
+            
+            message += `\n*Productos:*\n`;
+            
+            let subtotal = 0;
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                message += `• ${item.title} x${item.quantity} - ${formatPrice(itemTotal)}\n`;
+            });
+            
+            const total = subtotal + selectedShipping;
+            message += `\n*Subtotal:* ${formatPrice(subtotal)}\n`;
+            message += `*Total:* ${formatPrice(total)}\n\n`;
+            message += `¡Gracias!`;
+
+            // Codificar mensaje para URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Crear enlace de WhatsApp
+            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+            
+            // Abrir en nueva pestaña
+            window.open(whatsappUrl, '_blank');
+            
+            // Mostrar confirmación
+            showNotification('Redirigiendo a WhatsApp...');
+            
+            // Cerrar modal
+            cartModal.style.display = 'none';
+        }
+
+        function sendDirectOrderToWhatsApp() {
+            if (!currentDirectProduct) {
+                showNotification('No hay producto seleccionado');
+                return;
+            }
+
+            const name = directCustomerName.value.trim();
+            const phone = directCustomerPhone.value.trim();
+            const address = directCustomerAddress.value.trim();
+            const city = directCustomerCity.value.trim();
+
+            if (!name || !phone) {
+                showNotification('Por favor completa los campos obligatorios');
+                return;
+            }
+
+            // Construir mensaje
+            let message = `¡Hola! Quiero comprar este producto:\n\n`;
+            message += `*Producto:* ${currentDirectProduct.title}\n`;
+            message += `*Precio:* ${formatPrice(currentDirectProduct.price)}\n`;
+            message += `*Descripción:* ${currentDirectProduct.description}\n\n`;
+            
+            message += `*Información del cliente:*\n`;
+            message += `📋 Nombre: ${name}\n`;
+            message += `📞 Teléfono: ${phone}\n`;
+            
+            if (address && city) {
+                message += `📍 Dirección: ${address}, ${city}\n`;
+            }
+            
+            message += `\n*Método de pago:* ${selectedPayment === 'contraentrega' ? 'Contraentrega' : 'Anticipado'}\n`;
+            
+            if (currentDirectProduct.type === 'fisico') {
+                message += `🚚 Envío: Gratis\n`;
+            }
+            
+            const total = currentDirectProduct.price + (currentDirectProduct.type === 'fisico' ? selectedShipping : 0);
+            message += `\n*Total a pagar:* ${formatPrice(total)}\n\n`;
+            message += `¡Gracias!`;
+
+            // Codificar mensaje para URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Crear enlace de WhatsApp
+            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+            
+            // Abrir en nueva pestaña
+            window.open(whatsappUrl, '_blank');
+            
+            // Mostrar confirmación
+            showNotification('Redirigiendo a WhatsApp...');
+            
+            // Cerrar modal
+            directPurchaseModal.style.display = 'none';
         }
 
         function addToCart(productId) {
