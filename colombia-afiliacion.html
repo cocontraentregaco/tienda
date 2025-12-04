@@ -147,11 +147,6 @@
             color: var(--color-negro);
         }
         
-        .plan-badge.pro {
-            background-color: var(--color-oro);
-            color: var(--color-negro);
-        }
-        
         .plan-price {
             font-size: 1.8rem;
             font-weight: 700;
@@ -515,17 +510,10 @@
                 <p class="plan-description">Tienda profesional con integración a WhatsApp para finalizar compras</p>
                 <button class="select-plan">Seleccionar</button>
             </div>
-            <div class="plan-option" data-plan="pro">
-                <div class="plan-badge pro">Pro</div>
-                <h2>Plan Pro</h2>
-                <div class="plan-price">$800.000<span>/año</span></div>
-                <p class="plan-description">Solución avanzada para empresas en crecimiento</p>
-                <button class="select-plan">Seleccionar</button>
-            </div>
         </div>
         
         <!-- Plan Start Details -->
-        <div class="plan-details" id="start-details">
+        <div class="plan-details active" id="start-details">
             <div class="plan-section">
                 <h3><i class="fas fa-check-circle"></i> ¿Qué incluye el Plan Start?</h3>
                 <div class="features-grid">
@@ -560,47 +548,6 @@
             </div>
         </div>
         
-        <!-- Plan Pro Details -->
-        <div class="plan-details active" id="pro-details">
-            <div class="plan-section">
-                <h3><i class="fas fa-check-circle"></i> ¿Qué incluye el Plan Pro?</h3>
-                <div class="features-grid">
-                    <div class="feature-item"><i class="fas fa-check"></i> Tienda Profesional Avanzada Activa x 365 días</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Dominio premium personalizado incluido</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Hosting empresarial de alta disponibilidad</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Plataforma eCommerce personalizada</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Apps nativas para Android e iOS con funciones avanzadas</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Múltiples pasarelas de pago integradas</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Sistema de facturación electrónica avanzado</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> ERP completo integrado</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> CRM para gestión de clientes</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Almacenamiento premium incluido (3 meses gratis)</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Logística y envíos nacionales e internacionales</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Sistema de inventario avanzado</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Branding y diseño corporativo completo</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Campañas de marketing digital incluidas</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Integración con múltiples marketplaces</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Asesoría empresarial mensual de 1 hora</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Reportes analíticos avanzados</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> SEO avanzado y posicionamiento web</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Soporte técnico prioritario 24/7</div>
-                </div>
-            </div>
-            
-            <div class="plan-section">
-                <h3><i class="fas fa-star"></i> Ventajas</h3>
-                <div class="features-grid">
-                    <div class="feature-item"><i class="fas fa-check"></i> Solución integral para empresas en crecimiento</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Tecnología de punta para optimizar operaciones</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Asesoramiento estratégico personalizado</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Herramientas avanzadas de analytics y business intelligence</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Integraciones con sistemas empresariales</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Maximización del ROI con estrategias probadas</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Escalabilidad garantizada para el crecimiento</div>
-                </div>
-            </div>
-        </div>
-        
         <!-- Affiliation Form -->
         <div class="affiliation-form">
             <div class="form-header">
@@ -609,7 +556,7 @@
             </div>
             
             <form id="affiliationForm">
-                <input type="hidden" id="selectedPlan" name="selectedPlan" value="Plan Pro - $800.000/año">
+                <input type="hidden" id="selectedPlan" name="selectedPlan" value="Plan Start - $400.000/año">
                 
                 <div class="form-section">
                     <h3><i class="fas fa-building"></i> Información del Negocio</h3>
@@ -769,13 +716,12 @@
             // Plan selection functionality
             const planOptions = document.querySelectorAll('.plan-option');
             const planStart = document.getElementById('start-details');
-            const planPro = document.getElementById('pro-details');
             const selectedPlanInput = document.getElementById('selectedPlan');
             
-            // Select Plan Pro by default
-            document.querySelector('[data-plan="pro"]').classList.add('selected');
-            planPro.classList.add('active');
-            selectedPlanInput.value = 'Plan Pro - $800.000/año';
+            // Select Plan Start by default
+            document.querySelector('[data-plan="start"]').classList.add('selected');
+            planStart.classList.add('active');
+            selectedPlanInput.value = 'Plan Start - $400.000/año';
             
             planOptions.forEach(option => {
                 option.addEventListener('click', function() {
@@ -787,17 +733,10 @@
                     // Add selected class to clicked option
                     this.classList.add('selected');
                     
-                    // Hide all plan details
-                    planStart.classList.remove('active');
-                    planPro.classList.remove('active');
-                    
                     // Show the corresponding plan details
                     if (planType === 'start') {
                         planStart.classList.add('active');
                         selectedPlanInput.value = 'Plan Start - $400.000/año';
-                    } else if (planType === 'pro') {
-                        planPro.classList.add('active');
-                        selectedPlanInput.value = 'Plan Pro - $800.000/año';
                     }
                 });
             });
