@@ -1,381 +1,853 @@
 <!DOCTYPE html>
-<html lang="sq" dir="ltr">
+<html lang="sq">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - Shqipëria</title>
-    <style>
-        :root {
-            --red: #E41E26; /* Albanian red */
-            --black: #000000; 
-            --background-color: #f9f9f9;
-            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Dorëzimi Shqipëri</title>
+  <style>
+    :root {
+      --primary-color: #1a1a1a;
+      --secondary-color: #333;
+      --accent-color: #0066cc;
+      --text-color: #333;
+      --light-text: #fff;
+      --bg-light: #f8f8f8;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    body { 
+      font-family: 'Roboto', sans-serif; 
+      color: var(--text-color); 
+      line-height: 1.6; 
+      touch-action: manipulation;
+      overflow-x: hidden;
+    }
+    
+    #contenedor-mapa { 
+      height: 100vh; 
+      display: flex; 
+      flex-direction: column; 
+      position: relative;
+    }
+    
+    #barra-superior { 
+      display: flex; 
+      gap: 0.8rem; 
+      padding: 0.8rem; 
+      background: var(--bg-light); 
+      width: 100%;
+      z-index: 1000;
+    }
+    
+    #buscador { 
+      flex: 1; 
+      padding: 0.6rem 1.2rem; 
+      border: 1px solid #ddd; 
+      border-radius: 24px; 
+      appearance: none; 
+      font-size: 16px;
+      transition: var(--transition);
+    }
+    
+    #buscador:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+    }
+    
+    .btn { 
+      background: var(--primary-color); 
+      color: var(--light-text); 
+      padding: 0.6rem 1.2rem; 
+      border-radius: 24px; 
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    
+    .btn:hover {
+      background: var(--secondary-color);
+      transform: translateY(-1px);
+    }
+    
+    .btn-centrar {
+      background-color: #0066cc;
+    }
+    
+    .btn-ruta {
+      background-color: #9b59b6;
+    }
+    
+    .btn-info {
+      background-color: #3498db;
+    }
+    
+    .btn-whatsapp {
+      background-color: #25D366;
+    }
+    
+    .btn-solicitar {
+      background-color: #e74c3c;
+    }
+    
+    #mapa { 
+      flex: 1; 
+      background: #f0f0f0; 
+      width: 100%;
+    }
+    
+    .cluster-marcadores { 
+      background: rgba(40,40,40,0.7); 
+      border-radius: 50%; 
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    .whatsapp-icon {
+      width: 16px;
+      height: 16px;
+      filter: invert(1);
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    .popup-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
 
-        body {
-            background-color: var(--background-color);
-            color: #333;
-            line-height: 1.6;
-            background-image: linear-gradient(to bottom, rgba(228, 30, 38, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
-        }
+    .popup-button-row {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
+    .sugerencias-busqueda {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
 
-        header {
-            text-align: center;
-            margin-bottom: 3rem;
-            background: linear-gradient(135deg, var(--red) 0%, #F52E36 100%);
-            padding: 2rem;
-            border-radius: 10px;
-            color: white;
-        }
+    .sugerencia-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: white;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-        }
+    .sugerencia-item:hover {
+      background-color: #f5f5f5;
+    }
 
-        .albanian-title {
-            font-size: 2.2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
+    .sugerencia-texto {
+      flex: 1;
+    }
 
-        p.subtitle {
-            font-size: 1.2rem;
-            color: rgba(255,255,255,0.9);
-            max-width: 700px;
-            margin: 0 auto;
-        }
+    .sugerencia-boton {
+      margin-left: 10px;
+      padding: 5px 10px;
+      background-color: #9b59b6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
 
-        .counties-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 1.5rem;
-        }
+    .contenedor-buscador {
+      position: relative;
+      flex: 1;
+    }
 
-        .county-card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            text-align: center;
-            cursor: pointer;
-            border-top: 4px solid var(--red);
-        }
+    .cargando {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
 
-        .county-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            border-color: #F52E36;
-        }
+    .gm-style .gm-style-iw-c {
+      border-radius: 8px;
+      padding: 10px;
+    }
 
-        .flag-container {
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f0f0f0;
-            position: relative;
-            overflow: hidden;
-        }
+    .gm-style .gm-style-iw-d {
+      overflow: auto !important;
+    }
 
-        .flag-container::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--red) 0%, #F52E36 100%);
-        }
+    .gm-ui-hover-effect {
+      top: 8px !important;
+      right: 8px !important;
+    }
 
-        .flag-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
+    .map-type-selector {
+      position: absolute;
+      bottom: 20px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      display: flex;
+      gap: 10px;
+    }
 
-        .county-info {
-            padding: 1.5rem 1rem;
-        }
+    .map-type-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #f1f1f1;
+      transition: background 0.3s;
+    }
 
-        .county-name {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-            color: var(--red);
-        }
+    .map-type-btn.active {
+      background: #0066cc;
+      color: white;
+    }
 
-        .albanian-name {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
-        .county-type {
-            color: #666;
-            font-size: 0.9rem;
-        }
+    @media (max-width: 768px) { 
+      #barra-superior { 
+        flex-direction: column; 
+        gap: 0.6rem;
+      }
+      
+      .popup-button-row {
+        flex-direction: column;
+      }
 
-        .search-container {
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            position: relative;
-        }
+      .sugerencia-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
 
-        #county-search {
-            width: 100%;
-            padding: 12px 20px 12px 45px;
-            border: 1px solid #ddd;
-            border-radius: 50px;
-            font-size: 1rem;
-            outline: none;
-            transition: var(--transition);
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: 15px center;
-            background-size: 20px;
-        }
+      .sugerencia-boton {
+        margin-left: 0;
+        margin-top: 5px;
+        align-self: flex-end;
+      }
 
-        #county-search:focus {
-            border-color: var(--red);
-            box-shadow: 0 0 0 3px rgba(228, 30, 38, 0.2);
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid #eee;
-            color: #777;
-        }
-
-        @media (max-width: 768px) {
-            .counties-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            .albanian-title {
-                font-size: 1.8rem;
-            }
-
-            .flag-container {
-                height: 100px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .counties-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 1rem;
-            }
-
-            .county-info {
-                padding: 1rem 0.5rem;
-            }
-
-            .county-name {
-                font-size: 1rem;
-            }
-            
-            .albanian-name {
-                font-size: 1.1rem;
-            }
-        }
-    </style>
+      .map-type-selector {
+        bottom: 10px;
+        left: 5px;
+        flex-direction: column;
+        gap: 5px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>QRContraentrega</h1>
-            <div class="albanian-title">Shqipëria</div>
-            <div>Albania</div>
-            <p class="subtitle">Zgjidhni qarkun ose qytetin tuaj / Select your county or city</p>
-        </header>
-
-        <div class="search-container">
-            <input type="text" id="county-search" placeholder="Kërko për qark ose qytet... / Search for county or city..." aria-label="Kërko për qark ose qytet">
-        </div>
-
-        <div class="counties-grid" id="counties-container">
-            <!-- Counties and cities will appear here -->
-        </div>
-
-        <footer>
-            <p>© QRContraentrega. Të gjitha të drejtat e rezervuara / All rights reserved.</p>
-        </footer>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="contenedor-buscador">
+        <input type="search" id="buscador" placeholder="Kërko partnerë në Shqipëri…" enterkeyhint="search">
+        <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+      </div>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://qrdorezimi.al/partnerizimi', '_blank')">BËHU PARTNER</button>
+      <button class="btn btn-centrar" id="centrar-btn">QËNDRO</button>
     </div>
+    <div id="mapa"></div>
+    <div class="map-type-selector">
+      <button class="map-type-btn active" id="map-btn">Harta</button>
+      <button class="map-type-btn" id="satellite-btn">Satelit</button>
+    </div>
+  </div>
 
-    <script>
-        // List of Albanian counties and major cities with both languages
-        const counties = [
-            // Counties
-            { 
-                "name": { "sq": "Tiranë", "en": "Tirana" }, 
-                "type": { "sq": "Qark", "en": "County" }, 
-                "url": "https://qrcontraentrega.com/tirana", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "sq": "Durrës", "en": "Durrës" }, 
-                "type": { "sq": "Qark", "en": "County" }, 
-                "url": "https://qrcontraentrega.com/durres", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "sq": "Vlorë", "en": "Vlorë" }, 
-                "type": { "sq": "Qark", "en": "County" }, 
-                "url": "https://qrcontraentrega.com/vlore", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "sq": "Shkodër", "en": "Shkodër" }, 
-                "type": { "sq": "Qark", "en": "County" }, 
-                "url": "https://qrcontraentrega.com/shkoder", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "sq": "Korçë", "en": "Korçë" }, 
-                "type": { "sq": "Qark", "en": "County" }, 
-                "url": "https://qrcontraentrega.com/korce", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "sq": "Elbasan", "en": "Elbasan" }, 
-                "type": { "sq": "Qark", "en": "County" }, 
-                "url": "https://qrcontraentrega.com/elbasan", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "sq": "Fier", "en": "Fier" }, 
-                "type": { "sq": "Qark", "en": "County" }, 
-                "url": "https://qrcontraentrega.com/fier", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "sq": "Berat", "en": "Berat" }, 
-                "type": { "sq": "Qark", "en": "County" }, 
-                "url": "https://qrcontraentrega.com/berat", 
-                "image": "img/c.jpg" 
-            },
-            
-            // Major cities
-            { 
-                "name": { "sq": "Tiranë", "en": "Tirana" }, 
-                "type": { "sq": "Qytet", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/tirana-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "sq": "Durrës", "en": "Durrës" }, 
-                "type": { "sq": "Qytet", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/durres-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "sq": "Vlorë", "en": "Vlorë" }, 
-                "type": { "sq": "Qytet", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/vlore-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "sq": "Shkodër", "en": "Shkodër" }, 
-                "type": { "sq": "Qytet", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/shkoder-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "sq": "Korçë", "en": "Korçë" }, 
-                "type": { "sq": "Qytet", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/korce-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "sq": "Elbasan", "en": "Elbasan" }, 
-                "type": { "sq": "Qytet", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/elbasan-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "sq": "Berat", "en": "Berat" }, 
-                "type": { "sq": "Qytet", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/berat-city", 
-                "image": "img/c.jpg" 
-            }
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    // Variablat globale
+    let mapa;
+    let userMarker;
+    let marcadoresOriginales = [];
+    let destinoMarker = null;
+    let buscadorTimeout;
+    let googleMapsLayer;
+    let googleSatelliteLayer;
+    let currentLayer;
+
+    // Të dhënat e lokacioneve në Shqipëri (vetëm partnerë)
+    const UBICACIONES = [
+      { 
+        "id": "tirana",
+        "nombre": "@tirana", 
+        "direccion": "Rruga Myslym Shyri, Tiranë", 
+        "latlng": [41.3275, 19.8187], 
+        "url": "https://tirana.qrdorezimi.al/",
+        "telefono": "+355682345678",
+        "horario": "E Hënë - E Premte 08:00 deri 18:00",
+        "servicios": "Marketplace dhe Pikë Logjistike në Tiranë",
+        "tipo": "socio",
+        "ciudad": "Tiranë"
+      },
+      { 
+        "id": "durres",
+        "nombre": "@durres", 
+        "direccion": "Sheshi Liria, Durrës", 
+        "latlng": [41.3167, 19.4500], 
+        "url": "https://durres.qrdorezimi.al/",
+        "telefono": "+355692345679",
+        "horario": "E Hënë - E Premte 08:00 deri 17:00",
+        "servicios": "Marketplace dhe Pikë Logjistike në Durrës",
+        "tipo": "socio",
+        "ciudad": "Durrës"
+      },
+      { 
+        "id": "vlora",
+        "nombre": "@vlora", 
+        "direccion": "Rruga Uji i Ftohtë, Vlorë", 
+        "latlng": [40.4667, 19.4833], 
+        "url": "https://vlora.qrdorezimi.al/",
+        "telefono": "+355672345680",
+        "horario": "E Hënë - E Premte 09:00 deri 17:00",
+        "servicios": "Marketplace dhe Pikë Logjistike në Vlorë",
+        "tipo": "socio",
+        "ciudad": "Vlorë"
+      },
+      { 
+        "id": "shkoder",
+        "nombre": "@shkoder", 
+        "direccion": "Rruga Gjuhadol, Shkodër", 
+        "latlng": [42.0667, 19.5000], 
+        "url": "https://shkoder.qrdorezimi.al/",
+        "telefono": "+355682345681",
+        "horario": "E Hënë - E Premte 08:00 deri 17:00",
+        "servicios": "Marketplace dhe Pikë Logjistike në Shkodër",
+        "tipo": "socio",
+        "ciudad": "Shkodër"
+      },
+      { 
+        "id": "elbasan",
+        "nombre": "@elbasan", 
+        "direccion": "Rruga 28 Nëntori, Elbasan", 
+        "latlng": [41.1125, 20.0822], 
+        "url": "https://elbasan.qrdorezimi.al/",
+        "telefono": "+355692345682",
+        "horario": "E Hënë - E Premte 08:00 deri 17:00",
+        "servicios": "Marketplace dhe Pikë Logjistike në Elbasan",
+        "tipo": "socio",
+        "ciudad": "Elbasan"
+      },
+      { 
+        "id": "korce",
+        "nombre": "@korce", 
+        "direccion": "Bulevardi Republika, Korçë", 
+        "latlng": [40.6167, 20.7667], 
+        "url": "https://korce.qrdorezimi.al/",
+        "telefono": "+355682345683",
+        "horario": "E Hënë - E Premte 08:00 deri 17:00",
+        "servicios": "Marketplace dhe Pikë Logjistike në Korçë",
+        "tipo": "socio",
+        "ciudad": "Korçë"
+      },
+      { 
+        "id": "fier",
+        "nombre": "@fier", 
+        "direccion": "Rruga Kozma Naska, Fier", 
+        "latlng": [40.7167, 19.5500], 
+        "url": "https://fier.qrdorezimi.al/",
+        "telefono": "+355672345684",
+        "horario": "E Hënë - E Premte 08:00 deri 17:00",
+        "servicios": "Marketplace dhe Pikë Logjistike në Fier",
+        "tipo": "socio",
+        "ciudad": "Fier"
+      }
+    ];
+
+    // Inicializoni hartën kur DOM është gati
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeMap();
+      
+      // Event për butonin qëndro - KORRIGJUAR
+      document.getElementById('centrar-btn').addEventListener('click', function() {
+        obtenerUbicacionUsuario();
+      });
+      
+      // Event për të ndryshuar llojin e hartës
+      document.getElementById('map-btn').addEventListener('click', function() {
+        switchToMapView();
+      });
+      
+      document.getElementById('satellite-btn').addEventListener('click', function() {
+        switchToSatelliteView();
+      });
+      
+      // Event për kërkimin
+      const searchInput = document.getElementById('buscador');
+      searchInput.addEventListener('input', handleSearchInput);
+      searchInput.addEventListener('keydown', handleSearchKeydown);
+      
+      // Mbylgjoni sugjerimet kur klikoni jashtë
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.contenedor-buscador')) {
+          document.getElementById('sugerencias-busqueda').style.display = 'none';
+        }
+      });
+    });
+
+    function initializeMap() {
+      // Inicializoni hartën e përqendruar në Shqipëri
+      mapa = L.map('mapa', {
+        center: [41.1533, 20.1683], // Koordinatat qendrore të Shqipërisë
+        zoom: 7,
+        zoomControl: false
+      });
+
+      // Shtoni kontrollin e zmadhimt
+      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+
+      // Krijo shtresa të Google Maps
+      googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+      });
+
+      googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+      });
+
+      // Fillimisht përdorni pamjen e hartës
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+
+      // Sigurohuni që harta të zërë të gjithë hapësirën e disponueshme
+      setTimeout(() => {
+        mapa.invalidateSize();
+      }, 0);
+
+      // Sistemi i shënuesve
+      const clusters = L.markerClusterGroup({
+        iconCreateFunction: cluster => L.divIcon({
+          html: `<div>${cluster.getChildCount()}</div>`,
+          className: 'cluster-marcadores',
+          iconSize: [40, 40]
+        }),
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true
+      });
+
+      // Krijoni shënues (vetëm partnerë)
+      UBICACIONES.forEach(loc => {
+        const marcador = L.marker(loc.latlng, {
+          icon: L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+            iconSize: [32, 32],
+            className: 'marker-icon-orange'
+          })
+        }).bindPopup(`
+          <div style="min-width:220px">
+            <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
+            <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
+            <p style="margin:0 0 5px 0;font-size:0.9em"><strong>Qyteti:</strong> ${loc.ciudad}</p>
+            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Telefoni:</strong> ${loc.telefono}</p>` : ''}
+            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Orari:</strong> ${loc.horario}</p>` : ''}
+            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><strong>Shërbimet:</strong> ${loc.servicios}</p>` : ''}
+            <div class="popup-buttons">
+              <div class="popup-button-row">
+                <button class="btn btn-whatsapp" onclick="abrirWhatsApp('${loc.telefono}', '${loc.nombre}')">
+                  <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
+                  Bisedo në WhatsApp
+                </button>
+              </div>
+              <div class="popup-button-row">
+                <button class="btn btn-ruta" onclick="abrirGoogleMapsConDireccion('${loc.latlng[0]}', '${loc.latlng[1]}', '${loc.nombre}')">Si të shkohet</button>
+                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">Më shumë informacion</button>
+              </div>
+            </div>
+          </div>
+        `);
+        
+        // Ruani të gjitha të dhënat e lokacionit në shënues
+        marcador.datosUbicacion = loc;
+        marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.ciudad} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
+        marcadoresOriginales.push(marcador);
+      });
+
+      // Shtoni shënues në hartë
+      clusters.addLayers(marcadoresOriginales);
+      mapa.addLayer(clusters);
+
+      // Përshtatni pamjen me shënuesit
+      if(marcadoresOriginales.length > 0) {
+        mapa.fitBounds(clusters.getBounds().pad(0.3));
+      }
+
+      // Kërkoni lokacionin kur ngarkohet faqja
+      obtenerUbicacionUsuario();
+    }
+
+    // Funksioni për të kaluar në pamjen e hartës
+    function switchToMapView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      
+      document.getElementById('map-btn').classList.add('active');
+      document.getElementById('satellite-btn').classList.remove('active');
+    }
+
+    // Funksioni për të kaluar në pamjen satelitore
+    function switchToSatelliteView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleSatelliteLayer;
+      currentLayer.addTo(mapa);
+      
+      document.getElementById('satellite-btn').classList.add('active');
+      document.getElementById('map-btn').classList.remove('active');
+    }
+
+    // Funksioni për të hapur Google Maps me një adresë specifike
+    function abrirGoogleMapsConDireccion(lat, lng, nombre) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`;
+      window.open(url, '_blank');
+    }
+
+    // Funksioni për të trajtuar kërkimin
+    function handleSearchInput(e) {
+      clearTimeout(buscadorTimeout);
+      const termino = e.target.value.trim();
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      if (termino.length < 3) {
+        sugerenciasContainer.style.display = 'none';
+        return;
+      }
+      
+      // Shfaq treguesin e ngarkimit
+      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Duke kërkuar... <span class="cargando"></span></div>';
+      sugerenciasContainer.style.display = 'block';
+      
+      buscadorTimeout = setTimeout(() => {
+        buscarConGoogle(termino);
+      }, 500);
+    }
+
+    // Funksioni për të kërkuar duke përdorur Google Places API (simulim)
+    function buscarConGoogle(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      // Fillimisht kërkoni në pikat lokale
+      const resultadosLocales = buscarEnPuntosLocales(consulta);
+      if (resultadosLocales) {
+        return;
+      }
+      
+      // Simuloni kërkimin në Google Places
+      setTimeout(() => {
+        // Në një zbatim real, këtu do të lidhej me API-n e Google Places
+        sugerenciasContainer.innerHTML = '';
+        
+        // Simuloni disa rezultate kërkimi në Shqipëri
+        const resultadosSimulados = [
+          {
+            name: "Aeroporti Nënë Tereza",
+            lat: 41.4147,
+            lng: 19.7206,
+            formatted_address: "Rinas, Shqipëri"
+          },
+          {
+            name: "Qendra Tregtare TEG",
+            lat: 41.3292,
+            lng: 19.8189,
+            formatted_address: "Bulevardi Dëshmorët e Kombit, Tiranë"
+          },
+          {
+            name: "Porti i Durrësit",
+            lat: 41.3167,
+            lng: 19.4667,
+            formatted_address: "Durrës, Shqipëri"
+          },
+          {
+            name: "Qendra Tregtare Kristal",
+            lat: 41.3278,
+            lng: 19.8197,
+            formatted_address: "Rruga Myslym Shyri, Tiranë"
+          },
+          {
+            name: "Plazhi i Vlorës",
+            lat: 40.4667,
+            lng: 19.4833,
+            formatted_address: "Vlorë, Shqipëri"
+          }
         ];
-
-        // Function to display counties and cities
-        function renderCounties(countyList) {
-            const container = document.getElementById('counties-container');
-            container.innerHTML = '';
-
-            countyList.forEach(county => {
-                const countyCard = document.createElement('div');
-                countyCard.className = 'county-card';
-                countyCard.innerHTML = `
-                    <div class="flag-container">
-                        <img src="${county.image}" alt="${county.name.sq}" class="flag-image">
-                    </div>
-                    <div class="county-info">
-                        <div class="albanian-name">${county.name.sq}</div>
-                        <div class="county-name">${county.name.en}</div>
-                        <div class="county-type">${county.type.sq} • ${county.type.en}</div>
-                    </div>
-                `;
-                
-                countyCard.addEventListener('click', () => {
-                    window.location.href = county.url;
-                });
-
-                container.appendChild(countyCard);
+        
+        if (resultadosSimulados.length > 0) {
+          resultadosSimulados.forEach(lugar => {
+            const item = document.createElement('div');
+            item.className = 'sugerencia-item';
+            
+            const lat = lugar.lat;
+            const lng = lugar.lng;
+            const nombre = lugar.name;
+            
+            item.innerHTML = `
+              <div class="sugerencia-texto">
+                <strong>📍 ${nombre}</strong><br>
+                <small>${lugar.formatted_address}</small>
+              </div>
+              <button class="sugerencia-boton" data-lat="${lat}" data-lng="${lng}" data-nombre="${nombre}">
+                Si të shkohet
+              </button>
+            `;
+            
+            // Shto event në butonin "Si të shkohet"
+            const boton = item.querySelector('.sugerencia-boton');
+            boton.addEventListener('click', function(e) {
+              e.stopPropagation();
+              const lat = parseFloat(this.getAttribute('data-lat'));
+              const lng = parseFloat(this.getAttribute('data-lng'));
+              const nombre = this.getAttribute('data-nombre');
+              
+              // Lëvizni hartën në vendndodhjen e zgjedhur
+              const latlng = [lat, lng];
+              mapa.setView(latlng, 17);
+              
+              // Krijoni ose përditësoni shënuesin e destinacionit
+              if (destinoMarker) {
+                mapa.removeLayer(destinoMarker);
+              }
+              destinoMarker = L.marker(latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-red'
+                })
+              }).addTo(mapa)
+                .bindPopup(`<strong>${nombre}</strong>`);
+              
+              destinoMarker.openPopup();
+              document.getElementById('buscador').value = nombre;
+              sugerenciasContainer.style.display = 'none';
             });
+            
+            // Shto event në të gjithë itemin
+            item.addEventListener('click', function() {
+              const lat = parseFloat(boton.getAttribute('data-lat'));
+              const lng = parseFloat(boton.getAttribute('data-lng'));
+              const nombre = boton.getAttribute('data-nombre');
+              
+              const latlng = [lat, lng];
+              mapa.setView(latlng, 17);
+              
+              if (destinoMarker) {
+                mapa.removeLayer(destinoMarker);
+              }
+              destinoMarker = L.marker(latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-red'
+                })
+              }).addTo(mapa)
+                .bindPopup(`<strong>${nombre}</strong>`);
+              
+              destinoMarker.openPopup();
+              document.getElementById('buscador').value = nombre;
+              sugerenciasContainer.style.display = 'none';
+            });
+            
+            sugerenciasContainer.appendChild(item);
+          });
+          sugerenciasContainer.style.display = 'block';
+        } else {
+          sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Nuk u gjetën rezultate për: ' + consulta + '</div>';
+          sugerenciasContainer.style.display = 'block';
         }
+      }, 800);
+    }
 
-        // Function to search counties and cities
-        function searchCounties() {
-            const searchTerm = document.getElementById('county-search').value.toLowerCase();
-            const filteredCounties = counties.filter(county => 
-                county.name.sq.toLowerCase().includes(searchTerm) || 
-                county.name.en.toLowerCase().includes(searchTerm) ||
-                county.type.sq.toLowerCase().includes(searchTerm) ||
-                county.type.en.toLowerCase().includes(searchTerm)
-            );
-            renderCounties(filteredCounties);
-        }
-
-        // Event listeners
-        document.getElementById('county-search').addEventListener('input', searchCounties);
-
-        // Display all counties and cities when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            renderCounties(counties);
+    // Funksioni për të kërkuar në pikat lokale
+    function buscarEnPuntosLocales(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      const termino = consulta.toLowerCase();
+      const resultados = marcadoresOriginales.filter(m => 
+        m.datosBusqueda.includes(termino)
+      );
+      
+      if (resultados.length > 0) {
+        sugerenciasContainer.innerHTML = '';
+        
+        resultados.forEach(marcador => {
+          const loc = marcador.datosUbicacion;
+          const item = document.createElement('div');
+          item.className = 'sugerencia-item';
+          item.innerHTML = `
+            <div class="sugerencia-texto">
+              <strong>📍 ${loc.nombre}</strong><br>
+              <small>${loc.direccion}</small><br>
+              <small><strong>Qyteti:</strong> ${loc.ciudad}</small>
+            </div>
+            <button class="sugerencia-boton" data-id="${loc.id}">
+              Si të shkohet
+            </button>
+          `;
+          
+          // Shto event në butonin "Si të shkohet"
+          const boton = item.querySelector('.sugerencia-boton');
+          boton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = this.getAttribute('data-id');
+            abrirGoogleMapsConDireccionUbicacion(id);
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          // Shto event në të gjithë itemin
+          item.addEventListener('click', function() {
+            mapa.setView(marcador.getLatLng(), 17);
+            marcador.openPopup();
+            document.getElementById('buscador').value = loc.nombre;
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          sugerenciasContainer.appendChild(item);
         });
-    </script>
+        sugerenciasContainer.style.display = 'block';
+        return true;
+      }
+      return false;
+    }
+
+    // Funksioni për të hapur Google Maps me një vendndodhje specifike
+    function abrirGoogleMapsConDireccionUbicacion(idPunto) {
+      const punto = UBICACIONES.find(p => p.id === idPunto);
+      if (!punto) return;
+      
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${punto.latlng[0]},${punto.latlng[1]}&travelmode=driving&dir_action=navigate`;
+      window.open(url, '_blank');
+    }
+
+    // Funksioni për të trajtuar tastet në kërkim
+    function handleSearchKeydown(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const termino = document.getElementById('buscador').value.trim();
+        if (termino) {
+          buscarConGoogle(termino);
+        }
+      }
+    }
+
+    // Funksioni për të hapur WhatsApp
+    function abrirWhatsApp(telefono, nombre) {
+      const numeroLimpio = telefono.replace(/\D/g, '');
+      const mensaje = `Përshëndetje ${nombre}, jam i interesuar të mësoj më shumë për shërbimet tuaja të dorëzimit me para në dorë.`;
+      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
+    }
+
+    // Funksioni për të marrë vendndodhjen e përdoruesit - KORRIGJUAR
+    function obtenerUbicacionUsuario() {
+      return new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              
+              // Verifikoni nëse është në Shqipëri (përafërsisht)
+              const distanciaAShqipëria = calcularDistancia(
+                latitude, longitude,
+                41.1533, 20.1683
+              );
+              
+              if (distanciaAShqipëria > 200) {
+                alert('Shërbimi është i disponueshëm vetëm në Shqipëri');
+                reject();
+                return;
+              }
+              
+              // Hiq shënuesin e mëparshëm nëse ekziston
+              if (userMarker) {
+                mapa.removeLayer(userMarker);
+              }
+              
+              // Krijoni një shënues të ri të përdoruesit (blu)
+              userMarker = L.marker([latitude, longitude], {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-blue'
+                })
+              }).addTo(mapa)
+                .bindPopup('Vendndodhja juaj aktuale!');
+                
+              // Qendrojeni hartën në vendndodhjen e përdoruesit me zoom të afërt
+              mapa.setView([latitude, longitude], 17);
+              resolve();
+            },
+            (error) => {
+              console.log(`Gabim gjatë marrjes së vendndodhjes: ${error.message}`);
+              alert('Nuk mund të merrej vendndodhja juaj. Sigurohuni që keni lejuar qasjen në geolokacion.');
+              reject();
+            },
+            { 
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 60000
+            }
+          );
+        } else {
+          console.log("Shfletuesi juaj nuk mbështet geolokacionin.");
+          alert("Shfletuesi juaj nuk mbështet geolokacionin.");
+          reject();
+        }
+      });
+    }
+
+    // Funksioni për të llogaritur distancën në km (formula Haversine)
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+  </script>
 </body>
 </html>
