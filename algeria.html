@@ -1,382 +1,858 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - الجزائر</title>
-    <style>
-        :root {
-            --green: #007A3D; /* Algerian green */
-            --white: #FFFFFF; 
-            --red: #D2101A; /* Algerian red */
-            --background-color: #f9f9f9;
-            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR التسليم باليد الجزائر</title>
+  <style>
+    :root {
+      --primary-color: #1a1a1a;
+      --secondary-color: #333;
+      --accent-color: #0066cc;
+      --text-color: #333;
+      --light-text: #fff;
+      --bg-light: #f8f8f8;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    body { 
+      font-family: 'Roboto', 'Arial', sans-serif; 
+      color: var(--text-color); 
+      line-height: 1.6; 
+      touch-action: manipulation;
+      overflow-x: hidden;
+      direction: rtl;
+    }
+    
+    #contenedor-mapa { 
+      height: 100vh; 
+      display: flex; 
+      flex-direction: column; 
+      position: relative;
+    }
+    
+    #barra-superior { 
+      display: flex; 
+      gap: 0.8rem; 
+      padding: 0.8rem; 
+      background: var(--bg-light); 
+      width: 100%;
+      z-index: 1000;
+    }
+    
+    #buscador { 
+      flex: 1; 
+      padding: 0.6rem 1.2rem; 
+      border: 1px solid #ddd; 
+      border-radius: 24px; 
+      appearance: none; 
+      font-size: 16px;
+      transition: var(--transition);
+      direction: rtl;
+      text-align: right;
+    }
+    
+    #buscador:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+    }
+    
+    .btn { 
+      background: var(--primary-color); 
+      color: var(--light-text); 
+      padding: 0.6rem 1.2rem; 
+      border-radius: 24px; 
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    
+    .btn:hover {
+      background: var(--secondary-color);
+      transform: translateY(-1px);
+    }
+    
+    .btn-centrar {
+      background-color: #0066cc;
+    }
+    
+    .btn-ruta {
+      background-color: #9b59b6;
+    }
+    
+    .btn-info {
+      background-color: #3498db;
+    }
+    
+    .btn-whatsapp {
+      background-color: #25D366;
+    }
+    
+    .btn-solicitar {
+      background-color: #e74c3c;
+    }
+    
+    #mapa { 
+      flex: 1; 
+      background: #f0f0f0; 
+      width: 100%;
+    }
+    
+    .cluster-marcadores { 
+      background: rgba(40,40,40,0.7); 
+      border-radius: 50%; 
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    .whatsapp-icon {
+      width: 16px;
+      height: 16px;
+      filter: invert(1);
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, 'Arial', sans-serif;
-        }
+    .popup-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
 
-        body {
-            background-color: var(--background-color);
-            color: #333;
-            line-height: 1.6;
-            background-image: linear-gradient(to bottom, rgba(0, 122, 61, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
-        }
+    .popup-button-row {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
+    .sugerencias-busqueda {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+      direction: rtl;
+      text-align: right;
+    }
 
-        header {
-            text-align: center;
-            margin-bottom: 3rem;
-            background: linear-gradient(135deg, var(--green) 0%, #008B45 100%);
-            padding: 2rem;
-            border-radius: 10px;
-            color: white;
-        }
+    .sugerencia-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: white;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-        }
+    .sugerencia-item:hover {
+      background-color: #f5f5f5;
+    }
 
-        .arabic-title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
+    .sugerencia-texto {
+      flex: 1;
+      text-align: right;
+    }
 
-        p.subtitle {
-            font-size: 1.2rem;
-            color: rgba(255,255,255,0.9);
-            max-width: 700px;
-            margin: 0 auto;
-        }
+    .sugerencia-boton {
+      margin-left: 10px;
+      padding: 5px 10px;
+      background-color: #9b59b6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
 
-        .wilayas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 1.5rem;
-        }
+    .contenedor-buscador {
+      position: relative;
+      flex: 1;
+    }
 
-        .wilaya-card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            text-align: center;
-            cursor: pointer;
-            border-top: 4px solid var(--green);
-        }
+    .cargando {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
 
-        .wilaya-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            border-color: #008B45;
-        }
+    .gm-style .gm-style-iw-c {
+      border-radius: 8px;
+      padding: 10px;
+      direction: rtl;
+      text-align: right;
+    }
 
-        .flag-container {
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f0f0f0;
-            position: relative;
-            overflow: hidden;
-        }
+    .gm-style .gm-style-iw-d {
+      overflow: auto !important;
+    }
 
-        .flag-container::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--green) 0%, #008B45 100%);
-        }
+    .gm-ui-hover-effect {
+      top: 8px !important;
+      right: 8px !important;
+    }
 
-        .flag-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
+    .map-type-selector {
+      position: absolute;
+      bottom: 20px;
+      right: 10px;
+      left: auto;
+      z-index: 1000;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      display: flex;
+      gap: 10px;
+      direction: rtl;
+    }
 
-        .wilaya-info {
-            padding: 1.5rem 1rem;
-        }
+    .map-type-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #f1f1f1;
+      transition: background 0.3s;
+    }
 
-        .wilaya-name {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-            color: var(--green);
-        }
+    .map-type-btn.active {
+      background: #0066cc;
+      color: white;
+    }
 
-        .arabic-name {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
-        .wilaya-type {
-            color: #666;
-            font-size: 0.9rem;
-        }
+    @media (max-width: 768px) { 
+      #barra-superior { 
+        flex-direction: column; 
+        gap: 0.6rem;
+      }
+      
+      .popup-button-row {
+        flex-direction: column;
+      }
 
-        .search-container {
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            position: relative;
-        }
+      .sugerencia-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
 
-        #wilaya-search {
-            width: 100%;
-            padding: 12px 45px 12px 20px;
-            border: 1px solid #ddd;
-            border-radius: 50px;
-            font-size: 1rem;
-            outline: none;
-            transition: var(--transition);
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 20px;
-        }
+      .sugerencia-boton {
+        margin-left: 0;
+        margin-top: 5px;
+        align-self: flex-end;
+      }
 
-        #wilaya-search:focus {
-            border-color: var(--green);
-            box-shadow: 0 0 0 3px rgba(0, 122, 61, 0.2);
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid #eee;
-            color: #777;
-        }
-
-        @media (max-width: 768px) {
-            .wilayas-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            .arabic-title {
-                font-size: 2rem;
-            }
-
-            .flag-container {
-                height: 100px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .wilayas-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 1rem;
-            }
-
-            .wilaya-info {
-                padding: 1rem 0.5rem;
-            }
-
-            .wilaya-name {
-                font-size: 1rem;
-            }
-            
-            .arabic-name {
-                font-size: 1.1rem;
-            }
-        }
-    </style>
+      .map-type-selector {
+        bottom: 10px;
+        right: 5px;
+        left: auto;
+        flex-direction: column;
+        gap: 5px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>QRContraentrega</h1>
-            <div class="arabic-title">الجزائر</div>
-            <div>Algeria</div>
-            <p class="subtitle">اختر ولايتك أو مدينتك / Select your wilaya or city</p>
-        </header>
-
-        <div class="search-container">
-            <input type="text" id="wilaya-search" placeholder="ابحث عن ولاية أو مدينة... / Search for wilaya or city..." aria-label="ابحث عن ولاية أو مدينة">
-        </div>
-
-        <div class="wilayas-grid" id="wilayas-container">
-            <!-- Wilayas and cities will appear here -->
-        </div>
-
-        <footer>
-            <p>© QRContraentrega. جميع الحقوق محفوظة / All rights reserved.</p>
-        </footer>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="contenedor-buscador">
+        <input type="search" id="buscador" placeholder="البحث عن شركاء في الجزائر…" enterkeyhint="search">
+        <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+      </div>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://qrdelivery.dz/شراكة', '_blank')">انضم إلينا</button>
+      <button class="btn btn-centrar" id="centrar-btn">توسيط</button>
     </div>
+    <div id="mapa"></div>
+    <div class="map-type-selector">
+      <button class="map-type-btn active" id="map-btn">الخريطة</button>
+      <button class="map-type-btn" id="satellite-btn">القمر الصناعي</button>
+    </div>
+  </div>
 
-    <script>
-        // List of Algerian wilayas and major cities with both languages
-        const wilayas = [
-            // Wilayas
-            { 
-                "name": { "ar": "الجزائر", "en": "Algiers" }, 
-                "type": { "ar": "ولاية", "en": "Wilaya" }, 
-                "url": "https://qrcontraentrega.com/algiers", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ar": "وهران", "en": "Oran" }, 
-                "type": { "ar": "ولاية", "en": "Wilaya" }, 
-                "url": "https://qrcontraentrega.com/oran", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ar": "قسنطينة", "en": "Constantine" }, 
-                "type": { "ar": "ولاية", "en": "Wilaya" }, 
-                "url": "https://qrcontraentrega.com/constantine", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ar": "عنابة", "en": "Annaba" }, 
-                "type": { "ar": "ولاية", "en": "Wilaya" }, 
-                "url": "https://qrcontraentrega.com/annaba", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ar": "باتنة", "en": "Batna" }, 
-                "type": { "ar": "ولاية", "en": "Wilaya" }, 
-                "url": "https://qrcontraentrega.com/batna", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ar": "بجاية", "en": "Bejaia" }, 
-                "type": { "ar": "ولاية", "en": "Wilaya" }, 
-                "url": "https://qrcontraentrega.com/bejaia", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ar": "تلمسان", "en": "Tlemcen" }, 
-                "type": { "ar": "ولاية", "en": "Wilaya" }, 
-                "url": "https://qrcontraentrega.com/tlemcen", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ar": "سطيف", "en": "Setif" }, 
-                "type": { "ar": "ولاية", "en": "Wilaya" }, 
-                "url": "https://qrcontraentrega.com/setif", 
-                "image": "img/c.jpg" 
-            },
-            
-            // Major cities
-            { 
-                "name": { "ar": "الجزائر العاصمة", "en": "Algiers" }, 
-                "type": { "ar": "مدينة", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/algiers-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ar": "وهران", "en": "Oran" }, 
-                "type": { "ar": "مدينة", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/oran-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ar": "قسنطينة", "en": "Constantine" }, 
-                "type": { "ar": "مدينة", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/constantine-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ar": "عنابة", "en": "Annaba" }, 
-                "type": { "ar": "مدينة", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/annaba-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ar": "بسكرة", "en": "Biskra" }, 
-                "type": { "ar": "مدينة", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/biskra", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ar": "تيزي وزو", "en": "Tizi Ouzou" }, 
-                "type": { "ar": "مدينة", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/tizi-ouzou", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ar": "غرداية", "en": "Ghardaia" }, 
-                "type": { "ar": "مدينة", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/ghardaia", 
-                "image": "img/c.jpg" 
-            }
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    // المتغيرات العامة
+    let mapa;
+    let userMarker;
+    let marcadoresOriginales = [];
+    let destinoMarker = null;
+    let buscadorTimeout;
+    let googleMapsLayer;
+    let googleSatelliteLayer;
+    let currentLayer;
+
+    // بيانات المواقع في الجزائر (الشركاء فقط)
+    const UBICACIONES = [
+      { 
+        "id": "alger",
+        "nombre": "@الجزائر", 
+        "direccion": "شارع ديدوش مراد، الجزائر العاصمة", 
+        "latlng": [36.7525, 3.0420], 
+        "url": "https://alger.qrdelivery.dz/",
+        "telefono": "+213552345678",
+        "horario": "من الإثنين إلى الجمعة 08:00 إلى 17:00",
+        "servicios": "منصة التجارة الإلكترونية ونقطة لوجستية في الجزائر العاصمة",
+        "tipo": "socio",
+        "ciudad": "الجزائر العاصمة"
+      },
+      { 
+        "id": "oran",
+        "nombre": "@وهران", 
+        "direccion": "شارع العربي بن مهيدي، وهران", 
+        "latlng": [35.6971, -0.6337], 
+        "url": "https://oran.qrdelivery.dz/",
+        "telefono": "+213552345679",
+        "horario": "من الإثنين إلى الجمعة 08:00 إلى 17:00",
+        "servicios": "منصة التجارة الإلكترونية ونقطة لوجستية في وهران",
+        "tipo": "socio",
+        "ciudad": "وهران"
+      },
+      { 
+        "id": "constantina",
+        "nombre": "@قسنطينة", 
+        "direccion": "شارع سيدي راشد، قسنطينة", 
+        "latlng": [36.3650, 6.6147], 
+        "url": "https://constantina.qrdelivery.dz/",
+        "telefono": "+213552345680",
+        "horario": "من الإثنين إلى الجمعة 08:00 إلى 17:00",
+        "servicios": "منصة التجارة الإلكترونية ونقطة لوجستية في قسنطينة",
+        "tipo": "socio",
+        "ciudad": "قسنطينة"
+      },
+      { 
+        "id": "annaba",
+        "nombre": "@عنابة", 
+        "direccion": "شارع الاستقلال، عنابة", 
+        "latlng": [36.9000, 7.7667], 
+        "url": "https://annaba.qrdelivery.dz/",
+        "telefono": "+213552345681",
+        "horario": "من الإثنين إلى الجمعة 08:00 إلى 17:00",
+        "servicios": "منصة التجارة الإلكترونية ونقطة لوجستية في عنابة",
+        "tipo": "socio",
+        "ciudad": "عنابة"
+      },
+      { 
+        "id": "blida",
+        "nombre": "@البليدة", 
+        "direccion": "شارع أول نوفمبر، البليدة", 
+        "latlng": [36.4736, 2.8333], 
+        "url": "https://blida.qrdelivery.dz/",
+        "telefono": "+213552345682",
+        "horario": "من الإثنين إلى الجمعة 08:00 إلى 17:00",
+        "servicios": "منصة التجارة الإلكترونية ونقطة لوجستية في البليدة",
+        "tipo": "socio",
+        "ciudad": "البليدة"
+      },
+      { 
+        "id": "setif",
+        "nombre": "@سطيف", 
+        "direccion": "شارع الإخوة عروج، سطيف", 
+        "latlng": [36.1919, 5.4137], 
+        "url": "https://setif.qrdelivery.dz/",
+        "telefono": "+213552345683",
+        "horario": "من الإثنين إلى الجمعة 08:00 إلى 17:00",
+        "servicios": "منصة التجارة الإلكترونية ونقطة لوجستية في سطيف",
+        "tipo": "socio",
+        "ciudad": "سطيف"
+      },
+      { 
+        "id": "batna",
+        "nombre": "@باتنة", 
+        "direccion": "شارع أول نوفمبر، باتنة", 
+        "latlng": [35.5553, 6.1744], 
+        "url": "https://batna.qrdelivery.dz/",
+        "telefono": "+213552345684",
+        "horario": "من الإثنين إلى الجمعة 08:00 إلى 17:00",
+        "servicios": "منصة التجارة الإلكترونية ونقطة لوجستية في باتنة",
+        "tipo": "socio",
+        "ciudad": "باتنة"
+      }
+    ];
+
+    // تهيئة الخريطة عندما يكون DOM جاهزًا
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeMap();
+      
+      // حدث لزر التوسيط - تم التصحيح
+      document.getElementById('centrar-btn').addEventListener('click', function() {
+        obtenerUbicacionUsuario();
+      });
+      
+      // أحداث لتغيير نوع الخريطة
+      document.getElementById('map-btn').addEventListener('click', function() {
+        switchToMapView();
+      });
+      
+      document.getElementById('satellite-btn').addEventListener('click', function() {
+        switchToSatelliteView();
+      });
+      
+      // أحداث للبحث
+      const searchInput = document.getElementById('buscador');
+      searchInput.addEventListener('input', handleSearchInput);
+      searchInput.addEventListener('keydown', handleSearchKeydown);
+      
+      // إغلاق الاقتراحات عند النقر خارجها
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.contenedor-buscador')) {
+          document.getElementById('sugerencias-busqueda').style.display = 'none';
+        }
+      });
+    });
+
+    function initializeMap() {
+      // تهيئة الخريطة متمركزة على الجزائر
+      mapa = L.map('mapa', {
+        center: [28.0339, 1.6596], // الإحداثيات المركزية للجزائر
+        zoom: 5,
+        zoomControl: false
+      });
+
+      // إضافة عناصر التحكم في التكبير
+      L.control.zoom({ position: 'bottomleft' }).addTo(mapa);
+
+      // إنشاء طبقات خرائط Google
+      googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; <a href="https://maps.google.com">خرائط Google</a>'
+      });
+
+      googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; <a href="https://maps.google.com">خرائط Google</a>'
+      });
+
+      // استخدام عرض الخريطة في البداية
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+
+      // التأكد من أن الخريطة تشغل المساحة المتاحة بالكامل
+      setTimeout(() => {
+        mapa.invalidateSize();
+      }, 0);
+
+      // نظام العلامات
+      const clusters = L.markerClusterGroup({
+        iconCreateFunction: cluster => L.divIcon({
+          html: `<div>${cluster.getChildCount()}</div>`,
+          className: 'cluster-marcadores',
+          iconSize: [40, 40]
+        }),
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true
+      });
+
+      // إنشاء علامات (الشركاء فقط)
+      UBICACIONES.forEach(loc => {
+        const marcador = L.marker(loc.latlng, {
+          icon: L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+            iconSize: [32, 32],
+            className: 'marker-icon-orange'
+          })
+        }).bindPopup(`
+          <div style="min-width:220px;direction:rtl;text-align:right">
+            <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
+            <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
+            <p style="margin:0 0 5px 0;font-size:0.9em"><strong>المدينة:</strong> ${loc.ciudad}</p>
+            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>الهاتف:</strong> ${loc.telefono}</p>` : ''}
+            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>ساعات العمل:</strong> ${loc.horario}</p>` : ''}
+            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><strong>الخدمات:</strong> ${loc.servicios}</p>` : ''}
+            <div class="popup-buttons">
+              <div class="popup-button-row">
+                <button class="btn btn-whatsapp" onclick="abrirWhatsApp('${loc.telefono}', '${loc.nombre}')">
+                  <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
+                  محادثة عبر واتساب
+                </button>
+              </div>
+              <div class="popup-button-row">
+                <button class="btn btn-ruta" onclick="abrirGoogleMapsConDireccion('${loc.latlng[0]}', '${loc.latlng[1]}', '${loc.nombre}')">كيفية الوصول</button>
+                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">مزيد من المعلومات</button>
+              </div>
+            </div>
+          </div>
+        `);
+        
+        // حفظ جميع بيانات الموقع في العلامة
+        marcador.datosUbicacion = loc;
+        marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.ciudad} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
+        marcadoresOriginales.push(marcador);
+      });
+
+      // إضافة العلامات إلى الخريطة
+      clusters.addLayers(marcadoresOriginales);
+      mapa.addLayer(clusters);
+
+      // ضبط العرض للعلامات
+      if(marcadoresOriginales.length > 0) {
+        mapa.fitBounds(clusters.getBounds().pad(0.3));
+      }
+
+      // طلب الموقع عند تحميل الصفحة
+      obtenerUbicacionUsuario();
+    }
+
+    // وظيفة للتبديل إلى عرض الخريطة
+    function switchToMapView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      
+      document.getElementById('map-btn').classList.add('active');
+      document.getElementById('satellite-btn').classList.remove('active');
+    }
+
+    // وظيفة للتبديل إلى عرض القمر الصناعي
+    function switchToSatelliteView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleSatelliteLayer;
+      currentLayer.addTo(mapa);
+      
+      document.getElementById('satellite-btn').classList.add('active');
+      document.getElementById('map-btn').classList.remove('active');
+    }
+
+    // وظيفة لفتح خرائط Google بعنوان محدد
+    function abrirGoogleMapsConDireccion(lat, lng, nombre) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`;
+      window.open(url, '_blank');
+    }
+
+    // وظيفة للتعامل مع البحث
+    function handleSearchInput(e) {
+      clearTimeout(buscadorTimeout);
+      const termino = e.target.value.trim();
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      if (termino.length < 3) {
+        sugerenciasContainer.style.display = 'none';
+        return;
+      }
+      
+      // عرض مؤشر التحميل
+      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">جاري البحث... <span class="cargando"></span></div>';
+      sugerenciasContainer.style.display = 'block';
+      
+      buscadorTimeout = setTimeout(() => {
+        buscarConGoogle(termino);
+      }, 500);
+    }
+
+    // وظيفة للبحث باستخدام Google Places API (محاكاة)
+    function buscarConGoogle(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      // البحث أولاً في النقاط المحلية
+      const resultadosLocales = buscarEnPuntosLocales(consulta);
+      if (resultadosLocales) {
+        return;
+      }
+      
+      // محاكاة البحث في Google Places
+      setTimeout(() => {
+        // في التطبيق الفعلي، سيتم الاتصال بـ Google Places API هنا
+        sugerenciasContainer.innerHTML = '';
+        
+        // محاكاة بعض نتائج البحث في الجزائر
+        const resultadosSimulados = [
+          {
+            name: "مطار هواري بومدين الدولي",
+            lat: 36.6914,
+            lng: 3.2153,
+            formatted_address: "مطار هواري بومدين، الجزائر العاصمة، الجزائر"
+          },
+          {
+            name: "مركز التجارة الدولي",
+            lat: 36.7528,
+            lng: 3.0419,
+            formatted_address: "الجزائر العاصمة، الجزائر"
+          },
+          {
+            name: "مطار وهران الدولي",
+            lat: 35.6233,
+            lng: -0.6192,
+            formatted_address: "وهران، الجزائر"
+          },
+          {
+            name: "مركز مولود معمري التجاري",
+            lat: 36.7517,
+            lng: 3.0403,
+            formatted_address: "الجزائر العاصمة، الجزائر"
+          }
         ];
-
-        // Function to display wilayas and cities
-        function renderWilayas(wilayaList) {
-            const container = document.getElementById('wilayas-container');
-            container.innerHTML = '';
-
-            wilayaList.forEach(wilaya => {
-                const wilayaCard = document.createElement('div');
-                wilayaCard.className = 'wilaya-card';
-                wilayaCard.innerHTML = `
-                    <div class="flag-container">
-                        <img src="${wilaya.image}" alt="${wilaya.name.ar}" class="flag-image">
-                    </div>
-                    <div class="wilaya-info">
-                        <div class="arabic-name">${wilaya.name.ar}</div>
-                        <div class="wilaya-name">${wilaya.name.en}</div>
-                        <div class="wilaya-type">${wilaya.type.ar} • ${wilaya.type.en}</div>
-                    </div>
-                `;
-                
-                wilayaCard.addEventListener('click', () => {
-                    window.location.href = wilaya.url;
-                });
-
-                container.appendChild(wilayaCard);
+        
+        if (resultadosSimulados.length > 0) {
+          resultadosSimulados.forEach(lugar => {
+            const item = document.createElement('div');
+            item.className = 'sugerencia-item';
+            
+            const lat = lugar.lat;
+            const lng = lugar.lng;
+            const nombre = lugar.name;
+            
+            item.innerHTML = `
+              <div class="sugerencia-texto">
+                <strong>📍 ${nombre}</strong><br>
+                <small>${lugar.formatted_address}</small>
+              </div>
+              <button class="sugerencia-boton" data-lat="${lat}" data-lng="${lng}" data-nombre="${nombre}">
+                كيفية الوصول
+              </button>
+            `;
+            
+            // إضافة حدث إلى زر "كيفية الوصول"
+            const boton = item.querySelector('.sugerencia-boton');
+            boton.addEventListener('click', function(e) {
+              e.stopPropagation();
+              const lat = parseFloat(this.getAttribute('data-lat'));
+              const lng = parseFloat(this.getAttribute('data-lng'));
+              const nombre = this.getAttribute('data-nombre');
+              
+              // نقل الخريطة إلى الموقع المحدد
+              const latlng = [lat, lng];
+              mapa.setView(latlng, 17);
+              
+              // إنشاء أو تحديث علامة الوجهة
+              if (destinoMarker) {
+                mapa.removeLayer(destinoMarker);
+              }
+              destinoMarker = L.marker(latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-red'
+                })
+              }).addTo(mapa)
+                .bindPopup(`<strong>${nombre}</strong>`);
+              
+              destinoMarker.openPopup();
+              document.getElementById('buscador').value = nombre;
+              sugerenciasContainer.style.display = 'none';
             });
+            
+            // إضافة حدث إلى العنصر بأكمله
+            item.addEventListener('click', function() {
+              const lat = parseFloat(boton.getAttribute('data-lat'));
+              const lng = parseFloat(boton.getAttribute('data-lng'));
+              const nombre = boton.getAttribute('data-nombre');
+              
+              const latlng = [lat, lng];
+              mapa.setView(latlng, 17);
+              
+              if (destinoMarker) {
+                mapa.removeLayer(destinoMarker);
+              }
+              destinoMarker = L.marker(latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-red'
+                })
+              }).addTo(mapa)
+                .bindPopup(`<strong>${nombre}</strong>`);
+              
+              destinoMarker.openPopup();
+              document.getElementById('buscador').value = nombre;
+              sugerenciasContainer.style.display = 'none';
+            });
+            
+            sugerenciasContainer.appendChild(item);
+          });
+          sugerenciasContainer.style.display = 'block';
+        } else {
+          sugerenciasContainer.innerHTML = '<div class="sugerencia-item">لم يتم العثور على نتائج لـ: ' + consulta + '</div>';
+          sugerenciasContainer.style.display = 'block';
         }
+      }, 800);
+    }
 
-        // Function to search wilayas and cities
-        function searchWilayas() {
-            const searchTerm = document.getElementById('wilaya-search').value.toLowerCase();
-            const filteredWilayas = wilayas.filter(wilaya => 
-                wilaya.name.ar.toLowerCase().includes(searchTerm) || 
-                wilaya.name.en.toLowerCase().includes(searchTerm) ||
-                wilaya.type.ar.toLowerCase().includes(searchTerm) ||
-                wilaya.type.en.toLowerCase().includes(searchTerm)
-            );
-            renderWilayas(filteredWilayas);
-        }
-
-        // Event listeners
-        document.getElementById('wilaya-search').addEventListener('input', searchWilayas);
-
-        // Display all wilayas and cities when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            renderWilayas(wilayas);
+    // وظيفة للبحث في النقاط المحلية
+    function buscarEnPuntosLocales(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      const termino = consulta.toLowerCase();
+      const resultados = marcadoresOriginales.filter(m => 
+        m.datosBusqueda.includes(termino)
+      );
+      
+      if (resultados.length > 0) {
+        sugerenciasContainer.innerHTML = '';
+        
+        resultados.forEach(marcador => {
+          const loc = marcador.datosUbicacion;
+          const item = document.createElement('div');
+          item.className = 'sugerencia-item';
+          item.innerHTML = `
+            <div class="sugerencia-texto">
+              <strong>📍 ${loc.nombre}</strong><br>
+              <small>${loc.direccion}</small><br>
+              <small><strong>المدينة:</strong> ${loc.ciudad}</small>
+            </div>
+            <button class="sugerencia-boton" data-id="${loc.id}">
+              كيفية الوصول
+            </button>
+          `;
+          
+          // إضافة حدث إلى زر "كيفية الوصول"
+          const boton = item.querySelector('.sugerencia-boton');
+          boton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = this.getAttribute('data-id');
+            abrirGoogleMapsConDireccionUbicacion(id);
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          // إضافة حدث إلى العنصر بأكمله
+          item.addEventListener('click', function() {
+            mapa.setView(marcador.getLatLng(), 17);
+            marcador.openPopup();
+            document.getElementById('buscador').value = loc.nombre;
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          sugerenciasContainer.appendChild(item);
         });
-    </script>
+        sugerenciasContainer.style.display = 'block';
+        return true;
+      }
+      return false;
+    }
+
+    // وظيفة لفتح خرائط Google بموقع محدد
+    function abrirGoogleMapsConDireccionUbicacion(idPunto) {
+      const punto = UBICACIONES.find(p => p.id === idPunto);
+      if (!punto) return;
+      
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${punto.latlng[0]},${punto.latlng[1]}&travelmode=driving&dir_action=navigate`;
+      window.open(url, '_blank');
+    }
+
+    // وظيفة للتعامل مع المفاتيح في البحث
+    function handleSearchKeydown(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const termino = document.getElementById('buscador').value.trim();
+        if (termino) {
+          buscarConGoogle(termino);
+        }
+      }
+    }
+
+    // وظيفة لفتح واتساب
+    function abrirWhatsApp(telefono, nombre) {
+      const numeroLimpio = telefono.replace(/\D/g, '');
+      const mensaje = `مرحباً ${nombre}، أنا مهتم بمعرفة المزيد عن خدمات التسليم باليد لديكم.`;
+      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
+    }
+
+    // وظيفة للحصول على موقع المستخدم - تم التصحيح
+    function obtenerUbicacionUsuario() {
+      return new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              
+              // التحقق مما إذا كان في الجزائر (تقريبًا)
+              const distanciaAArgelia = calcularDistancia(
+                latitude, longitude,
+                28.0339, 1.6596
+              );
+              
+              if (distanciaAArgelia > 500) {
+                alert('الخدمة متاحة فقط في الجزائر');
+                reject();
+                return;
+              }
+              
+              // إزالة العلامة السابقة إذا كانت موجودة
+              if (userMarker) {
+                mapa.removeLayer(userMarker);
+              }
+              
+              // إنشاء علامة مستخدم جديدة (زرقاء)
+              userMarker = L.marker([latitude, longitude], {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-blue'
+                })
+              }).addTo(mapa)
+                .bindPopup('موقعك الحالي!');
+                
+              // توسيط الخريطة على موقع المستخدم مع تكبير قريب
+              mapa.setView([latitude, longitude], 17);
+              resolve();
+            },
+            (error) => {
+              console.log(`خطأ في الحصول على الموقع: ${error.message}`);
+              alert('تعذر الحصول على موقعك. تأكد من السماح بالوصول إلى الموقع.');
+              reject();
+            },
+            { 
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 60000
+            }
+          );
+        } else {
+          console.log("متصفحك لا يدعم تحديد الموقع.");
+          alert("متصفحك لا يدعم تحديد الموقع.");
+          reject();
+        }
+      });
+    }
+
+    // وظيفة لحساب المسافة بالكم (صيغة هافرساين)
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+  </script>
 </body>
 </html>
