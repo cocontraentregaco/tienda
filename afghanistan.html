@@ -1,382 +1,823 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="ps">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - افغانستان</title>
-    <style>
-        :root {
-            --black: #000000; /* Afghan black */
-            --red: #D32011; /* Afghan red */
-            --green: #007A36; /* Afghan green */
-            --background-color: #f9f9f9;
-            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR ضد تحویل افغانستان</title>
+  <style>
+    :root {
+      --primary-color: #1a1a1a;
+      --secondary-color: #333;
+      --accent-color: #0066cc;
+      --text-color: #333;
+      --light-text: #fff;
+      --bg-light: #f8f8f8;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    body { 
+      font-family: 'Roboto', sans-serif; 
+      color: var(--text-color); 
+      line-height: 1.6; 
+      touch-action: manipulation;
+      overflow-x: hidden;
+    }
+    
+    #contenedor-mapa { 
+      height: 100vh; 
+      display: flex; 
+      flex-direction: column; 
+      position: relative;
+    }
+    
+    #barra-superior { 
+      display: flex; 
+      gap: 0.8rem; 
+      padding: 0.8rem; 
+      background: var(--bg-light); 
+      width: 100%;
+      z-index: 1000;
+    }
+    
+    #buscador { 
+      flex: 1; 
+      padding: 0.6rem 1.2rem; 
+      border: 1px solid #ddd; 
+      border-radius: 24px; 
+      appearance: none; 
+      font-size: 16px;
+      transition: var(--transition);
+    }
+    
+    #buscador:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+    }
+    
+    .btn { 
+      background: var(--primary-color); 
+      color: var(--light-text); 
+      padding: 0.6rem 1.2rem; 
+      border-radius: 24px; 
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    
+    .btn:hover {
+      background: var(--secondary-color);
+      transform: translateY(-1px);
+    }
+    
+    .btn-centrar {
+      background-color: #0066cc;
+    }
+    
+    .btn-ruta {
+      background-color: #9b59b6;
+    }
+    
+    .btn-info {
+      background-color: #3498db;
+    }
+    
+    .btn-whatsapp {
+      background-color: #25D366;
+    }
+    
+    .btn-solicitar {
+      background-color: #e74c3c;
+    }
+    
+    #mapa { 
+      flex: 1; 
+      background: #f0f0f0; 
+      width: 100%;
+    }
+    
+    .cluster-marcadores { 
+      background: rgba(40,40,40,0.7); 
+      border-radius: 50%; 
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    .whatsapp-icon {
+      width: 16px;
+      height: 16px;
+      filter: invert(1);
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, 'Arial', sans-serif;
-        }
+    .popup-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
 
-        body {
-            background-color: var(--background-color);
-            color: #333;
-            line-height: 1.6;
-            background-image: linear-gradient(to bottom, rgba(0, 122, 54, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
-        }
+    .popup-button-row {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
+    .sugerencias-busqueda {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
 
-        header {
-            text-align: center;
-            margin-bottom: 3rem;
-            background: linear-gradient(135deg, var(--black) 0%, #333333 100%);
-            padding: 2rem;
-            border-radius: 10px;
-            color: white;
-        }
+    .sugerencia-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: white;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-        }
+    .sugerencia-item:hover {
+      background-color: #f5f5f5;
+    }
 
-        .afghan-title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
+    .sugerencia-texto {
+      flex: 1;
+    }
 
-        p.subtitle {
-            font-size: 1.2rem;
-            color: rgba(255,255,255,0.9);
-            max-width: 700px;
-            margin: 0 auto;
-        }
+    .sugerencia-boton {
+      margin-left: 10px;
+      padding: 5px 10px;
+      background-color: #9b59b6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
 
-        .provinces-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 1.5rem;
-        }
+    .contenedor-buscador {
+      position: relative;
+      flex: 1;
+    }
 
-        .province-card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            text-align: center;
-            cursor: pointer;
-            border-top: 4px solid var(--black);
-        }
+    .cargando {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
 
-        .province-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            border-color: #333333;
-        }
+    .gm-style .gm-style-iw-c {
+      border-radius: 8px;
+      padding: 10px;
+    }
 
-        .flag-container {
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f0f0f0;
-            position: relative;
-            overflow: hidden;
-        }
+    .gm-style .gm-style-iw-d {
+      overflow: auto !important;
+    }
 
-        .flag-container::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--black) 0%, #333333 100%);
-        }
+    .gm-ui-hover-effect {
+      top: 8px !important;
+      right: 8px !important;
+    }
 
-        .flag-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
+    .map-type-selector {
+      position: absolute;
+      bottom: 20px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      display: flex;
+      gap: 10px;
+    }
 
-        .province-info {
-            padding: 1.5rem 1rem;
-        }
+    .map-type-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #f1f1f1;
+      transition: background 0.3s;
+    }
 
-        .province-name {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-            color: var(--black);
-        }
+    .map-type-btn.active {
+      background: #0066cc;
+      color: white;
+    }
 
-        .dari-name {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
-        .province-type {
-            color: #666;
-            font-size: 0.9rem;
-        }
+    @media (max-width: 768px) { 
+      #barra-superior { 
+        flex-direction: column; 
+        gap: 0.6rem;
+      }
+      
+      .popup-button-row {
+        flex-direction: column;
+      }
 
-        .search-container {
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            position: relative;
-        }
+      .sugerencia-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
 
-        #province-search {
-            width: 100%;
-            padding: 12px 45px 12px 20px;
-            border: 1px solid #ddd;
-            border-radius: 50px;
-            font-size: 1rem;
-            outline: none;
-            transition: var(--transition);
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 20px;
-        }
+      .sugerencia-boton {
+        margin-left: 0;
+        margin-top: 5px;
+        align-self: flex-end;
+      }
 
-        #province-search:focus {
-            border-color: var(--black);
-            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid #eee;
-            color: #777;
-        }
-
-        @media (max-width: 768px) {
-            .provinces-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            .afghan-title {
-                font-size: 2rem;
-            }
-
-            .flag-container {
-                height: 100px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .provinces-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 1rem;
-            }
-
-            .province-info {
-                padding: 1rem 0.5rem;
-            }
-
-            .province-name {
-                font-size: 1rem;
-            }
-            
-            .dari-name {
-                font-size: 1.1rem;
-            }
-        }
-    </style>
+      .map-type-selector {
+        bottom: 10px;
+        left: 5px;
+        flex-direction: column;
+        gap: 5px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>QRContraentrega</h1>
-            <div class="afghan-title">افغانستان</div>
-            <div>Afghanistan</div>
-            <p class="subtitle">ولایت یا شهر خود را انتخاب کنید / Select your province or city</p>
-        </header>
-
-        <div class="search-container">
-            <input type="text" id="province-search" placeholder="جستجوی ولایت یا شهر... / Search for province or city..." aria-label="جستجوی ولایت یا شهر">
-        </div>
-
-        <div class="provinces-grid" id="provinces-container">
-            <!-- Provinces and cities will appear here -->
-        </div>
-
-        <footer>
-            <p>© QRContraentrega. تمام حقوق محفوظ است / All rights reserved.</p>
-        </footer>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="contenedor-buscador">
+        <input type="search" id="buscador" placeholder="په افغانستان کې د ملګرو لټون..." enterkeyhint="search">
+        <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+      </div>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://qrcontraentrega.com/afghanistan-afiliacion', '_blank')">ملګری کېږدئ</button>
+      <button class="btn btn-centrar" id="centrar-btn">مرکز</button>
     </div>
+    <div id="mapa"></div>
+    <div class="map-type-selector">
+      <button class="map-type-btn active" id="map-btn">نقشه</button>
+      <button class="map-type-btn" id="satellite-btn">ساتلایټ</button>
+    </div>
+  </div>
 
-    <script>
-        // List of Afghan provinces and major cities with both languages
-        const provinces = [
-            // Provinces
-            { 
-                "name": { "fa": "کابل", "en": "Kabul" }, 
-                "type": { "fa": "ولایت", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/kabul", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "fa": "هرات", "en": "Herat" }, 
-                "type": { "fa": "ولایت", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/herat", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "fa": "بلخ", "en": "Balkh" }, 
-                "type": { "fa": "ولایت", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/balkh", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "fa": "ننگرهار", "en": "Nangarhar" }, 
-                "type": { "fa": "ولایت", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/nangarhar", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "fa": "قندهار", "en": "Kandahar" }, 
-                "type": { "fa": "ولایت", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/kandahar", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "fa": "بدخشان", "en": "Badakhshan" }, 
-                "type": { "fa": "ولایت", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/badakhshan", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "fa": "بامیان", "en": "Bamyan" }, 
-                "type": { "fa": "ولایت", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/bamyan", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "fa": "فراه", "en": "Farah" }, 
-                "type": { "fa": "ولایت", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/farah", 
-                "image": "img/c.jpg" 
-            },
-            
-            // Major cities
-            { 
-                "name": { "fa": "کابل", "en": "Kabul" }, 
-                "type": { "fa": "شهر", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/kabul-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "fa": "هرات", "en": "Herat" }, 
-                "type": { "fa": "شهر", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/herat-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "fa": "مزارشریف", "en": "Mazar-i-Sharif" }, 
-                "type": { "fa": "شهر", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/mazar", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "fa": "جلال آباد", "en": "Jalalabad" }, 
-                "type": { "fa": "شهر", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/jalalabad", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "fa": "قندهار", "en": "Kandahar" }, 
-                "type": { "fa": "شهر", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/kandahar-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "fa": "غزنی", "en": "Ghazni" }, 
-                "type": { "fa": "شهر", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/ghazni", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "fa": "کندز", "en": "Kunduz" }, 
-                "type": { "fa": "شهر", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/kunduz", 
-                "image": "img/c.jpg" 
-            }
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    // Variables globales
+    let mapa;
+    let userMarker;
+    let marcadoresOriginales = [];
+    let destinoMarker = null;
+    let buscadorTimeout;
+    let googleMapsLayer;
+    let googleSatelliteLayer;
+    let currentLayer;
+
+    // Datos de ubicaciones en Afganistán (solo socios)
+    const UBICACIONES = [
+      { 
+        "id": "kabul",
+        "nombre": "@kabul", 
+        "direccion": "چوک پل خشتی، کابل", 
+        "latlng": [34.5553, 69.2075], 
+        "url": "https://kabul.qrcontraentrega.af/",
+        "telefono": "+93701234567",
+        "horario": "شنبه - چهارشنبه ۰۸:۰۰ تر ۱۶:۰۰",
+        "servicios": "Marketplace او د سوداګرۍ نقطه په کابل کې",
+        "tipo": "socio",
+        "ciudad": "کابل"
+      },
+      { 
+        "id": "herat",
+        "nombre": "@herat", 
+        "direccion": "میدان جهاد، هرات", 
+        "latlng": [34.3734, 62.1792], 
+        "url": "https://herat.qrcontraentrega.af/",
+        "telefono": "+93701234568",
+        "horario": "شنبه - چهارشنبه ۰۸:۰۰ تر ۱۶:۰۰",
+        "servicios": "Marketplace او د سوداګرۍ نقطه په هرات کې",
+        "tipo": "socio",
+        "ciudad": "هرات"
+      },
+      { 
+        "id": "mazar",
+        "nombre": "@mazare_sharif", 
+        "direccion": "بلوار حضرت علی، مزار شریف", 
+        "latlng": [36.7069, 67.1095], 
+        "url": "https://mazar.qrcontraentrega.af/",
+        "telefono": "+93701234569",
+        "horario": "شنبه - چهارشنبه ۰۸:۰۰ تر ۱۶:۰۰",
+        "servicios": "Marketplace او د سوداګرۍ نقطه په مزار شریف کې",
+        "tipo": "socio",
+        "ciudad": "مزار شریف"
+      },
+      { 
+        "id": "kandahar",
+        "nombre": "@kandahar", 
+        "direccion": "چوک شیرپور، قندهار", 
+        "latlng": [31.6289, 65.7372], 
+        "url": "https://kandahar.qrcontraentrega.af/",
+        "telefono": "+93701234570",
+        "horario": "شنبه - چهارشنبه ۰۸:۰۰ تر ۱۶:۰۰",
+        "servicios": "Marketplace او د سوداګرۍ نقطه په قندهار کې",
+        "tipo": "socio",
+        "ciudad": "قندهار"
+      },
+      { 
+        "id": "jalalabad",
+        "nombre": "@jalalabad", 
+        "direccion": "سړک میوند، جلال آباد", 
+        "latlng": [34.4265, 70.4516], 
+        "url": "https://jalalabad.qrcontraentrega.af/",
+        "telefono": "+93701234571",
+        "horario": "شنبه - چهارشنبه ۰۸:۰۰ تر ۱۶:۰۰",
+        "servicios": "Marketplace او د سوداګرۍ نقطه په جلال آباد کې",
+        "tipo": "socio",
+        "ciudad": "جلال آباد"
+      }
+    ];
+
+    // Inicializar el mapa cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeMap();
+      
+      // Evento para el botón centrar - CORREGIDO
+      document.getElementById('centrar-btn').addEventListener('click', function() {
+        obtenerUbicacionUsuario();
+      });
+      
+      // Eventos para cambiar tipo de mapa
+      document.getElementById('map-btn').addEventListener('click', function() {
+        switchToMapView();
+      });
+      
+      document.getElementById('satellite-btn').addEventListener('click', function() {
+        switchToSatelliteView();
+      });
+      
+      // Eventos para el buscador
+      const searchInput = document.getElementById('buscador');
+      searchInput.addEventListener('input', handleSearchInput);
+      searchInput.addEventListener('keydown', handleSearchKeydown);
+      
+      // Cerrar sugerencias al hacer clic fuera
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.contenedor-buscador')) {
+          document.getElementById('sugerencias-busqueda').style.display = 'none';
+        }
+      });
+    });
+
+    function initializeMap() {
+      // Inicializar mapa centrado en Afganistán
+      mapa = L.map('mapa', {
+        center: [33.9391, 67.7100], // Coordenadas centrales de Afganistán
+        zoom: 6,
+        zoomControl: false
+      });
+
+      // Añadir control de zoom
+      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+
+      // Crear capas de Google Maps
+      googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+      });
+
+      googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+      });
+
+      // Inicialmente usar la vista de mapa
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+
+      // Asegurar que el mapa ocupe todo el espacio disponible
+      setTimeout(() => {
+        mapa.invalidateSize();
+      }, 0);
+
+      // Sistema de marcadores
+      const clusters = L.markerClusterGroup({
+        iconCreateFunction: cluster => L.divIcon({
+          html: `<div>${cluster.getChildCount()}</div>`,
+          className: 'cluster-marcadores',
+          iconSize: [40, 40]
+        }),
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true
+      });
+
+      // Crear marcadores (solo socios)
+      UBICACIONES.forEach(loc => {
+        const marcador = L.marker(loc.latlng, {
+          icon: L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+            iconSize: [32, 32],
+            className: 'marker-icon-orange'
+          })
+        }).bindPopup(`
+          <div style="min-width:220px">
+            <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
+            <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
+            <p style="margin:0 0 5px 0;font-size:0.9em"><strong>ښار:</strong> ${loc.ciudad}</p>
+            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>تلیفون:</strong> ${loc.telefono}</p>` : ''}
+            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>کار وخت:</strong> ${loc.horario}</p>` : ''}
+            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><strong>خدمتونه:</strong> ${loc.servicios}</p>` : ''}
+            <div class="popup-buttons">
+              <div class="popup-button-row">
+                <button class="btn btn-whatsapp" onclick="abrirWhatsApp('${loc.telefono}', '${loc.nombre}')">
+                  <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
+                  په واتساپ کې خبرې
+                </button>
+              </div>
+              <div class="popup-button-row">
+                <button class="btn btn-ruta" onclick="abrirGoogleMapsConDireccion('${loc.latlng[0]}', '${loc.latlng[1]}', '${loc.nombre}')">لار ښودنه</button>
+                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">نور معلومات</button>
+              </div>
+            </div>
+          </div>
+        `);
+        
+        // Guardar todos los datos de la ubicación en el marcador
+        marcador.datosUbicacion = loc;
+        marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.ciudad} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
+        marcadoresOriginales.push(marcador);
+      });
+
+      // Añadir marcadores al mapa
+      clusters.addLayers(marcadoresOriginales);
+      mapa.addLayer(clusters);
+
+      // Ajustar vista a los marcadores
+      if(marcadoresOriginales.length > 0) {
+        mapa.fitBounds(clusters.getBounds().pad(0.3));
+      }
+
+      // Solicitar ubicación al cargar la página
+      obtenerUbicacionUsuario();
+    }
+
+    // Función para cambiar a vista de mapa
+    function switchToMapView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      
+      document.getElementById('map-btn').classList.add('active');
+      document.getElementById('satellite-btn').classList.remove('active');
+    }
+
+    // Función para cambiar a vista de satélite
+    function switchToSatelliteView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleSatelliteLayer;
+      currentLayer.addTo(mapa);
+      
+      document.getElementById('satellite-btn').classList.add('active');
+      document.getElementById('map-btn').classList.remove('active');
+    }
+
+    // Función para abrir Google Maps con una dirección específica
+    function abrirGoogleMapsConDireccion(lat, lng, nombre) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`;
+      window.open(url, '_blank');
+    }
+
+    // Función para manejar la búsqueda
+    function handleSearchInput(e) {
+      clearTimeout(buscadorTimeout);
+      const termino = e.target.value.trim();
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      if (termino.length < 3) {
+        sugerenciasContainer.style.display = 'none';
+        return;
+      }
+      
+      // Mostrar indicador de carga
+      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">لټول کېږي... <span class="cargando"></span></div>';
+      sugerenciasContainer.style.display = 'block';
+      
+      buscadorTimeout = setTimeout(() => {
+        buscarConGoogle(termino);
+      }, 500);
+    }
+
+    // Función para buscar usando Google Places API (simulación)
+    function buscarConGoogle(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      // Primero buscar en puntos locales
+      const resultadosLocales = buscarEnPuntosLocales(consulta);
+      if (resultadosLocales) {
+        return;
+      }
+      
+      // Simular búsqueda en Google Places
+      setTimeout(() => {
+        // En una implementación real, aquí se conectaría con la API de Google Places
+        sugerenciasContainer.innerHTML = '';
+        
+        // Simular algunos resultados de búsqueda en Afganistán
+        const resultadosSimulados = [
+          {
+            name: "کابل هوایی ډګر",
+            lat: 34.5658,
+            lng: 69.2124,
+            formatted_address: "کابل هوایی ډګر، کابل، افغانستان"
+          },
+          {
+            name: "بلوچستان بازار",
+            lat: 34.5310,
+            lng: 69.1702,
+            formatted_address: "بلوچستان بازار، کابل، افغانستان"
+          },
+          {
+            name: "هرات هوایی ډګر",
+            lat: 34.2130,
+            lng: 62.2280,
+            formatted_address: "هرات هوایی ډګر، هرات، افغانستان"
+          },
+          {
+            name: "مزار شریف هوایی ډګر",
+            lat: 36.7069,
+            lng: 67.2095,
+            formatted_address: "مزار شریف هوایی ډګر، مزار شریف، افغانستان"
+          }
         ];
-
-        // Function to display provinces and cities
-        function renderProvinces(provinceList) {
-            const container = document.getElementById('provinces-container');
-            container.innerHTML = '';
-
-            provinceList.forEach(province => {
-                const provinceCard = document.createElement('div');
-                provinceCard.className = 'province-card';
-                provinceCard.innerHTML = `
-                    <div class="flag-container">
-                        <img src="${province.image}" alt="${province.name.fa}" class="flag-image">
-                    </div>
-                    <div class="province-info">
-                        <div class="dari-name">${province.name.fa}</div>
-                        <div class="province-name">${province.name.en}</div>
-                        <div class="province-type">${province.type.fa} • ${province.type.en}</div>
-                    </div>
-                `;
-                
-                provinceCard.addEventListener('click', () => {
-                    window.location.href = province.url;
-                });
-
-                container.appendChild(provinceCard);
+        
+        if (resultadosSimulados.length > 0) {
+          resultadosSimulados.forEach(lugar => {
+            const item = document.createElement('div');
+            item.className = 'sugerencia-item';
+            
+            const lat = lugar.lat;
+            const lng = lugar.lng;
+            const nombre = lugar.name;
+            
+            item.innerHTML = `
+              <div class="sugerencia-texto">
+                <strong>📍 ${nombre}</strong><br>
+                <small>${lugar.formatted_address}</small>
+              </div>
+              <button class="sugerencia-boton" data-lat="${lat}" data-lng="${lng}" data-nombre="${nombre}">
+                لار ښودنه
+              </button>
+            `;
+            
+            // Agregar evento al botón "Cómo llegar"
+            const boton = item.querySelector('.sugerencia-boton');
+            boton.addEventListener('click', function(e) {
+              e.stopPropagation();
+              const lat = parseFloat(this.getAttribute('data-lat'));
+              const lng = parseFloat(this.getAttribute('data-lng'));
+              const nombre = this.getAttribute('data-nombre');
+              
+              // Mover el mapa a la ubicación seleccionada
+              const latlng = [lat, lng];
+              mapa.setView(latlng, 17);
+              
+              // Crear o actualizar marcador de destino
+              if (destinoMarker) {
+                mapa.removeLayer(destinoMarker);
+              }
+              destinoMarker = L.marker(latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-red'
+                })
+              }).addTo(mapa)
+                .bindPopup(`<strong>${nombre}</strong>`);
+              
+              destinoMarker.openPopup();
+              document.getElementById('buscador').value = nombre;
+              sugerenciasContainer.style.display = 'none';
             });
+            
+            // Agregar evento al item completo
+            item.addEventListener('click', function() {
+              const lat = parseFloat(boton.getAttribute('data-lat'));
+              const lng = parseFloat(boton.getAttribute('data-lng'));
+              const nombre = boton.getAttribute('data-nombre');
+              
+              const latlng = [lat, lng];
+              mapa.setView(latlng, 17);
+              
+              if (destinoMarker) {
+                mapa.removeLayer(destinoMarker);
+              }
+              destinoMarker = L.marker(latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-red'
+                })
+              }).addTo(mapa)
+                .bindPopup(`<strong>${nombre}</strong>`);
+              
+              destinoMarker.openPopup();
+              document.getElementById('buscador').value = nombre;
+              sugerenciasContainer.style.display = 'none';
+            });
+            
+            sugerenciasContainer.appendChild(item);
+          });
+          sugerenciasContainer.style.display = 'block';
+        } else {
+          sugerenciasContainer.innerHTML = '<div class="sugerencia-item">د ' + consulta + ' لپاره هیڅ نتیجه ونه موندل شوه</div>';
+          sugerenciasContainer.style.display = 'block';
         }
+      }, 800);
+    }
 
-        // Function to search provinces and cities
-        function searchProvinces() {
-            const searchTerm = document.getElementById('province-search').value.toLowerCase();
-            const filteredProvinces = provinces.filter(province => 
-                province.name.fa.toLowerCase().includes(searchTerm) || 
-                province.name.en.toLowerCase().includes(searchTerm) ||
-                province.type.fa.toLowerCase().includes(searchTerm) ||
-                province.type.en.toLowerCase().includes(searchTerm)
-            );
-            renderProvinces(filteredProvinces);
-        }
-
-        // Event listeners
-        document.getElementById('province-search').addEventListener('input', searchProvinces);
-
-        // Display all provinces and cities when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            renderProvinces(provinces);
+    // Función para buscar en los puntos locales
+    function buscarEnPuntosLocales(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      const termino = consulta.toLowerCase();
+      const resultados = marcadoresOriginales.filter(m => 
+        m.datosBusqueda.includes(termino)
+      );
+      
+      if (resultados.length > 0) {
+        sugerenciasContainer.innerHTML = '';
+        
+        resultados.forEach(marcador => {
+          const loc = marcador.datosUbicacion;
+          const item = document.createElement('div');
+          item.className = 'sugerencia-item';
+          item.innerHTML = `
+            <div class="sugerencia-texto">
+              <strong>📍 ${loc.nombre}</strong><br>
+              <small>${loc.direccion}</small><br>
+              <small><strong>ښار:</strong> ${loc.ciudad}</small>
+            </div>
+            <button class="sugerencia-boton" data-id="${loc.id}">
+              لار ښودنه
+            </button>
+          `;
+          
+          // Agregar evento al botón "Cómo llegar"
+          const boton = item.querySelector('.sugerencia-boton');
+          boton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = this.getAttribute('data-id');
+            abrirGoogleMapsConDireccionUbicacion(id);
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          // Agregar evento al item completo
+          item.addEventListener('click', function() {
+            mapa.setView(marcador.getLatLng(), 17);
+            marcador.openPopup();
+            document.getElementById('buscador').value = loc.nombre;
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          sugerenciasContainer.appendChild(item);
         });
-    </script>
+        sugerenciasContainer.style.display = 'block';
+        return true;
+      }
+      return false;
+    }
+
+    // Función para abrir Google Maps con una ubicación específica
+    function abrirGoogleMapsConDireccionUbicacion(idPunto) {
+      const punto = UBICACIONES.find(p => p.id === idPunto);
+      if (!punto) return;
+      
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${punto.latlng[0]},${punto.latlng[1]}&travelmode=driving&dir_action=navigate`;
+      window.open(url, '_blank');
+    }
+
+    // Función para manejar teclas en el buscador
+    function handleSearchKeydown(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const termino = document.getElementById('buscador').value.trim();
+        if (termino) {
+          buscarConGoogle(termino);
+        }
+      }
+    }
+
+    // Función para abrir WhatsApp
+    function abrirWhatsApp(telefono, nombre) {
+      const numeroLimpio = telefono.replace(/\D/g, '');
+      const mensaje = `سلام ${nombre}، زه ستاسو د ضد تحویل خدماتو په اړه نور معلومات غواړم.`;
+      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
+    }
+
+    // Función para obtener ubicación del usuario - CORREGIDA
+    function obtenerUbicacionUsuario() {
+      return new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              
+              // Verificar si está en Afganistán (aproximadamente)
+              const distanciaAAfganistan = calcularDistancia(
+                latitude, longitude,
+                33.9391, 67.7100
+              );
+              
+              if (distanciaAAfganistan > 500) {
+                alert('دا خدمت یوازې په افغانستان کې شتون لري');
+                reject();
+                return;
+              }
+              
+              // Eliminar marcador anterior si existe
+              if (userMarker) {
+                mapa.removeLayer(userMarker);
+              }
+              
+              // Crear nuevo marcador de usuario (azul)
+              userMarker = L.marker([latitude, longitude], {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-blue'
+                })
+              }).addTo(mapa)
+                .bindPopup('ستاسو اوسنی ځای!');
+                
+              // Centrar mapa en la ubicación del usuario con zoom cercano
+              mapa.setView([latitude, longitude], 17);
+              resolve();
+            },
+            (error) => {
+              console.log(`Error al obtener ubicación: ${error.message}`);
+              alert('ستاسو ځای ترلاسه نشو. ډاډ ترلاسه کړئ چې تاسو د جیولوکیشن لاسرسی اجازه کړی دی.');
+              reject();
+            },
+            { 
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 60000
+            }
+          );
+        } else {
+          console.log("ستاسو براوزر د جیولوکیشن ملاتړ نه کوي.");
+          alert("ستاسو براوزر د جیولوکیشن ملاتړ نه کوي.");
+          reject();
+        }
+      });
+    }
+
+    // Función para calcular distancia en km (fórmula Haversine)
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+  </script>
 </body>
 </html>
