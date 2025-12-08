@@ -1,375 +1,853 @@
 <!DOCTYPE html>
-<html lang="ca" dir="ltr">
+<html lang="ca">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - Andorra</title>
-    <style>
-        :root {
-            --blue: #0018A8; /* Andorran blue */
-            --yellow: #FCDD09; /* Andorran yellow */
-            --red: #D91023; /* Andorran red */
-            --background-color: #f9f9f9;
-            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Lliurament Andorra</title>
+  <style>
+    :root {
+      --primary-color: #1a1a1a;
+      --secondary-color: #333;
+      --accent-color: #0066cc;
+      --text-color: #333;
+      --light-text: #fff;
+      --bg-light: #f8f8f8;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    body { 
+      font-family: 'Roboto', sans-serif; 
+      color: var(--text-color); 
+      line-height: 1.6; 
+      touch-action: manipulation;
+      overflow-x: hidden;
+    }
+    
+    #contenedor-mapa { 
+      height: 100vh; 
+      display: flex; 
+      flex-direction: column; 
+      position: relative;
+    }
+    
+    #barra-superior { 
+      display: flex; 
+      gap: 0.8rem; 
+      padding: 0.8rem; 
+      background: var(--bg-light); 
+      width: 100%;
+      z-index: 1000;
+    }
+    
+    #buscador { 
+      flex: 1; 
+      padding: 0.6rem 1.2rem; 
+      border: 1px solid #ddd; 
+      border-radius: 24px; 
+      appearance: none; 
+      font-size: 16px;
+      transition: var(--transition);
+    }
+    
+    #buscador:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+    }
+    
+    .btn { 
+      background: var(--primary-color); 
+      color: var(--light-text); 
+      padding: 0.6rem 1.2rem; 
+      border-radius: 24px; 
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    
+    .btn:hover {
+      background: var(--secondary-color);
+      transform: translateY(-1px);
+    }
+    
+    .btn-centrar {
+      background-color: #0066cc;
+    }
+    
+    .btn-ruta {
+      background-color: #9b59b6;
+    }
+    
+    .btn-info {
+      background-color: #3498db;
+    }
+    
+    .btn-whatsapp {
+      background-color: #25D366;
+    }
+    
+    .btn-solicitar {
+      background-color: #e74c3c;
+    }
+    
+    #mapa { 
+      flex: 1; 
+      background: #f0f0f0; 
+      width: 100%;
+    }
+    
+    .cluster-marcadores { 
+      background: rgba(40,40,40,0.7); 
+      border-radius: 50%; 
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    .whatsapp-icon {
+      width: 16px;
+      height: 16px;
+      filter: invert(1);
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    .popup-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
 
-        body {
-            background-color: var(--background-color);
-            color: #333;
-            line-height: 1.6;
-            background-image: linear-gradient(to bottom, rgba(0, 24, 168, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
-        }
+    .popup-button-row {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
+    .sugerencias-busqueda {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
 
-        header {
-            text-align: center;
-            margin-bottom: 3rem;
-            background: linear-gradient(135deg, var(--blue) 0%, #0020C0 100%);
-            padding: 2rem;
-            border-radius: 10px;
-            color: white;
-        }
+    .sugerencia-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: white;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-        }
+    .sugerencia-item:hover {
+      background-color: #f5f5f5;
+    }
 
-        .andorran-title {
-            font-size: 2.2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
+    .sugerencia-texto {
+      flex: 1;
+    }
 
-        p.subtitle {
-            font-size: 1.2rem;
-            color: rgba(255,255,255,0.9);
-            max-width: 700px;
-            margin: 0 auto;
-        }
+    .sugerencia-boton {
+      margin-left: 10px;
+      padding: 5px 10px;
+      background-color: #9b59b6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
 
-        .parishes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 1.5rem;
-        }
+    .contenedor-buscador {
+      position: relative;
+      flex: 1;
+    }
 
-        .parish-card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            text-align: center;
-            cursor: pointer;
-            border-top: 4px solid var(--blue);
-        }
+    .cargando {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
 
-        .parish-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            border-color: #0020C0;
-        }
+    .gm-style .gm-style-iw-c {
+      border-radius: 8px;
+      padding: 10px;
+    }
 
-        .flag-container {
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f0f0f0;
-            position: relative;
-            overflow: hidden;
-        }
+    .gm-style .gm-style-iw-d {
+      overflow: auto !important;
+    }
 
-        .flag-container::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--blue) 0%, #0020C0 100%);
-        }
+    .gm-ui-hover-effect {
+      top: 8px !important;
+      right: 8px !important;
+    }
 
-        .flag-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
+    .map-type-selector {
+      position: absolute;
+      bottom: 20px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      display: flex;
+      gap: 10px;
+    }
 
-        .parish-info {
-            padding: 1.5rem 1rem;
-        }
+    .map-type-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #f1f1f1;
+      transition: background 0.3s;
+    }
 
-        .parish-name {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-            color: var(--blue);
-        }
+    .map-type-btn.active {
+      background: #0066cc;
+      color: white;
+    }
 
-        .catalan-name {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
-        .parish-type {
-            color: #666;
-            font-size: 0.9rem;
-        }
+    @media (max-width: 768px) { 
+      #barra-superior { 
+        flex-direction: column; 
+        gap: 0.6rem;
+      }
+      
+      .popup-button-row {
+        flex-direction: column;
+      }
 
-        .search-container {
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            position: relative;
-        }
+      .sugerencia-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
 
-        #parish-search {
-            width: 100%;
-            padding: 12px 20px 12px 45px;
-            border: 1px solid #ddd;
-            border-radius: 50px;
-            font-size: 1rem;
-            outline: none;
-            transition: var(--transition);
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: 15px center;
-            background-size: 20px;
-        }
+      .sugerencia-boton {
+        margin-left: 0;
+        margin-top: 5px;
+        align-self: flex-end;
+      }
 
-        #parish-search:focus {
-            border-color: var(--blue);
-            box-shadow: 0 0 0 3px rgba(0, 24, 168, 0.2);
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid #eee;
-            color: #777;
-        }
-
-        @media (max-width: 768px) {
-            .parishes-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            .andorran-title {
-                font-size: 1.8rem;
-            }
-
-            .flag-container {
-                height: 100px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .parishes-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 1rem;
-            }
-
-            .parish-info {
-                padding: 1rem 0.5rem;
-            }
-
-            .parish-name {
-                font-size: 1rem;
-            }
-            
-            .catalan-name {
-                font-size: 1.1rem;
-            }
-        }
-    </style>
+      .map-type-selector {
+        bottom: 10px;
+        left: 5px;
+        flex-direction: column;
+        gap: 5px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>QRContraentrega</h1>
-            <div class="andorran-title">Andorra</div>
-            <p class="subtitle">Seleccioneu la vostra parròquia o localitat / Select your parish or town</p>
-        </header>
-
-        <div class="search-container">
-            <input type="text" id="parish-search" placeholder="Cercar parròquia o localitat... / Search for parish or town..." aria-label="Cercar parròquia o localitat">
-        </div>
-
-        <div class="parishes-grid" id="parishes-container">
-            <!-- Parishes and towns will appear here -->
-        </div>
-
-        <footer>
-            <p>© QRContraentrega. Tots els drets reservats / All rights reserved.</p>
-        </footer>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="contenedor-buscador">
+        <input type="search" id="buscador" placeholder="Cerca socis a Andorra…" enterkeyhint="search">
+        <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+      </div>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://qrlliuraments.ad/afiliacio', '_blank')">AFILIAR-SE</button>
+      <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
     </div>
+    <div id="mapa"></div>
+    <div class="map-type-selector">
+      <button class="map-type-btn active" id="map-btn">Mapa</button>
+      <button class="map-type-btn" id="satellite-btn">Satèl·lit</button>
+    </div>
+  </div>
 
-    <script>
-        // List of Andorran parishes and major towns with both languages
-        const parishes = [
-            // Parishes
-            { 
-                "name": { "ca": "Andorra la Vella", "en": "Andorra la Vella" }, 
-                "type": { "ca": "Parròquia", "en": "Parish" }, 
-                "url": "https://qrcontraentrega.com/andorra-la-vella", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ca": "Canillo", "en": "Canillo" }, 
-                "type": { "ca": "Parròquia", "en": "Parish" }, 
-                "url": "https://qrcontraentrega.com/canillo", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ca": "Encamp", "en": "Encamp" }, 
-                "type": { "ca": "Parròquia", "en": "Parish" }, 
-                "url": "https://qrcontraentrega.com/encamp", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ca": "Escaldes-Engordany", "en": "Escaldes-Engordany" }, 
-                "type": { "ca": "Parròquia", "en": "Parish" }, 
-                "url": "https://qrcontraentrega.com/escaldes-engordany", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ca": "La Massana", "en": "La Massana" }, 
-                "type": { "ca": "Parròquia", "en": "Parish" }, 
-                "url": "https://qrcontraentrega.com/la-massana", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ca": "Ordino", "en": "Ordino" }, 
-                "type": { "ca": "Parròquia", "en": "Parish" }, 
-                "url": "https://qrcontraentrega.com/ordino", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ca": "Sant Julià de Lòria", "en": "Sant Julià de Lòria" }, 
-                "type": { "ca": "Parròquia", "en": "Parish" }, 
-                "url": "https://qrcontraentrega.com/sant-julia-de-loria", 
-                "image": "img/c.jpg" 
-            },
-            
-            // Major towns
-            { 
-                "name": { "ca": "Andorra la Vella", "en": "Andorra la Vella" }, 
-                "type": { "ca": "Ciutat", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/andorra-la-vella-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ca": "Escaldes", "en": "Escaldes" }, 
-                "type": { "ca": "Vila", "en": "Town" }, 
-                "url": "https://qrcontraentrega.com/escaldes", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ca": "Encamp", "en": "Encamp" }, 
-                "type": { "ca": "Vila", "en": "Town" }, 
-                "url": "https://qrcontraentrega.com/encamp-town", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ca": "Pas de la Casa", "en": "Pas de la Casa" }, 
-                "type": { "ca": "Localitat", "en": "Locality" }, 
-                "url": "https://qrcontraentrega.com/pas-de-la-casa", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ca": "Santa Coloma", "en": "Santa Coloma" }, 
-                "type": { "ca": "Vila", "en": "Town" }, 
-                "url": "https://qrcontraentrega.com/santa-coloma", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ca": "Arinsal", "en": "Arinsal" }, 
-                "type": { "ca": "Poble", "en": "Village" }, 
-                "url": "https://qrcontraentrega.com/arinsal", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "ca": "Soldeu", "en": "Soldeu" }, 
-                "type": { "ca": "Poble", "en": "Village" }, 
-                "url": "https://qrcontraentrega.com/soldeu", 
-                "image": "img/c.jpg" 
-            }
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    // Variables globals
+    let mapa;
+    let userMarker;
+    let marcadoresOriginales = [];
+    let destinoMarker = null;
+    let buscadorTimeout;
+    let googleMapsLayer;
+    let googleSatelliteLayer;
+    let currentLayer;
+
+    // Dades de ubicacions a Andorra (només socis)
+    const UBICACIONES = [
+      { 
+        "id": "andorra_la_vella",
+        "nombre": "@andorralavella", 
+        "direccion": "Av. Meritxell 96, Andorra la Vella", 
+        "latlng": [42.5078, 1.5211], 
+        "url": "https://andorralavella.qrlliuraments.ad/",
+        "telefono": "+376345678",
+        "horario": "Dl - Dv 09:00 a 17:00",
+        "servicios": "Marketplace i Punt logístic a Andorra la Vella",
+        "tipo": "socio",
+        "ciudad": "Andorra la Vella"
+      },
+      { 
+        "id": "les_escales",
+        "nombre": "@lesescales", 
+        "direccion": "Carrer de la Unió 4, Les Escaldes", 
+        "latlng": [42.5113, 1.5341], 
+        "url": "https://lesescales.qrlliuraments.ad/",
+        "telefono": "+376345679",
+        "horario": "Dl - Dv 09:00 a 17:00",
+        "servicios": "Marketplace i Punt logístic a Les Escaldes",
+        "tipo": "socio",
+        "ciudad": "Les Escaldes"
+      },
+      { 
+        "id": "encamp",
+        "nombre": "@encamp", 
+        "direccion": "Av. Copríncep Episcopal 58, Encamp", 
+        "latlng": [42.5358, 1.5831], 
+        "url": "https://encamp.qrlliuraments.ad/",
+        "telefono": "+376345680",
+        "horario": "Dl - Dv 09:00 a 17:00",
+        "servicios": "Marketplace i Punt logístic a Encamp",
+        "tipo": "socio",
+        "ciudad": "Encamp"
+      },
+      { 
+        "id": "sant_julia",
+        "nombre": "@santjulia", 
+        "direccion": "Av. Carlemany 144, Sant Julià de Lòria", 
+        "latlng": [42.4664, 1.4914], 
+        "url": "https://santjulia.qrlliuraments.ad/",
+        "telefono": "+376345681",
+        "horario": "Dl - Dv 09:00 a 17:00",
+        "servicios": "Marketplace i Punt logístic a Sant Julià de Lòria",
+        "tipo": "socio",
+        "ciudad": "Sant Julià de Lòria"
+      },
+      { 
+        "id": "la_massana",
+        "nombre": "@lamassana", 
+        "direccion": "Carrer Major 42, La Massana", 
+        "latlng": [42.5452, 1.5153], 
+        "url": "https://lamassana.qrlliuraments.ad/",
+        "telefono": "+376345682",
+        "horario": "Dl - Dv 09:00 a 17:00",
+        "servicios": "Marketplace i Punt logístic a La Massana",
+        "tipo": "socio",
+        "ciudad": "La Massana"
+      },
+      { 
+        "id": "ordino",
+        "nombre": "@ordino", 
+        "direccion": "Carrer Major 8, Ordino", 
+        "latlng": [42.5562, 1.5331], 
+        "url": "https://ordino.qrlliuraments.ad/",
+        "telefono": "+376345683",
+        "horario": "Dl - Dv 09:00 a 17:00",
+        "servicios": "Marketplace i Punt logístic a Ordino",
+        "tipo": "socio",
+        "ciudad": "Ordino"
+      },
+      { 
+        "id": "canillo",
+        "nombre": "@canillo", 
+        "direccion": "Pl. del Príncep Benlloch 1, Canillo", 
+        "latlng": [42.5675, 1.5978], 
+        "url": "https://canillo.qrlliuraments.ad/",
+        "telefono": "+376345684",
+        "horario": "Dl - Dv 09:00 a 17:00",
+        "servicios": "Marketplace i Punt logístic a Canillo",
+        "tipo": "socio",
+        "ciudad": "Canillo"
+      }
+    ];
+
+    // Inicialitzar el mapa quan el DOM estigui llest
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeMap();
+      
+      // Event per al botó centrar - CORREGIT
+      document.getElementById('centrar-btn').addEventListener('click', function() {
+        obtenerUbicacionUsuario();
+      });
+      
+      // Events per canviar tipus de mapa
+      document.getElementById('map-btn').addEventListener('click', function() {
+        switchToMapView();
+      });
+      
+      document.getElementById('satellite-btn').addEventListener('click', function() {
+        switchToSatelliteView();
+      });
+      
+      // Events per al cercador
+      const searchInput = document.getElementById('buscador');
+      searchInput.addEventListener('input', handleSearchInput);
+      searchInput.addEventListener('keydown', handleSearchKeydown);
+      
+      // Tancar suggeriments en fer clic fora
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.contenedor-buscador')) {
+          document.getElementById('sugerencias-busqueda').style.display = 'none';
+        }
+      });
+    });
+
+    function initializeMap() {
+      // Inicialitzar mapa centrat a Andorra
+      mapa = L.map('mapa', {
+        center: [42.5063, 1.5218], // Coordenades centrals d'Andorra
+        zoom: 12,
+        zoomControl: false
+      });
+
+      // Afegir control de zoom
+      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+
+      // Crear capes de Google Maps
+      googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+      });
+
+      googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+      });
+
+      // Inicialment utilitzar la vista de mapa
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+
+      // Assegurar que el mapa ocupi tot l'espai disponible
+      setTimeout(() => {
+        mapa.invalidateSize();
+      }, 0);
+
+      // Sistema de marcadors
+      const clusters = L.markerClusterGroup({
+        iconCreateFunction: cluster => L.divIcon({
+          html: `<div>${cluster.getChildCount()}</div>`,
+          className: 'cluster-marcadores',
+          iconSize: [40, 40]
+        }),
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true
+      });
+
+      // Crear marcadors (només socis)
+      UBICACIONES.forEach(loc => {
+        const marcador = L.marker(loc.latlng, {
+          icon: L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+            iconSize: [32, 32],
+            className: 'marker-icon-orange'
+          })
+        }).bindPopup(`
+          <div style="min-width:220px">
+            <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
+            <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
+            <p style="margin:0 0 5px 0;font-size:0.9em"><strong>Ciutat:</strong> ${loc.ciudad}</p>
+            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Telèfon:</strong> ${loc.telefono}</p>` : ''}
+            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Horari:</strong> ${loc.horario}</p>` : ''}
+            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><strong>Serveis:</strong> ${loc.servicios}</p>` : ''}
+            <div class="popup-buttons">
+              <div class="popup-button-row">
+                <button class="btn btn-whatsapp" onclick="abrirWhatsApp('${loc.telefono}', '${loc.nombre}')">
+                  <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
+                  Xatejar per WhatsApp
+                </button>
+              </div>
+              <div class="popup-button-row">
+                <button class="btn btn-ruta" onclick="abrirGoogleMapsConDireccion('${loc.latlng[0]}', '${loc.latlng[1]}', '${loc.nombre}')">Com arribar-hi</button>
+                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">Més informació</button>
+              </div>
+            </div>
+          </div>
+        `);
+        
+        // Guardar totes les dades de la ubicació en el marcador
+        marcador.datosUbicacion = loc;
+        marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.ciudad} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
+        marcadoresOriginales.push(marcador);
+      });
+
+      // Afegir marcadors al mapa
+      clusters.addLayers(marcadoresOriginales);
+      mapa.addLayer(clusters);
+
+      // Ajustar vista als marcadors
+      if(marcadoresOriginales.length > 0) {
+        mapa.fitBounds(clusters.getBounds().pad(0.3));
+      }
+
+      // Sol·licitar ubicació en carregar la pàgina
+      obtenerUbicacionUsuario();
+    }
+
+    // Funció per canviar a vista de mapa
+    function switchToMapView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      
+      document.getElementById('map-btn').classList.add('active');
+      document.getElementById('satellite-btn').classList.remove('active');
+    }
+
+    // Funció per canviar a vista de satèl·lit
+    function switchToSatelliteView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleSatelliteLayer;
+      currentLayer.addTo(mapa);
+      
+      document.getElementById('satellite-btn').classList.add('active');
+      document.getElementById('map-btn').classList.remove('active');
+    }
+
+    // Funció per obrir Google Maps amb una adreça específica
+    function abrirGoogleMapsConDireccion(lat, lng, nombre) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`;
+      window.open(url, '_blank');
+    }
+
+    // Funció per gestionar la cerca
+    function handleSearchInput(e) {
+      clearTimeout(buscadorTimeout);
+      const termino = e.target.value.trim();
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      if (termino.length < 3) {
+        sugerenciasContainer.style.display = 'none';
+        return;
+      }
+      
+      // Mostrar indicador de càrrega
+      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Cercant... <span class="cargando"></span></div>';
+      sugerenciasContainer.style.display = 'block';
+      
+      buscadorTimeout = setTimeout(() => {
+        buscarConGoogle(termino);
+      }, 500);
+    }
+
+    // Funció per cercar usant Google Places API (simulació)
+    function buscarConGoogle(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      // Primer cercar en punts locals
+      const resultadosLocales = buscarEnPuntosLocales(consulta);
+      if (resultadosLocales) {
+        return;
+      }
+      
+      // Simular cerca en Google Places
+      setTimeout(() => {
+        // En una implementació real, aquí es connectaria amb l'API de Google Places
+        sugerenciasContainer.innerHTML = '';
+        
+        // Simular alguns resultats de cerca a Andorra
+        const resultadosSimulados = [
+          {
+            name: "Centre Comercial Pyrenèes",
+            lat: 42.5089,
+            lng: 1.5324,
+            formatted_address: "Av. Meritxell 104, Andorra la Vella"
+          },
+          {
+            name: "Caldea Centre Termolúdic",
+            lat: 42.5094,
+            lng: 1.5331,
+            formatted_address: "Parc de la Mola 10, Les Escaldes"
+          },
+          {
+            name: "Estació d'esquí Grandvalira",
+            lat: 42.5808,
+            lng: 1.6669,
+            formatted_address: "Estació d'esquí, Canillo"
+          },
+          {
+            name: "Aeroport d'Andorra-La Seu d'Urgell",
+            lat: 42.3386,
+            lng: 1.4092,
+            formatted_address: "Carretera d'Andorra, La Seu d'Urgell"
+          },
+          {
+            name: "Centre Comercial Illa Carlemany",
+            lat: 42.4658,
+            lng: 1.4928,
+            formatted_address: "Av. Carlemany, Sant Julià de Lòria"
+          }
         ];
-
-        // Function to display parishes and towns
-        function renderParishes(parishList) {
-            const container = document.getElementById('parishes-container');
-            container.innerHTML = '';
-
-            parishList.forEach(parish => {
-                const parishCard = document.createElement('div');
-                parishCard.className = 'parish-card';
-                parishCard.innerHTML = `
-                    <div class="flag-container">
-                        <img src="${parish.image}" alt="${parish.name.ca}" class="flag-image">
-                    </div>
-                    <div class="parish-info">
-                        <div class="catalan-name">${parish.name.ca}</div>
-                        <div class="parish-name">${parish.name.en}</div>
-                        <div class="parish-type">${parish.type.ca} • ${parish.type.en}</div>
-                    </div>
-                `;
-                
-                parishCard.addEventListener('click', () => {
-                    window.location.href = parish.url;
-                });
-
-                container.appendChild(parishCard);
+        
+        if (resultadosSimulados.length > 0) {
+          resultadosSimulados.forEach(lugar => {
+            const item = document.createElement('div');
+            item.className = 'sugerencia-item';
+            
+            const lat = lugar.lat;
+            const lng = lugar.lng;
+            const nombre = lugar.name;
+            
+            item.innerHTML = `
+              <div class="sugerencia-texto">
+                <strong>📍 ${nombre}</strong><br>
+                <small>${lugar.formatted_address}</small>
+              </div>
+              <button class="sugerencia-boton" data-lat="${lat}" data-lng="${lng}" data-nombre="${nombre}">
+                Com arribar-hi
+              </button>
+            `;
+            
+            // Afegir esdeveniment al botó "Com arribar-hi"
+            const boton = item.querySelector('.sugerencia-boton');
+            boton.addEventListener('click', function(e) {
+              e.stopPropagation();
+              const lat = parseFloat(this.getAttribute('data-lat'));
+              const lng = parseFloat(this.getAttribute('data-lng'));
+              const nombre = this.getAttribute('data-nombre');
+              
+              // Moure el mapa a la ubicació seleccionada
+              const latlng = [lat, lng];
+              mapa.setView(latlng, 17);
+              
+              // Crear o actualitzar marcador de destí
+              if (destinoMarker) {
+                mapa.removeLayer(destinoMarker);
+              }
+              destinoMarker = L.marker(latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-red'
+                })
+              }).addTo(mapa)
+                .bindPopup(`<strong>${nombre}</strong>`);
+              
+              destinoMarker.openPopup();
+              document.getElementById('buscador').value = nombre;
+              sugerenciasContainer.style.display = 'none';
             });
+            
+            // Afegir esdeveniment a tot l'ítem
+            item.addEventListener('click', function() {
+              const lat = parseFloat(boton.getAttribute('data-lat'));
+              const lng = parseFloat(boton.getAttribute('data-lng'));
+              const nombre = boton.getAttribute('data-nombre');
+              
+              const latlng = [lat, lng];
+              mapa.setView(latlng, 17);
+              
+              if (destinoMarker) {
+                mapa.removeLayer(destinoMarker);
+              }
+              destinoMarker = L.marker(latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-red'
+                })
+              }).addTo(mapa)
+                .bindPopup(`<strong>${nombre}</strong>`);
+              
+              destinoMarker.openPopup();
+              document.getElementById('buscador').value = nombre;
+              sugerenciasContainer.style.display = 'none';
+            });
+            
+            sugerenciasContainer.appendChild(item);
+          });
+          sugerenciasContainer.style.display = 'block';
+        } else {
+          sugerenciasContainer.innerHTML = '<div class="sugerencia-item">No s\'han trobat resultats per a: ' + consulta + '</div>';
+          sugerenciasContainer.style.display = 'block';
         }
+      }, 800);
+    }
 
-        // Function to search parishes and towns
-        function searchParishes() {
-            const searchTerm = document.getElementById('parish-search').value.toLowerCase();
-            const filteredParishes = parishes.filter(parish => 
-                parish.name.ca.toLowerCase().includes(searchTerm) || 
-                parish.name.en.toLowerCase().includes(searchTerm) ||
-                parish.type.ca.toLowerCase().includes(searchTerm) ||
-                parish.type.en.toLowerCase().includes(searchTerm)
-            );
-            renderParishes(filteredParishes);
-        }
-
-        // Event listeners
-        document.getElementById('parish-search').addEventListener('input', searchParishes);
-
-        // Display all parishes and towns when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            renderParishes(parishes);
+    // Funció per cercar en els punts locals
+    function buscarEnPuntosLocales(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      const termino = consulta.toLowerCase();
+      const resultados = marcadoresOriginales.filter(m => 
+        m.datosBusqueda.includes(termino)
+      );
+      
+      if (resultados.length > 0) {
+        sugerenciasContainer.innerHTML = '';
+        
+        resultados.forEach(marcador => {
+          const loc = marcador.datosUbicacion;
+          const item = document.createElement('div');
+          item.className = 'sugerencia-item';
+          item.innerHTML = `
+            <div class="sugerencia-texto">
+              <strong>📍 ${loc.nombre}</strong><br>
+              <small>${loc.direccion}</small><br>
+              <small><strong>Ciutat:</strong> ${loc.ciudad}</small>
+            </div>
+            <button class="sugerencia-boton" data-id="${loc.id}">
+              Com arribar-hi
+            </button>
+          `;
+          
+          // Afegir esdeveniment al botó "Com arribar-hi"
+          const boton = item.querySelector('.sugerencia-boton');
+          boton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = this.getAttribute('data-id');
+            abrirGoogleMapsConDireccionUbicacion(id);
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          // Afegir esdeveniment a tot l'ítem
+          item.addEventListener('click', function() {
+            mapa.setView(marcador.getLatLng(), 17);
+            marcador.openPopup();
+            document.getElementById('buscador').value = loc.nombre;
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          sugerenciasContainer.appendChild(item);
         });
-    </script>
+        sugerenciasContainer.style.display = 'block';
+        return true;
+      }
+      return false;
+    }
+
+    // Funció per obrir Google Maps amb una ubicació específica
+    function abrirGoogleMapsConDireccionUbicacion(idPunto) {
+      const punto = UBICACIONES.find(p => p.id === idPunto);
+      if (!punto) return;
+      
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${punto.latlng[0]},${punto.latlng[1]}&travelmode=driving&dir_action=navigate`;
+      window.open(url, '_blank');
+    }
+
+    // Funció per gestionar tecles en el cercador
+    function handleSearchKeydown(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const termino = document.getElementById('buscador').value.trim();
+        if (termino) {
+          buscarConGoogle(termino);
+        }
+      }
+    }
+
+    // Funció per obrir WhatsApp
+    function abrirWhatsApp(telefono, nombre) {
+      const numeroLimpio = telefono.replace(/\D/g, '');
+      const mensaje = `Hola ${nombre}, m'interessa conèixer més sobre els vostres serveis de lliurament contra reemborsament.`;
+      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
+    }
+
+    // Funció per obtenir ubicació de l'usuari - CORREGIDA
+    function obtenerUbicacionUsuario() {
+      return new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              
+              // Verificar si està a Andorra (aproximadament)
+              const distanciaAAndorra = calcularDistancia(
+                latitude, longitude,
+                42.5063, 1.5218
+              );
+              
+              if (distanciaAAndorra > 50) {
+                alert('El servei només està disponible a Andorra');
+                reject();
+                return;
+              }
+              
+              // Eliminar marcador anterior si existeix
+              if (userMarker) {
+                mapa.removeLayer(userMarker);
+              }
+              
+              // Crear nou marcador d'usuari (blau)
+              userMarker = L.marker([latitude, longitude], {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-blue'
+                })
+              }).addTo(mapa)
+                .bindPopup('La teva ubicació actual!');
+                
+              // Centrar mapa en la ubicació de l'usuari amb zoom proper
+              mapa.setView([latitude, longitude], 17);
+              resolve();
+            },
+            (error) => {
+              console.log(`Error en obtenir ubicació: ${error.message}`);
+              alert('No s\'ha pogut obtenir la teva ubicació. Assegura\'t que has permès l\'accés a la geolocalització.');
+              reject();
+            },
+            { 
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 60000
+            }
+          );
+        } else {
+          console.log("El teu navegador no suporta geolocalització.");
+          alert("El teu navegador no suporta geolocalització.");
+          reject();
+        }
+      });
+    }
+
+    // Funció per calcular distància en km (fórmula Haversine)
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+  </script>
 </body>
 </html>
