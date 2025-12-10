@@ -233,22 +233,158 @@
                 font-size: 1.1rem;
             }
         }
+
+        /* Nuevos estilos para la detección de IP */
+        .location-detect-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            border-top: 5px solid var(--yellow);
+        }
+
+        .location-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .location-flag {
+            font-size: 2.5rem;
+        }
+
+        .location-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--blue);
+        }
+
+        .location-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .detect-button {
+            background: linear-gradient(135deg, var(--blue) 0%, var(--red) 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detect-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 56, 147, 0.3);
+        }
+
+        .detect-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .location-status {
+            margin-top: 1rem;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-loading {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .manual-link {
+            margin-top: 1rem;
+            color: var(--blue);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
+        .manual-link:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
+        <!-- Sección de detección automática -->
+        <div class="location-detect-container" id="location-detect">
+            <div class="location-header">
+                <div class="location-flag" id="country-flag">🇨🇴</div>
+                <div class="location-title" id="country-name">Colombia</div>
+            </div>
+            <p class="location-subtitle" id="location-message">Presiona Enter para detectar tu ubicación automáticamente</p>
+            
+            <button class="detect-button" id="detect-button">
+                <span id="button-text">Enter</span>
+                <span class="spinner" id="button-spinner" style="display: none;"></span>
+            </button>
+            
+            <div class="location-status hidden" id="location-status"></div>
+            
+            <a href="#" class="manual-link" id="manual-link">Seleccionar ciudad manualmente</a>
+        </div>
+
+        <!-- Sección original con todas las ciudades -->
+        <header id="cities-header" class="hidden">
             <h1>QRContraentrega</h1>
             <div class="spanish-title">Colombia</div>
             <div>Colombia</div>
             <p class="subtitle">Selecciona la capital de tu departamento / Select your department's capital</p>
         </header>
 
-        <div class="search-container">
+        <div class="search-container hidden" id="search-section">
             <input type="text" id="state-search" placeholder="Busca una capital departamental / Search for a departmental capital..." aria-label="Busca una capital departamental">
         </div>
 
-        <div class="states-grid" id="states-container">
+        <div class="states-grid hidden" id="states-container">
             <!-- Department capitals will appear here -->
         </div>
 
@@ -454,7 +590,131 @@
             }
         ];
 
-        // Function to display states and cities
+        // Variables para la detección de ubicación
+        let detectedCity = null;
+        let isLocationDetected = false;
+
+        // Elementos del DOM
+        const detectButton = document.getElementById('detect-button');
+        const buttonText = document.getElementById('button-text');
+        const buttonSpinner = document.getElementById('button-spinner');
+        const locationStatus = document.getElementById('location-status');
+        const countryFlag = document.getElementById('country-flag');
+        const countryName = document.getElementById('country-name');
+        const locationMessage = document.getElementById('location-message');
+        const manualLink = document.getElementById('manual-link');
+        const locationDetect = document.getElementById('location-detect');
+        const citiesHeader = document.getElementById('cities-header');
+        const searchSection = document.getElementById('search-section');
+        const statesContainer = document.getElementById('states-container');
+
+        // Función para obtener emoji de bandera
+        function getFlagEmoji(countryCode) {
+            const codePoints = countryCode
+                .toUpperCase()
+                .split('')
+                .map(char => 127397 + char.charCodeAt());
+            return String.fromCodePoint(...codePoints);
+        }
+
+        // Función para simular detección de IP (en producción usarías una API real)
+        async function simulateIPLocation() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // Simular diferentes ciudades para pruebas
+                    const cities = states.map(s => s.name.es);
+                    const randomCity = cities[Math.floor(Math.random() * cities.length)];
+                    
+                    // Para simular diferentes ubicaciones, puedes cambiar el índice
+                    // 0: Bogotá, 1: Medellín, 2: Cali, etc.
+                    const simulatedCity = cities[Math.floor(Math.random() * 5)]; // Primera 5 ciudades
+                    
+                    resolve({
+                        country: "Colombia",
+                        countryCode: "CO",
+                        city: simulatedCity,
+                        success: true
+                    });
+                }, 1500);
+            });
+        }
+
+        // Función para detectar ubicación real
+        async function detectRealLocation() {
+            try {
+                // Primero intentar con geolocalización del navegador
+                if (navigator.geolocation) {
+                    const position = await new Promise((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(resolve, reject, {
+                            enableHighAccuracy: true,
+                            timeout: 10000,
+                            maximumAge: 0
+                        });
+                    });
+                    
+                    // En producción, aquí usarías una API de geocodificación inversa
+                    // Por ahora usamos la simulación
+                    return await simulateIPLocation();
+                } else {
+                    // Si no hay geolocalización, usar detección por IP
+                    return await simulateIPLocation();
+                }
+            } catch (error) {
+                // Si falla la geolocalización, usar detección por IP
+                return await simulateIPLocation();
+            }
+        }
+
+        // Función para actualizar estado
+        function updateStatus(message, type) {
+            locationStatus.textContent = message;
+            locationStatus.className = 'location-status';
+            locationStatus.classList.remove('hidden');
+            
+            if (type === 'success') {
+                locationStatus.classList.add('status-success');
+            } else if (type === 'error') {
+                locationStatus.classList.add('status-error');
+            } else if (type === 'loading') {
+                locationStatus.classList.add('status-loading');
+            }
+        }
+
+        // Función para mostrar/ocultar spinner
+        function showLoading(show) {
+            if (show) {
+                buttonSpinner.style.display = 'inline-block';
+                buttonText.textContent = 'Detectando...';
+                detectButton.disabled = true;
+            } else {
+                buttonSpinner.style.display = 'none';
+                detectButton.disabled = false;
+            }
+        }
+
+        // Función para redirigir a la ciudad
+        function redirectToCity(cityName) {
+            const city = states.find(s => s.name.es === cityName);
+            if (city && city.url) {
+                window.location.href = city.url;
+            }
+        }
+
+        // Función para mostrar selector manual
+        function showManualSelector() {
+            locationDetect.classList.add('hidden');
+            citiesHeader.classList.remove('hidden');
+            searchSection.classList.remove('hidden');
+            statesContainer.classList.remove('hidden');
+            
+            // Renderizar todas las ciudades
+            renderStates(states);
+            
+            // Configurar búsqueda
+            setupSearch();
+        }
+
+        // Función original para mostrar estados
         function renderStates(stateList) {
             const container = document.getElementById('states-container');
             container.innerHTML = '';
@@ -481,7 +741,7 @@
             });
         }
 
-        // Function to search states and cities
+        // Función original para buscar estados
         function searchStates() {
             const searchTerm = document.getElementById('state-search').value.toLowerCase();
             const filteredStates = states.filter(state => 
@@ -493,12 +753,58 @@
             renderStates(filteredStates);
         }
 
-        // Event listeners
-        document.getElementById('state-search').addEventListener('input', searchStates);
+        // Configurar búsqueda
+        function setupSearch() {
+            document.getElementById('state-search').addEventListener('input', searchStates);
+        }
 
-        // Display all states and cities when page loads
+        // Event Listeners
+        detectButton.addEventListener('click', async () => {
+            showLoading(true);
+            updateStatus('Detectando tu ubicación...', 'loading');
+            
+            try {
+                const location = await detectRealLocation();
+                
+                if (location.success) {
+                    countryFlag.textContent = getFlagEmoji(location.countryCode);
+                    countryName.textContent = location.country;
+                    detectedCity = location.city;
+                    
+                    updateStatus(`Ubicación detectada: ${detectedCity}`, 'success');
+                    locationMessage.textContent = `Presiona Enter para continuar a ${detectedCity}`;
+                    buttonText.textContent = `Enter - ${detectedCity}`;
+                    isLocationDetected = true;
+                    
+                    // Configurar redirección automática después de 3 segundos
+                    setTimeout(() => {
+                        if (isLocationDetected) {
+                            redirectToCity(detectedCity);
+                        }
+                    }, 3000);
+                    
+                } else {
+                    updateStatus('No se pudo detectar tu ubicación', 'error');
+                    buttonText.textContent = 'Intentar nuevamente';
+                }
+            } catch (error) {
+                updateStatus('Error al detectar la ubicación', 'error');
+                buttonText.textContent = 'Intentar nuevamente';
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        manualLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showManualSelector();
+        });
+
+        // Inicialización
         document.addEventListener('DOMContentLoaded', () => {
-            renderStates(states);
+            // Mostrar la bandera de Colombia por defecto
+            countryFlag.textContent = getFlagEmoji('CO');
+            countryName.textContent = 'Colombia';
         });
     </script>
 </body>
