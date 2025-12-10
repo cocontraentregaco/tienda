@@ -1,787 +1,505 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" dir="ltr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QR Contraentrega Colombia</title>
-  <style>
-    :root {
-      --primary-color: #1a1a1a;
-      --secondary-color: #333;
-      --accent-color: #0066cc;
-      --text-color: #333;
-      --light-text: #fff;
-      --bg-light: #f8f8f8;
-      --border-radius: 8px;
-      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      --transition: all 0.3s ease;
-    }
-    
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-    }
-    
-    body { 
-      font-family: 'Roboto', sans-serif; 
-      color: var(--text-color); 
-      line-height: 1.6; 
-      touch-action: manipulation;
-      overflow-x: hidden;
-    }
-    
-    #contenedor-mapa { 
-      height: 100vh; 
-      display: flex; 
-      flex-direction: column; 
-      position: relative;
-    }
-    
-    #barra-superior { 
-      display: flex; 
-      gap: 0.8rem; 
-      padding: 0.8rem; 
-      background: var(--bg-light); 
-      width: 100%;
-      z-index: 1000;
-    }
-    
-    #buscador { 
-      flex: 1; 
-      padding: 0.6rem 1.2rem; 
-      border: 1px solid #ddd; 
-      border-radius: 24px; 
-      appearance: none; 
-      font-size: 16px;
-      transition: var(--transition);
-    }
-    
-    #buscador:focus {
-      outline: none;
-      border-color: var(--accent-color);
-      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
-    }
-    
-    .btn { 
-      background: var(--primary-color); 
-      color: var(--light-text); 
-      padding: 0.6rem 1.2rem; 
-      border-radius: 24px; 
-      text-decoration: none;
-      font-weight: 500;
-      transition: var(--transition);
-      border: none;
-      cursor: pointer;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-    }
-    
-    .btn:hover {
-      background: var(--secondary-color);
-      transform: translateY(-1px);
-    }
-    
-    .btn-centrar {
-      background-color: #0066cc;
-    }
-    
-    .btn-ruta {
-      background-color: #9b59b6;
-    }
-    
-    .btn-info {
-      background-color: #3498db;
-    }
-    
-    .btn-whatsapp {
-      background-color: #25D366;
-    }
-    
-    .btn-solicitar {
-      background-color: #e74c3c;
-    }
-    
-    #mapa { 
-      flex: 1; 
-      background: #f0f0f0; 
-      width: 100%;
-    }
-    
-    .cluster-marcadores { 
-      background: rgba(40,40,40,0.7); 
-      border-radius: 50%; 
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
-    
-    .whatsapp-icon {
-      width: 16px;
-      height: 16px;
-      filter: invert(1);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRContraentrega - Colombia / Colombia</title>
+    <style>
+        :root {
+            --yellow: #FCD116; /* Colombia yellow */
+            --blue: #003893; /* Colombia blue */
+            --red: #CE1126; /* Colombia red */
+            --white: #FFFFFF;
+            --background-color: #f9f9f9;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
 
-    .popup-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 10px;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    .popup-button-row {
-      display: flex;
-      gap: 8px;
-      justify-content: space-between;
-    }
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, rgba(0, 56, 147, 0.05) 0%, rgba(255, 255, 255, 1) 100%);
+        }
 
-    .sugerencias-busqueda {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      border-radius: 0 0 8px 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      z-index: 1000;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
-    }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
 
-    .sugerencia-item {
-      padding: 10px 15px;
-      cursor: pointer;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--blue) 0%, var(--red) 50%, var(--yellow) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
 
-    .sugerencia-item:hover {
-      background-color: #f5f5f5;
-    }
+        header::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, var(--yellow) 30%, transparent 31%);
+            opacity: 0.3;
+        }
 
-    .sugerencia-texto {
-      flex: 1;
-    }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--white);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
 
-    .sugerencia-boton {
-      margin-left: 10px;
-      padding: 5px 10px;
-      background-color: #9b59b6;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-    }
+        .spanish-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--yellow);
+            position: relative;
+            z-index: 1;
+        }
 
-    .contenedor-buscador {
-      position: relative;
-      flex: 1;
-    }
+        p.subtitle {
+            font-size: 1.2rem;
+            color: var(--white);
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            opacity: 0.9;
+        }
 
-    .cargando {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
 
-    .gm-style .gm-style-iw-c {
-      border-radius: 8px;
-      padding: 10px;
-    }
+        .state-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+            border-top: 4px solid var(--yellow);
+        }
 
-    .gm-style .gm-style-iw-d {
-      overflow: auto !important;
-    }
+        .state-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--blue);
+        }
 
-    .gm-ui-hover-effect {
-      top: 8px !important;
-      right: 8px !important;
-    }
+        .flag-container {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(90deg, var(--yellow) 0%, var(--blue) 50%, var(--red) 100%);
+            position: relative;
+            overflow: hidden;
+        }
 
-    .map-type-selector {
-      position: absolute;
-      bottom: 20px;
-      left: 10px;
-      z-index: 1000;
-      background: white;
-      padding: 8px 12px;
-      border-radius: 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      display: flex;
-      gap: 10px;
-    }
+        .flag-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--yellow) 0%, var(--blue) 50%, var(--red) 100%);
+        }
 
-    .map-type-btn {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      background: #f1f1f1;
-      transition: background 0.3s;
-    }
+        .flag-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
 
-    .map-type-btn.active {
-      background: #0066cc;
-      color: white;
-    }
+        .state-info {
+            padding: 1.5rem 1rem;
+        }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+        .state-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--blue);
+        }
 
-    @media (max-width: 768px) { 
-      #barra-superior { 
-        flex-direction: column; 
-        gap: 0.6rem;
-      }
-      
-      .popup-button-row {
-        flex-direction: column;
-      }
+        .spanish-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--red);
+        }
 
-      .sugerencia-item {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+        .state-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
 
-      .sugerencia-boton {
-        margin-left: 0;
-        margin-top: 5px;
-        align-self: flex-end;
-      }
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
 
-      .map-type-selector {
-        bottom: 10px;
-        left: 5px;
-        flex-direction: column;
-        gap: 5px;
-      }
-    }
-  </style>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+        #state-search {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            background-size: 20px;
+        }
+
+        #state-search:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(0, 56, 147, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .spanish-title {
+                font-size: 1.8rem;
+            }
+
+            .flag-container {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .states-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+
+            .state-info {
+                padding: 1rem 0.5rem;
+            }
+
+            .state-name {
+                font-size: 1rem;
+            }
+            
+            .spanish-name {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div id="contenedor-mapa">
-    <div id="barra-superior">
-      <div class="contenedor-buscador">
-        <input type="search" id="buscador" placeholder="Buscar afiliados en Colombia…" enterkeyhint="search">
-        <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
-      </div>
-      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://qrcontraentrega.com/colombia-afiliacion', '_blank')">AFILIARSE</button>
-      <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
+    <div class="container">
+        <header>
+            <h1>QRContraentrega</h1>
+            <div class="spanish-title">Colombia</div>
+            <div>Colombia</div>
+            <p class="subtitle">Selecciona la capital de tu departamento / Select your department's capital</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="state-search" placeholder="Busca una capital departamental / Search for a departmental capital..." aria-label="Busca una capital departamental">
+        </div>
+
+        <div class="states-grid" id="states-container">
+            <!-- Department capitals will appear here -->
+        </div>
+
+        <footer>
+            <p>© QRContraentrega. Todos los derechos reservados / All rights reserved.</p>
+        </footer>
     </div>
-    <div id="mapa"></div>
-    <div class="map-type-selector">
-      <button class="map-type-btn active" id="map-btn">Mapa</button>
-      <button class="map-type-btn" id="satellite-btn">Satélite</button>
-    </div>
-  </div>
 
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-  <script>
-    // Variables globales
-    let mapa;
-    let userMarker;
-    let marcadoresOriginales = [];
-    let destinoMarker = null;
-    let buscadorTimeout;
-    let googleMapsLayer;
-    let googleSatelliteLayer;
-    let currentLayer;
-
-    // Datos de ubicaciones en Colombia (solo socios)
-    const UBICACIONES = [
-      { 
-        "id": "bogota",
-        "nombre": "@bogota", 
-        "direccion": "CLL 8 #14-25, Bogotá", 
-        "latlng": [4.598191, -74.076151], 
-        "url": "https://bogota.qrcontraentrega.com/",
-        "telefono": "+573215343562",
-        "horario": "L - V 09:00 a 17:00",
-        "servicios": "Marketplace y Punto logístico en Bogotá",
-        "tipo": "socio",
-        "ciudad": "Bogotá"
-      },
-{ 
-        "id": "salentoquindio",
-        "nombre": "@salentoquindio", 
-        "direccion": "CLL 2 #6-06, Bogotá", 
-        "latlng": [4.640030, -75.568687], 
-        "url": "https://salentoquindio.qrcontraentrega.com/",
-        "telefono": "+573215343562",
-        "horario": "L - V 09:00 a 17:00",
-        "servicios": "Marketplace y Punto logístico en Salento",
-        "tipo": "socio",
-        "ciudad": "Salento, Quindío"
-      },
-    ];
-
-    // Inicializar el mapa cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', function() {
-      initializeMap();
-      
-      // Evento para el botón centrar - CORREGIDO
-      document.getElementById('centrar-btn').addEventListener('click', function() {
-        obtenerUbicacionUsuario();
-      });
-      
-      // Eventos para cambiar tipo de mapa
-      document.getElementById('map-btn').addEventListener('click', function() {
-        switchToMapView();
-      });
-      
-      document.getElementById('satellite-btn').addEventListener('click', function() {
-        switchToSatelliteView();
-      });
-      
-      // Eventos para el buscador
-      const searchInput = document.getElementById('buscador');
-      searchInput.addEventListener('input', handleSearchInput);
-      searchInput.addEventListener('keydown', handleSearchKeydown);
-      
-      // Cerrar sugerencias al hacer clic fuera
-      document.addEventListener('click', function(e) {
-        if (!e.target.closest('.contenedor-buscador')) {
-          document.getElementById('sugerencias-busqueda').style.display = 'none';
-        }
-      });
-    });
-
-    function initializeMap() {
-      // Inicializar mapa centrado en Colombia
-      mapa = L.map('mapa', {
-        center: [4.570868, -74.297333], // Coordenadas centrales de Colombia
-        zoom: 6,
-        zoomControl: false
-      });
-
-      // Añadir control de zoom
-      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
-
-      // Crear capas de Google Maps
-      googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-        maxZoom: 20,
-        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
-      });
-
-      googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-        maxZoom: 20,
-        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
-      });
-
-      // Inicialmente usar la vista de mapa
-      currentLayer = googleMapsLayer;
-      currentLayer.addTo(mapa);
-
-      // Asegurar que el mapa ocupe todo el espacio disponible
-      setTimeout(() => {
-        mapa.invalidateSize();
-      }, 0);
-
-      // Sistema de marcadores
-      const clusters = L.markerClusterGroup({
-        iconCreateFunction: cluster => L.divIcon({
-          html: `<div>${cluster.getChildCount()}</div>`,
-          className: 'cluster-marcadores',
-          iconSize: [40, 40]
-        }),
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        zoomToBoundsOnClick: true
-      });
-
-      // Crear marcadores (solo socios)
-      UBICACIONES.forEach(loc => {
-        const marcador = L.marker(loc.latlng, {
-          icon: L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
-            iconSize: [32, 32],
-            className: 'marker-icon-orange'
-          })
-        }).bindPopup(`
-          <div style="min-width:220px">
-            <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
-            <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
-            <p style="margin:0 0 5px 0;font-size:0.9em"><strong>Ciudad:</strong> ${loc.ciudad}</p>
-            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Teléfono:</strong> ${loc.telefono}</p>` : ''}
-            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Horario:</strong> ${loc.horario}</p>` : ''}
-            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><strong>Servicios:</strong> ${loc.servicios}</p>` : ''}
-            <div class="popup-buttons">
-              <div class="popup-button-row">
-                <button class="btn btn-whatsapp" onclick="abrirWhatsApp('${loc.telefono}', '${loc.nombre}')">
-                  <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
-                  Chatear por WhatsApp
-                </button>
-              </div>
-              <div class="popup-button-row">
-                <button class="btn btn-ruta" onclick="abrirGoogleMapsConDireccion('${loc.latlng[0]}', '${loc.latlng[1]}', '${loc.nombre}')">Cómo llegar</button>
-                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">Más información</button>
-              </div>
-            </div>
-          </div>
-        `);
-        
-        // Guardar todos los datos de la ubicación en el marcador
-        marcador.datosUbicacion = loc;
-        marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.ciudad} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
-        marcadoresOriginales.push(marcador);
-      });
-
-      // Añadir marcadores al mapa
-      clusters.addLayers(marcadoresOriginales);
-      mapa.addLayer(clusters);
-
-      // Ajustar vista a los marcadores
-      if(marcadoresOriginales.length > 0) {
-        mapa.fitBounds(clusters.getBounds().pad(0.3));
-      }
-
-      // Solicitar ubicación al cargar la página
-      obtenerUbicacionUsuario();
-    }
-
-    // Función para cambiar a vista de mapa
-    function switchToMapView() {
-      mapa.removeLayer(currentLayer);
-      currentLayer = googleMapsLayer;
-      currentLayer.addTo(mapa);
-      
-      document.getElementById('map-btn').classList.add('active');
-      document.getElementById('satellite-btn').classList.remove('active');
-    }
-
-    // Función para cambiar a vista de satélite
-    function switchToSatelliteView() {
-      mapa.removeLayer(currentLayer);
-      currentLayer = googleSatelliteLayer;
-      currentLayer.addTo(mapa);
-      
-      document.getElementById('satellite-btn').classList.add('active');
-      document.getElementById('map-btn').classList.remove('active');
-    }
-
-    // Función para abrir Google Maps con una dirección específica
-    function abrirGoogleMapsConDireccion(lat, lng, nombre) {
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`;
-      window.open(url, '_blank');
-    }
-
-    // Función para manejar la búsqueda
-    function handleSearchInput(e) {
-      clearTimeout(buscadorTimeout);
-      const termino = e.target.value.trim();
-      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
-      
-      if (termino.length < 3) {
-        sugerenciasContainer.style.display = 'none';
-        return;
-      }
-      
-      // Mostrar indicador de carga
-      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Buscando... <span class="cargando"></span></div>';
-      sugerenciasContainer.style.display = 'block';
-      
-      buscadorTimeout = setTimeout(() => {
-        buscarConGoogle(termino);
-      }, 500);
-    }
-
-    // Función para buscar usando Google Places API (simulación)
-    function buscarConGoogle(consulta) {
-      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
-      
-      // Primero buscar en puntos locales
-      const resultadosLocales = buscarEnPuntosLocales(consulta);
-      if (resultadosLocales) {
-        return;
-      }
-      
-      // Simular búsqueda en Google Places
-      setTimeout(() => {
-        // En una implementación real, aquí se conectaría con la API de Google Places
-        sugerenciasContainer.innerHTML = '';
-        
-        // Simular algunos resultados de búsqueda en Colombia
-        const resultadosSimulados = [
-          {
-            name: "Centro Comercial Santafé Medellín",
-            lat: 6.197943,
-            lng: -75.578316,
-            formatted_address: "Cra. 43A #7 Sur-170, Medellín, Antioquia"
-          },
-          {
-            name: "Centro Comercial Andino Bogotá",
-            lat: 4.667222,
-            lng: -74.055833,
-            formatted_address: "Cra. 11 #82-71, Bogotá"
-          },
-          {
-            name: "Centro Comercial Unicentro Cali",
-            lat: 3.368889,
-            lng: -76.530833,
-            formatted_address: "Cl. 5 #50-00, Cali, Valle"
-          },
-          {
-            name: "Aeropuerto Internacional El Dorado",
-            lat: 4.701389,
-            lng: -74.146944,
-            formatted_address: "Bogotá, Colombia"
-          }
-        ];
-        
-        if (resultadosSimulados.length > 0) {
-          resultadosSimulados.forEach(lugar => {
-            const item = document.createElement('div');
-            item.className = 'sugerencia-item';
-            
-            const lat = lugar.lat;
-            const lng = lugar.lng;
-            const nombre = lugar.name;
-            
-            item.innerHTML = `
-              <div class="sugerencia-texto">
-                <strong>📍 ${nombre}</strong><br>
-                <small>${lugar.formatted_address}</small>
-              </div>
-              <button class="sugerencia-boton" data-lat="${lat}" data-lng="${lng}" data-nombre="${nombre}">
-                Cómo llegar
-              </button>
-            `;
-            
-            // Agregar evento al botón "Cómo llegar"
-            const boton = item.querySelector('.sugerencia-boton');
-            boton.addEventListener('click', function(e) {
-              e.stopPropagation();
-              const lat = parseFloat(this.getAttribute('data-lat'));
-              const lng = parseFloat(this.getAttribute('data-lng'));
-              const nombre = this.getAttribute('data-nombre');
-              
-              // Mover el mapa a la ubicación seleccionada
-              const latlng = [lat, lng];
-              mapa.setView(latlng, 17);
-              
-              // Crear o actualizar marcador de destino
-              if (destinoMarker) {
-                mapa.removeLayer(destinoMarker);
-              }
-              destinoMarker = L.marker(latlng, {
-                icon: L.icon({
-                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-                  iconSize: [32, 32],
-                  className: 'marker-icon-red'
-                })
-              }).addTo(mapa)
-                .bindPopup(`<strong>${nombre}</strong>`);
-              
-              destinoMarker.openPopup();
-              document.getElementById('buscador').value = nombre;
-              sugerenciasContainer.style.display = 'none';
-            });
-            
-            // Agregar evento al item completo
-            item.addEventListener('click', function() {
-              const lat = parseFloat(boton.getAttribute('data-lat'));
-              const lng = parseFloat(boton.getAttribute('data-lng'));
-              const nombre = boton.getAttribute('data-nombre');
-              
-              const latlng = [lat, lng];
-              mapa.setView(latlng, 17);
-              
-              if (destinoMarker) {
-                mapa.removeLayer(destinoMarker);
-              }
-              destinoMarker = L.marker(latlng, {
-                icon: L.icon({
-                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-                  iconSize: [32, 32],
-                  className: 'marker-icon-red'
-                })
-              }).addTo(mapa)
-                .bindPopup(`<strong>${nombre}</strong>`);
-              
-              destinoMarker.openPopup();
-              document.getElementById('buscador').value = nombre;
-              sugerenciasContainer.style.display = 'none';
-            });
-            
-            sugerenciasContainer.appendChild(item);
-          });
-          sugerenciasContainer.style.display = 'block';
-        } else {
-          sugerenciasContainer.innerHTML = '<div class="sugerencia-item">No se encontraron resultados para: ' + consulta + '</div>';
-          sugerenciasContainer.style.display = 'block';
-        }
-      }, 800);
-    }
-
-    // Función para buscar en los puntos locales
-    function buscarEnPuntosLocales(consulta) {
-      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
-      const termino = consulta.toLowerCase();
-      const resultados = marcadoresOriginales.filter(m => 
-        m.datosBusqueda.includes(termino)
-      );
-      
-      if (resultados.length > 0) {
-        sugerenciasContainer.innerHTML = '';
-        
-        resultados.forEach(marcador => {
-          const loc = marcador.datosUbicacion;
-          const item = document.createElement('div');
-          item.className = 'sugerencia-item';
-          item.innerHTML = `
-            <div class="sugerencia-texto">
-              <strong>📍 ${loc.nombre}</strong><br>
-              <small>${loc.direccion}</small><br>
-              <small><strong>Ciudad:</strong> ${loc.ciudad}</small>
-            </div>
-            <button class="sugerencia-boton" data-id="${loc.id}">
-              Cómo llegar
-            </button>
-          `;
-          
-          // Agregar evento al botón "Cómo llegar"
-          const boton = item.querySelector('.sugerencia-boton');
-          boton.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const id = this.getAttribute('data-id');
-            abrirGoogleMapsConDireccionUbicacion(id);
-            sugerenciasContainer.style.display = 'none';
-          });
-          
-          // Agregar evento al item completo
-          item.addEventListener('click', function() {
-            mapa.setView(marcador.getLatLng(), 17);
-            marcador.openPopup();
-            document.getElementById('buscador').value = loc.nombre;
-            sugerenciasContainer.style.display = 'none';
-          });
-          
-          sugerenciasContainer.appendChild(item);
-        });
-        sugerenciasContainer.style.display = 'block';
-        return true;
-      }
-      return false;
-    }
-
-    // Función para abrir Google Maps con una ubicación específica
-    function abrirGoogleMapsConDireccionUbicacion(idPunto) {
-      const punto = UBICACIONES.find(p => p.id === idPunto);
-      if (!punto) return;
-      
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${punto.latlng[0]},${punto.latlng[1]}&travelmode=driving&dir_action=navigate`;
-      window.open(url, '_blank');
-    }
-
-    // Función para manejar teclas en el buscador
-    function handleSearchKeydown(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const termino = document.getElementById('buscador').value.trim();
-        if (termino) {
-          buscarConGoogle(termino);
-        }
-      }
-    }
-
-    // Función para abrir WhatsApp
-    function abrirWhatsApp(telefono, nombre) {
-      const numeroLimpio = telefono.replace(/\D/g, '');
-      const mensaje = `Hola ${nombre}, me interesa conocer más sobre sus servicios de contraentrega.`;
-      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
-    }
-
-    // Función para obtener ubicación del usuario - CORREGIDA
-    function obtenerUbicacionUsuario() {
-      return new Promise((resolve, reject) => {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const { latitude, longitude } = position.coords;
-              
-              // Verificar si está en Colombia (aproximadamente)
-              const distanciaAColombia = calcularDistancia(
-                latitude, longitude,
-                4.570868, -74.297333
-              );
-              
-              if (distanciaAColombia > 500) {
-                alert('El servicio solo está disponible en Colombia');
-                reject();
-                return;
-              }
-              
-              // Eliminar marcador anterior si existe
-              if (userMarker) {
-                mapa.removeLayer(userMarker);
-              }
-              
-              // Crear nuevo marcador de usuario (azul)
-              userMarker = L.marker([latitude, longitude], {
-                icon: L.icon({
-                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
-                  iconSize: [32, 32],
-                  className: 'marker-icon-blue'
-                })
-              }).addTo(mapa)
-                .bindPopup('¡Tu ubicación actual!');
-                
-              // Centrar mapa en la ubicación del usuario con zoom cercano
-              mapa.setView([latitude, longitude], 17);
-              resolve();
-            },
-            (error) => {
-              console.log(`Error al obtener ubicación: ${error.message}`);
-              alert('No se pudo obtener tu ubicación. Asegúrate de haber permitido el acceso a la geolocalización.');
-              reject();
+    <script>
+        // List of Colombia's 32 department capitals with subdomain URLs
+        const states = [
+            { 
+                "name": { "es": "Bogotá, D.C.", "en": "Bogotá, D.C." }, 
+                "type": { "es": "Capital Nacional", "en": "National Capital" }, 
+                "url": "https://bogota.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
             },
             { 
-              enableHighAccuracy: true,
-              timeout: 10000,
-              maximumAge: 60000
+                "name": { "es": "Medellín", "en": "Medellín" }, 
+                "type": { "es": "Capital de Antioquia", "en": "Capital of Antioquia" }, 
+                "url": "https://medellin.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Cali", "en": "Cali" }, 
+                "type": { "es": "Capital del Valle del Cauca", "en": "Capital of Valle del Cauca" }, 
+                "url": "https://cali.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Barranquilla", "en": "Barranquilla" }, 
+                "type": { "es": "Capital del Atlántico", "en": "Capital of Atlántico" }, 
+                "url": "https://barranquilla.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Cartagena", "en": "Cartagena" }, 
+                "type": { "es": "Capital de Bolívar", "en": "Capital of Bolívar" }, 
+                "url": "https://cartagena.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Cúcuta", "en": "Cúcuta" }, 
+                "type": { "es": "Capital de Norte de Santander", "en": "Capital of Norte de Santander" }, 
+                "url": "https://cucuta.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Bucaramanga", "en": "Bucaramanga" }, 
+                "type": { "es": "Capital de Santander", "en": "Capital of Santander" }, 
+                "url": "https://bucaramanga.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Pereira", "en": "Pereira" }, 
+                "type": { "es": "Capital de Risaralda", "en": "Capital of Risaralda" }, 
+                "url": "https://pereira.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Santa Marta", "en": "Santa Marta" }, 
+                "type": { "es": "Capital del Magdalena", "en": "Capital of Magdalena" }, 
+                "url": "https://santamarta.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Ibagué", "en": "Ibagué" }, 
+                "type": { "es": "Capital del Tolima", "en": "Capital of Tolima" }, 
+                "url": "https://ibague.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Pasto", "en": "Pasto" }, 
+                "type": { "es": "Capital de Nariño", "en": "Capital of Nariño" }, 
+                "url": "https://pasto.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Manizales", "en": "Manizales" }, 
+                "type": { "es": "Capital de Caldas", "en": "Capital of Caldas" }, 
+                "url": "https://manizales.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Neiva", "en": "Neiva" }, 
+                "type": { "es": "Capital del Huila", "en": "Capital of Huila" }, 
+                "url": "https://neiva.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Villavicencio", "en": "Villavicencio" }, 
+                "type": { "es": "Capital del Meta", "en": "Capital of Meta" }, 
+                "url": "https://villavicencio.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Armenia", "en": "Armenia" }, 
+                "type": { "es": "Capital del Quindío", "en": "Capital of Quindío" }, 
+                "url": "https://armenia.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Valledupar", "en": "Valledupar" }, 
+                "type": { "es": "Capital del Cesar", "en": "Capital of Cesar" }, 
+                "url": "https://valledupar.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Montería", "en": "Montería" }, 
+                "type": { "es": "Capital de Córdoba", "en": "Capital of Córdoba" }, 
+                "url": "https://monteria.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Popayán", "en": "Popayán" }, 
+                "type": { "es": "Capital del Cauca", "en": "Capital of Cauca" }, 
+                "url": "https://popayan.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Sincelejo", "en": "Sincelejo" }, 
+                "type": { "es": "Capital de Sucre", "en": "Capital of Sucre" }, 
+                "url": "https://sincelejo.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Riohacha", "en": "Riohacha" }, 
+                "type": { "es": "Capital de La Guajira", "en": "Capital of La Guajira" }, 
+                "url": "https://riohacha.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Tunja", "en": "Tunja" }, 
+                "type": { "es": "Capital de Boyacá", "en": "Capital of Boyacá" }, 
+                "url": "https://tunja.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Florencia", "en": "Florencia" }, 
+                "type": { "es": "Capital del Caquetá", "en": "Capital of Caquetá" }, 
+                "url": "https://florencia.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Yopal", "en": "Yopal" }, 
+                "type": { "es": "Capital de Casanare", "en": "Capital of Casanare" }, 
+                "url": "https://yopal.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Mocoa", "en": "Mocoa" }, 
+                "type": { "es": "Capital del Putumayo", "en": "Capital of Putumayo" }, 
+                "url": "https://mocoa.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "San José del Guaviare", "en": "San José del Guaviare" }, 
+                "type": { "es": "Capital del Guaviare", "en": "Capital of Guaviare" }, 
+                "url": "https://guaviare.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Mitú", "en": "Mitú" }, 
+                "type": { "es": "Capital del Vaupés", "en": "Capital of Vaupés" }, 
+                "url": "https://mitu.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Puerto Carreño", "en": "Puerto Carreño" }, 
+                "type": { "es": "Capital de Vichada", "en": "Capital of Vichada" }, 
+                "url": "https://puertocarreno.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Arauca", "en": "Arauca" }, 
+                "type": { "es": "Capital de Arauca", "en": "Capital of Arauca" }, 
+                "url": "https://arauca.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Inírida", "en": "Inírida" }, 
+                "type": { "es": "Capital de Guainía", "en": "Capital of Guainía" }, 
+                "url": "https://inirida.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "San Andrés", "en": "San Andrés" }, 
+                "type": { "es": "Capital de San Andrés", "en": "Capital of San Andrés" }, 
+                "url": "https://sanandres.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Leticia", "en": "Leticia" }, 
+                "type": { "es": "Capital del Amazonas", "en": "Capital of Amazonas" }, 
+                "url": "https://leticia.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
+            },
+            { 
+                "name": { "es": "Quibdó", "en": "Quibdó" }, 
+                "type": { "es": "Capital del Chocó", "en": "Capital of Chocó" }, 
+                "url": "https://quibdo.qrcontraentrega.com", 
+                "image": "img/c.jpg" 
             }
-          );
-        } else {
-          console.log("Tu navegador no soporta geolocalización.");
-          alert("Tu navegador no soporta geolocalización.");
-          reject();
-        }
-      });
-    }
+        ];
 
-    // Función para calcular distancia en km (fórmula Haversine)
-    function calcularDistancia(lat1, lon1, lat2, lon2) {
-      const R = 6371;
-      const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLon = (lon2 - lon1) * Math.PI / 180;
-      const a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      return R * c;
-    }
-  </script>
+        // Function to display states and cities
+        function renderStates(stateList) {
+            const container = document.getElementById('states-container');
+            container.innerHTML = '';
+
+            stateList.forEach(state => {
+                const stateCard = document.createElement('div');
+                stateCard.className = 'state-card';
+                stateCard.innerHTML = `
+                    <div class="flag-container">
+                        <img src="${state.image}" alt="${state.name.es}" class="flag-image">
+                    </div>
+                    <div class="state-info">
+                        <div class="spanish-name">${state.name.es}</div>
+                        <div class="state-name">${state.name.en}</div>
+                        <div class="state-type">${state.type.es} • ${state.type.en}</div>
+                    </div>
+                `;
+                
+                stateCard.addEventListener('click', () => {
+                    window.location.href = state.url;
+                });
+
+                container.appendChild(stateCard);
+            });
+        }
+
+        // Function to search states and cities
+        function searchStates() {
+            const searchTerm = document.getElementById('state-search').value.toLowerCase();
+            const filteredStates = states.filter(state => 
+                state.name.es.toLowerCase().includes(searchTerm) || 
+                state.name.en.toLowerCase().includes(searchTerm) ||
+                state.type.es.toLowerCase().includes(searchTerm) ||
+                state.type.en.toLowerCase().includes(searchTerm)
+            );
+            renderStates(filteredStates);
+        }
+
+        // Event listeners
+        document.getElementById('state-search').addEventListener('input', searchStates);
+
+        // Display all states and cities when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStates(states);
+        });
+    </script>
 </body>
 </html>
