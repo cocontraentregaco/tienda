@@ -234,98 +234,71 @@
             }
         }
 
-        /* Nuevos estilos para la detección de IP */
-        .location-detect-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: var(--card-shadow);
-            padding: 2rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            border-top: 5px solid var(--yellow);
-        }
-
+        /* Nuevos estilos para la geolocalización */
         .location-header {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            border-left: 5px solid var(--yellow);
+        }
+
+        .location-info {
+            display: flex;
+            align-items: center;
             gap: 1rem;
-            margin-bottom: 1.5rem;
         }
 
         .location-flag {
-            font-size: 2.5rem;
+            font-size: 2rem;
         }
 
-        .location-title {
-            font-size: 1.8rem;
-            font-weight: bold;
+        .location-text h3 {
             color: var(--blue);
+            margin-bottom: 0.25rem;
+            font-size: 1.2rem;
         }
 
-        .location-subtitle {
-            font-size: 1.1rem;
+        .location-text p {
             color: #666;
-            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
         }
 
-        .detect-button {
+        .location-button {
             background: linear-gradient(135deg, var(--blue) 0%, var(--red) 100%);
             color: white;
             border: none;
-            padding: 12px 30px;
-            font-size: 1.1rem;
+            padding: 10px 20px;
             border-radius: 50px;
             cursor: pointer;
-            transition: var(--transition);
             font-weight: bold;
-            display: inline-flex;
+            transition: var(--transition);
+            display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .detect-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 56, 147, 0.3);
+        .location-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 56, 147, 0.3);
         }
 
-        .detect-button:disabled {
+        .location-button:disabled {
             background: #cccccc;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
 
-        .location-status {
-            margin-top: 1rem;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 0.9rem;
-        }
-
-        .status-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .status-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .status-loading {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
-
-        .spinner {
+        .location-spinner {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,.3);
             border-radius: 50%;
             border-top-color: white;
             animation: spin 1s ease-in-out infinite;
@@ -335,56 +308,87 @@
             to { transform: rotate(360deg); }
         }
 
-        .manual-link {
-            margin-top: 1rem;
-            color: var(--blue);
-            text-decoration: none;
-            font-size: 0.9rem;
-            display: inline-block;
-        }
-
-        .manual-link:hover {
-            text-decoration: underline;
-        }
-
-        .hidden {
+        .location-status {
+            margin-top: 0.5rem;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.85rem;
             display: none;
+        }
+
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .status-loading {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            display: block;
+        }
+
+        .detected-city {
+            background-color: #e8f4ff;
+            border: 2px solid var(--blue);
+            position: relative;
+        }
+
+        .detected-city::before {
+            content: "📍";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .detected-city .spanish-name::after {
+            content: " (Cerca de ti)";
+            font-size: 0.9rem;
+            color: var(--blue);
+            font-weight: normal;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Sección de detección automática -->
-        <div class="location-detect-container" id="location-detect">
-            <div class="location-header">
-                <div class="location-flag" id="country-flag">🇨🇴</div>
-                <div class="location-title" id="country-name">Colombia</div>
+        <!-- Sección de geolocalización -->
+        <div class="location-header" id="location-header">
+            <div class="location-info">
+                <div class="location-flag">🇨🇴</div>
+                <div class="location-text">
+                    <h3>Ubicación detectada</h3>
+                    <p>Permite el acceso a tu ubicación para encontrar la ciudad más cercana</p>
+                    <div class="location-status" id="location-status"></div>
+                </div>
             </div>
-            <p class="location-subtitle" id="location-message">Presiona Enter para detectar tu ubicación automáticamente</p>
-            
-            <button class="detect-button" id="detect-button">
-                <span id="button-text">Enter</span>
-                <span class="spinner" id="button-spinner" style="display: none;"></span>
+            <button class="location-button" id="location-button">
+                <span id="button-text">Detectar mi ubicación</span>
+                <span class="location-spinner" id="button-spinner" style="display: none;"></span>
             </button>
-            
-            <div class="location-status hidden" id="location-status"></div>
-            
-            <a href="#" class="manual-link" id="manual-link">Seleccionar ciudad manualmente</a>
         </div>
 
-        <!-- Sección original con todas las ciudades -->
-        <header id="cities-header" class="hidden">
+        <header>
             <h1>QRContraentrega</h1>
             <div class="spanish-title">Colombia</div>
             <div>Colombia</div>
             <p class="subtitle">Selecciona la capital de tu departamento / Select your department's capital</p>
         </header>
 
-        <div class="search-container hidden" id="search-section">
+        <div class="search-container">
             <input type="text" id="state-search" placeholder="Busca una capital departamental / Search for a departmental capital..." aria-label="Busca una capital departamental">
         </div>
 
-        <div class="states-grid hidden" id="states-container">
+        <div class="states-grid" id="states-container">
             <!-- Department capitals will appear here -->
         </div>
 
@@ -400,276 +404,278 @@
                 "name": { "es": "Bogotá, D.C.", "en": "Bogotá, D.C." }, 
                 "type": { "es": "Capital Nacional", "en": "National Capital" }, 
                 "url": "https://bogota.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 4.6097, "lng": -74.0817 }
             },
             { 
                 "name": { "es": "Medellín", "en": "Medellín" }, 
                 "type": { "es": "Capital de Antioquia", "en": "Capital of Antioquia" }, 
                 "url": "https://medellin.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 6.2442, "lng": -75.5812 }
             },
             { 
                 "name": { "es": "Cali", "en": "Cali" }, 
                 "type": { "es": "Capital del Valle del Cauca", "en": "Capital of Valle del Cauca" }, 
                 "url": "https://cali.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 3.4516, "lng": -76.5320 }
             },
             { 
                 "name": { "es": "Barranquilla", "en": "Barranquilla" }, 
                 "type": { "es": "Capital del Atlántico", "en": "Capital of Atlántico" }, 
                 "url": "https://barranquilla.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 10.9639, "lng": -74.7964 }
             },
             { 
                 "name": { "es": "Cartagena", "en": "Cartagena" }, 
                 "type": { "es": "Capital de Bolívar", "en": "Capital of Bolívar" }, 
                 "url": "https://cartagena.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 10.3910, "lng": -75.4794 }
             },
             { 
                 "name": { "es": "Cúcuta", "en": "Cúcuta" }, 
                 "type": { "es": "Capital de Norte de Santander", "en": "Capital of Norte de Santander" }, 
                 "url": "https://cucuta.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 7.8939, "lng": -72.5078 }
             },
             { 
                 "name": { "es": "Bucaramanga", "en": "Bucaramanga" }, 
                 "type": { "es": "Capital de Santander", "en": "Capital of Santander" }, 
                 "url": "https://bucaramanga.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 7.1193, "lng": -73.1227 }
             },
             { 
                 "name": { "es": "Pereira", "en": "Pereira" }, 
                 "type": { "es": "Capital de Risaralda", "en": "Capital of Risaralda" }, 
                 "url": "https://pereira.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 4.8087, "lng": -75.6906 }
             },
             { 
                 "name": { "es": "Santa Marta", "en": "Santa Marta" }, 
                 "type": { "es": "Capital del Magdalena", "en": "Capital of Magdalena" }, 
                 "url": "https://santamarta.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 11.2404, "lng": -74.2110 }
             },
             { 
                 "name": { "es": "Ibagué", "en": "Ibagué" }, 
                 "type": { "es": "Capital del Tolima", "en": "Capital of Tolima" }, 
                 "url": "https://ibague.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 4.4370, "lng": -75.1987 }
             },
             { 
                 "name": { "es": "Pasto", "en": "Pasto" }, 
                 "type": { "es": "Capital de Nariño", "en": "Capital of Nariño" }, 
                 "url": "https://pasto.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 1.2136, "lng": -77.2811 }
             },
             { 
                 "name": { "es": "Manizales", "en": "Manizales" }, 
                 "type": { "es": "Capital de Caldas", "en": "Capital of Caldas" }, 
                 "url": "https://manizales.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 5.0703, "lng": -75.5138 }
             },
             { 
                 "name": { "es": "Neiva", "en": "Neiva" }, 
                 "type": { "es": "Capital del Huila", "en": "Capital of Huila" }, 
                 "url": "https://neiva.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 2.9345, "lng": -75.2809 }
             },
             { 
                 "name": { "es": "Villavicencio", "en": "Villavicencio" }, 
                 "type": { "es": "Capital del Meta", "en": "Capital of Meta" }, 
                 "url": "https://villavicencio.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 4.1420, "lng": -73.6266 }
             },
             { 
                 "name": { "es": "Armenia", "en": "Armenia" }, 
                 "type": { "es": "Capital del Quindío", "en": "Capital of Quindío" }, 
                 "url": "https://armenia.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 4.5380, "lng": -75.6721 }
             },
             { 
                 "name": { "es": "Valledupar", "en": "Valledupar" }, 
                 "type": { "es": "Capital del Cesar", "en": "Capital of Cesar" }, 
                 "url": "https://valledupar.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 10.4631, "lng": -73.2532 }
             },
             { 
                 "name": { "es": "Montería", "en": "Montería" }, 
                 "type": { "es": "Capital de Córdoba", "en": "Capital of Córdoba" }, 
                 "url": "https://monteria.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 8.7575, "lng": -75.8900 }
             },
             { 
                 "name": { "es": "Popayán", "en": "Popayán" }, 
                 "type": { "es": "Capital del Cauca", "en": "Capital of Cauca" }, 
                 "url": "https://popayan.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 2.4448, "lng": -76.6147 }
             },
             { 
                 "name": { "es": "Sincelejo", "en": "Sincelejo" }, 
                 "type": { "es": "Capital de Sucre", "en": "Capital of Sucre" }, 
                 "url": "https://sincelejo.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 9.3046, "lng": -75.3978 }
             },
             { 
                 "name": { "es": "Riohacha", "en": "Riohacha" }, 
                 "type": { "es": "Capital de La Guajira", "en": "Capital of La Guajira" }, 
                 "url": "https://riohacha.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 11.5444, "lng": -72.9072 }
             },
             { 
                 "name": { "es": "Tunja", "en": "Tunja" }, 
                 "type": { "es": "Capital de Boyacá", "en": "Capital of Boyacá" }, 
                 "url": "https://tunja.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 5.5353, "lng": -73.3678 }
             },
             { 
                 "name": { "es": "Florencia", "en": "Florencia" }, 
                 "type": { "es": "Capital del Caquetá", "en": "Capital of Caquetá" }, 
                 "url": "https://florencia.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 1.6144, "lng": -75.6062 }
             },
             { 
                 "name": { "es": "Yopal", "en": "Yopal" }, 
                 "type": { "es": "Capital de Casanare", "en": "Capital of Casanare" }, 
                 "url": "https://yopal.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 5.3378, "lng": -72.3959 }
             },
             { 
                 "name": { "es": "Mocoa", "en": "Mocoa" }, 
                 "type": { "es": "Capital del Putumayo", "en": "Capital of Putumayo" }, 
                 "url": "https://mocoa.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 1.1492, "lng": -76.6464 }
             },
             { 
                 "name": { "es": "San José del Guaviare", "en": "San José del Guaviare" }, 
                 "type": { "es": "Capital del Guaviare", "en": "Capital of Guaviare" }, 
                 "url": "https://guaviare.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 2.5659, "lng": -72.6383 }
             },
             { 
                 "name": { "es": "Mitú", "en": "Mitú" }, 
                 "type": { "es": "Capital del Vaupés", "en": "Capital of Vaupés" }, 
                 "url": "https://mitu.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 1.2522, "lng": -70.2336 }
             },
             { 
                 "name": { "es": "Puerto Carreño", "en": "Puerto Carreño" }, 
                 "type": { "es": "Capital de Vichada", "en": "Capital of Vichada" }, 
                 "url": "https://puertocarreno.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 6.1890, "lng": -67.4854 }
             },
             { 
                 "name": { "es": "Arauca", "en": "Arauca" }, 
                 "type": { "es": "Capital de Arauca", "en": "Capital of Arauca" }, 
                 "url": "https://arauca.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 7.0762, "lng": -70.7105 }
             },
             { 
                 "name": { "es": "Inírida", "en": "Inírida" }, 
                 "type": { "es": "Capital de Guainía", "en": "Capital of Guainía" }, 
                 "url": "https://inirida.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 3.8653, "lng": -67.9239 }
             },
             { 
                 "name": { "es": "San Andrés", "en": "San Andrés" }, 
                 "type": { "es": "Capital de San Andrés", "en": "Capital of San Andrés" }, 
                 "url": "https://sanandres.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 12.5847, "lng": -81.7006 }
             },
             { 
                 "name": { "es": "Leticia", "en": "Leticia" }, 
                 "type": { "es": "Capital del Amazonas", "en": "Capital of Amazonas" }, 
                 "url": "https://leticia.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": -4.2032, "lng": -69.9631 }
             },
             { 
                 "name": { "es": "Quibdó", "en": "Quibdó" }, 
                 "type": { "es": "Capital del Chocó", "en": "Capital of Chocó" }, 
                 "url": "https://quibdo.qrcontraentrega.com", 
-                "image": "img/c.jpg" 
+                "image": "img/c.jpg",
+                "coordinates": { "lat": 5.6956, "lng": -76.6498 }
             }
         ];
 
-        // Variables para la detección de ubicación
-        let detectedCity = null;
-        let isLocationDetected = false;
+        // Variables para la geolocalización
+        let userLocation = null;
+        let nearestCity = null;
 
         // Elementos del DOM
-        const detectButton = document.getElementById('detect-button');
+        const locationButton = document.getElementById('location-button');
         const buttonText = document.getElementById('button-text');
         const buttonSpinner = document.getElementById('button-spinner');
         const locationStatus = document.getElementById('location-status');
-        const countryFlag = document.getElementById('country-flag');
-        const countryName = document.getElementById('country-name');
-        const locationMessage = document.getElementById('location-message');
-        const manualLink = document.getElementById('manual-link');
-        const locationDetect = document.getElementById('location-detect');
-        const citiesHeader = document.getElementById('cities-header');
-        const searchSection = document.getElementById('search-section');
-        const statesContainer = document.getElementById('states-container');
+        const locationHeader = document.getElementById('location-header');
 
-        // Función para obtener emoji de bandera
-        function getFlagEmoji(countryCode) {
-            const codePoints = countryCode
-                .toUpperCase()
-                .split('')
-                .map(char => 127397 + char.charCodeAt());
-            return String.fromCodePoint(...codePoints);
+        // Función para calcular distancia entre dos coordenadas (fórmula Haversine)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radio de la Tierra en km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c; // Distancia en km
         }
 
-        // Función para simular detección de IP (en producción usarías una API real)
-        async function simulateIPLocation() {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    // Simular diferentes ciudades para pruebas
-                    const cities = states.map(s => s.name.es);
-                    const randomCity = cities[Math.floor(Math.random() * cities.length)];
-                    
-                    // Para simular diferentes ubicaciones, puedes cambiar el índice
-                    // 0: Bogotá, 1: Medellín, 2: Cali, etc.
-                    const simulatedCity = cities[Math.floor(Math.random() * 5)]; // Primera 5 ciudades
-                    
-                    resolve({
-                        country: "Colombia",
-                        countryCode: "CO",
-                        city: simulatedCity,
-                        success: true
-                    });
-                }, 1500);
-            });
-        }
+        // Función para encontrar la ciudad más cercana
+        function findNearestCity(userLat, userLng) {
+            let nearest = null;
+            let minDistance = Infinity;
 
-        // Función para detectar ubicación real
-        async function detectRealLocation() {
-            try {
-                // Primero intentar con geolocalización del navegador
-                if (navigator.geolocation) {
-                    const position = await new Promise((resolve, reject) => {
-                        navigator.geolocation.getCurrentPosition(resolve, reject, {
-                            enableHighAccuracy: true,
-                            timeout: 10000,
-                            maximumAge: 0
-                        });
-                    });
+            states.forEach(city => {
+                if (city.coordinates) {
+                    const distance = calculateDistance(
+                        userLat, userLng,
+                        city.coordinates.lat, city.coordinates.lng
+                    );
                     
-                    // En producción, aquí usarías una API de geocodificación inversa
-                    // Por ahora usamos la simulación
-                    return await simulateIPLocation();
-                } else {
-                    // Si no hay geolocalización, usar detección por IP
-                    return await simulateIPLocation();
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        nearest = city;
+                    }
                 }
-            } catch (error) {
-                // Si falla la geolocalización, usar detección por IP
-                return await simulateIPLocation();
-            }
+            });
+
+            return { city: nearest, distance: minDistance };
         }
 
-        // Función para actualizar estado
+        // Función para actualizar el estado
         function updateStatus(message, type) {
             locationStatus.textContent = message;
             locationStatus.className = 'location-status';
-            locationStatus.classList.remove('hidden');
             
             if (type === 'success') {
                 locationStatus.classList.add('status-success');
@@ -685,36 +691,143 @@
             if (show) {
                 buttonSpinner.style.display = 'inline-block';
                 buttonText.textContent = 'Detectando...';
-                detectButton.disabled = true;
+                locationButton.disabled = true;
             } else {
                 buttonSpinner.style.display = 'none';
-                detectButton.disabled = false;
+                locationButton.disabled = false;
             }
         }
 
-        // Función para redirigir a la ciudad
-        function redirectToCity(cityName) {
-            const city = states.find(s => s.name.es === cityName);
-            if (city && city.url) {
-                window.location.href = city.url;
+        // Función para obtener la ubicación del usuario
+        async function getUserLocation() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject(new Error('Geolocalización no soportada'));
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        resolve({
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                            accuracy: position.coords.accuracy
+                        });
+                    },
+                    (error) => {
+                        let errorMessage = 'Error al obtener ubicación';
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage = 'Permiso de ubicación denegado';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage = 'Información de ubicación no disponible';
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage = 'Tiempo de espera agotado';
+                                break;
+                        }
+                        reject(new Error(errorMessage));
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            });
+        }
+
+        // Función para resaltar la ciudad más cercana
+        function highlightNearestCity(cityName) {
+            const stateCards = document.querySelectorAll('.state-card');
+            stateCards.forEach(card => {
+                const spanishName = card.querySelector('.spanish-name');
+                if (spanishName && spanishName.textContent === cityName) {
+                    card.classList.add('detected-city');
+                    
+                    // Scroll suave hasta la ciudad detectada
+                    setTimeout(() => {
+                        card.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center' 
+                        });
+                    }, 500);
+                } else {
+                    card.classList.remove('detected-city');
+                }
+            });
+        }
+
+        // Función para detectar ubicación
+        async function detectLocation() {
+            showLoading(true);
+            updateStatus('Obteniendo tu ubicación...', 'loading');
+
+            try {
+                userLocation = await getUserLocation();
+                
+                updateStatus('Ubicación obtenida. Buscando ciudad más cercana...', 'loading');
+                
+                // Encontrar ciudad más cercana
+                const result = findNearestCity(userLocation.lat, userLocation.lng);
+                nearestCity = result.city;
+                
+                if (nearestCity) {
+                    updateStatus(
+                        `Ciudad más cercana: ${nearestCity.name.es} (a ${result.distance.toFixed(1)} km)`, 
+                        'success'
+                    );
+                    buttonText.textContent = 'Ubicación detectada';
+                    
+                    // Resaltar la ciudad en la lista
+                    highlightNearestCity(nearestCity.name.es);
+                    
+                    // Hacer scroll suave hasta la ciudad
+                    setTimeout(() => {
+                        const cityCard = document.querySelector('.detected-city');
+                        if (cityCard) {
+                            cityCard.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'center' 
+                            });
+                        }
+                    }, 1000);
+                    
+                } else {
+                    updateStatus('No se pudo encontrar una ciudad cercana', 'error');
+                    buttonText.textContent = 'Intentar nuevamente';
+                }
+                
+            } catch (error) {
+                console.error('Error en geolocalización:', error);
+                updateStatus(error.message, 'error');
+                buttonText.textContent = 'Intentar nuevamente';
+                
+                // Simulación de ubicación para desarrollo
+                if (error.message.includes('denegado') || error.message.includes('no disponible')) {
+                    setTimeout(() => {
+                        updateStatus('Usando ubicación aproximada basada en IP...', 'loading');
+                        
+                        // Simular una ubicación (Bogotá por defecto)
+                        setTimeout(() => {
+                            nearestCity = states[0]; // Bogotá
+                            updateStatus(
+                                `Ciudad sugerida: ${nearestCity.name.es} (ubicación aproximada)`, 
+                                'success'
+                            );
+                            buttonText.textContent = 'Ubicación aproximada';
+                            highlightNearestCity(nearestCity.name.es);
+                            showLoading(false);
+                        }, 1500);
+                    }, 1000);
+                }
+            } finally {
+                showLoading(false);
             }
         }
 
-        // Función para mostrar selector manual
-        function showManualSelector() {
-            locationDetect.classList.add('hidden');
-            citiesHeader.classList.remove('hidden');
-            searchSection.classList.remove('hidden');
-            statesContainer.classList.remove('hidden');
-            
-            // Renderizar todas las ciudades
-            renderStates(states);
-            
-            // Configurar búsqueda
-            setupSearch();
-        }
-
-        // Función original para mostrar estados
+        // Function to display states and cities
         function renderStates(stateList) {
             const container = document.getElementById('states-container');
             container.innerHTML = '';
@@ -739,9 +852,14 @@
 
                 container.appendChild(stateCard);
             });
+
+            // Si ya hay una ciudad detectada, resaltarla
+            if (nearestCity) {
+                highlightNearestCity(nearestCity.name.es);
+            }
         }
 
-        // Función original para buscar estados
+        // Function to search states and cities
         function searchStates() {
             const searchTerm = document.getElementById('state-search').value.toLowerCase();
             const filteredStates = states.filter(state => 
@@ -753,58 +871,20 @@
             renderStates(filteredStates);
         }
 
-        // Configurar búsqueda
-        function setupSearch() {
-            document.getElementById('state-search').addEventListener('input', searchStates);
-        }
+        // Event listeners
+        locationButton.addEventListener('click', detectLocation);
+        document.getElementById('state-search').addEventListener('input', searchStates);
 
-        // Event Listeners
-        detectButton.addEventListener('click', async () => {
-            showLoading(true);
-            updateStatus('Detectando tu ubicación...', 'loading');
-            
-            try {
-                const location = await detectRealLocation();
-                
-                if (location.success) {
-                    countryFlag.textContent = getFlagEmoji(location.countryCode);
-                    countryName.textContent = location.country;
-                    detectedCity = location.city;
-                    
-                    updateStatus(`Ubicación detectada: ${detectedCity}`, 'success');
-                    locationMessage.textContent = `Presiona Enter para continuar a ${detectedCity}`;
-                    buttonText.textContent = `Enter - ${detectedCity}`;
-                    isLocationDetected = true;
-                    
-                    // Configurar redirección automática después de 3 segundos
-                    setTimeout(() => {
-                        if (isLocationDetected) {
-                            redirectToCity(detectedCity);
-                        }
-                    }, 3000);
-                    
-                } else {
-                    updateStatus('No se pudo detectar tu ubicación', 'error');
-                    buttonText.textContent = 'Intentar nuevamente';
-                }
-            } catch (error) {
-                updateStatus('Error al detectar la ubicación', 'error');
-                buttonText.textContent = 'Intentar nuevamente';
-            } finally {
-                showLoading(false);
-            }
-        });
-
-        manualLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            showManualSelector();
-        });
-
-        // Inicialización
+        // Display all states and cities when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            // Mostrar la bandera de Colombia por defecto
-            countryFlag.textContent = getFlagEmoji('CO');
-            countryName.textContent = 'Colombia';
+            renderStates(states);
+            
+            // Intentar detectar ubicación automáticamente al cargar
+            setTimeout(() => {
+                if (navigator.geolocation) {
+                    updateStatus('Presiona el botón para detectar tu ubicación automáticamente', 'loading');
+                }
+            }, 1000);
         });
     </script>
 </body>
