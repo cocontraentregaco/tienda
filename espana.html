@@ -868,4 +868,109 @@
                 }
                 
                 // Check all required fields
-                const requiredFields = form.querySelectorAll('[required]
+                const requiredFields = form.querySelectorAll('[required]');
+                let valid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        valid = false;
+                        field.style.borderColor = 'red';
+                        
+                        // Remove error style when user starts typing
+                        field.addEventListener('input', function() {
+                            this.style.borderColor = '';
+                        });
+                    }
+                });
+                
+                // Check if at least one radio button is selected for idType
+                const idTypeSelected = document.querySelector('input[name="idType"]:checked');
+                if (!idTypeSelected) {
+                    valid = false;
+                    showNotification('Selecciona un tipo de documento de identidad', true);
+                }
+                
+                // Check if at least one radio button is selected for colorPreference
+                const colorSelected = document.querySelector('input[name="colorPreference"]:checked');
+                if (!colorSelected) {
+                    valid = false;
+                    showNotification('Elige un color para el diseño de tu tienda', true);
+                }
+                
+                if (!valid) {
+                    showNotification('Completa todos los campos obligatorios marcados con *', true);
+                    return false;
+                }
+                
+                showNotification('Información validada correctamente. Conectando con WhatsApp...');
+                return true;
+            }
+            
+            // Show notification
+            function showNotification(message, isError = false) {
+                // Remove existing notification if any
+                const existingNotification = document.querySelector('.notification');
+                if (existingNotification) {
+                    existingNotification.remove();
+                }
+                
+                const notification = document.createElement('div');
+                notification.className = isError ? 'notification error' : 'notification';
+                notification.innerHTML = `
+                    <i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+                    <span>${message}</span>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 500);
+                }, 3000);
+            }
+            
+            // Message generators
+            function generateWhatsAppMessage() {
+                let message = "¡Hola! Me interesa el PLAN SOCIOS para España:\n\n";
+                
+                message += `*Plan seleccionado:* ${selectedPlanInput.value}\n\n`;
+                message += "*Información de mi negocio:*\n";
+                message += `• Nombre: ${document.getElementById('businessName').value}\n`;
+                message += `• Descripción: ${document.getElementById('businessDescription').value}\n`;
+                message += `• País: ${document.getElementById('businessCountry').value}\n`;
+                message += `• Comunidad Autónoma: ${document.getElementById('businessProvince').value}\n`;
+                message += `• Ciudad: ${document.getElementById('businessCity').value}\n`;
+                message += `• Dirección: ${document.getElementById('businessAddress').value}\n`;
+                message += `• CIF/NIF: ${document.getElementById('businessCIF').value}\n\n`;
+                
+                message += "*Datos del representante:*\n";
+                message += `• Nombre: ${document.getElementById('legalName').value}\n`;
+                message += `• Tipo de documento: ${document.querySelector('input[name="idType"]:checked').value}\n`;
+                message += `• Número: ${document.getElementById('idNumber').value}\n\n`;
+                
+                message += "*Información del E-commerce:*\n";
+                message += `• URL deseada: ${document.getElementById('websiteUrl').value || 'No especificada'}\n`;
+                message += `• Pasarelas de pago: ${document.getElementById('paymentPreferences').value || 'No especificada'}\n`;
+                message += `• Interés en publicidad: ${document.getElementById('advertisingInterest').value || 'No especificada'}\n\n`;
+                
+                message += "*Contacto:*\n";
+                message += `• Teléfono: ${document.getElementById('contactPhone').value}\n`;
+                message += `• Email: ${document.getElementById('contactEmail').value}\n`;
+                message += `• Color validación: ${document.querySelector('input[name="colorPreference"]:checked').value}\n\n`;
+                
+                message += "*Beneficios esperados:*\n";
+                message += "• Red global de socios\n";
+                message += "• WooCommerce profesional\n";
+                message += "• ERP integrado\n";
+                message += "• Visibilidad en mapa mundial\n";
+                message += "• Mayor ROI y publicidad\n";
+                message += "• Optimización para mercado español\n";
+                
+                return message;
+            }
+        });
+    </script>
+</body>
+</html>
