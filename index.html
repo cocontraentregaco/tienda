@@ -608,38 +608,29 @@
                 <small>${lugar.formatted_address}</small>
               </div>
               <button class="sugerencia-boton" data-lat="${lat}" data-lng="${lng}" data-nombre="${nombre}">
-                Ver ubicación
+                Enter
               </button>
             `;
             
-            // Agregar evento al botón
+            // Agregar evento al botón - MODIFICADO: Ahora redirige al sitio web
             const boton = item.querySelector('.sugerencia-boton');
             boton.addEventListener('click', function(e) {
               e.stopPropagation();
-              const lat = parseFloat(this.getAttribute('data-lat'));
-              const lng = parseFloat(this.getAttribute('data-lng'));
               const nombre = this.getAttribute('data-nombre');
               
-              // Mover el mapa a la ubicación seleccionada
-              const latlng = [lat, lng];
-              mapa.setView(latlng, 10);
-              
-              // Crear o actualizar marcador de destino
-              if (destinoMarker) {
-                mapa.removeLayer(destinoMarker);
+              // Redirigir al sitio web en lugar de Google Maps
+              if (nombre.toLowerCase().includes("nueva york")) {
+                window.open("https://www.nuevayork.com", "_blank");
+              } else if (nombre.toLowerCase().includes("londres")) {
+                window.open("https://www.visitlondon.com", "_blank");
+              } else if (nombre.toLowerCase().includes("tokio")) {
+                window.open("https://www.gotokyo.org", "_blank");
+              } else {
+                // Sitio web por defecto si no hay coincidencia específica
+                window.open("https://qrcontraentrega.com", "_blank");
               }
-              destinoMarker = L.marker(latlng, {
-                icon: L.icon({
-                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-                  iconSize: [32, 32],
-                  className: 'marker-icon-red'
-                })
-              }).addTo(mapa)
-                .bindPopup(`<strong>${nombre}</strong>`);
               
-              destinoMarker.openPopup();
-              document.getElementById('buscador').value = nombre;
-              sugerenciasContainer.style.display = 'none';
+              sugerenciasContainer.style.display = "none";
             });
             
             // Agregar evento al item completo
@@ -661,7 +652,7 @@
                   className: 'marker-icon-red'
                 })
               }).addTo(mapa)
-                .bindPopup(`<strong>${nombre}</strong>`);
+                .bindPopup(`<strong>${nombre}</strong><br><button onclick="redirigirSitioWeb('${nombre}')" style="background:#9b59b6;color:white;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;margin-top:5px;">Enter</button>`);
               
               destinoMarker.openPopup();
               document.getElementById('buscador').value = nombre;
@@ -676,6 +667,19 @@
           sugerenciasContainer.style.display = 'block';
         }
       }, 500);
+    }
+
+    // Nueva función para redirigir al sitio web basado en el nombre
+    function redirigirSitioWeb(nombre) {
+      if (nombre.toLowerCase().includes("nueva york")) {
+        window.open("https://www.nuevayork.com", "_blank");
+      } else if (nombre.toLowerCase().includes("londres")) {
+        window.open("https://www.visitlondon.com", "_blank");
+      } else if (nombre.toLowerCase().includes("tokio")) {
+        window.open("https://www.gotokyo.org", "_blank");
+      } else {
+        window.open("https://qrcontraentrega.com", "_blank");
+      }
     }
 
     // Función para buscar en los puntos locales
