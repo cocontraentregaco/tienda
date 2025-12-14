@@ -486,7 +486,7 @@
               </div>
               <div class="popup-button-row">
                 <button class="btn btn-ruta" onclick="abrirGoogleMapsConDireccion('${loc.latlng[0]}', '${loc.latlng[1]}', '${loc.nombre}')">Cómo llegar</button>
-                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">Más información</button>
+                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">Marketplace</button>
               </div>
             </div>
           </div>
@@ -703,16 +703,19 @@
               <small>${loc.direccion}, ${loc.pais}</small>
             </div>
             <button class="sugerencia-boton" data-id="${loc.id}">
-              Cómo llegar
+              Marketplace
             </button>
           `;
           
-          // Agregar evento al botón "Cómo llegar"
+          // Agregar evento al botón "Marketplace" - MODIFICADO: Ahora abre la URL del punto
           const boton = item.querySelector('.sugerencia-boton');
           boton.addEventListener('click', function(e) {
             e.stopPropagation();
             const id = this.getAttribute('data-id');
-            abrirGoogleMapsConDireccionUbicacion(id);
+            const punto = UBICACIONES.find(p => p.id === id);
+            if (punto && punto.url) {
+              window.open(punto.url, '_blank');
+            }
             sugerenciasContainer.style.display = 'none';
           });
           
