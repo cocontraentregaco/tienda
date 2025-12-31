@@ -458,7 +458,7 @@
             return filteredCities.length > 0 ? filteredCities[0] : null;
         }
 
-        // Improved location detection with multiple fallbacks
+        // AUTOMATIC location detection without asking for permission first
         async function detectUserLocation() {
             const autoDetectionEl = document.getElementById('auto-detection');
             const detectedCityEl = document.getElementById('detected-city');
@@ -468,78 +468,63 @@
             detectedCityEl.innerHTML = '<span class="loading"></span>Detecting your location...';
             autoDetectionEl.style.display = 'flex';
             
-            // Try browser geolocation first (most accurate)
+            // FIRST: Try browser geolocation automatically (without asking first)
             if (navigator.geolocation) {
-                // Show location permission request
-                locationPermissionEl.style.display = 'block';
-                
-                // Set up location permission buttons
-                document.getElementById('allow-location').onclick = requestGeolocation;
-                document.getElementById('skip-location').onclick = () => {
-                    locationPermissionEl.style.display = 'none';
-                    fallbackToIPDetection();
-                };
-                
+                // Try to get location silently - browser will show its own permission dialog
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        // Success - browser permission granted
+                        const { latitude, longitude } = position.coords;
+                        
+                        // Try to get city name from coordinates using reverse geocoding
+                        try {
+                            const city = await reverseGeocode(latitude, longitude);
+                            if (city) {
+                                showAutoDetection(city);
+                            } else {
+                                // If no city found from coordinates, try IP-based
+                                fallbackToIPDetection();
+                            }
+                        } catch (error) {
+                            console.log('Reverse geocoding error:', error);
+                            fallbackToIPDetection();
+                        }
+                    },
+                    (error) => {
+                        // User denied permission or other error - show browser's message
+                        console.log('Geolocation error:', error);
+                        locationPermissionEl.style.display = 'none';
+                        
+                        // Show appropriate browser message
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                detectedCityEl.textContent = "Location access denied by browser. Using IP-based detection...";
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                detectedCityEl.textContent = "Location unavailable. Using IP-based detection...";
+                                break;
+                            case error.TIMEOUT:
+                                detectedCityEl.textContent = "Location request timed out. Using IP-based detection...";
+                                break;
+                            default:
+                                detectedCityEl.textContent = "Using IP-based detection...";
+                        }
+                        
+                        // Immediately fall back to IP detection
+                        fallbackToIPDetection();
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 8000,
+                        maximumAge: 0
+                    }
+                );
             } else {
                 // Browser doesn't support geolocation
                 locationPermissionEl.style.display = 'none';
+                detectedCityEl.textContent = "Browser doesn't support geolocation. Using IP-based detection...";
                 fallbackToIPDetection();
             }
-        }
-
-        // Request precise geolocation
-        function requestGeolocation() {
-            const detectedCityEl = document.getElementById('detected-city');
-            const locationPermissionEl = document.getElementById('location-permission');
-            
-            detectedCityEl.innerHTML = '<span class="loading"></span>Getting precise location...';
-            
-            navigator.geolocation.getCurrentPosition(
-                async (position) => {
-                    locationPermissionEl.style.display = 'none';
-                    const { latitude, longitude } = position.coords;
-                    
-                    // Try to get city name from coordinates using reverse geocoding
-                    try {
-                        const city = await reverseGeocode(latitude, longitude);
-                        if (city) {
-                            showAutoDetection(city);
-                        } else {
-                            // If no city found from coordinates, try IP-based
-                            fallbackToIPDetection();
-                        }
-                    } catch (error) {
-                        console.log('Reverse geocoding error:', error);
-                        fallbackToIPDetection();
-                    }
-                },
-                (error) => {
-                    console.log('Geolocation error:', error);
-                    locationPermissionEl.style.display = 'none';
-                    
-                    // Show appropriate error message
-                    switch(error.code) {
-                        case error.PERMISSION_DENIED:
-                            detectedCityEl.textContent = "Location permission denied. Using IP-based detection...";
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            detectedCityEl.textContent = "Location information unavailable. Using IP-based detection...";
-                            break;
-                        case error.TIMEOUT:
-                            detectedCityEl.textContent = "Location request timed out. Using IP-based detection...";
-                            break;
-                        default:
-                            detectedCityEl.textContent = "Error getting location. Using IP-based detection...";
-                    }
-                    
-                    setTimeout(fallbackToIPDetection, 2000);
-                },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                }
-            );
         }
 
         // Reverse geocoding to get city name from coordinates
@@ -689,8 +674,8 @@
                 }
             });
             
-            // Try to detect user's location with improved method
-            setTimeout(detectUserLocation, 1000); // Small delay for better UX
+            // Automatically detect user's location on page load
+            setTimeout(detectUserLocation, 500);
         });
     </script>
 </body>
