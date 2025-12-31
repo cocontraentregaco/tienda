@@ -1,843 +1,498 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QRContraentrega - Worldwide Logistics Services</title>
-  <style>
-    :root {
-      --primary-color: #1a1a1a;
-      --secondary-color: #333;
-      --accent-color: #0066cc;
-      --text-color: #333;
-      --light-text: #fff;
-      --bg-light: #f8f8f8;
-      --border-radius: 8px;
-      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      --transition: all 0.3s ease;
-    }
-    
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-    }
-    
-    body { 
-      font-family: 'Roboto', sans-serif; 
-      color: var(--text-color); 
-      line-height: 1.6; 
-      touch-action: manipulation;
-      overflow-x: hidden;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-    }
-    
-    .contenedor-principal { 
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-    
-    .logo-header {
-      text-align: center;
-      margin: 30px 0;
-      width: 100%;
-    }
-    
-    .logo-header img {
-      max-width: 300px;
-      height: auto;
-      margin-bottom: 20px;
-    }
-    
-    .logo-header h1 {
-      color: white;
-      font-size: 1.5rem;
-      font-weight: 300;
-      margin-bottom: 10px;
-    }
-    
-    .logo-header h2 {
-      color: white;
-      font-size: 1.2rem;
-      font-weight: 300;
-      opacity: 0.9;
-    }
-    
-    .selector-region {
-      background: white;
-      border-radius: 16px;
-      padding: 30px;
-      width: 100%;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
-    }
-    
-    .selector-titulo {
-      text-align: center;
-      margin-bottom: 30px;
-      color: var(--primary-color);
-    }
-    
-    .selector-titulo h3 {
-      font-size: 1.8rem;
-      font-weight: 600;
-      margin-bottom: 10px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    .selector-titulo p {
-      color: #666;
-      font-size: 1.1rem;
-    }
-    
-    .buscador-container {
-      position: relative;
-      margin-bottom: 30px;
-    }
-    
-    #buscador-regiones {
-      width: 100%;
-      padding: 16px 20px;
-      border: 2px solid #e0e0e0;
-      border-radius: 12px;
-      font-size: 16px;
-      transition: var(--transition);
-      background: white;
-    }
-    
-    #buscador-regiones:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-    
-    .icono-busqueda {
-      position: absolute;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #999;
-      font-size: 20px;
-    }
-    
-    .grid-regiones {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 15px;
-      margin-bottom: 30px;
-    }
-    
-    .region-card {
-      background: white;
-      border: 2px solid #e0e0e0;
-      border-radius: 12px;
-      padding: 20px 15px;
-      text-align: center;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100px;
-    }
-    
-    .region-card:hover {
-      transform: translateY(-3px);
-      border-color: #667eea;
-      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.15);
-    }
-    
-    .region-card.activa {
-      border-color: #667eea;
-      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-    }
-    
-    .region-nombre {
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 5px;
-      font-size: 1.1rem;
-    }
-    
-    .region-pais {
-      color: #666;
-      font-size: 0.9rem;
-    }
-    
-    .region-icon {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 10px;
-      color: #667eea;
-    }
-    
-    .geolocalizador {
-      background: white;
-      border-radius: 16px;
-      padding: 25px;
-      width: 100%;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
-      text-align: center;
-    }
-    
-    .geolocalizador h3 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 15px;
-      color: var(--primary-color);
-    }
-    
-    .geolocalizador p {
-      color: #666;
-      margin-bottom: 20px;
-      font-size: 1rem;
-    }
-    
-    .btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 14px 28px;
-      border-radius: 50px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: var(--transition);
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-    }
-    
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-    }
-    
-    .btn-geo {
-      margin-top: 10px;
-    }
-    
-    .resultado-geo {
-      margin-top: 20px;
-      padding: 20px;
-      background: #f8f9fa;
-      border-radius: 12px;
-      display: none;
-    }
-    
-    .resultado-geo.visible {
-      display: block;
-      animation: fadeIn 0.5s ease;
-    }
-    
-    .marketplace-cercano {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      border-left: 4px solid #667eea;
-    }
-    
-    .marketplace-nombre {
-      font-weight: 600;
-      color: #333;
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-    }
-    
-    .marketplace-info {
-      color: #666;
-      font-size: 0.95rem;
-      margin-bottom: 15px;
-    }
-    
-    .btn-redireccion {
-      background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-    }
-    
-    .sugerencias-busqueda {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      border-radius: 0 0 12px 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      z-index: 1000;
-      max-height: 300px;
-      overflow-y: auto;
-      display: none;
-      border: 2px solid #667eea;
-      border-top: none;
-    }
-    
-    .sugerencia-item {
-      padding: 15px 20px;
-      cursor: pointer;
-      border-bottom: 1px solid #eee;
-      transition: var(--transition);
-    }
-    
-    .sugerencia-item:hover {
-      background-color: #f5f7ff;
-    }
-    
-    .sugerencia-item:last-child {
-      border-bottom: none;
-    }
-    
-    .sugerencia-texto {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .sugerencia-nombre {
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 5px;
-    }
-    
-    .sugerencia-detalle {
-      color: #666;
-      font-size: 0.9rem;
-    }
-    
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(102, 126, 234, 0.3);
-      border-radius: 50%;
-      border-top-color: #667eea;
-      animation: spin 1s ease-in-out infinite;
-      vertical-align: middle;
-      margin-right: 10px;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @media (max-width: 768px) {
-      .contenedor-principal {
-        padding: 15px;
-      }
-      
-      .selector-region, .geolocalizador {
-        padding: 20px;
-      }
-      
-      .grid-regiones {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-      }
-      
-      .region-card {
-        padding: 15px 10px;
-        min-height: 90px;
-      }
-      
-      .region-nombre {
-        font-size: 1rem;
-      }
-      
-      .logo-header img {
-        max-width: 250px;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .grid-regiones {
-        grid-template-columns: 1fr;
-      }
-      
-      .logo-header img {
-        max-width: 200px;
-      }
-      
-      .btn {
-        padding: 12px 24px;
-        font-size: 0.95rem;
-      }
-    }
-  </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Contraentrega Marketplace</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ffffff;
+            --secondary: #f5f5f5;
+            --accent: #e0e0e0;
+            --light: #4a4a4a;
+            --text: #000000;
+            --border: #d0d0d0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Libre Baskerville', 'Source Serif Pro', Georgia, serif;
+        }
+        
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: var(--primary);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo-container {
+            max-width: 400px;
+            margin: 0 auto 1rem;
+            padding: 0 1rem;
+        }
+        
+        .logo-container img {
+            width: 100%;
+            height: auto;
+            max-height: 80px;
+            object-fit: contain;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            color: var(--text);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        
+        .search-container {
+            margin: 2rem auto;
+            max-width: 600px;
+            position: relative;
+        }
+        
+        #marketplace-search {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: var(--primary);
+            color: var(--text);
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        #marketplace-search:focus {
+            outline: none;
+            background: var(--primary);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            border-color: var(--light);
+        }
+        
+        #marketplace-search::placeholder {
+            color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .cities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .city-card {
+            background: var(--primary);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            border: 1px solid var(--border);
+        }
+        
+        .city-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--light);
+        }
+        
+        .city-image {
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .city-info {
+            padding: 1.5rem;
+        }
+        
+        .city-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .city-name .flag-icon {
+            font-size: 1.5rem;
+            border-radius: 3px;
+        }
+        
+        .city-desc {
+            opacity: 0.8;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+        
+        .city-link {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--text);
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .city-link:hover {
+            background: transparent;
+            border-color: var(--text);
+            color: var(--text);
+        }
+        
+        footer {
+            background: var(--secondary);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--text);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+        
+        .copyright {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .logo-container {
+                max-width: 300px;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+            
+            .cities-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .city-image {
+                height: 120px;
+            }
+            
+            .city-info {
+                padding: 1rem;
+            }
+            
+            .city-name {
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo-container {
+                max-width: 250px;
+            }
+            
+            .cities-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .city-card {
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+        
+        /* Delay animations for each card */
+        .city-card:nth-child(1) { animation-delay: 0.1s; }
+        .city-card:nth-child(2) { animation-delay: 0.2s; }
+        .city-card:nth-child(3) { animation-delay: 0.3s; }
+        .city-card:nth-child(4) { animation-delay: 0.4s; }
+        .city-card:nth-child(5) { animation-delay: 0.5s; }
+        .city-card:nth-child(6) { animation-delay: 0.6s; }
+        .city-card:nth-child(7) { animation-delay: 0.7s; }
+        .city-card:nth-child(8) { animation-delay: 0.8s; }
+        .city-card:nth-child(9) { animation-delay: 0.9s; }
+        .city-card:nth-child(10) { animation-delay: 1s; }
+        
+        /* Auto-detection notification */
+        .auto-detection {
+            background-color: #e8f4fd;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .auto-detection-message {
+            font-size: 0.95rem;
+            color: #0c5460;
+        }
+        
+        .auto-detection-action {
+            background: var(--text);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+        
+        .auto-detection-action:hover {
+            background: #333;
+        }
+    </style>
 </head>
 <body>
-  <div class="contenedor-principal">
-    <div class="logo-header">
-      <img src="https://qrcontraentrega.com/img/c-index.png" alt="QRContraentrega" id="logo-principal">
-      <h1>Logistics Services</h1>
-      <h2>Select your marketplace region</h2>
-    </div>
-    
-    <div class="selector-region">
-      <div class="selector-titulo">
-        <h3>Select your region | Selecciona tu región</h3>
-        <p>Find the nearest marketplace to your location</p>
-      </div>
-      
-      <div class="buscador-container">
-        <input type="search" id="buscador-regiones" placeholder="🔍 Search region... | Buscar región..." enterkeyhint="search">
-        <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
-      </div>
-      
-      <div class="grid-regiones" id="grid-regiones">
-        <!-- Las regiones se generarán dinámicamente -->
-      </div>
-    </div>
-    
-    <div class="geolocalizador">
-      <h3>📍 Find my nearest marketplace</h3>
-      <p>Allow location access to find the marketplace closest to you</p>
-      <button class="btn btn-geo" id="btn-geolocalizacion">
-        <i class="fas fa-location-crosshairs"></i> Detect my location
-      </button>
-      
-      <div class="resultado-geo" id="resultado-geo">
-        <div class="marketplace-cercano">
-          <div class="marketplace-nombre" id="geo-marketplace-nombre"></div>
-          <div class="marketplace-info" id="geo-marketplace-info"></div>
-          <button class="btn btn-redireccion" id="btn-redireccion-geo">
-            <i class="fas fa-external-link-alt"></i> ENTER - Go to Marketplace
-          </button>
+    <header>
+        <div class="logo-container">
+            <img src="img/c-index.png" alt="">
         </div>
-      </div>
+        <div class="tagline">QR CONTRAENTREGA MARKETPLACE</div>
+    </header>
+    
+    <div class="container">
+        <div class="auto-detection" id="auto-detection" style="display: none;">
+            <div class="auto-detection-message">
+                <strong>Detected Location:</strong> <span id="detected-city"></span>
+            </div>
+            <button class="auto-detection-action" id="go-to-detected-city">Enter</button>
+        </div>
+        
+        <div class="search-container">
+            <input type="text" id="marketplace-search" placeholder="Search Marketplace...">
+        </div>
+        
+        <div class="cities-grid" id="cities-container">
+            <!-- Cities will be inserted here by JavaScript -->
+        </div>
     </div>
-  </div>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="terms.html">Terms of Service</a>
+        </div>
+        <div class="copyright">©️ QR Contraentrega Marketplace. All rights reserved.</div>
+    </footer>
 
-  <script>
-    // Datos de ubicaciones globales (marketplaces en todo el planeta)
-    const UBICACIONES = [
-      { 
-        "id": "salento",
-        "nombre": "QRContraentrega Salento", 
-        "direccion": "Cra. 3 #2-39, Salento, Quindío", 
-        "latlng": [4.640546, -75.569243], 
-        "url": "https://salento.qrcontraentrega.com/",
-        "telefono": "+573146824438",
-        "horario": "24/7",
-        "servicios": "Almacenes QRContraentrega",
-        "pais": "Colombia",
-        "region": "Quindío",
-        "tipo": "marketplace"
-      },
-      { 
-        "id": "santiago",
-        "nombre": "QRContraentrega Santiago", 
-        "direccion": "Av. Providencia 1234, Santiago", 
-        "latlng": [-33.4489, -70.6693], 
-        "url": "https://santiago.qrcontraentrega.com/",
-        "telefono": "+56212345678",
-        "horario": "Lun-Vie: 9:00-18:00",
-        "servicios": "Logística y distribución",
-        "pais": "Chile",
-        "region": "Santiago Metropolitan",
-        "tipo": "marketplace"
-      },
-      { 
-        "id": "buenosaires",
-        "nombre": "QRContraentrega Buenos Aires", 
-        "direccion": "Av. Corrientes 1234, CABA", 
-        "latlng": [-34.6037, -58.3816], 
-        "url": "https://buenosaires.qrcontraentrega.com/",
-        "telefono": "+541112345678",
-        "horario": "24/7",
-        "servicios": "Centro de distribución",
-        "pais": "Argentina",
-        "region": "Buenos Aires",
-        "tipo": "marketplace"
-      },
-      { 
-        "id": "lima",
-        "nombre": "QRContraentrega Lima", 
-        "direccion": "Av. Javier Prado 1234, Lima", 
-        "latlng": [-12.0464, -77.0428], 
-        "url": "https://lima.qrcontraentrega.com/",
-        "telefono": "+5112345678",
-        "horario": "Lun-Sab: 8:00-20:00",
-        "servicios": "Almacén principal",
-        "pais": "Perú",
-        "region": "Lima",
-        "tipo": "marketplace"
-      },
-      { 
-        "id": "mexicocity",
-        "nombre": "QRContraentrega CDMX", 
-        "direccion": "Av. Reforma 1234, CDMX", 
-        "latlng": [19.4326, -99.1332], 
-        "url": "https://cdmx.qrcontraentrega.com/",
-        "telefono": "+525512345678",
-        "horario": "24/7",
-        "servicios": "Centro logístico nacional",
-        "pais": "México",
-        "region": "Ciudad de México",
-        "tipo": "marketplace"
-      },
-      { 
-        "id": "madrid",
-        "nombre": "QRContraentrega Madrid", 
-        "direccion": "Calle Gran Vía 123, Madrid", 
-        "latlng": [40.4168, -3.7038], 
-        "url": "https://madrid.qrcontraentrega.com/",
-        "telefono": "+34123456789",
-        "horario": "Lun-Vie: 8:00-20:00",
-        "servicios": "Distribución europea",
-        "pais": "España",
-        "region": "Madrid",
-        "tipo": "marketplace"
-      }
-    ];
+    <script>
+        // City data with images and links
+        const cities = [
+            {
+                "code": "cali",
+                "name": "Cali",
+                "region": "Valle del Cauca",
+                "country": "Colombia",
+                "flag": "flag-icon flag-icon-co",
+                "description": "Marketplace de compras y ventas en Cali",
+                "link": "https://www.facebook.com/share/g/1F6fsEsu94/?mibextid=wwXIfr",
+                "image": "https://qrcontraentrega.com/img/c.jpg"
+            },
+            {
+                "code": "salento",
+                "name": "Salento",
+                "region": "Quindío",
+                "country": "Colombia",
+                "flag": "flag-icon flag-icon-co",
+                "description": "Comercio local y servicios en Salento, Quindío",
+                "link": "https://www.facebook.com/share/g/1Bngt2dzoL/?mibextid=wwXIfr",
+                "image": "https://qrcontraentrega.com/img/c.jpg"
+            }
+        ];
 
-    // Variables globales
-    let ubicacionUsuario = null;
-    let marketplaceCercano = null;
-
-    // Inicializar cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', function() {
-      inicializarRegiones();
-      
-      // Eventos para el buscador
-      const buscador = document.getElementById('buscador-regiones');
-      buscador.addEventListener('input', manejarBusqueda);
-      buscador.addEventListener('keydown', manejarTeclaBusqueda);
-      
-      // Evento para geolocalización
-      document.getElementById('btn-geolocalizacion').addEventListener('click', detectarUbicacionUsuario);
-      
-      // Evento para redirección desde geolocalización
-      document.getElementById('btn-redireccion-geo').addEventListener('click', redirigirDesdeGeo);
-      
-      // Cerrar sugerencias al hacer clic fuera
-      document.addEventListener('click', function(e) {
-        if (!e.target.closest('.buscador-container')) {
-          document.getElementById('sugerencias-busqueda').style.display = 'none';
+        // Function to normalize text for search (remove accents, trim, lowercase)
+        function normalizeText(text) {
+            return text
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .trim()
+                .toLowerCase();
         }
-      });
-      
-      // Pre-cargar imagen del logo
-      const logoImg = document.getElementById('logo-principal');
-      logoImg.onerror = function() {
-        // Si la imagen no carga, mostrar texto alternativo
-        logoImg.style.display = 'none';
-        document.querySelector('.logo-header').innerHTML = `
-          <h1 style="font-size: 2.5rem; color: white; margin-bottom: 10px;">QRContraentrega</h1>
-          <h2>Worldwide Logistics Services</h2>
-          <p style="color: white; opacity: 0.8; margin-top: 10px;">Select your marketplace region</p>
-        `;
-      };
-    });
 
-    // Función para inicializar la grid de regiones
-    function inicializarRegiones() {
-      const grid = document.getElementById('grid-regiones');
-      grid.innerHTML = '';
-      
-      // Crear array único de regiones basado en los datos
-      const regionesUnicas = [];
-      UBICACIONES.forEach(loc => {
-        if (!regionesUnicas.some(r => r.region === loc.region && r.pais === loc.pais)) {
-          regionesUnicas.push({
-            region: loc.region,
-            pais: loc.pais,
-            id: loc.id
-          });
+        // Function to render cities
+        function renderCities(cityList) {
+            const container = document.getElementById('cities-container');
+            container.innerHTML = '';
+            
+            cityList.forEach(city => {
+                const card = document.createElement('div');
+                card.className = 'city-card';
+                card.innerHTML = `
+                    <div class="city-image" style="background-image: url('${city.image}')"></div>
+                    <div class="city-info">
+                        <h3 class="city-name">
+                            <span class="${city.flag}"></span>
+                            ${city.name}
+                        </h3>
+                        <p class="city-desc">${city.description}</p>
+                        <p class="city-desc" style="font-size: 0.85rem; opacity: 0.7;">${city.region}, ${city.country}</p>
+                        <a href="${city.link}" class="city-link" target="_blank">Enter Marketplace</a>
+                    </div>
+                `;
+                
+                // Make entire card clickable
+                card.addEventListener('click', () => {
+                    window.open(city.link, '_blank');
+                });
+                
+                container.appendChild(card);
+            });
         }
-      });
-      
-      // Ordenar alfabéticamente por país
-      regionesUnicas.sort((a, b) => a.pais.localeCompare(b.pais));
-      
-      // Crear cards para cada región
-      regionesUnicas.forEach(region => {
-        const card = document.createElement('div');
-        card.className = 'region-card';
-        card.dataset.id = region.id;
-        card.dataset.region = region.region;
-        card.dataset.pais = region.pais;
-        
-        // Icono basado en la región
-        let icono = 'globe-americas';
-        if (region.pais.includes('Chile')) icono = 'flag';
-        if (region.pais.includes('Colombia')) icono = 'mountain';
-        if (region.pais.includes('Argentina')) icono = 'sun';
-        if (region.pais.includes('México')) icono = 'cactus';
-        if (region.pais.includes('España')) icono = 'bullhorn';
-        
-        card.innerHTML = `
-          <i class="fas fa-${icono} region-icon"></i>
-          <div class="region-nombre">${region.region}</div>
-          <div class="region-pais">${region.pais}</div>
-        `;
-        
-        // Evento para seleccionar región
-        card.addEventListener('click', function() {
-          seleccionarRegion(this.dataset.id);
+
+        // Search functionality with intelligent filtering
+        function performSearch(searchTerm) {
+            const normalizedSearch = normalizeText(searchTerm);
+            const filteredCities = cities.filter(city => 
+                normalizeText(city.name).includes(normalizedSearch) || 
+                normalizeText(city.region).includes(normalizedSearch) ||
+                normalizeText(city.country).includes(normalizedSearch) ||
+                normalizeText(city.description).includes(normalizedSearch)
+            );
+            renderCities(filteredCities);
+            
+            // Return first result for Enter key functionality
+            return filteredCities.length > 0 ? filteredCities[0] : null;
+        }
+
+        // Auto-detection of user's approximate location
+        function detectUserLocation() {
+            // Using a simple geolocation approach
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        // In a real app, you would use reverse geocoding API here
+                        // For this example, we'll simulate detection based on timezone
+                        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                        
+                        // Check if timezone suggests Colombia
+                        if (timezone.includes("Bogota") || timezone.includes("America/Bogota")) {
+                            const detectedCity = cities.find(city => city.code === "cali");
+                            if (detectedCity) {
+                                showAutoDetection(detectedCity);
+                            }
+                        }
+                    },
+                    (error) => {
+                        console.log('Geolocation error:', error);
+                        // Fallback to IP-based detection
+                        fallbackIPDetection();
+                    }
+                );
+            } else {
+                // Fallback to IP-based detection
+                fallbackIPDetection();
+            }
+        }
+
+        function fallbackIPDetection() {
+            // Simple IP detection using a free API
+            fetch('https://ipapi.co/json/')
+                .then(response => response.json())
+                .then(data => {
+                    const countryCode = data.country_code;
+                    // If user is in Colombia, show Cali as default
+                    if (countryCode === 'CO') {
+                        const detectedCity = cities.find(city => city.code === "cali");
+                        if (detectedCity) {
+                            showAutoDetection(detectedCity);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.log('IP detection error:', error);
+                });
+        }
+
+        function showAutoDetection(city) {
+            document.getElementById('detected-city').textContent = `${city.name}, ${city.region}`;
+            document.getElementById('auto-detection').style.display = 'flex';
+            
+            // Set up the button to go to the detected city
+            document.getElementById('go-to-detected-city').addEventListener('click', () => {
+                window.open(city.link, '_blank');
+            });
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initial render
+            renderCities(cities);
+            
+            // Set up search functionality
+            const searchInput = document.getElementById('marketplace-search');
+            searchInput.addEventListener('input', (e) => {
+                performSearch(e.target.value);
+            });
+            
+            // Add Enter key functionality
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const firstResult = performSearch(e.target.value);
+                    if (firstResult) {
+                        window.open(firstResult.link, '_blank');
+                    }
+                }
+            });
+            
+            // Try to detect user's location
+            detectUserLocation();
         });
-        
-        grid.appendChild(card);
-      });
-    }
-
-    // Función para seleccionar una región
-    function seleccionarRegion(id) {
-      const marketplace = UBICACIONES.find(m => m.id === id);
-      if (!marketplace) return;
-      
-      // Remover clase activa de todas las cards
-      document.querySelectorAll('.region-card').forEach(card => {
-        card.classList.remove('activa');
-      });
-      
-      // Agregar clase activa a la card seleccionada
-      const cardSeleccionada = document.querySelector(`.region-card[data-id="${id}"]`);
-      if (cardSeleccionada) {
-        cardSeleccionada.classList.add('activa');
-      }
-      
-      // Mostrar confirmación y redirigir
-      if (confirm(`Do you want to go to ${marketplace.nombre}?`)) {
-        window.open(marketplace.url, '_blank');
-      }
-    }
-
-    // Función para manejar la búsqueda
-    function manejarBusqueda(e) {
-      const termino = e.target.value.trim().toLowerCase();
-      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
-      
-      if (termino.length < 2) {
-        sugerenciasContainer.style.display = 'none';
-        return;
-      }
-      
-      // Buscar coincidencias
-      const resultados = UBICACIONES.filter(loc => 
-        loc.nombre.toLowerCase().includes(termino) ||
-        loc.region.toLowerCase().includes(termino) ||
-        loc.pais.toLowerCase().includes(termino) ||
-        loc.direccion.toLowerCase().includes(termino)
-      );
-      
-      mostrarSugerencias(resultados, sugerenciasContainer);
-    }
-
-    // Función para mostrar sugerencias de búsqueda
-    function mostrarSugerencias(resultados, container) {
-      container.innerHTML = '';
-      
-      if (resultados.length === 0) {
-        container.innerHTML = '<div class="sugerencia-item">No se encontraron resultados</div>';
-        container.style.display = 'block';
-        return;
-      }
-      
-      resultados.forEach(marketplace => {
-        const item = document.createElement('div');
-        item.className = 'sugerencia-item';
-        item.dataset.id = marketplace.id;
-        
-        item.innerHTML = `
-          <div class="sugerencia-texto">
-            <div class="sugerencia-nombre">${marketplace.nombre}</div>
-            <div class="sugerencia-detalle">${marketplace.region}, ${marketplace.pais}</div>
-          </div>
-        `;
-        
-        item.addEventListener('click', function() {
-          seleccionarRegion(this.dataset.id);
-          document.getElementById('buscador-regiones').value = marketplace.nombre;
-          container.style.display = 'none';
-        });
-        
-        container.appendChild(item);
-      });
-      
-      container.style.display = 'block';
-    }
-
-    // Función para manejar teclas en el buscador
-    function manejarTeclaBusqueda(e) {
-      if (e.key === 'Enter') {
-        const termino = document.getElementById('buscador-regiones').value.trim();
-        if (termino) {
-          const resultados = UBICACIONES.filter(loc => 
-            loc.nombre.toLowerCase().includes(termino.toLowerCase()) ||
-            loc.region.toLowerCase().includes(termino.toLowerCase())
-          );
-          
-          if (resultados.length > 0) {
-            seleccionarRegion(resultados[0].id);
-          }
-        }
-      }
-    }
-
-    // Función para detectar ubicación del usuario
-    function detectarUbicacionUsuario() {
-      const btnGeo = document.getElementById('btn-geolocalizacion');
-      const resultadoGeo = document.getElementById('resultado-geo');
-      
-      btnGeo.innerHTML = '<span class="loading"></span> Detecting location...';
-      btnGeo.disabled = true;
-      
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          function(position) {
-            ubicacionUsuario = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            };
-            
-            // Encontrar el marketplace más cercano
-            encontrarMarketplaceCercano();
-            
-            btnGeo.innerHTML = '<i class="fas fa-location-crosshairs"></i> Location detected!';
-            btnGeo.disabled = false;
-            
-            // Mostrar resultado después de 1 segundo
-            setTimeout(() => {
-              resultadoGeo.classList.add('visible');
-            }, 1000);
-          },
-          function(error) {
-            console.error('Error de geolocalización:', error);
-            
-            btnGeo.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Location error';
-            
-            setTimeout(() => {
-              btnGeo.innerHTML = '<i class="fas fa-location-crosshairs"></i> Try again';
-              btnGeo.disabled = false;
-              
-              // Mostrar mensaje de error
-              resultadoGeo.innerHTML = `
-                <div style="text-align: center; padding: 20px;">
-                  <i class="fas fa-exclamation-circle" style="font-size: 2rem; color: #ff6b6b; margin-bottom: 15px;"></i>
-                  <p style="color: #666; margin-bottom: 15px;">Could not detect your location. Please enable location services or select a region manually.</p>
-                  <button class="btn" onclick="detectarUbicacionUsuario()">
-                    <i class="fas fa-redo"></i> Try again
-                  </button>
-                </div>
-              `;
-              resultadoGeo.classList.add('visible');
-            }, 2000);
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0
-          }
-        );
-      } else {
-        alert('Tu navegador no soporta geolocalización. Por favor, selecciona una región manualmente.');
-        btnGeo.innerHTML = '<i class="fas fa-location-crosshairs"></i> Not supported';
-        btnGeo.disabled = false;
-      }
-    }
-
-    // Función para encontrar el marketplace más cercano
-    function encontrarMarketplaceCercano() {
-      if (!ubicacionUsuario) return;
-      
-      let distanciaMinima = Infinity;
-      let marketplaceMasCercano = null;
-      
-      UBICACIONES.forEach(marketplace => {
-        const distancia = calcularDistancia(
-          ubicacionUsuario.lat,
-          ubicacionUsuario.lng,
-          marketplace.latlng[0],
-          marketplace.latlng[1]
-        );
-        
-        if (distancia < distanciaMinima) {
-          distanciaMinima = distancia;
-          marketplaceMasCercano = marketplace;
-        }
-      });
-      
-      marketplaceCercano = marketplaceMasCercano;
-      
-      // Mostrar información del marketplace más cercano
-      if (marketplaceCercano) {
-        const nombreElement = document.getElementById('geo-marketplace-nombre');
-        const infoElement = document.getElementById('geo-marketplace-info');
-        
-        nombreElement.textContent = marketplaceCercano.nombre;
-        infoElement.innerHTML = `
-          📍 ${marketplaceCercano.direccion}<br>
-          🏙️ ${marketplaceCercano.region}, ${marketplaceCercano.pais}<br>
-          📞 ${marketplaceCercano.telefono}<br>
-          ⏰ ${marketplaceCercano.horario}
-        `;
-        
-        // Resaltar la región en el grid
-        document.querySelectorAll('.region-card').forEach(card => {
-          card.classList.remove('activa');
-          if (card.dataset.id === marketplaceCercano.id) {
-            card.classList.add('activa');
-          }
-        });
-      }
-    }
-
-    // Función para calcular distancia entre dos puntos (fórmula Haversine)
-    function calcularDistancia(lat1, lon1, lat2, lon2) {
-      const R = 6371; // Radio de la Tierra en km
-      const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLon = (lon2 - lon1) * Math.PI / 180;
-      const a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      return R * c;
-    }
-
-    // Función para redirigir desde la geolocalización
-    function redirigirDesdeGeo() {
-      if (marketplaceCercano && marketplaceCercano.url) {
-        window.open(marketplaceCercano.url, '_blank');
-      } else {
-        alert('No se pudo determinar el marketplace más cercano. Por favor, selecciona una región manualmente.');
-      }
-    }
-
-    // Función para simular detección de ciudad (usada si no hay geolocalización disponible)
-    function simularDeteccionCiudad() {
-      // En un caso real, esto se haría con una API de geolocalización por IP
-      // Por ahora, simulamos algunas ciudades comunes
-      const ciudadesSimuladas = [
-        { ciudad: "Santiago", pais: "Chile", id: "santiago" },
-        { ciudad: "Buenos Aires", pais: "Argentina", id: "buenosaires" },
-        { ciudad: "Lima", pais: "Perú", id: "lima" },
-        { ciudad: "Ciudad de México", pais: "México", id: "mexicocity" },
-        { ciudad: "Madrid", pais: "España", id: "madrid" },
-        { ciudad: "Salento", pais: "Colombia", id: "salento" }
-      ];
-      
-      const ciudadAleatoria = ciudadesSimuladas[Math.floor(Math.random() * ciudadesSimuladas.length)];
-      return UBICACIONES.find(m => m.id === ciudadAleatoria.id);
-    }
-  </script>
+    </script>
 </body>
 </html>
