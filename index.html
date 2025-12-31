@@ -29,277 +29,404 @@
       line-height: 1.6; 
       touch-action: manipulation;
       overflow-x: hidden;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
     }
     
-    #contenedor-mapa { 
-      height: 100vh; 
-      display: flex; 
-      flex-direction: column; 
-      position: relative;
+    .contenedor-principal { 
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
     }
     
-    #barra-superior { 
-      display: flex; 
-      gap: 0.8rem; 
-      padding: 0.8rem; 
-      background: var(--bg-light); 
+    .logo-header {
+      text-align: center;
+      margin: 30px 0;
       width: 100%;
-      z-index: 1000;
-      justify-content: center;
     }
     
-    #buscador { 
-      flex: 1; 
-      max-width: 500px;
-      padding: 0.6rem 1.2rem; 
-      border: 1px solid #ddd; 
-      border-radius: 24px; 
-      appearance: none; 
+    .logo-header img {
+      max-width: 300px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+    
+    .logo-header h1 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 300;
+      margin-bottom: 10px;
+    }
+    
+    .logo-header h2 {
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 300;
+      opacity: 0.9;
+    }
+    
+    .selector-region {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    
+    .selector-titulo {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--primary-color);
+    }
+    
+    .selector-titulo h3 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .selector-titulo p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+    
+    .buscador-container {
+      position: relative;
+      margin-bottom: 30px;
+    }
+    
+    #buscador-regiones {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
       font-size: 16px;
       transition: var(--transition);
+      background: white;
     }
     
-    #buscador:focus {
+    #buscador-regiones:focus {
       outline: none;
-      border-color: var(--accent-color);
-      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
     
-    .btn { 
-      background: #000000; /* NEGRO */
-      color: #ffffff; /* BLANCO */
-      padding: 0.6rem 1.2rem; 
-      border-radius: 24px; 
+    .icono-busqueda {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      font-size: 20px;
+    }
+    
+    .grid-regiones {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    
+    .region-card {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 20px 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100px;
+    }
+    
+    .region-card:hover {
+      transform: translateY(-3px);
+      border-color: #667eea;
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.15);
+    }
+    
+    .region-card.activa {
+      border-color: #667eea;
+      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+    }
+    
+    .region-nombre {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+      font-size: 1.1rem;
+    }
+    
+    .region-pais {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .region-icon {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 10px;
+      color: #667eea;
+    }
+    
+    .geolocalizador {
+      background: white;
+      border-radius: 16px;
+      padding: 25px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    .geolocalizador h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--primary-color);
+    }
+    
+    .geolocalizador p {
+      color: #666;
+      margin-bottom: 20px;
+      font-size: 1rem;
+    }
+    
+    .btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 14px 28px;
+      border-radius: 50px;
       text-decoration: none;
-      font-weight: 500;
+      font-weight: 600;
       transition: var(--transition);
       border: none;
       cursor: pointer;
-      white-space: nowrap;
-      display: flex;
+      font-size: 1rem;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
-      border: 1px solid #333;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
     
     .btn:hover {
-      background: #333333; /* Gris oscuro al pasar el mouse */
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
     }
     
-    .btn-centrar {
-      background-color: #000000;
-      color: #ffffff;
-    }
-    
-    .btn-socios {
-      background-color: #000000;
-      color: #ffffff;
-    }
-    
-    #mapa { 
-      flex: 1; 
-      background: #f0f0f0; 
-      width: 100%;
-    }
-    
-    .cluster-marcadores { 
-      background: rgba(40,40,40,0.7); 
-      border-radius: 50%; 
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
-    
-    .whatsapp-icon {
-      width: 16px;
-      height: 16px;
-      filter: invert(1);
-    }
-
-    .popup-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    .btn-geo {
       margin-top: 10px;
     }
-
-    .popup-button-row {
-      display: flex;
-      gap: 8px;
-      justify-content: space-between;
+    
+    .resultado-geo {
+      margin-top: 20px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      display: none;
     }
-
+    
+    .resultado-geo.visible {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .marketplace-cercano {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      border-left: 4px solid #667eea;
+    }
+    
+    .marketplace-nombre {
+      font-weight: 600;
+      color: #333;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+    
+    .marketplace-info {
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 15px;
+    }
+    
+    .btn-redireccion {
+      background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+    
     .sugerencias-busqueda {
       position: absolute;
       top: 100%;
       left: 0;
       right: 0;
       background: white;
-      border-radius: 0 0 8px 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
       z-index: 1000;
-      max-height: 200px;
+      max-height: 300px;
       overflow-y: auto;
       display: none;
+      border: 2px solid #667eea;
+      border-top: none;
     }
-
+    
     .sugerencia-item {
-      padding: 10px 15px;
+      padding: 15px 20px;
       cursor: pointer;
       border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      transition: var(--transition);
     }
-
+    
     .sugerencia-item:hover {
-      background-color: #f5f5f5;
+      background-color: #f5f7ff;
     }
-
+    
+    .sugerencia-item:last-child {
+      border-bottom: none;
+    }
+    
     .sugerencia-texto {
-      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
-
-    .sugerencia-boton {
-      margin-left: 10px;
-      padding: 5px 10px;
-      background-color: #9b59b6;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
+    
+    .sugerencia-nombre {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
     }
-
-    .contenedor-buscador {
-      position: relative;
-      flex: 1;
-      max-width: 500px;
+    
+    .sugerencia-detalle {
+      color: #666;
+      font-size: 0.9rem;
     }
-
-    .cargando {
+    
+    .loading {
       display: inline-block;
       width: 20px;
       height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
+      border: 3px solid rgba(102, 126, 234, 0.3);
       border-radius: 50%;
-      border-top-color: #fff;
+      border-top-color: #667eea;
       animation: spin 1s ease-in-out infinite;
+      vertical-align: middle;
+      margin-right: 10px;
     }
-
-    .gm-style .gm-style-iw-c {
-      border-radius: 8px;
-      padding: 10px;
-    }
-
-    .gm-style .gm-style-iw-d {
-      overflow: auto !important;
-    }
-
-    .gm-ui-hover-effect {
-      top: 8px !important;
-      right: 8px !important;
-    }
-
-    .map-type-selector {
-      position: absolute;
-      bottom: 20px;
-      left: 10px;
-      z-index: 1000;
-      background: white;
-      padding: 8px 12px;
-      border-radius: 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      display: flex;
-      gap: 10px;
-    }
-
-    .map-type-btn {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      background: #f1f1f1;
-      transition: background 0.3s;
-    }
-
-    .map-type-btn.active {
-      background: #0066cc;
-      color: white;
-    }
-
+    
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
-
-    @media (max-width: 768px) { 
-      #barra-superior { 
-        flex-direction: column; 
-        gap: 0.6rem;
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @media (max-width: 768px) {
+      .contenedor-principal {
+        padding: 15px;
       }
       
-      .popup-button-row {
-        flex-direction: column;
+      .selector-region, .geolocalizador {
+        padding: 20px;
       }
-
-      .sugerencia-item {
-        flex-direction: column;
-        align-items: flex-start;
+      
+      .grid-regiones {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
       }
-
-      .sugerencia-boton {
-        margin-left: 0;
-        margin-top: 5px;
-        align-self: flex-end;
+      
+      .region-card {
+        padding: 15px 10px;
+        min-height: 90px;
       }
-
-      .map-type-selector {
-        bottom: 10px;
-        left: 5px;
-        flex-direction: column;
-        gap: 5px;
+      
+      .region-nombre {
+        font-size: 1rem;
+      }
+      
+      .logo-header img {
+        max-width: 250px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .grid-regiones {
+        grid-template-columns: 1fr;
+      }
+      
+      .logo-header img {
+        max-width: 200px;
+      }
+      
+      .btn {
+        padding: 12px 24px;
+        font-size: 0.95rem;
       }
     }
   </style>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-  <div id="contenedor-mapa">
-    <div id="barra-superior">
-      <div class="contenedor-buscador">
-        <input type="search" id="buscador" placeholder="SEARCH MARKETPLACE..." enterkeyhint="search">
+  <div class="contenedor-principal">
+    <div class="logo-header">
+      <img src="https://qrcontraentrega.com/img/c-index.png" alt="QRContraentrega" id="logo-principal">
+      <h1>Logistics Services</h1>
+      <h2>Select your marketplace region</h2>
+    </div>
+    
+    <div class="selector-region">
+      <div class="selector-titulo">
+        <h3>Select your region | Selecciona tu región</h3>
+        <p>Find the nearest marketplace to your location</p>
+      </div>
+      
+      <div class="buscador-container">
+        <input type="search" id="buscador-regiones" placeholder="🔍 Search region... | Buscar región..." enterkeyhint="search">
         <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
       </div>
-      <button class="btn btn-centrar" id="centrar-btn">CENTER</button>
+      
+      <div class="grid-regiones" id="grid-regiones">
+        <!-- Las regiones se generarán dinámicamente -->
+      </div>
     </div>
-    <div id="mapa"></div>
-    <div class="map-type-selector">
-      <button class="map-type-btn active" id="map-btn">Mapa</button>
-      <button class="map-type-btn" id="satellite-btn">Satélite</button>
+    
+    <div class="geolocalizador">
+      <h3>📍 Find my nearest marketplace</h3>
+      <p>Allow location access to find the marketplace closest to you</p>
+      <button class="btn btn-geo" id="btn-geolocalizacion">
+        <i class="fas fa-location-crosshairs"></i> Detect my location
+      </button>
+      
+      <div class="resultado-geo" id="resultado-geo">
+        <div class="marketplace-cercano">
+          <div class="marketplace-nombre" id="geo-marketplace-nombre"></div>
+          <div class="marketplace-info" id="geo-marketplace-info"></div>
+          <button class="btn btn-redireccion" id="btn-redireccion-geo">
+            <i class="fas fa-external-link-alt"></i> ENTER - Go to Marketplace
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
   <script>
-    // Variables globales
-    let mapa;
-    let userMarker;
-    let marcadoresOriginales = [];
-    let destinoMarker = null;
-    let buscadorTimeout;
-    let googleMapsLayer;
-    let googleSatelliteLayer;
-    let currentLayer;
-
-    // Datos de ubicaciones globales (socios en todo el planeta)
+    // Datos de ubicaciones globales (marketplaces en todo el planeta)
     const UBICACIONES = [
       { 
         "id": "salento",
@@ -311,164 +438,191 @@
         "horario": "24/7",
         "servicios": "Almacenes QRContraentrega",
         "pais": "Colombia",
-        "tipo": "socio"
+        "region": "Quindío",
+        "tipo": "marketplace"
+      },
+      { 
+        "id": "santiago",
+        "nombre": "QRContraentrega Santiago", 
+        "direccion": "Av. Providencia 1234, Santiago", 
+        "latlng": [-33.4489, -70.6693], 
+        "url": "https://santiago.qrcontraentrega.com/",
+        "telefono": "+56212345678",
+        "horario": "Lun-Vie: 9:00-18:00",
+        "servicios": "Logística y distribución",
+        "pais": "Chile",
+        "region": "Santiago Metropolitan",
+        "tipo": "marketplace"
+      },
+      { 
+        "id": "buenosaires",
+        "nombre": "QRContraentrega Buenos Aires", 
+        "direccion": "Av. Corrientes 1234, CABA", 
+        "latlng": [-34.6037, -58.3816], 
+        "url": "https://buenosaires.qrcontraentrega.com/",
+        "telefono": "+541112345678",
+        "horario": "24/7",
+        "servicios": "Centro de distribución",
+        "pais": "Argentina",
+        "region": "Buenos Aires",
+        "tipo": "marketplace"
+      },
+      { 
+        "id": "lima",
+        "nombre": "QRContraentrega Lima", 
+        "direccion": "Av. Javier Prado 1234, Lima", 
+        "latlng": [-12.0464, -77.0428], 
+        "url": "https://lima.qrcontraentrega.com/",
+        "telefono": "+5112345678",
+        "horario": "Lun-Sab: 8:00-20:00",
+        "servicios": "Almacén principal",
+        "pais": "Perú",
+        "region": "Lima",
+        "tipo": "marketplace"
+      },
+      { 
+        "id": "mexicocity",
+        "nombre": "QRContraentrega CDMX", 
+        "direccion": "Av. Reforma 1234, CDMX", 
+        "latlng": [19.4326, -99.1332], 
+        "url": "https://cdmx.qrcontraentrega.com/",
+        "telefono": "+525512345678",
+        "horario": "24/7",
+        "servicios": "Centro logístico nacional",
+        "pais": "México",
+        "region": "Ciudad de México",
+        "tipo": "marketplace"
+      },
+      { 
+        "id": "madrid",
+        "nombre": "QRContraentrega Madrid", 
+        "direccion": "Calle Gran Vía 123, Madrid", 
+        "latlng": [40.4168, -3.7038], 
+        "url": "https://madrid.qrcontraentrega.com/",
+        "telefono": "+34123456789",
+        "horario": "Lun-Vie: 8:00-20:00",
+        "servicios": "Distribución europea",
+        "pais": "España",
+        "region": "Madrid",
+        "tipo": "marketplace"
       }
     ];
 
-    // Inicializar el mapa cuando el DOM esté listo
+    // Variables globales
+    let ubicacionUsuario = null;
+    let marketplaceCercano = null;
+
+    // Inicializar cuando el DOM esté listo
     document.addEventListener('DOMContentLoaded', function() {
-      initializeMap();
-      
-      // Evento para el botón centrar
-      document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
-      
-      // Eventos para cambiar tipo de mapa
-      document.getElementById('map-btn').addEventListener('click', function() {
-        switchToMapView();
-      });
-      
-      document.getElementById('satellite-btn').addEventListener('click', function() {
-        switchToSatelliteView();
-      });
+      inicializarRegiones();
       
       // Eventos para el buscador
-      const searchInput = document.getElementById('buscador');
-      searchInput.addEventListener('input', handleSearchInput);
-      searchInput.addEventListener('keydown', handleSearchKeydown);
+      const buscador = document.getElementById('buscador-regiones');
+      buscador.addEventListener('input', manejarBusqueda);
+      buscador.addEventListener('keydown', manejarTeclaBusqueda);
+      
+      // Evento para geolocalización
+      document.getElementById('btn-geolocalizacion').addEventListener('click', detectarUbicacionUsuario);
+      
+      // Evento para redirección desde geolocalización
+      document.getElementById('btn-redireccion-geo').addEventListener('click', redirigirDesdeGeo);
       
       // Cerrar sugerencias al hacer clic fuera
       document.addEventListener('click', function(e) {
-        if (!e.target.closest('.contenedor-buscador')) {
+        if (!e.target.closest('.buscador-container')) {
           document.getElementById('sugerencias-busqueda').style.display = 'none';
         }
       });
+      
+      // Pre-cargar imagen del logo
+      const logoImg = document.getElementById('logo-principal');
+      logoImg.onerror = function() {
+        // Si la imagen no carga, mostrar texto alternativo
+        logoImg.style.display = 'none';
+        document.querySelector('.logo-header').innerHTML = `
+          <h1 style="font-size: 2.5rem; color: white; margin-bottom: 10px;">QRContraentrega</h1>
+          <h2>Worldwide Logistics Services</h2>
+          <p style="color: white; opacity: 0.8; margin-top: 10px;">Select your marketplace region</p>
+        `;
+      };
     });
 
-    function initializeMap() {
-      // Inicializar mapa con vista global
-      mapa = L.map('mapa', {
-        center: [20, 0], // Centro del mundo
-        zoom: 2,
-        zoomControl: false
-      });
-
-      // Añadir control de zoom
-      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
-
-      // Crear capas de Google Maps
-      googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-        maxZoom: 20,
-        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
-      });
-
-      googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-        maxZoom: 20,
-        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
-      });
-
-      // Inicialmente usar la vista de mapa
-      currentLayer = googleMapsLayer;
-      currentLayer.addTo(mapa);
-
-      // Asegurar que el mapa ocupe todo el espacio disponible
-      setTimeout(() => {
-        mapa.invalidateSize();
-      }, 0);
-
-      // Sistema de marcadores
-      const clusters = L.markerClusterGroup({
-        iconCreateFunction: cluster => L.divIcon({
-          html: `<div>${cluster.getChildCount()}</div>`,
-          className: 'cluster-marcadores',
-          iconSize: [40, 40]
-        }),
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        zoomToBoundsOnClick: true
-      });
-
-      // Crear marcadores (socios globales)
+    // Función para inicializar la grid de regiones
+    function inicializarRegiones() {
+      const grid = document.getElementById('grid-regiones');
+      grid.innerHTML = '';
+      
+      // Crear array único de regiones basado en los datos
+      const regionesUnicas = [];
       UBICACIONES.forEach(loc => {
-        const marcador = L.marker(loc.latlng, {
-          icon: L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
-            iconSize: [32, 32],
-            className: 'marker-icon-orange'
-          })
-        }).bindPopup(`
-          <div style="min-width:220px">
-            <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
-            <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
-            <p style="margin:0 0 5px 0;font-size:0.9em"><strong>País:</strong> ${loc.pais}</p>
-            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Teléfono:</strong> ${loc.telefono}</p>` : ''}
-            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Horario:</strong> ${loc.horario}</p>` : ''}
-            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><strong>Servicios:</strong> ${loc.servicios}</p>` : ''}
-            <div class="popup-buttons">
-              <div class="popup-button-row">
-                <button class="btn btn-whatsapp" onclick="abrirWhatsApp('${loc.telefono}', '${loc.nombre}')">
-                  <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
-                  WhatsApp
-                </button>
-              </div>
-              <div class="popup-button-row">
-                <button class="btn btn-ruta" onclick="abrirGoogleMapsConDireccion('${loc.latlng[0]}', '${loc.latlng[1]}', '${loc.nombre}')">Google Maps</button>
-                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">Marketplace</button>
-              </div>
-            </div>
-          </div>
-        `);
-        
-        // Guardar todos los datos de la ubicación en el marcador
-        marcador.datosUbicacion = loc;
-        marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.pais} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
-        marcadoresOriginales.push(marcador);
+        if (!regionesUnicas.some(r => r.region === loc.region && r.pais === loc.pais)) {
+          regionesUnicas.push({
+            region: loc.region,
+            pais: loc.pais,
+            id: loc.id
+          });
+        }
       });
+      
+      // Ordenar alfabéticamente por país
+      regionesUnicas.sort((a, b) => a.pais.localeCompare(b.pais));
+      
+      // Crear cards para cada región
+      regionesUnicas.forEach(region => {
+        const card = document.createElement('div');
+        card.className = 'region-card';
+        card.dataset.id = region.id;
+        card.dataset.region = region.region;
+        card.dataset.pais = region.pais;
+        
+        // Icono basado en la región
+        let icono = 'globe-americas';
+        if (region.pais.includes('Chile')) icono = 'flag';
+        if (region.pais.includes('Colombia')) icono = 'mountain';
+        if (region.pais.includes('Argentina')) icono = 'sun';
+        if (region.pais.includes('México')) icono = 'cactus';
+        if (region.pais.includes('España')) icono = 'bullhorn';
+        
+        card.innerHTML = `
+          <i class="fas fa-${icono} region-icon"></i>
+          <div class="region-nombre">${region.region}</div>
+          <div class="region-pais">${region.pais}</div>
+        `;
+        
+        // Evento para seleccionar región
+        card.addEventListener('click', function() {
+          seleccionarRegion(this.dataset.id);
+        });
+        
+        grid.appendChild(card);
+      });
+    }
 
-      // Añadir marcadores al mapa
-      clusters.addLayers(marcadoresOriginales);
-      mapa.addLayer(clusters);
-
-      // Ajustar vista a los marcadores
-      if(marcadoresOriginales.length > 0) {
-        mapa.fitBounds(clusters.getBounds().pad(0.3));
+    // Función para seleccionar una región
+    function seleccionarRegion(id) {
+      const marketplace = UBICACIONES.find(m => m.id === id);
+      if (!marketplace) return;
+      
+      // Remover clase activa de todas las cards
+      document.querySelectorAll('.region-card').forEach(card => {
+        card.classList.remove('activa');
+      });
+      
+      // Agregar clase activa a la card seleccionada
+      const cardSeleccionada = document.querySelector(`.region-card[data-id="${id}"]`);
+      if (cardSeleccionada) {
+        cardSeleccionada.classList.add('activa');
       }
-
-      // Solicitar ubicación al cargar la página
-      obtenerUbicacionUsuario();
-    }
-
-    // Función para cambiar a vista de mapa
-    function switchToMapView() {
-      mapa.removeLayer(currentLayer);
-      currentLayer = googleMapsLayer;
-      currentLayer.addTo(mapa);
       
-      document.getElementById('map-btn').classList.add('active');
-      document.getElementById('satellite-btn').classList.remove('active');
-    }
-
-    // Función para cambiar a vista de satélite
-    function switchToSatelliteView() {
-      mapa.removeLayer(currentLayer);
-      currentLayer = googleSatelliteLayer;
-      currentLayer.addTo(mapa);
-      
-      document.getElementById('satellite-btn').classList.add('active');
-      document.getElementById('map-btn').classList.remove('active');
-    }
-
-    // Función para abrir Google Maps con una dirección específica
-    function abrirGoogleMapsConDireccion(lat, lng, nombre) {
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`;
-      window.open(url, '_blank');
+      // Mostrar confirmación y redirigir
+      if (confirm(`Do you want to go to ${marketplace.nombre}?`)) {
+        window.open(marketplace.url, '_blank');
+      }
     }
 
     // Función para manejar la búsqueda
-    function handleSearchInput(e) {
-      clearTimeout(buscadorTimeout);
-      const termino = e.target.value.trim();
+    function manejarBusqueda(e) {
+      const termino = e.target.value.trim().toLowerCase();
       const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
       
       if (termino.length < 2) {
@@ -476,270 +630,213 @@
         return;
       }
       
-      // Mostrar indicador de carga
-      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Buscando... <span class="cargando"></span></div>';
-      sugerenciasContainer.style.display = 'block';
+      // Buscar coincidencias
+      const resultados = UBICACIONES.filter(loc => 
+        loc.nombre.toLowerCase().includes(termino) ||
+        loc.region.toLowerCase().includes(termino) ||
+        loc.pais.toLowerCase().includes(termino) ||
+        loc.direccion.toLowerCase().includes(termino)
+      );
       
-      buscadorTimeout = setTimeout(() => {
-        buscarConGoogle(termino);
-      }, 300);
+      mostrarSugerencias(resultados, sugerenciasContainer);
     }
 
-    // Función para buscar usando Google Places API (simulación)
-    function buscarConGoogle(consulta) {
-      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+    // Función para mostrar sugerencias de búsqueda
+    function mostrarSugerencias(resultados, container) {
+      container.innerHTML = '';
       
-      // Primero buscar en puntos locales
-      const resultadosLocales = buscarEnPuntosLocales(consulta);
-      if (resultadosLocales) {
+      if (resultados.length === 0) {
+        container.innerHTML = '<div class="sugerencia-item">No se encontraron resultados</div>';
+        container.style.display = 'block';
         return;
       }
       
-      // Simular búsqueda en Google Places
-      setTimeout(() => {
-        sugerenciasContainer.innerHTML = '';
+      resultados.forEach(marketplace => {
+        const item = document.createElement('div');
+        item.className = 'sugerencia-item';
+        item.dataset.id = marketplace.id;
         
-        // Simular algunos resultados de búsqueda global
-        const resultadosSimulados = [
-          {
-            name: "Nueva York, USA",
-            lat: 40.712776,
-            lng: -74.005974,
-            formatted_address: "Nueva York, NY, Estados Unidos"
-          },
-          {
-            name: "Londres, Reino Unido",
-            lat: 51.507351,
-            lng: -0.127758,
-            formatted_address: "Londres, Reino Unido"
-          },
-          {
-            name: "Tokio, Japón",
-            lat: 35.676422,
-            lng: 139.650028,
-            formatted_address: "Tokio, Japón"
-          }
-        ];
+        item.innerHTML = `
+          <div class="sugerencia-texto">
+            <div class="sugerencia-nombre">${marketplace.nombre}</div>
+            <div class="sugerencia-detalle">${marketplace.region}, ${marketplace.pais}</div>
+          </div>
+        `;
         
-        if (resultadosSimulados.length > 0) {
-          resultadosSimulados.forEach(lugar => {
-            const item = document.createElement('div');
-            item.className = 'sugerencia-item';
-            
-            const lat = lugar.lat;
-            const lng = lugar.lng;
-            const nombre = lugar.name;
-            
-            item.innerHTML = `
-              <div class="sugerencia-texto">
-                <strong>📍 ${nombre}</strong><br>
-                <small>${lugar.formatted_address}</small>
-              </div>
-              <button class="sugerencia-boton" data-lat="${lat}" data-lng="${lng}" data-nombre="${nombre}">
-                Enter
-              </button>
-            `;
-            
-            // Agregar evento al botón - MODIFICADO: Ahora redirige al sitio web
-            const boton = item.querySelector('.sugerencia-boton');
-            boton.addEventListener('click', function(e) {
-              e.stopPropagation();
-              const nombre = this.getAttribute('data-nombre');
-              
-              // Redirigir al sitio web en lugar de Google Maps
-              if (nombre.toLowerCase().includes("nueva york")) {
-                window.open("https://www.nuevayork.com", "_blank");
-              } else if (nombre.toLowerCase().includes("londres")) {
-                window.open("https://www.visitlondon.com", "_blank");
-              } else if (nombre.toLowerCase().includes("tokio")) {
-                window.open("https://www.gotokyo.org", "_blank");
-              } else {
-                // Sitio web por defecto si no hay coincidencia específica
-                window.open("https://qrcontraentrega.com", "_blank");
-              }
-              
-              sugerenciasContainer.style.display = "none";
-            });
-            
-            // Agregar evento al item completo
-            item.addEventListener('click', function() {
-              const lat = parseFloat(boton.getAttribute('data-lat'));
-              const lng = parseFloat(boton.getAttribute('data-lng'));
-              const nombre = boton.getAttribute('data-nombre');
-              
-              const latlng = [lat, lng];
-              mapa.setView(latlng, 10);
-              
-              if (destinoMarker) {
-                mapa.removeLayer(destinoMarker);
-              }
-              destinoMarker = L.marker(latlng, {
-                icon: L.icon({
-                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-                  iconSize: [32, 32],
-                  className: 'marker-icon-red'
-                })
-              }).addTo(mapa)
-                .bindPopup(`<strong>${nombre}</strong><br><button onclick="redirigirSitioWeb('${nombre}')" style="background:#9b59b6;color:white;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;margin-top:5px;">Enter</button>`);
-              
-              destinoMarker.openPopup();
-              document.getElementById('buscador').value = nombre;
-              sugerenciasContainer.style.display = 'none';
-            });
-            
-            sugerenciasContainer.appendChild(item);
-          });
-          sugerenciasContainer.style.display = 'block';
-        } else {
-          sugerenciasContainer.innerHTML = '<div class="sugerencia-item">No se encontraron resultados para: ' + consulta + '</div>';
-          sugerenciasContainer.style.display = 'block';
-        }
-      }, 500);
-    }
-
-    // Nueva función para redirigir al sitio web basado en el nombre
-    function redirigirSitioWeb(nombre) {
-      if (nombre.toLowerCase().includes("nueva york")) {
-        window.open("https://www.nuevayork.com", "_blank");
-      } else if (nombre.toLowerCase().includes("londres")) {
-        window.open("https://www.visitlondon.com", "_blank");
-      } else if (nombre.toLowerCase().includes("tokio")) {
-        window.open("https://www.gotokyo.org", "_blank");
-      } else {
-        window.open("https://qrcontraentrega.com", "_blank");
-      }
-    }
-
-    // Función para buscar en los puntos locales
-    function buscarEnPuntosLocales(consulta) {
-      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
-      const termino = consulta.toLowerCase();
-      const resultados = marcadoresOriginales.filter(m => 
-        m.datosBusqueda.includes(termino)
-      );
-      
-      if (resultados.length > 0) {
-        sugerenciasContainer.innerHTML = '';
-        
-        resultados.forEach(marcador => {
-          const loc = marcador.datosUbicacion;
-          const item = document.createElement('div');
-          item.className = 'sugerencia-item';
-          item.innerHTML = `
-            <div class="sugerencia-texto">
-              <strong>📍 ${loc.nombre}</strong><br>
-              <small>${loc.direccion}, ${loc.pais}</small>
-            </div>
-            <button class="sugerencia-boton" data-id="${loc.id}">
-              Marketplace
-            </button>
-          `;
-          
-          // Agregar evento al botón "Marketplace" - MODIFICADO: Ahora abre la URL del punto
-          const boton = item.querySelector('.sugerencia-boton');
-          boton.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const id = this.getAttribute('data-id');
-            const punto = UBICACIONES.find(p => p.id === id);
-            if (punto && punto.url) {
-              window.open(punto.url, '_blank');
-            }
-            sugerenciasContainer.style.display = 'none';
-          });
-          
-          // Agregar evento al item completo
-          item.addEventListener('click', function() {
-            mapa.setView(marcador.getLatLng(), 15);
-            marcador.openPopup();
-            document.getElementById('buscador').value = loc.nombre;
-            sugerenciasContainer.style.display = 'none';
-          });
-          
-          sugerenciasContainer.appendChild(item);
+        item.addEventListener('click', function() {
+          seleccionarRegion(this.dataset.id);
+          document.getElementById('buscador-regiones').value = marketplace.nombre;
+          container.style.display = 'none';
         });
-        sugerenciasContainer.style.display = 'block';
-        return true;
-      }
-      return false;
-    }
-
-    // Función para abrir Google Maps con una ubicación específica
-    function abrirGoogleMapsConDireccionUbicacion(idPunto) {
-      const punto = UBICACIONES.find(p => p.id === idPunto);
-      if (!punto) return;
+        
+        container.appendChild(item);
+      });
       
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${punto.latlng[0]},${punto.latlng[1]}&travelmode=driving&dir_action=navigate`;
-      window.open(url, '_blank');
+      container.style.display = 'block';
     }
 
     // Función para manejar teclas en el buscador
-    function handleSearchKeydown(e) {
+    function manejarTeclaBusqueda(e) {
       if (e.key === 'Enter') {
-        e.preventDefault();
-        const termino = document.getElementById('buscador').value.trim();
+        const termino = document.getElementById('buscador-regiones').value.trim();
         if (termino) {
-          buscarConGoogle(termino);
+          const resultados = UBICACIONES.filter(loc => 
+            loc.nombre.toLowerCase().includes(termino.toLowerCase()) ||
+            loc.region.toLowerCase().includes(termino.toLowerCase())
+          );
+          
+          if (resultados.length > 0) {
+            seleccionarRegion(resultados[0].id);
+          }
         }
       }
     }
 
-    // Función para abrir WhatsApp
-    function abrirWhatsApp(telefono, nombre) {
-      const numeroLimpio = telefono.replace(/\D/g, '');
-      const mensaje = `Hola ${nombre}, me interesa conocer más sobre sus servicios de contraentrega.`;
-      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
-    }
-
-    // Función para centrar el mapa en la ubicación actual
-    function centrarMapa() {
-      if (userMarker) {
-        mapa.setView(userMarker.getLatLng(), 15);
+    // Función para detectar ubicación del usuario
+    function detectarUbicacionUsuario() {
+      const btnGeo = document.getElementById('btn-geolocalizacion');
+      const resultadoGeo = document.getElementById('resultado-geo');
+      
+      btnGeo.innerHTML = '<span class="loading"></span> Detecting location...';
+      btnGeo.disabled = true;
+      
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            ubicacionUsuario = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            
+            // Encontrar el marketplace más cercano
+            encontrarMarketplaceCercano();
+            
+            btnGeo.innerHTML = '<i class="fas fa-location-crosshairs"></i> Location detected!';
+            btnGeo.disabled = false;
+            
+            // Mostrar resultado después de 1 segundo
+            setTimeout(() => {
+              resultadoGeo.classList.add('visible');
+            }, 1000);
+          },
+          function(error) {
+            console.error('Error de geolocalización:', error);
+            
+            btnGeo.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Location error';
+            
+            setTimeout(() => {
+              btnGeo.innerHTML = '<i class="fas fa-location-crosshairs"></i> Try again';
+              btnGeo.disabled = false;
+              
+              // Mostrar mensaje de error
+              resultadoGeo.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                  <i class="fas fa-exclamation-circle" style="font-size: 2rem; color: #ff6b6b; margin-bottom: 15px;"></i>
+                  <p style="color: #666; margin-bottom: 15px;">Could not detect your location. Please enable location services or select a region manually.</p>
+                  <button class="btn" onclick="detectarUbicacionUsuario()">
+                    <i class="fas fa-redo"></i> Try again
+                  </button>
+                </div>
+              `;
+              resultadoGeo.classList.add('visible');
+            }, 2000);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+          }
+        );
       } else {
-        obtenerUbicacionUsuario();
+        alert('Tu navegador no soporta geolocalización. Por favor, selecciona una región manualmente.');
+        btnGeo.innerHTML = '<i class="fas fa-location-crosshairs"></i> Not supported';
+        btnGeo.disabled = false;
       }
     }
 
-    // Función para obtener ubicación del usuario
-    function obtenerUbicacionUsuario() {
-      return new Promise((resolve, reject) => {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const { latitude, longitude } = position.coords;
-              
-              // Eliminar marcador anterior si existe
-              if (userMarker) {
-                mapa.removeLayer(userMarker);
-              }
-              
-              // Crear nuevo marcador de usuario (azul)
-              userMarker = L.marker([latitude, longitude], {
-                icon: L.icon({
-                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
-                  iconSize: [32, 32],
-                  className: 'marker-icon-blue'
-                })
-              }).addTo(mapa)
-                .bindPopup('¡Tu ubicación actual!');
-                
-              // Centrar mapa en la ubicación del usuario
-              mapa.setView([latitude, longitude], 15);
-              resolve();
-            },
-            (error) => {
-              console.log(`Error al obtener ubicación: ${error.message}`);
-              // Centrar en vista global si no se puede obtener ubicación
-              mapa.setView([20, 0], 2);
-              reject();
-            },
-            { enableHighAccuracy: true }
-          );
-        } else {
-          console.log("Tu navegador no soporta geolocalización.");
-          mapa.setView([20, 0], 2);
-          reject();
+    // Función para encontrar el marketplace más cercano
+    function encontrarMarketplaceCercano() {
+      if (!ubicacionUsuario) return;
+      
+      let distanciaMinima = Infinity;
+      let marketplaceMasCercano = null;
+      
+      UBICACIONES.forEach(marketplace => {
+        const distancia = calcularDistancia(
+          ubicacionUsuario.lat,
+          ubicacionUsuario.lng,
+          marketplace.latlng[0],
+          marketplace.latlng[1]
+        );
+        
+        if (distancia < distanciaMinima) {
+          distanciaMinima = distancia;
+          marketplaceMasCercano = marketplace;
         }
       });
+      
+      marketplaceCercano = marketplaceMasCercano;
+      
+      // Mostrar información del marketplace más cercano
+      if (marketplaceCercano) {
+        const nombreElement = document.getElementById('geo-marketplace-nombre');
+        const infoElement = document.getElementById('geo-marketplace-info');
+        
+        nombreElement.textContent = marketplaceCercano.nombre;
+        infoElement.innerHTML = `
+          📍 ${marketplaceCercano.direccion}<br>
+          🏙️ ${marketplaceCercano.region}, ${marketplaceCercano.pais}<br>
+          📞 ${marketplaceCercano.telefono}<br>
+          ⏰ ${marketplaceCercano.horario}
+        `;
+        
+        // Resaltar la región en el grid
+        document.querySelectorAll('.region-card').forEach(card => {
+          card.classList.remove('activa');
+          if (card.dataset.id === marketplaceCercano.id) {
+            card.classList.add('activa');
+          }
+        });
+      }
+    }
+
+    // Función para calcular distancia entre dos puntos (fórmula Haversine)
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Radio de la Tierra en km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    // Función para redirigir desde la geolocalización
+    function redirigirDesdeGeo() {
+      if (marketplaceCercano && marketplaceCercano.url) {
+        window.open(marketplaceCercano.url, '_blank');
+      } else {
+        alert('No se pudo determinar el marketplace más cercano. Por favor, selecciona una región manualmente.');
+      }
+    }
+
+    // Función para simular detección de ciudad (usada si no hay geolocalización disponible)
+    function simularDeteccionCiudad() {
+      // En un caso real, esto se haría con una API de geolocalización por IP
+      // Por ahora, simulamos algunas ciudades comunes
+      const ciudadesSimuladas = [
+        { ciudad: "Santiago", pais: "Chile", id: "santiago" },
+        { ciudad: "Buenos Aires", pais: "Argentina", id: "buenosaires" },
+        { ciudad: "Lima", pais: "Perú", id: "lima" },
+        { ciudad: "Ciudad de México", pais: "México", id: "mexicocity" },
+        { ciudad: "Madrid", pais: "España", id: "madrid" },
+        { ciudad: "Salento", pais: "Colombia", id: "salento" }
+      ];
+      
+      const ciudadAleatoria = ciudadesSimuladas[Math.floor(Math.random() * ciudadesSimuladas.length)];
+      return UBICACIONES.find(m => m.id === ciudadAleatoria.id);
     }
   </script>
 </body>
