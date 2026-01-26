@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contraentrega Cali Valle - Mapa</title>
+  <style>
+    :root {
+      --primary-color: #1a1a1a;
+      --secondary-color: #333;
+      --accent-color: #0066cc;
+      --text-color: #333;
+      --light-text: #fff;
+      --bg-light: #f8f8f8;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    body { 
+      font-family: 'Roboto', sans-serif; 
+      color: var(--text-color); 
+      line-height: 1.6; 
+      touch-action: manipulation;
+      overflow-x: hidden;
+    }
+    
+    #contenedor-mapa { 
+      height: 100vh; 
+      display: flex; 
+      flex-direction: column; 
+      position: relative;
+    }
+    
+    #barra-superior { 
+      display: flex; 
+      gap: 0.8rem; 
+      padding: 0.8rem; 
+      background: var(--bg-light); 
+      width: 100%;
+      z-index: 1000;
+      justify-content: center;
+    }
+    
+    #buscador { 
+      flex: 1; 
+      max-width: 500px;
+      padding: 0.6rem 1.2rem; 
+      border: 1px solid #ddd; 
+      border-radius: 24px; 
+      appearance: none; 
+      font-size: 16px;
+      transition: var(--transition);
+    }
+    
+    #buscador:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+    }
+    
+    .btn { 
+      background: #000000; /* NEGRO */
+      color: #ffffff; /* BLANCO */
+      padding: 0.6rem 1.2rem; 
+      border-radius: 24px; 
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      border: 1px solid #333;
+    }
+    
+    .btn:hover {
+      background: #333333; /* Gris oscuro al pasar el mouse */
+      transform: translateY(-1px);
+    }
+    
+    .btn-centrar {
+      background-color: #000000;
+      color: #ffffff;
+    }
+    
+    .btn-socios {
+      background-color: #000000;
+      color: #ffffff;
+    }
+    
+    #mapa { 
+      flex: 1; 
+      background: #f0f0f0; 
+      width: 100%;
+    }
+    
+    .cluster-marcadores { 
+      background: rgba(40,40,40,0.7); 
+      border-radius: 50%; 
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    .whatsapp-icon {
+      width: 16px;
+      height: 16px;
+      filter: invert(1);
+    }
+
+    .popup-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .popup-button-row {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+    }
+
+    .sugerencias-busqueda {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .sugerencia-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sugerencia-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    .sugerencia-texto {
+      flex: 1;
+    }
+
+    .sugerencia-boton {
+      margin-left: 10px;
+      padding: 5px 10px;
+      background-color: #9b59b6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .contenedor-buscador {
+      position: relative;
+      flex: 1;
+      max-width: 500px;
+    }
+
+    .cargando {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    .gm-style .gm-style-iw-c {
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .gm-style .gm-style-iw-d {
+      overflow: auto !important;
+    }
+
+    .gm-ui-hover-effect {
+      top: 8px !important;
+      right: 8px !important;
+    }
+
+    .map-type-selector {
+      position: absolute;
+      bottom: 20px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      display: flex;
+      gap: 10px;
+    }
+
+    .map-type-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #f1f1f1;
+      transition: background 0.3s;
+    }
+
+    .map-type-btn.active {
+      background: #0066cc;
+      color: white;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) { 
+      #barra-superior { 
+        flex-direction: column; 
+        gap: 0.6rem;
+      }
+      
+      .popup-button-row {
+        flex-direction: column;
+      }
+
+      .sugerencia-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .sugerencia-boton {
+        margin-left: 0;
+        margin-top: 5px;
+        align-self: flex-end;
+      }
+
+      .map-type-selector {
+        bottom: 10px;
+        left: 5px;
+        flex-direction: column;
+        gap: 5px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+</head>
+<body>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="contenedor-buscador">
+        <input type="search" id="buscador" placeholder="BUSCAR EN CALI..." enterkeyhint="search">
+        <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+      </div>
+      <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
+    </div>
+    <div id="mapa"></div>
+    <div class="map-type-selector">
+      <button class="map-type-btn active" id="map-btn">Mapa</button>
+      <button class="map-type-btn" id="satellite-btn">Satélite</button>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    // Variables globales
+    let mapa;
+    let userMarker;
+    let marcadoresOriginales = [];
+    let destinoMarker = null;
+    let buscadorTimeout;
+    let googleMapsLayer;
+    let googleSatelliteLayer;
+    let currentLayer;
+
+    // Datos de ubicaciones - Cali, Valle del Cauca
+    const UBICACIONES = [
+      { 
+        "id": "cali-norte",
+        "nombre": "QRContraentrega Cali Norte", 
+        "direccion": "Cra. 100 #5-169, Cali, Valle del Cauca", 
+        "latlng": [3.452441, -76.533894], 
+        "url": "https://cali.qrcontraentrega.com/",
+        "telefono": "+573146824438",
+        "horario": "Lunes a Viernes: 8am-7pm, Sábados: 9am-5pm",
+        "servicios": "Almacenes QRContraentrega, Logística",
+        "pais": "Colombia",
+        "tipo": "socio"
+      },
+      { 
+        "id": "cali-sur",
+        "nombre": "QRContraentrega Cali Sur", 
+        "direccion": "Av. Ciudad de Cali #15-45, Cali, Valle del Cauca", 
+        "latlng": [3.396829, -76.544258], 
+        "url": "https://cali.qrcontraentrega.com/",
+        "telefono": "+573206789012",
+        "horario": "Lunes a Domingo: 7am-9pm",
+        "servicios": "Punto de recogida, Entrega inmediata",
+        "pais": "Colombia",
+        "tipo": "socio"
+      },
+      { 
+        "id": "centro-cali",
+        "nombre": "QRContraentrega Centro Cali", 
+        "direccion": "Calle 10 #4-39, Cali, Valle del Cauca", 
+        "latlng": [3.451646, -76.531985], 
+        "url": "https://cali.qrcontraentrega.com/",
+        "telefono": "+573155432109",
+        "horario": "24/7 para recogidas urgentes",
+        "servicios": "Centro logístico principal",
+        "pais": "Colombia",
+        "tipo": "socio"
+      }
+    ];
+
+    // Inicializar el mapa cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeMap();
+      
+      // Evento para el botón centrar
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
+      
+      // Eventos para cambiar tipo de mapa
+      document.getElementById('map-btn').addEventListener('click', function() {
+        switchToMapView();
+      });
+      
+      document.getElementById('satellite-btn').addEventListener('click', function() {
+        switchToSatelliteView();
+      });
+      
+      // Eventos para el buscador
+      const searchInput = document.getElementById('buscador');
+      searchInput.addEventListener('input', handleSearchInput);
+      searchInput.addEventListener('keydown', handleSearchKeydown);
+      
+      // Cerrar sugerencias al hacer clic fuera
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.contenedor-buscador')) {
+          document.getElementById('sugerencias-busqueda').style.display = 'none';
+        }
+      });
+    });
+
+    function initializeMap() {
+      // Inicializar mapa con vista centrada en Cali
+      mapa = L.map('mapa', {
+        center: [3.4516, -76.5319], // Centro de Cali
+        zoom: 13,
+        zoomControl: false
+      });
+
+      // Añadir control de zoom
+      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+
+      // Crear capas de Google Maps
+      googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+      });
+
+      googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+      });
+
+      // Inicialmente usar la vista de mapa
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+
+      // Asegurar que el mapa ocupe todo el espacio disponible
+      setTimeout(() => {
+        mapa.invalidateSize();
+      }, 0);
+
+      // Sistema de marcadores
+      const clusters = L.markerClusterGroup({
+        iconCreateFunction: cluster => L.divIcon({
+          html: `<div>${cluster.getChildCount()}</div>`,
+          className: 'cluster-marcadores',
+          iconSize: [40, 40]
+        }),
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true
+      });
+
+      // Crear marcadores para Cali
+      UBICACIONES.forEach(loc => {
+        const marcador = L.marker(loc.latlng, {
+          icon: L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+            iconSize: [32, 32],
+            className: 'marker-icon-orange'
+          })
+        }).bindPopup(`
+          <div style="min-width:220px">
+            <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
+            <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
+            <p style="margin:0 0 5px 0;font-size:0.9em"><strong>País:</strong> ${loc.pais}</p>
+            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Teléfono:</strong> ${loc.telefono}</p>` : ''}
+            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Horario:</strong> ${loc.horario}</p>` : ''}
+            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><strong>Servicios:</strong> ${loc.servicios}</p>` : ''}
+            <div class="popup-buttons">
+              <div class="popup-button-row">
+                <button class="btn btn-whatsapp" onclick="abrirWhatsApp('${loc.telefono}', '${loc.nombre}')">
+                  <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
+                  WhatsApp
+                </button>
+              </div>
+              <div class="popup-button-row">
+                <button class="btn btn-ruta" onclick="abrirGoogleMapsConDireccion('${loc.latlng[0]}', '${loc.latlng[1]}', '${loc.nombre}')">Google Maps</button>
+                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">Marketplace</button>
+              </div>
+            </div>
+          </div>
+        `);
+        
+        // Guardar todos los datos de la ubicación en el marcador
+        marcador.datosUbicacion = loc;
+        marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.pais} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
+        marcadoresOriginales.push(marcador);
+      });
+
+      // Añadir marcadores al mapa
+      clusters.addLayers(marcadoresOriginales);
+      mapa.addLayer(clusters);
+
+      // Ajustar vista a los marcadores
+      if(marcadoresOriginales.length > 0) {
+        mapa.fitBounds(clusters.getBounds().pad(0.3));
+      }
+
+      // Solicitar ubicación al cargar la página
+      obtenerUbicacionUsuario();
+    }
+
+    // Función para cambiar a vista de mapa
+    function switchToMapView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      
+      document.getElementById('map-btn').classList.add('active');
+      document.getElementById('satellite-btn').classList.remove('active');
+    }
+
+    // Función para cambiar a vista de satélite
+    function switchToSatelliteView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleSatelliteLayer;
+      currentLayer.addTo(mapa);
+      
+      document.getElementById('satellite-btn').classList.add('active');
+      document.getElementById('map-btn').classList.remove('active');
+    }
+
+    // Función para abrir Google Maps con una dirección específica
+    function abrirGoogleMapsConDireccion(lat, lng, nombre) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`;
+      window.open(url, '_blank');
+    }
+
+    // Función para manejar la búsqueda
+    function handleSearchInput(e) {
+      clearTimeout(buscadorTimeout);
+      const termino = e.target.value.trim();
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      if (termino.length < 2) {
+        sugerenciasContainer.style.display = 'none';
+        return;
+      }
+      
+      // Mostrar indicador de carga
+      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Buscando... <span class="cargando"></span></div>';
+      sugerenciasContainer.style.display = 'block';
+      
+      buscadorTimeout = setTimeout(() => {
+        buscarConGoogle(termino);
+      }, 300);
+    }
+
+    // Función para buscar usando Google Places API (simulación)
+    function buscarConGoogle(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      
+      // Primero buscar en puntos locales (Cali)
+      const resultadosLocales = buscarEnPuntosLocales(consulta);
+      if (resultadosLocales) {
+        return;
+      }
+      
+      // Simular búsqueda en Google Places para Cali y alrededores
+      setTimeout(() => {
+        sugerenciasContainer.innerHTML = '';
+        
+        // Resultados específicos para Cali y Valle del Cauca
+        const resultadosSimulados = [
+          {
+            name: "Centro Comercial Chipichape",
+            lat: 3.4833,
+            lng: -76.4917,
+            formatted_address: "Cra. 38 #6N-25, Cali, Valle del Cauca"
+          },
+          {
+            name: "Estadio Pascual Guerrero",
+            lat: 3.4500,
+            lng: -76.5500,
+            formatted_address: "Cra. 36 #5-185, Cali, Valle del Cauca"
+          },
+          {
+            name: "Zoológico de Cali",
+            lat: 3.4467,
+            lng: -76.5517,
+            formatted_address: "Cra. 2 Oeste #14-00, Cali, Valle del Cauca"
+          },
+          {
+            name: "Aeropuerto Alfonso Bonilla Aragón",
+            lat: 3.5436,
+            lng: -76.3839,
+            formatted_address: "Palmira, Valle del Cauca"
+          },
+          {
+            name: "Plaza de Cayzedo",
+            lat: 3.4511,
+            lng: -76.5319,
+            formatted_address: "Centro, Cali, Valle del Cauca"
+          }
+        ];
+        
+        if (resultadosSimulados.length > 0) {
+          resultadosSimulados.forEach(lugar => {
+            const item = document.createElement('div');
+            item.className = 'sugerencia-item';
+            
+            const lat = lugar.lat;
+            const lng = lugar.lng;
+            const nombre = lugar.name;
+            
+            item.innerHTML = `
+              <div class="sugerencia-texto">
+                <strong>📍 ${nombre}</strong><br>
+                <small>${lugar.formatted_address}</small>
+              </div>
+              <button class="sugerencia-boton" data-lat="${lat}" data-lng="${lng}" data-nombre="${nombre}">
+                Ver
+              </button>
+            `;
+            
+            // Agregar evento al botón
+            const boton = item.querySelector('.sugerencia-boton');
+            boton.addEventListener('click', function(e) {
+              e.stopPropagation();
+              const nombre = this.getAttribute('data-nombre');
+              
+              // Redirigir según el lugar seleccionado
+              if (nombre.toLowerCase().includes("chipichape")) {
+                window.open("https://www.chipichape.com.co", "_blank");
+              } else if (nombre.toLowerCase().includes("estadio") || nombre.toLowerCase().includes("pascual")) {
+                window.open("https://www.deportivocali.com.co", "_blank");
+              } else if (nombre.toLowerCase().includes("zoológico") || nombre.toLowerCase().includes("zoologico")) {
+                window.open("https://www.zoologicodecali.com.co", "_blank");
+              } else if (nombre.toLowerCase().includes("aeropuerto")) {
+                window.open("https://www.aerocali.com.co", "_blank");
+              } else {
+                // Por defecto, abrir el marketplace de Cali
+                window.open("https://cali.qrcontraentrega.com", "_blank");
+              }
+              
+              sugerenciasContainer.style.display = "none";
+            });
+            
+            // Agregar evento al item completo
+            item.addEventListener('click', function() {
+              const lat = parseFloat(boton.getAttribute('data-lat'));
+              const lng = parseFloat(boton.getAttribute('data-lng'));
+              const nombre = boton.getAttribute('data-nombre');
+              
+              const latlng = [lat, lng];
+              mapa.setView(latlng, 15);
+              
+              if (destinoMarker) {
+                mapa.removeLayer(destinoMarker);
+              }
+              destinoMarker = L.marker(latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-red'
+                })
+              }).addTo(mapa)
+                .bindPopup(`<strong>${nombre}</strong><br><button onclick="redirigirSitioWeb('${nombre}')" style="background:#9b59b6;color:white;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;margin-top:5px;">Ver más</button>`);
+              
+              destinoMarker.openPopup();
+              document.getElementById('buscador').value = nombre;
+              sugerenciasContainer.style.display = 'none';
+            });
+            
+            sugerenciasContainer.appendChild(item);
+          });
+          sugerenciasContainer.style.display = 'block';
+        } else {
+          sugerenciasContainer.innerHTML = '<div class="sugerencia-item">No se encontraron resultados para: ' + consulta + '</div>';
+          sugerenciasContainer.style.display = 'block';
+        }
+      }, 500);
+    }
+
+    // Función para redirigir al sitio web basado en el nombre
+    function redirigirSitioWeb(nombre) {
+      if (nombre.toLowerCase().includes("chipichape")) {
+        window.open("https://www.chipichape.com.co", "_blank");
+      } else if (nombre.toLowerCase().includes("estadio") || nombre.toLowerCase().includes("pascual")) {
+        window.open("https://www.deportivocali.com.co", "_blank");
+      } else if (nombre.toLowerCase().includes("zoológico") || nombre.toLowerCase().includes("zoologico")) {
+        window.open("https://www.zoologicodecali.com.co", "_blank");
+      } else if (nombre.toLowerCase().includes("aeropuerto")) {
+        window.open("https://www.aerocali.com.co", "_blank");
+      } else if (nombre.toLowerCase().includes("plaza") || nombre.toLowerCase().includes("cayzedo")) {
+        window.open("https://www.cali.gov.co", "_blank");
+      } else {
+        window.open("https://cali.qrcontraentrega.com", "_blank");
+      }
+    }
+
+    // Función para buscar en los puntos locales (Cali)
+    function buscarEnPuntosLocales(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      const termino = consulta.toLowerCase();
+      const resultados = marcadoresOriginales.filter(m => 
+        m.datosBusqueda.includes(termino)
+      );
+      
+      if (resultados.length > 0) {
+        sugerenciasContainer.innerHTML = '';
+        
+        resultados.forEach(marcador => {
+          const loc = marcador.datosUbicacion;
+          const item = document.createElement('div');
+          item.className = 'sugerencia-item';
+          item.innerHTML = `
+            <div class="sugerencia-texto">
+              <strong>📍 ${loc.nombre}</strong><br>
+              <small>${loc.direccion}, ${loc.pais}</small>
+            </div>
+            <button class="sugerencia-boton" data-id="${loc.id}">
+              Marketplace
+            </button>
+          `;
+          
+          // Agregar evento al botón "Marketplace"
+          const boton = item.querySelector('.sugerencia-boton');
+          boton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = this.getAttribute('data-id');
+            const punto = UBICACIONES.find(p => p.id === id);
+            if (punto && punto.url) {
+              window.open(punto.url, '_blank');
+            }
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          // Agregar evento al item completo
+          item.addEventListener('click', function() {
+            mapa.setView(marcador.getLatLng(), 15);
+            marcador.openPopup();
+            document.getElementById('buscador').value = loc.nombre;
+            sugerenciasContainer.style.display = 'none';
+          });
+          
+          sugerenciasContainer.appendChild(item);
+        });
+        sugerenciasContainer.style.display = 'block';
+        return true;
+      }
+      return false;
+    }
+
+    // Función para abrir Google Maps con una ubicación específica
+    function abrirGoogleMapsConDireccionUbicacion(idPunto) {
+      const punto = UBICACIONES.find(p => p.id === idPunto);
+      if (!punto) return;
+      
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${punto.latlng[0]},${punto.latlng[1]}&travelmode=driving&dir_action=navigate`;
+      window.open(url, '_blank');
+    }
+
+    // Función para manejar teclas en el buscador
+    function handleSearchKeydown(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const termino = document.getElementById('buscador').value.trim();
+        if (termino) {
+          buscarConGoogle(termino);
+        }
+      }
+    }
+
+    // Función para abrir WhatsApp
+    function abrirWhatsApp(telefono, nombre) {
+      const numeroLimpio = telefono.replace(/\D/g, '');
+      const mensaje = `Hola ${nombre}, me interesa conocer más sobre sus servicios de contraentrega en Cali.`;
+      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
+    }
+
+    // Función para centrar el mapa en la ubicación actual
+    function centrarMapa() {
+      if (userMarker) {
+        mapa.setView(userMarker.getLatLng(), 15);
+      } else {
+        obtenerUbicacionUsuario();
+      }
+    }
+
+    // Función para obtener ubicación del usuario
+    function obtenerUbicacionUsuario() {
+      return new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              
+              // Eliminar marcador anterior si existe
+              if (userMarker) {
+                mapa.removeLayer(userMarker);
+              }
+              
+              // Crear nuevo marcador de usuario (azul)
+              userMarker = L.marker([latitude, longitude], {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+                  iconSize: [32, 32],
+                  className: 'marker-icon-blue'
+                })
+              }).addTo(mapa)
+                .bindPopup('¡Tu ubicación actual!');
+                
+              // Centrar mapa en la ubicación del usuario
+              mapa.setView([latitude, longitude], 15);
+              resolve();
+            },
+            (error) => {
+              console.log(`Error al obtener ubicación: ${error.message}`);
+              // Centrar en Cali si no se puede obtener ubicación
+              mapa.setView([3.4516, -76.5319], 13);
+              reject();
+            },
+            { enableHighAccuracy: true }
+          );
+        } else {
+          console.log("Tu navegador no soporta geolocalización.");
+          mapa.setView([3.4516, -76.5319], 13);
+          reject();
+        }
+      });
+    }
+  </script>
+</body>
+</html>
