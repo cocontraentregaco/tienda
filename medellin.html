@@ -93,7 +93,7 @@
       color: #ffffff;
     }
     
-    .btn-socios {
+    .btn-marketplace {
       background-color: #000000;
       color: #ffffff;
     }
@@ -278,6 +278,7 @@
         <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
       </div>
       <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://medellin.qrcontraentrega.com', '_blank')">MARKETPLACE</button>
     </div>
     <div id="mapa"></div>
     <div class="map-type-selector">
@@ -299,16 +300,16 @@
     let googleSatelliteLayer;
     let currentLayer;
 
-    // Datos de ubicaciones - Medellín, Antioquia
+    // Datos de ubicaciones - Medellín
     const UBICACIONES = [
       { 
-        "id": "medellin-poblado",
+        "id": "medellin-el-poblado",
         "nombre": "QRContraentrega El Poblado", 
-        "direccion": "Carrera 43A #1-50, El Poblado, Medellín", 
-        "latlng": [6.2081, -75.5654], 
+        "direccion": "Carrera 43A # 1-50, El Poblado, Medellín, Colombia", 
+        "latlng": [6.2081, -75.5673], 
         "url": "https://medellin.qrcontraentrega.com/",
-        "telefono": "+573146824438",
-        "horario": "Lunes a Sábado: 8am-8pm, Domingo: 9am-6pm",
+        "telefono": "+573128765432",
+        "horario": "Lunes a Viernes: 8am-7pm, Sábados: 9am-5pm",
         "servicios": "Almacenes QRContraentrega, Logística",
         "pais": "Colombia",
         "tipo": "socio"
@@ -316,11 +317,11 @@
       { 
         "id": "medellin-laureles",
         "nombre": "QRContraentrega Laureles", 
-        "direccion": "Circular 74 #39-20, Laureles, Medellín", 
-        "latlng": [6.2479, -75.5891], 
+        "direccion": "Circular 74 # 39-50, Laureles, Medellín, Colombia", 
+        "latlng": [6.2500, -75.5833], 
         "url": "https://medellin.qrcontraentrega.com/",
-        "telefono": "+573206789012",
-        "horario": "Lunes a Viernes: 7am-9pm, Sábados: 8am-7pm",
+        "telefono": "+573105432198",
+        "horario": "Lunes a Domingo: 7am-9pm",
         "servicios": "Punto de recogida, Entrega inmediata",
         "pais": "Colombia",
         "tipo": "socio"
@@ -328,10 +329,10 @@
       { 
         "id": "medellin-centro",
         "nombre": "QRContraentrega Centro Medellín", 
-        "direccion": "Calle 50 #46-30, Centro, Medellín", 
+        "direccion": "Carrera 52 # 52-10, Centro, Medellín, Colombia", 
         "latlng": [6.2442, -75.5736], 
         "url": "https://medellin.qrcontraentrega.com/",
-        "telefono": "+573155432109",
+        "telefono": "+573209876543",
         "horario": "24/7 para recogidas urgentes",
         "servicios": "Centro logístico principal",
         "pais": "Colombia",
@@ -340,12 +341,12 @@
       { 
         "id": "medellin-belen",
         "nombre": "QRContraentrega Belén", 
-        "direccion": "Carrera 76 #30-45, Belén, Medellín", 
-        "latlng": [6.2368, -75.5997], 
+        "direccion": "Calle 30A # 79-40, Belén, Medellín, Colombia", 
+        "latlng": [6.2300, -75.6000], 
         "url": "https://medellin.qrcontraentrega.com/",
-        "telefono": "+573178901234",
-        "horario": "Lunes a Domingo: 7am-10pm",
-        "servicios": "Almacén, Distribución local",
+        "telefono": "+573215432109",
+        "horario": "Lunes a Sábado: 8am-8pm, Domingos: 9am-3pm",
+        "servicios": "Punto de entrega express",
         "pais": "Colombia",
         "tipo": "socio"
       }
@@ -383,7 +384,7 @@
     function initializeMap() {
       // Inicializar mapa con vista centrada en Medellín
       mapa = L.map('mapa', {
-        center: [6.2442, -75.5812], // Centro de Medellín
+        center: [6.2442, -75.5812], // Centro de Medellín (Parque Berrío)
         zoom: 13,
         zoomControl: false
       });
@@ -535,49 +536,61 @@
       setTimeout(() => {
         sugerenciasContainer.innerHTML = '';
         
-        // Resultados específicos para Medellín y Antioquia
+        // Resultados específicos para Medellín
         const resultadosSimulados = [
           {
-            name: "Parque Explora",
-            lat: 6.2696,
-            lng: -75.5648,
-            formatted_address: "Cra. 52 #73-75, Medellín, Antioquia"
+            name: "Parque Berrío",
+            lat: 6.2456,
+            lng: -75.5736,
+            formatted_address: "Centro, Medellín, Colombia"
           },
           {
-            name: "Jardín Botánico",
-            lat: 6.2695,
-            lng: -75.5641,
-            formatted_address: "Cl. 73 #51D-14, Medellín, Antioquia"
+            name: "Parque Lleras",
+            lat: 6.2095,
+            lng: -75.5711,
+            formatted_address: "El Poblado, Medellín, Colombia"
           },
           {
-            name: "Pueblito Paisa",
-            lat: 6.2119,
-            lng: -75.5761,
-            formatted_address: "Cra. 37 #1 Sur, Medellín, Antioquia"
-          },
-          {
-            name: "Museo de Antioquia",
-            lat: 6.2514,
-            lng: -75.5663,
-            formatted_address: "Cra. 52 #52-43, Medellín, Antioquia"
-          },
-          {
-            name: "Metrocable",
-            lat: 6.2751,
-            lng: -75.5901,
-            formatted_address: "Estación Acevedo, Medellín, Antioquia"
+            name: "Metro de Medellín - Estación San Antonio",
+            lat: 6.2475,
+            lng: -75.5719,
+            formatted_address: "Centro, Medellín, Colombia"
           },
           {
             name: "Centro Comercial Santafé",
-            lat: 6.1975,
-            lng: -75.5765,
-            formatted_address: "Cl. 7 Sur #170, Medellín, Antioquia"
+            lat: 6.1972,
+            lng: -75.5758,
+            formatted_address: "Carrera 43A # 7 sur-170, Medellín, Colombia"
+          },
+          {
+            name: "Museo de Antioquia",
+            lat: 6.2469,
+            lng: -75.5747,
+            formatted_address: "Carrera 52 # 52-43, Centro, Medellín, Colombia"
+          },
+          {
+            name: "Parque Explora",
+            lat: 6.2703,
+            lng: -75.5650,
+            formatted_address: "Carrera 52 # 73-75, Medellín, Colombia"
+          },
+          {
+            name: "Jardín Botánico",
+            lat: 6.2708,
+            lng: -75.5642,
+            formatted_address: "Calle 73 # 51D-14, Medellín, Colombia"
           },
           {
             name: "Aeropuerto José María Córdova",
             lat: 6.1644,
             lng: -75.4231,
-            formatted_address: "Rionegro, Antioquia"
+            formatted_address: "Rionegro, Antioquia, Colombia"
+          },
+          {
+            name: "Parque Arví",
+            lat: 6.2817,
+            lng: -75.5103,
+            formatted_address: "Santa Elena, Medellín, Colombia"
           }
         ];
         
@@ -607,20 +620,24 @@
               const nombre = this.getAttribute('data-nombre');
               
               // Redirigir según el lugar seleccionado
-              if (nombre.toLowerCase().includes("parque explora")) {
-                window.open("https://www.parqueexplora.org", "_blank");
-              } else if (nombre.toLowerCase().includes("jardín botánico") || nombre.toLowerCase().includes("jardin botanico")) {
-                window.open("https://www.botanicomedellin.org", "_blank");
-              } else if (nombre.toLowerCase().includes("pueblito paisa")) {
-                window.open("https://www.medellin.travel", "_blank");
+              if (nombre.toLowerCase().includes("parque berrío")) {
+                window.open("https://www.medellin.gov.co/parque-berrio", "_blank");
+              } else if (nombre.toLowerCase().includes("parque lleras")) {
+                window.open("https://www.medellin.travel/es/que-hacer/parque-lleras", "_blank");
+              } else if (nombre.toLowerCase().includes("metro")) {
+                window.open("https://www.metrodemedellin.gov.co", "_blank");
+              } else if (nombre.toLowerCase().includes("santafé")) {
+                window.open("https://www.centrocomercialsantafe.com", "_blank");
               } else if (nombre.toLowerCase().includes("museo de antioquia")) {
                 window.open("https://www.museodeantioquia.co", "_blank");
-              } else if (nombre.toLowerCase().includes("metrocable")) {
-                window.open("https://www.metrodemedellin.gov.co", "_blank");
-              } else if (nombre.toLowerCase().includes("santafé") || nombre.toLowerCase().includes("santafe")) {
-                window.open("https://www.santafemedellin.com", "_blank");
+              } else if (nombre.toLowerCase().includes("parque explora")) {
+                window.open("https://www.parqueexplora.org", "_blank");
+              } else if (nombre.toLowerCase().includes("jardín botánico")) {
+                window.open("https://www.botanicomedellin.org", "_blank");
               } else if (nombre.toLowerCase().includes("aeropuerto")) {
                 window.open("https://www.aeropuertojosemariacordova.com", "_blank");
+              } else if (nombre.toLowerCase().includes("parque arví")) {
+                window.open("https://www.parquearvi.org", "_blank");
               } else {
                 // Por defecto, abrir el marketplace de Medellín
                 window.open("https://medellin.qrcontraentrega.com", "_blank");
@@ -667,20 +684,24 @@
 
     // Función para redirigir al sitio web basado en el nombre
     function redirigirSitioWeb(nombre) {
-      if (nombre.toLowerCase().includes("parque explora")) {
-        window.open("https://www.parqueexplora.org", "_blank");
-      } else if (nombre.toLowerCase().includes("jardín botánico") || nombre.toLowerCase().includes("jardin botanico")) {
-        window.open("https://www.botanicomedellin.org", "_blank");
-      } else if (nombre.toLowerCase().includes("pueblito paisa")) {
-        window.open("https://www.medellin.travel", "_blank");
+      if (nombre.toLowerCase().includes("parque berrío")) {
+        window.open("https://www.medellin.gov.co/parque-berrio", "_blank");
+      } else if (nombre.toLowerCase().includes("parque lleras")) {
+        window.open("https://www.medellin.travel/es/que-hacer/parque-lleras", "_blank");
+      } else if (nombre.toLowerCase().includes("metro")) {
+        window.open("https://www.metrodemedellin.gov.co", "_blank");
+      } else if (nombre.toLowerCase().includes("santafé")) {
+        window.open("https://www.centrocomercialsantafe.com", "_blank");
       } else if (nombre.toLowerCase().includes("museo de antioquia")) {
         window.open("https://www.museodeantioquia.co", "_blank");
-      } else if (nombre.toLowerCase().includes("metrocable")) {
-        window.open("https://www.metrodemedellin.gov.co", "_blank");
-      } else if (nombre.toLowerCase().includes("santafé") || nombre.toLowerCase().includes("santafe")) {
-        window.open("https://www.santafemedellin.com", "_blank");
+      } else if (nombre.toLowerCase().includes("parque explora")) {
+        window.open("https://www.parqueexplora.org", "_blank");
+      } else if (nombre.toLowerCase().includes("jardín botánico")) {
+        window.open("https://www.botanicomedellin.org", "_blank");
       } else if (nombre.toLowerCase().includes("aeropuerto")) {
         window.open("https://www.aeropuertojosemariacordova.com", "_blank");
+      } else if (nombre.toLowerCase().includes("parque arví")) {
+        window.open("https://www.parquearvi.org", "_blank");
       } else {
         window.open("https://medellin.qrcontraentrega.com", "_blank");
       }
