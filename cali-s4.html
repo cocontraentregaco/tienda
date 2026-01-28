@@ -42,6 +42,7 @@
       width: 100%;
       max-width: 400px;
       text-align: center;
+      margin: 1rem;
     }
     
     .logo {
@@ -127,6 +128,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
     
     .header-title h2 {
@@ -156,21 +159,20 @@
     }
     
     .dashboard-content {
-      padding: 2rem;
-      overflow-x: auto;
+      padding: 1.5rem;
     }
     
     .stats-cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
     }
     
     .stat-card {
       background: white;
       border-radius: var(--border-radius);
-      padding: 1.5rem;
+      padding: 1.2rem;
       box-shadow: var(--box-shadow);
       display: flex;
       align-items: center;
@@ -178,26 +180,27 @@
     }
     
     .stat-icon {
-      width: 50px;
-      height: 50px;
+      width: 45px;
+      height: 45px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 1.5rem;
+      font-size: 1.3rem;
+      flex-shrink: 0;
     }
     
     .stat-info h3 {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       color: var(--primary-color);
       margin-bottom: 0.2rem;
     }
     
     .stat-info p {
       color: #666;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
     
     .table-container {
@@ -210,14 +213,15 @@
     .table-header {
       background: var(--primary-color);
       color: white;
-      padding: 1.2rem 1.5rem;
+      padding: 1rem 1.2rem;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 1rem;
     }
     
     .table-header h3 {
       font-size: 1.2rem;
+      text-align: center;
     }
     
     .search-box {
@@ -227,6 +231,7 @@
       background: rgba(255,255,255,0.1);
       padding: 0.5rem 1rem;
       border-radius: 24px;
+      width: 100%;
     }
     
     .search-box input {
@@ -234,44 +239,86 @@
       border: none;
       color: white;
       outline: none;
-      min-width: 200px;
+      width: 100%;
+      font-size: 0.9rem;
     }
     
     .search-box input::placeholder {
       color: rgba(255,255,255,0.7);
     }
     
+    /* Tabla móvil - Diseño responsivo mejorado */
     .logistics-table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 800px;
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
     
     .logistics-table thead {
-      background: #f8f9fa;
+      display: none;
     }
     
-    .logistics-table th {
-      padding: 1rem 1.5rem;
-      text-align: left;
-      font-weight: 600;
-      color: var(--primary-color);
+    .logistics-table tbody {
+      display: block;
+      width: 100%;
+    }
+    
+    .logistics-table tr {
+      display: block;
       border-bottom: 2px solid #eee;
-      white-space: nowrap;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      background: #fff;
+    }
+    
+    .logistics-table tr:nth-child(even) {
+      background: #f9f9f9;
     }
     
     .logistics-table td {
-      padding: 1rem 1.5rem;
-      border-bottom: 1px solid #eee;
-      vertical-align: middle;
+      display: block;
+      text-align: left;
+      padding: 0.5rem 0;
+      border: none;
+      position: relative;
+      padding-left: 40%;
+      min-height: 2.5rem;
     }
     
-    .logistics-table tbody tr:hover {
-      background: #f8f9fa;
+    .logistics-table td:before {
+      content: attr(data-label);
+      position: absolute;
+      left: 0.5rem;
+      width: 35%;
+      padding-right: 1rem;
+      white-space: nowrap;
+      text-align: left;
+      font-weight: 600;
+      color: var(--primary-color);
+      font-size: 0.85rem;
+    }
+    
+    .logistics-table td:last-child {
+      padding-left: 0;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+    
+    .logistics-table td:last-child:before {
+      display: none;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
     }
     
     .action-btn {
-      padding: 0.4rem 0.8rem;
+      padding: 0.5rem 1rem;
       border-radius: 4px;
       border: none;
       cursor: pointer;
@@ -281,6 +328,8 @@
       display: inline-flex;
       align-items: center;
       gap: 0.3rem;
+      min-width: 110px;
+      justify-content: center;
     }
     
     .whatsapp-btn {
@@ -324,11 +373,6 @@
       color: #856404;
     }
     
-    .mobile-actions {
-      display: none;
-      gap: 0.5rem;
-    }
-    
     .whatsapp-icon {
       width: 16px;
       height: 16px;
@@ -341,17 +385,132 @@
       filter: invert(1);
     }
     
-    @media (max-width: 768px) {
-      .login-container {
-        margin: 1rem;
+    /* Versión desktop (768px+) */
+    @media (min-width: 768px) {
+      .dashboard-content {
+        padding: 2rem;
+      }
+      
+      .stats-cards {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      
+      .stat-card {
         padding: 1.5rem;
+      }
+      
+      .stat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+      }
+      
+      .table-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.2rem 1.5rem;
+      }
+      
+      .table-header h3 {
+        text-align: left;
+      }
+      
+      .search-box {
+        width: auto;
+        min-width: 250px;
+      }
+      
+      .logistics-table {
+        display: table;
+        overflow-x: visible;
+      }
+      
+      .logistics-table thead {
+        display: table-header-group;
+        background: #f8f9fa;
+      }
+      
+      .logistics-table tbody {
+        display: table-row-group;
+      }
+      
+      .logistics-table tr {
+        display: table-row;
+        border-bottom: 1px solid #eee;
+        padding: 0;
+        margin: 0;
+        background: transparent;
+      }
+      
+      .logistics-table tr:hover {
+        background: #f8f9fa;
+      }
+      
+      .logistics-table td {
+        display: table-cell;
+        padding: 1rem 1.2rem;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+        padding-left: 1.2rem;
+        min-height: auto;
+      }
+      
+      .logistics-table td:before {
+        display: none;
+      }
+      
+      .logistics-table td:last-child {
+        padding: 1rem 1.2rem;
+        text-align: center;
+        margin-top: 0;
+      }
+      
+      .action-buttons {
+        justify-content: flex-start;
+      }
+      
+      .action-btn {
+        min-width: auto;
+      }
+    }
+    
+    /* Para tablets pequeñas */
+    @media (max-width: 767px) and (min-width: 480px) {
+      .logistics-table td {
+        padding-left: 35%;
+      }
+      
+      .logistics-table td:before {
+        width: 30%;
+      }
+      
+      .action-btn {
+        min-width: 100px;
+      }
+    }
+    
+    /* Para móviles muy pequeños */
+    @media (max-width: 479px) {
+      .login-container {
+        padding: 1.5rem;
+      }
+      
+      .logo h1 {
+        font-size: 1.5rem;
       }
       
       .dashboard-header {
         padding: 1rem;
-        flex-direction: column;
-        gap: 1rem;
         text-align: center;
+        justify-content: center;
+      }
+      
+      .logout-btn {
+        width: 100%;
+        max-width: 200px;
       }
       
       .dashboard-content {
@@ -362,63 +521,43 @@
         grid-template-columns: 1fr;
       }
       
-      .table-header {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-      }
-      
-      .search-box {
-        width: 100%;
-      }
-      
-      .search-box input {
-        width: 100%;
-      }
-      
-      .logistics-table {
+      .logistics-table td {
+        padding-left: 45%;
         font-size: 0.9rem;
       }
       
-      .logistics-table th,
-      .logistics-table td {
-        padding: 0.8rem;
-      }
-      
-      .desktop-actions {
-        display: none;
-      }
-      
-      .mobile-actions {
-        display: flex;
-      }
-      
-      .logistics-table td:last-child {
-        text-align: center;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .login-container {
-        padding: 1.2rem;
-      }
-      
-      .logo h1 {
-        font-size: 1.5rem;
-      }
-      
-      .logistics-table {
+      .logistics-table td:before {
+        width: 40%;
         font-size: 0.8rem;
       }
       
-      .logistics-table th,
-      .logistics-table td {
-        padding: 0.6rem;
+      .action-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+        min-width: 90px;
       }
       
-      .action-btn {
-        padding: 0.3rem 0.6rem;
+      .status-badge {
+        padding: 0.2rem 0.6rem;
         font-size: 0.75rem;
+      }
+    }
+    
+    /* Para mejorar la legibilidad en móviles */
+    @media (max-width: 767px) {
+      .logistics-table tr {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      }
+      
+      .logistics-table td {
+        border-bottom: 1px solid #eee;
+      }
+      
+      .logistics-table td:last-child {
+        border-bottom: none;
       }
     }
   </style>
@@ -477,7 +616,7 @@
           <div class="stat-icon">📍</div>
           <div class="stat-info">
             <h3 id="totalZones">8</h3>
-            <p>Zones Cubiertas</p>
+            <p>Zonas Cubiertas</p>
           </div>
         </div>
         
@@ -512,8 +651,7 @@
                 <th>Descripción</th>
                 <th>Dirección</th>
                 <th>Estado</th>
-                <th class="desktop-actions">Acciones</th>
-                <th class="mobile-actions">Acciones</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody id="tableBody">
@@ -709,29 +847,24 @@
             break;
         }
         
+        // Para móviles, usamos el diseño de tarjeta
         row.innerHTML = `
-          <td>${person.nombre}</td>
-          <td>${person.telefono}</td>
-          <td>${person.descripcion}</td>
-          <td>${person.direccion}</td>
-          <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-          <td class="desktop-actions">
-            <button class="action-btn whatsapp-btn" onclick="openWhatsApp('${person.telefono}', '${person.nombre}')">
-              <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
-              WhatsApp
-            </button>
-            <button class="action-btn maps-btn" onclick="openGoogleMaps('${person.direccion}', '${person.nombre}')">
-              <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" class="maps-icon" alt="Maps">
-              Maps
-            </button>
-          </td>
-          <td class="mobile-actions">
-            <button class="action-btn whatsapp-btn" onclick="openWhatsApp('${person.telefono}', '${person.nombre}')">
-              <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="W">
-            </button>
-            <button class="action-btn maps-btn" onclick="openGoogleMaps('${person.direccion}', '${person.nombre}')">
-              <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" class="maps-icon" alt="M">
-            </button>
+          <td data-label="Nombre">${person.nombre}</td>
+          <td data-label="Teléfono">${person.telefono}</td>
+          <td data-label="Descripción">${person.descripcion}</td>
+          <td data-label="Dirección">${person.direccion}</td>
+          <td data-label="Estado"><span class="status-badge ${statusClass}">${statusText}</span></td>
+          <td data-label="Acciones">
+            <div class="action-buttons">
+              <button class="action-btn whatsapp-btn" onclick="openWhatsApp('${person.telefono}', '${person.nombre}')">
+                <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
+                WhatsApp
+              </button>
+              <button class="action-btn maps-btn" onclick="openGoogleMaps('${person.direccion}', '${person.nombre}')">
+                <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" class="maps-icon" alt="Maps">
+                Maps
+              </button>
+            </div>
           </td>
         `;
         
