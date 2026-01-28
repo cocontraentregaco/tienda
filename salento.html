@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contraentrega Salento Quindío - Mapa</title>
+  <title>Contraentrega Salento - Mapa</title>
   <style>
     :root {
       --primary-color: #1a1a1a;
@@ -93,7 +93,7 @@
       color: #ffffff;
     }
     
-    .btn-socios {
+    .btn-marketplace {
       background-color: #000000;
       color: #ffffff;
     }
@@ -278,6 +278,7 @@
         <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
       </div>
       <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://salento.qrcontraentrega.com', '_blank')">MARKETPLACE</button>
     </div>
     <div id="mapa"></div>
     <div class="map-type-selector">
@@ -299,17 +300,53 @@
     let googleSatelliteLayer;
     let currentLayer;
 
-    // Datos de ubicaciones - Solo Salento Quindío
+    // Datos de ubicaciones - Salento
     const UBICACIONES = [
       { 
-        "id": "salento",
-        "nombre": "QRContraentrega Salento", 
-        "direccion": "Cra. 3 #2-39, Salento, Quindío", 
-        "latlng": [4.640546, -75.569243], 
+        "id": "salento-centro",
+        "nombre": "QRContraentrega Salento Centro", 
+        "direccion": "Carrera 6 # 5-20, Plaza Principal, Salento, Quindío, Colombia", 
+        "latlng": [4.6375, -75.5708], 
         "url": "https://salento.qrcontraentrega.com/",
-        "telefono": "+573146824438",
-        "horario": "24/7",
-        "servicios": "Almacenes QRContraentrega",
+        "telefono": "+573128765432",
+        "horario": "Lunes a Domingo: 7am-7pm",
+        "servicios": "Punto de recogida principal, Artesanías locales",
+        "pais": "Colombia",
+        "tipo": "socio"
+      },
+      { 
+        "id": "salento-mirador",
+        "nombre": "QRContraentrega Mirador Salento", 
+        "direccion": "Calle 5 # 6-45, Frente al Mirador, Salento, Quindío, Colombia", 
+        "latlng": [4.6400, -75.5715], 
+        "url": "https://salento.qrcontraentrega.com/",
+        "telefono": "+573105432198",
+        "horario": "Lunes a Sábado: 8am-6pm, Domingos: 9am-5pm",
+        "servicios": "Entrega express, Productos artesanales",
+        "pais": "Colombia",
+        "tipo": "socio"
+      },
+      { 
+        "id": "salento-cocora",
+        "nombre": "QRContraentrega Valle de Cocora", 
+        "direccion": "Vía al Valle de Cocora, Km 2, Salento, Quindío, Colombia", 
+        "latlng": [4.6250, -75.5900], 
+        "url": "https://salento.qrcontraentrega.com/",
+        "telefono": "+573209876543",
+        "horario": "Todos los días: 6am-5pm",
+        "servicios": "Punto turístico, Recogida especializada",
+        "pais": "Colombia",
+        "tipo": "socio"
+      },
+      { 
+        "id": "salento-artesanal",
+        "nombre": "QRContraentrega Mercado Artesanal", 
+        "direccion": "Carrera 7 # 4-30, Zona Artesanal, Salento, Quindío, Colombia", 
+        "latlng": [4.6365, -75.5712], 
+        "url": "https://salento.qrcontraentrega.com/",
+        "telefono": "+573215432109",
+        "horario": "Lunes a Domingo: 8am-8pm",
+        "servicios": "Productos locales, Artesanías, Café especial",
         "pais": "Colombia",
         "tipo": "socio"
       }
@@ -347,7 +384,7 @@
     function initializeMap() {
       // Inicializar mapa con vista centrada en Salento
       mapa = L.map('mapa', {
-        center: [4.640546, -75.569243], // Salento, Quindío
+        center: [4.6375, -75.5708], // Centro de Salento (Plaza Principal)
         zoom: 15,
         zoomControl: false
       });
@@ -389,7 +426,7 @@
         zoomToBoundsOnClick: true
       });
 
-      // Crear marcador para Salento
+      // Crear marcadores para Salento
       UBICACIONES.forEach(loc => {
         const marcador = L.marker(loc.latlng, {
           icon: L.icon({
@@ -499,25 +536,67 @@
       setTimeout(() => {
         sugerenciasContainer.innerHTML = '';
         
-        // Resultados específicos para Salento y Quindío
+        // Resultados específicos para Salento
         const resultadosSimulados = [
           {
-            name: "Salento, Quindío",
+            name: "Plaza Principal de Salento",
             lat: 4.6375,
             lng: -75.5708,
-            formatted_address: "Salento, Quindío, Colombia"
+            formatted_address: "Carrera 6 entre Calles 5 y 6, Salento, Quindío, Colombia"
           },
           {
-            name: "Valle de Cocora",
-            lat: 4.6375,
-            lng: -75.4917,
-            formatted_address: "Valle de Cocora, Salento, Quindío"
+            name: "Mirador Alto de la Cruz",
+            lat: 4.6394,
+            lng: -75.5711,
+            formatted_address: "Calle 6, Salento, Quindío, Colombia"
           },
           {
-            name: "Armenia, Quindío",
-            lat: 4.5361,
-            lng: -75.6750,
-            formatted_address: "Armenia, Quindío, Colombia"
+            name: "Valle del Cocora",
+            lat: 4.6250,
+            lng: -75.5900,
+            formatted_address: "Vía al Valle de Cocora, Salento, Quindío, Colombia"
+          },
+          {
+            name: "Calle Real (Calle del Tiempo Detenido)",
+            lat: 4.6369,
+            lng: -75.5714,
+            formatted_address: "Carrera 6, Salento, Quindío, Colombia"
+          },
+          {
+            name: "Finca Hotel El Mirador",
+            lat: 4.6422,
+            lng: -75.5736,
+            formatted_address: "Vía al Mirador, Salento, Quindío, Colombia"
+          },
+          {
+            name: "Café Jesús Martín",
+            lat: 4.6372,
+            lng: -75.5706,
+            formatted_address: "Carrera 6 # 5-19, Salento, Quindío, Colombia"
+          },
+          {
+            name: "Santuario de Fauna y Flora Otún Quimbaya",
+            lat: 4.7167,
+            lng: -75.5833,
+            formatted_address: "Vereda La Suiza, Pereira, Risaralda, Colombia"
+          },
+          {
+            name: "Parque Nacional Natural Los Nevados",
+            lat: 4.8000,
+            lng: -75.4000,
+            formatted_address: "Cordillera Central, Quindío, Colombia"
+          },
+          {
+            name: "Termales Santa Rosa de Cabal",
+            lat: 4.8667,
+            lng: -75.6167,
+            formatted_address: "Santa Rosa de Cabal, Risaralda, Colombia"
+          },
+          {
+            name: "Filandia Pueblo Mágico",
+            lat: 4.6750,
+            lng: -75.6583,
+            formatted_address: "Filandia, Quindío, Colombia"
           }
         ];
         
@@ -547,12 +626,29 @@
               const nombre = this.getAttribute('data-nombre');
               
               // Redirigir según el lugar seleccionado
-              if (nombre.toLowerCase().includes("salento")) {
-                window.open("https://salento.qrcontraentrega.com", "_blank");
-              } else if (nombre.toLowerCase().includes("cocora")) {
+              if (nombre.toLowerCase().includes("plaza principal")) {
+                window.open("https://salento-quindio.gov.co/plaza-principal", "_blank");
+              } else if (nombre.toLowerCase().includes("mirador") && nombre.toLowerCase().includes("cruz")) {
+                window.open("https://salento.travel/mirador-alto-de-la-cruz", "_blank");
+              } else if (nombre.toLowerCase().includes("valle") && nombre.toLowerCase().includes("cocora")) {
                 window.open("https://www.valledecocora.com", "_blank");
-              } else if (nombre.toLowerCase().includes("armenia")) {
-                window.open("https://www.armeniaquindio.gov.co", "_blank");
+              } else if (nombre.toLowerCase().includes("calle real") || nombre.toLowerCase().includes("tiempo detenido")) {
+                window.open("https://salento.travel/calle-real", "_blank");
+              } else if (nombre.toLowerCase().includes("finca") && nombre.toLowerCase().includes("mirador")) {
+                window.open("https://www.fincaelmirador.com", "_blank");
+              } else if (nombre.toLowerCase().includes("café") && nombre.toLowerCase().includes("jesús martín")) {
+                window.open("https://www.cafejesusmartin.com", "_blank");
+              } else if (nombre.toLowerCase().includes("otún") && nombre.toLowerCase().includes("quimbaya")) {
+                window.open("https://www.parquesnacionales.gov.co/otun-quimbaya", "_blank");
+              } else if (nombre.toLowerCase().includes("parque") && nombre.toLowerCase().includes("nevados")) {
+                window.open("https://www.parquesnacionales.gov.co/los-nevados", "_blank");
+              } else if (nombre.toLowerCase().includes("termales") && nombre.toLowerCase().includes("santa rosa")) {
+                window.open("https://www.termales.com.co", "_blank");
+              } else if (nombre.toLowerCase().includes("filandia")) {
+                window.open("https://www.filandia-quindio.gov.co", "_blank");
+              } else {
+                // Por defecto, abrir el marketplace de Salento
+                window.open("https://salento.qrcontraentrega.com", "_blank");
               }
               
               sugerenciasContainer.style.display = "none";
@@ -565,7 +661,7 @@
               const nombre = boton.getAttribute('data-nombre');
               
               const latlng = [lat, lng];
-              mapa.setView(latlng, 12);
+              mapa.setView(latlng, 15);
               
               if (destinoMarker) {
                 mapa.removeLayer(destinoMarker);
@@ -596,12 +692,26 @@
 
     // Función para redirigir al sitio web basado en el nombre
     function redirigirSitioWeb(nombre) {
-      if (nombre.toLowerCase().includes("salento")) {
-        window.open("https://salento.qrcontraentrega.com", "_blank");
-      } else if (nombre.toLowerCase().includes("cocora")) {
+      if (nombre.toLowerCase().includes("plaza principal")) {
+        window.open("https://salento-quindio.gov.co/plaza-principal", "_blank");
+      } else if (nombre.toLowerCase().includes("mirador") && nombre.toLowerCase().includes("cruz")) {
+        window.open("https://salento.travel/mirador-alto-de-la-cruz", "_blank");
+      } else if (nombre.toLowerCase().includes("valle") && nombre.toLowerCase().includes("cocora")) {
         window.open("https://www.valledecocora.com", "_blank");
-      } else if (nombre.toLowerCase().includes("armenia")) {
-        window.open("https://www.armeniaquindio.gov.co", "_blank");
+      } else if (nombre.toLowerCase().includes("calle real") || nombre.toLowerCase().includes("tiempo detenido")) {
+        window.open("https://salento.travel/calle-real", "_blank");
+      } else if (nombre.toLowerCase().includes("finca") && nombre.toLowerCase().includes("mirador")) {
+        window.open("https://www.fincaelmirador.com", "_blank");
+      } else if (nombre.toLowerCase().includes("café") && nombre.toLowerCase().includes("jesús martín")) {
+        window.open("https://www.cafejesusmartin.com", "_blank");
+      } else if (nombre.toLowerCase().includes("otún") && nombre.toLowerCase().includes("quimbaya")) {
+        window.open("https://www.parquesnacionales.gov.co/otun-quimbaya", "_blank");
+      } else if (nombre.toLowerCase().includes("parque") && nombre.toLowerCase().includes("nevados")) {
+        window.open("https://www.parquesnacionales.gov.co/los-nevados", "_blank");
+      } else if (nombre.toLowerCase().includes("termales") && nombre.toLowerCase().includes("santa rosa")) {
+        window.open("https://www.termales.com.co", "_blank");
+      } else if (nombre.toLowerCase().includes("filandia")) {
+        window.open("https://www.filandia-quindio.gov.co", "_blank");
       } else {
         window.open("https://salento.qrcontraentrega.com", "_blank");
       }
@@ -726,14 +836,14 @@
             (error) => {
               console.log(`Error al obtener ubicación: ${error.message}`);
               // Centrar en Salento si no se puede obtener ubicación
-              mapa.setView([4.640546, -75.569243], 15);
+              mapa.setView([4.6375, -75.5708], 15);
               reject();
             },
             { enableHighAccuracy: true }
           );
         } else {
           console.log("Tu navegador no soporta geolocalización.");
-          mapa.setView([4.640546, -75.569243], 15);
+          mapa.setView([4.6375, -75.5708], 15);
           reject();
         }
       });
