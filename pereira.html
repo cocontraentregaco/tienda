@@ -93,7 +93,7 @@
       color: #ffffff;
     }
     
-    .btn-socios {
+    .btn-marketplace {
       background-color: #000000;
       color: #ffffff;
     }
@@ -278,6 +278,7 @@
         <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
       </div>
       <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://pereira.qrcontraentrega.com', '_blank')">MARKETPLACE</button>
     </div>
     <div id="mapa"></div>
     <div class="map-type-selector">
@@ -299,53 +300,53 @@
     let googleSatelliteLayer;
     let currentLayer;
 
-    // Datos de ubicaciones - Pereira, Risaralda
+    // Datos de ubicaciones - Pereira
     const UBICACIONES = [
       { 
         "id": "pereira-centro",
-        "nombre": "QRContraentrega Centro Pereira", 
-        "direccion": "Carrera 8 #19-45, Centro, Pereira", 
-        "latlng": [4.8137, -75.6946], 
+        "nombre": "QRContraentrega Pereira Centro", 
+        "direccion": "Carrera 8 # 18-45, Centro, Pereira, Colombia", 
+        "latlng": [4.8133, -75.6945], 
         "url": "https://pereira.qrcontraentrega.com/",
-        "telefono": "+573146824438",
-        "horario": "Lunes a Sábado: 8am-8pm, Domingo: 9am-6pm",
+        "telefono": "+573128765432",
+        "horario": "Lunes a Viernes: 8am-7pm, Sábados: 9am-5pm",
         "servicios": "Almacenes QRContraentrega, Logística",
-        "pais": "Colombia",
-        "tipo": "socio"
-      },
-      { 
-        "id": "pereira-victoria",
-        "nombre": "QRContraentrega Ciudad Victoria", 
-        "direccion": "Av. Circunvalar #15-80, Pereira", 
-        "latlng": [4.8056, -75.7123], 
-        "url": "https://pereira.qrcontraentrega.com/",
-        "telefono": "+573206789012",
-        "horario": "Lunes a Viernes: 7am-9pm, Sábados: 8am-7pm",
-        "servicios": "Punto de recogida, Entrega inmediata",
         "pais": "Colombia",
         "tipo": "socio"
       },
       { 
         "id": "pereira-cuba",
         "nombre": "QRContraentrega Cuba", 
-        "direccion": "Calle 17 #15-30, Barrio Cuba, Pereira", 
-        "latlng": [4.8213, -75.7045], 
+        "direccion": "Avenida Circunvalar # 23-45, Cuba, Pereira, Colombia", 
+        "latlng": [4.8100, -75.7100], 
         "url": "https://pereira.qrcontraentrega.com/",
-        "telefono": "+573155432109",
+        "telefono": "+573105432198",
+        "horario": "Lunes a Domingo: 7am-9pm",
+        "servicios": "Punto de recogida, Entrega inmediata",
+        "pais": "Colombia",
+        "tipo": "socio"
+      },
+      { 
+        "id": "pereira-victoria",
+        "nombre": "QRContraentrega Victoria", 
+        "direccion": "Calle 19 # 12-30, Victoria, Pereira, Colombia", 
+        "latlng": [4.8089, -75.6847], 
+        "url": "https://pereira.qrcontraentrega.com/",
+        "telefono": "+573209876543",
         "horario": "24/7 para recogidas urgentes",
         "servicios": "Centro logístico principal",
         "pais": "Colombia",
         "tipo": "socio"
       },
       { 
-        "id": "pereira-boston",
-        "nombre": "QRContraentrega Boston", 
-        "direccion": "Carrera 13 #12-45, Barrio Boston, Pereira", 
-        "latlng": [4.8154, -75.6802], 
+        "id": "pereira-el-ovalle",
+        "nombre": "QRContraentrega El Ovalle", 
+        "direccion": "Transversal 34 # 45-60, El Ovalle, Pereira, Colombia", 
+        "latlng": [4.8015, -75.7032], 
         "url": "https://pereira.qrcontraentrega.com/",
-        "telefono": "+573178901234",
-        "horario": "Lunes a Domingo: 7am-10pm",
-        "servicios": "Almacén, Distribución local",
+        "telefono": "+573215432109",
+        "horario": "Lunes a Sábado: 8am-8pm, Domingos: 9am-3pm",
+        "servicios": "Punto de entrega express",
         "pais": "Colombia",
         "tipo": "socio"
       }
@@ -383,7 +384,7 @@
     function initializeMap() {
       // Inicializar mapa con vista centrada en Pereira
       mapa = L.map('mapa', {
-        center: [4.8137, -75.6946], // Centro de Pereira
+        center: [4.8133, -75.6945], // Centro de Pereira (Plaza de Bolívar)
         zoom: 14,
         zoomControl: false
       });
@@ -535,49 +536,61 @@
       setTimeout(() => {
         sugerenciasContainer.innerHTML = '';
         
-        // Resultados específicos para Pereira y Risaralda
+        // Resultados específicos para Pereira
         const resultadosSimulados = [
           {
             name: "Plaza de Bolívar",
-            lat: 4.8136,
+            lat: 4.8133,
             lng: -75.6945,
-            formatted_address: "Cra. 8 #19-40, Centro, Pereira, Risaralda"
+            formatted_address: "Carrera 8 entre Calles 19 y 20, Centro, Pereira, Colombia"
           },
           {
-            name: "Zoológico Matecaña",
-            lat: 4.7964,
-            lng: -75.7222,
-            formatted_address: "Av. Las Américas #26-30, Pereira, Risaralda"
+            name: "Centro Comercial Pereira Plaza",
+            lat: 4.8072,
+            lng: -75.7014,
+            formatted_address: "Carrera 13 # 15-100, Pereira, Colombia"
           },
           {
             name: "Parque Olaya Herrera",
             lat: 4.8111,
-            lng: -75.6903,
-            formatted_address: "Calle 20 #7-50, Centro, Pereira, Risaralda"
-          },
-          {
-            name: "Centro Comercial Pereira Plaza",
-            lat: 4.8069,
-            lng: -75.6853,
-            formatted_address: "Cra. 13 #15-90, Pereira, Risaralda"
-          },
-          {
-            name: "Termales de Santa Rosa",
-            lat: 4.8500,
-            lng: -75.6333,
-            formatted_address: "Santa Rosa de Cabal, Risaralda"
-          },
-          {
-            name: "Universidad Tecnológica de Pereira",
-            lat: 4.8108,
-            lng: -75.7167,
-            formatted_address: "Av. Circunvalar #15-100, Pereira, Risaralda"
+            lng: -75.6889,
+            formatted_address: "Avenida Circunvalar, Pereira, Colombia"
           },
           {
             name: "Aeropuerto Matecaña",
             lat: 4.8125,
             lng: -75.7394,
-            formatted_address: "Vía Aeropuerto Matecaña, Pereira, Risaralda"
+            formatted_address: "Kilómetro 5 vía a Cerritos, Pereira, Colombia"
+          },
+          {
+            name: "Museo de Arte de Pereira",
+            lat: 4.8108,
+            lng: -75.6969,
+            formatted_address: "Carrera 11 # 18-50, Pereira, Colombia"
+          },
+          {
+            name: "Terminal de Transportes",
+            lat: 4.8022,
+            lng: -75.7283,
+            formatted_address: "Calle 17 # 23-157, Pereira, Colombia"
+          },
+          {
+            name: "Centro Comercial Victoria",
+            lat: 4.8083,
+            lng: -75.6847,
+            formatted_address: "Calle 19 # 12-30, Victoria, Pereira, Colombia"
+          },
+          {
+            name: "Parque del Café",
+            lat: 4.5389,
+            lng: -75.7772,
+            formatted_address: "Montenegro, Quindío, Colombia"
+          },
+          {
+            name: "Zoológico Matecaña",
+            lat: 4.8250,
+            lng: -75.7417,
+            formatted_address: "Vía Cerritos, Pereira, Colombia"
           }
         ];
         
@@ -607,20 +620,24 @@
               const nombre = this.getAttribute('data-nombre');
               
               // Redirigir según el lugar seleccionado
-              if (nombre.toLowerCase().includes("plaza de bolívar") || nombre.toLowerCase().includes("plaza de bolivar")) {
-                window.open("https://www.pereira.gov.co", "_blank");
-              } else if (nombre.toLowerCase().includes("zoológico") || nombre.toLowerCase().includes("zoologico") || nombre.toLowerCase().includes("matecaña") || nombre.toLowerCase().includes("matecana")) {
-                window.open("https://www.zoologicomatecana.com", "_blank");
-              } else if (nombre.toLowerCase().includes("parque olaya")) {
-                window.open("https://www.pereira.travel", "_blank");
+              if (nombre.toLowerCase().includes("plaza") && nombre.toLowerCase().includes("bolívar")) {
+                window.open("https://pereira.gov.co/plaza-de-bolivar", "_blank");
               } else if (nombre.toLowerCase().includes("pereira plaza")) {
-                window.open("https://www.pereiraplaza.com", "_blank");
-              } else if (nombre.toLowerCase().includes("termales") || nombre.toLowerCase().includes("santa rosa")) {
-                window.open("https://www.termales.com.co", "_blank");
-              } else if (nombre.toLowerCase().includes("universidad tecnológica") || nombre.toLowerCase().includes("utp")) {
-                window.open("https://www.utp.edu.co", "_blank");
-              } else if (nombre.toLowerCase().includes("aeropuerto") || nombre.toLowerCase().includes("matecaña") || nombre.toLowerCase().includes("matecana")) {
+                window.open("https://www.pereiraplaza.com.co", "_blank");
+              } else if (nombre.toLowerCase().includes("parque olaya")) {
+                window.open("https://pereira.travel/parque-olaya-herrera", "_blank");
+              } else if (nombre.toLowerCase().includes("aeropuerto") || nombre.toLowerCase().includes("matecaña")) {
                 window.open("https://www.aeropuertomatecana.com", "_blank");
+              } else if (nombre.toLowerCase().includes("museo de arte")) {
+                window.open("https://www.museodeartedepereira.org", "_blank");
+              } else if (nombre.toLowerCase().includes("terminal")) {
+                window.open("https://www.terminalpereira.com.co", "_blank");
+              } else if (nombre.toLowerCase().includes("centro comercial victoria")) {
+                window.open("https://www.centrovictoriapereira.com", "_blank");
+              } else if (nombre.toLowerCase().includes("parque del café")) {
+                window.open("https://www.parquedelcafe.com.co", "_blank");
+              } else if (nombre.toLowerCase().includes("zoológico") || nombre.toLowerCase().includes("matecaña")) {
+                window.open("https://www.zoologicomatecana.com", "_blank");
               } else {
                 // Por defecto, abrir el marketplace de Pereira
                 window.open("https://pereira.qrcontraentrega.com", "_blank");
@@ -667,20 +684,24 @@
 
     // Función para redirigir al sitio web basado en el nombre
     function redirigirSitioWeb(nombre) {
-      if (nombre.toLowerCase().includes("plaza de bolívar") || nombre.toLowerCase().includes("plaza de bolivar")) {
-        window.open("https://www.pereira.gov.co", "_blank");
-      } else if (nombre.toLowerCase().includes("zoológico") || nombre.toLowerCase().includes("zoologico") || nombre.toLowerCase().includes("matecaña") || nombre.toLowerCase().includes("matecana")) {
-        window.open("https://www.zoologicomatecana.com", "_blank");
-      } else if (nombre.toLowerCase().includes("parque olaya")) {
-        window.open("https://www.pereira.travel", "_blank");
+      if (nombre.toLowerCase().includes("plaza") && nombre.toLowerCase().includes("bolívar")) {
+        window.open("https://pereira.gov.co/plaza-de-bolivar", "_blank");
       } else if (nombre.toLowerCase().includes("pereira plaza")) {
-        window.open("https://www.pereiraplaza.com", "_blank");
-      } else if (nombre.toLowerCase().includes("termales") || nombre.toLowerCase().includes("santa rosa")) {
-        window.open("https://www.termales.com.co", "_blank");
-      } else if (nombre.toLowerCase().includes("universidad tecnológica") || nombre.toLowerCase().includes("utp")) {
-        window.open("https://www.utp.edu.co", "_blank");
-      } else if (nombre.toLowerCase().includes("aeropuerto") || nombre.toLowerCase().includes("matecaña") || nombre.toLowerCase().includes("matecana")) {
+        window.open("https://www.pereiraplaza.com.co", "_blank");
+      } else if (nombre.toLowerCase().includes("parque olaya")) {
+        window.open("https://pereira.travel/parque-olaya-herrera", "_blank");
+      } else if (nombre.toLowerCase().includes("aeropuerto") || nombre.toLowerCase().includes("matecaña")) {
         window.open("https://www.aeropuertomatecana.com", "_blank");
+      } else if (nombre.toLowerCase().includes("museo de arte")) {
+        window.open("https://www.museodeartedepereira.org", "_blank");
+      } else if (nombre.toLowerCase().includes("terminal")) {
+        window.open("https://www.terminalpereira.com.co", "_blank");
+      } else if (nombre.toLowerCase().includes("centro comercial victoria")) {
+        window.open("https://www.centrovictoriapereira.com", "_blank");
+      } else if (nombre.toLowerCase().includes("parque del café")) {
+        window.open("https://www.parquedelcafe.com.co", "_blank");
+      } else if (nombre.toLowerCase().includes("zoológico") || nombre.toLowerCase().includes("matecaña")) {
+        window.open("https://www.zoologicomatecana.com", "_blank");
       } else {
         window.open("https://pereira.qrcontraentrega.com", "_blank");
       }
@@ -805,14 +826,14 @@
             (error) => {
               console.log(`Error al obtener ubicación: ${error.message}`);
               // Centrar en Pereira si no se puede obtener ubicación
-              mapa.setView([4.8137, -75.6946], 14);
+              mapa.setView([4.8133, -75.6945], 14);
               reject();
             },
             { enableHighAccuracy: true }
           );
         } else {
           console.log("Tu navegador no soporta geolocalización.");
-          mapa.setView([4.8137, -75.6946], 14);
+          mapa.setView([4.8133, -75.6945], 14);
           reject();
         }
       });
