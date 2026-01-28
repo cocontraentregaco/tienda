@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Logística - Acceso Restringido</title>
+  <style>
+    :root {
+      --primary-color: #1a1a1a;
+      --secondary-color: #333;
+      --accent-color: #0066cc;
+      --text-color: #333;
+      --light-text: #fff;
+      --bg-light: #f8f8f8;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    body { 
+      font-family: 'Roboto', sans-serif; 
+      color: var(--text-color); 
+      line-height: 1.6; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .login-container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    
+    .logo {
+      margin-bottom: 1.5rem;
+    }
+    
+    .logo h1 {
+      color: var(--primary-color);
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .logo p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--secondary-color);
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+    }
+    
+    .btn { 
+      background: #000000; /* NEGRO */
+      color: #ffffff; /* BLANCO */
+      padding: 0.8rem 2rem; 
+      border-radius: 24px; 
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+    }
+    
+    .btn:hover {
+      background: #333333; /* Gris oscuro al pasar el mouse */
+      transform: translateY(-1px);
+    }
+    
+    .error-message {
+      color: #e74c3c;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      display: none;
+    }
+    
+    /* Estilos para el panel de logística */
+    .dashboard-container {
+      width: 100%;
+      min-height: 100vh;
+      background: #f5f7fa;
+      display: none;
+    }
+    
+    .dashboard-header {
+      background: white;
+      padding: 1.2rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header-title h2 {
+      color: var(--primary-color);
+      font-size: 1.5rem;
+    }
+    
+    .header-title p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .logout-btn {
+      background: #e74c3c;
+      color: white;
+      padding: 0.6rem 1.5rem;
+      border-radius: 24px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    
+    .logout-btn:hover {
+      background: #c0392b;
+      transform: translateY(-1px);
+    }
+    
+    .dashboard-content {
+      padding: 2rem;
+      overflow-x: auto;
+    }
+    
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--box-shadow);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+    }
+    
+    .stat-info h3 {
+      font-size: 1.8rem;
+      color: var(--primary-color);
+      margin-bottom: 0.2rem;
+    }
+    
+    .stat-info p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .table-container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+    }
+    
+    .table-header {
+      background: var(--primary-color);
+      color: white;
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .table-header h3 {
+      font-size: 1.2rem;
+    }
+    
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.1);
+      padding: 0.5rem 1rem;
+      border-radius: 24px;
+    }
+    
+    .search-box input {
+      background: transparent;
+      border: none;
+      color: white;
+      outline: none;
+      min-width: 200px;
+    }
+    
+    .search-box input::placeholder {
+      color: rgba(255,255,255,0.7);
+    }
+    
+    .logistics-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 800px;
+    }
+    
+    .logistics-table thead {
+      background: #f8f9fa;
+    }
+    
+    .logistics-table th {
+      padding: 1rem 1.5rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--primary-color);
+      border-bottom: 2px solid #eee;
+      white-space: nowrap;
+    }
+    
+    .logistics-table td {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #eee;
+      vertical-align: middle;
+    }
+    
+    .logistics-table tbody tr:hover {
+      background: #f8f9fa;
+    }
+    
+    .action-btn {
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .whatsapp-btn {
+      background: #25D366;
+      color: white;
+    }
+    
+    .whatsapp-btn:hover {
+      background: #1da851;
+    }
+    
+    .maps-btn {
+      background: #4285F4;
+      color: white;
+    }
+    
+    .maps-btn:hover {
+      background: #3367d6;
+    }
+    
+    .status-badge {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-block;
+    }
+    
+    .status-active {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    .status-inactive {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .mobile-actions {
+      display: none;
+      gap: 0.5rem;
+    }
+    
+    .whatsapp-icon {
+      width: 16px;
+      height: 16px;
+      filter: invert(1);
+    }
+    
+    .maps-icon {
+      width: 16px;
+      height: 16px;
+      filter: invert(1);
+    }
+    
+    @media (max-width: 768px) {
+      .login-container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+      
+      .dashboard-header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+      
+      .dashboard-content {
+        padding: 1rem;
+      }
+      
+      .stats-cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .table-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+      
+      .search-box {
+        width: 100%;
+      }
+      
+      .search-box input {
+        width: 100%;
+      }
+      
+      .logistics-table {
+        font-size: 0.9rem;
+      }
+      
+      .logistics-table th,
+      .logistics-table td {
+        padding: 0.8rem;
+      }
+      
+      .desktop-actions {
+        display: none;
+      }
+      
+      .mobile-actions {
+        display: flex;
+      }
+      
+      .logistics-table td:last-child {
+        text-align: center;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 1.2rem;
+      }
+      
+      .logo h1 {
+        font-size: 1.5rem;
+      }
+      
+      .logistics-table {
+        font-size: 0.8rem;
+      }
+      
+      .logistics-table th,
+      .logistics-table td {
+        padding: 0.6rem;
+      }
+      
+      .action-btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Pantalla de Login -->
+  <div class="login-container" id="loginScreen">
+    <div class="logo">
+      <h1>Panel de Logística</h1>
+      <p>Acceso restringido al personal autorizado</p>
+    </div>
+    
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="accessKey">Clave de Acceso</label>
+        <input 
+          type="password" 
+          id="accessKey" 
+          placeholder="Ingresa la clave de acceso" 
+          required
+        >
+      </div>
+      
+      <button type="submit" class="btn">Acceder al Panel</button>
+      
+      <div class="error-message" id="errorMessage">
+        Clave de acceso incorrecta. Intenta nuevamente.
+      </div>
+    </form>
+  </div>
+  
+  <!-- Panel de Logística -->
+  <div class="dashboard-container" id="dashboard">
+    <header class="dashboard-header">
+      <div class="header-title">
+        <h2>Personal de Logística</h2>
+        <p>Gestión y contacto del equipo operativo</p>
+      </div>
+      
+      <button class="logout-btn" id="logoutBtn">
+        Cerrar Sesión
+      </button>
+    </header>
+    
+    <main class="dashboard-content">
+      <div class="stats-cards">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-info">
+            <h3 id="totalPersonnel">12</h3>
+            <p>Personal Activo</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">📍</div>
+          <div class="stat-info">
+            <h3 id="totalZones">8</h3>
+            <p>Zones Cubiertas</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">🚚</div>
+          <div class="stat-info">
+            <h3 id="totalVehicles">6</h3>
+            <p>Vehículos Activos</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <div class="table-header">
+          <h3>Lista del Personal Operativo</h3>
+          <div class="search-box">
+            <input 
+              type="text" 
+              id="searchInput" 
+              placeholder="Buscar personal..."
+            >
+            <span>🔍</span>
+          </div>
+        </div>
+        
+        <div class="table-wrapper">
+          <table class="logistics-table" id="logisticsTable">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Descripción</th>
+                <th>Dirección</th>
+                <th>Estado</th>
+                <th class="desktop-actions">Acciones</th>
+                <th class="mobile-actions">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- Los datos se cargarán dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Clave de acceso (puedes cambiarla)
+    const ACCESS_KEY = "logistica2024";
+    
+    // Datos del personal de logística
+    const PERSONAL_DATA = [
+      {
+        id: 1,
+        nombre: "Carlos Rodríguez",
+        telefono: "+573001234567",
+        descripcion: "Coordinador de rutas - Zona Norte",
+        direccion: "Calle 100 #45-30, Bogotá",
+        estado: "active",
+        zona: "Norte",
+        vehiculo: "Camión F-350"
+      },
+      {
+        id: 2,
+        nombre: "María González",
+        telefono: "+573002345678",
+        descripcion: "Supervisora de inventarios",
+        direccion: "Carrera 15 #85-20, Medellín",
+        estado: "active",
+        zona: "Centro",
+        vehiculo: "Van Mercedes"
+      },
+      {
+        id: 3,
+        nombre: "Luis Fernández",
+        telefono: "+573003456789",
+        descripcion: "Conductor principal - Distribución",
+        direccion: "Avenida 68 #25-45, Cali",
+        estado: "active",
+        zona: "Sur",
+        vehiculo: "Camión Volvo"
+      },
+      {
+        id: 4,
+        nombre: "Ana Martínez",
+        telefono: "+573004567890",
+        descripcion: "Asistente logística - Picking",
+        direccion: "Calle 72 #10-15, Barranquilla",
+        estado: "pending",
+        zona: "Costa",
+        vehiculo: "Motocarga"
+      },
+      {
+        id: 5,
+        nombre: "José Ramírez",
+        telefono: "+573005678901",
+        descripcion: "Operario de almacén",
+        direccion: "Transversal 45 #30-80, Pereira",
+        estado: "active",
+        zona: "Eje Cafetero",
+        vehiculo: "Carro plataforma"
+      },
+      {
+        id: 6,
+        nombre: "Sofía López",
+        telefono: "+573006789012",
+        descripcion: "Coordinadora de entregas express",
+        direccion: "Diagonal 23 #55-60, Bucaramanga",
+        estado: "active",
+        zona: "Oriente",
+        vehiculo: "Moto express"
+      },
+      {
+        id: 7,
+        nombre: "Pedro Sánchez",
+        telefono: "+573007890123",
+        descripcion: "Conductor nocturno",
+        direccion: "Carrera 50 #40-25, Cartagena",
+        estado: "inactive",
+        zona: "Caribe",
+        vehiculo: "Camión refrigerado"
+      },
+      {
+        id: 8,
+        nombre: "Laura Díaz",
+        telefono: "+573008901234",
+        descripcion: "Supervisora de calidad",
+        direccion: "Calle 30 #15-40, Manizales",
+        estado: "active",
+        zona: "Centro",
+        vehiculo: "Automóvil inspección"
+      },
+      {
+        id: 9,
+        nombre: "Andrés Torres",
+        telefono: "+573009012345",
+        descripcion: "Operario de carga/descarga",
+        direccion: "Avenida Circunvalar #12-35, Ibagué",
+        estado: "active",
+        zona: "Tolima",
+        vehiculo: "Montacargas"
+      },
+      {
+        id: 10,
+        nombre: "Camila Vargas",
+        telefono: "+573010123456",
+        descripcion: "Analista de rutas óptimas",
+        direccion: "Carrera 7 #20-50, Bogotá",
+        estado: "active",
+        zona: "Nacional",
+        vehiculo: "No asignado"
+      },
+      {
+        id: 11,
+        nombre: "Javier Ruiz",
+        telefono: "+573011234567",
+        descripcion: "Conductor de larga distancia",
+        direccion: "Calle 85 #45-30, Medellín",
+        estado: "pending",
+        zona: "Interdepartamental",
+        vehiculo: "Tractocamión"
+      },
+      {
+        id: 12,
+        nombre: "Valentina Castro",
+        telefono: "+573012345678",
+        descripcion: "Asistente administrativa logística",
+        direccion: "Avenida 6N #25-100, Cali",
+        estado: "active",
+        zona: "Valle",
+        vehiculo: "No asignado"
+      }
+    ];
+    
+    // Referencias a elementos del DOM
+    const loginScreen = document.getElementById('loginScreen');
+    const dashboard = document.getElementById('dashboard');
+    const loginForm = document.getElementById('loginForm');
+    const errorMessage = document.getElementById('errorMessage');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const searchInput = document.getElementById('searchInput');
+    const tableBody = document.getElementById('tableBody');
+    const totalPersonnel = document.getElementById('totalPersonnel');
+    const totalZones = document.getElementById('totalZones');
+    const totalVehicles = document.getElementById('totalVehicles');
+    
+    // Estado de la aplicación
+    let isAuthenticated = false;
+    let filteredData = [...PERSONAL_DATA];
+    
+    // Función para abrir WhatsApp
+    function openWhatsApp(phoneNumber, nombre) {
+      const cleanNumber = phoneNumber.replace(/\D/g, '');
+      const message = `Hola ${nombre}, necesito contactarte sobre un asunto logístico.`;
+      window.open(`https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    }
+    
+    // Función para abrir Google Maps
+    function openGoogleMaps(address, nombre) {
+      const encodedAddress = encodeURIComponent(`${address}, Colombia`);
+      const url = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+      window.open(url, '_blank');
+    }
+    
+    // Función para renderizar la tabla
+    function renderTable(data) {
+      tableBody.innerHTML = '';
+      
+      data.forEach(person => {
+        const row = document.createElement('tr');
+        
+        // Determinar clase de estado
+        let statusClass = '';
+        let statusText = '';
+        
+        switch(person.estado) {
+          case 'active':
+            statusClass = 'status-active';
+            statusText = 'Activo';
+            break;
+          case 'inactive':
+            statusClass = 'status-inactive';
+            statusText = 'Inactivo';
+            break;
+          case 'pending':
+            statusClass = 'status-pending';
+            statusText = 'Pendiente';
+            break;
+        }
+        
+        row.innerHTML = `
+          <td>${person.nombre}</td>
+          <td>${person.telefono}</td>
+          <td>${person.descripcion}</td>
+          <td>${person.direccion}</td>
+          <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+          <td class="desktop-actions">
+            <button class="action-btn whatsapp-btn" onclick="openWhatsApp('${person.telefono}', '${person.nombre}')">
+              <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
+              WhatsApp
+            </button>
+            <button class="action-btn maps-btn" onclick="openGoogleMaps('${person.direccion}', '${person.nombre}')">
+              <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" class="maps-icon" alt="Maps">
+              Maps
+            </button>
+          </td>
+          <td class="mobile-actions">
+            <button class="action-btn whatsapp-btn" onclick="openWhatsApp('${person.telefono}', '${person.nombre}')">
+              <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="W">
+            </button>
+            <button class="action-btn maps-btn" onclick="openGoogleMaps('${person.direccion}', '${person.nombre}')">
+              <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" class="maps-icon" alt="M">
+            </button>
+          </td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+      
+      // Actualizar estadísticas
+      updateStatistics(data);
+    }
+    
+    // Función para actualizar estadísticas
+    function updateStatistics(data) {
+      totalPersonnel.textContent = data.length;
+      
+      // Contar zonas únicas
+      const uniqueZones = [...new Set(data.map(p => p.zona))];
+      totalZones.textContent = uniqueZones.length;
+      
+      // Contar vehículos activos (excluyendo "No asignado")
+      const activeVehicles = data.filter(p => p.vehiculo !== "No asignado").length;
+      totalVehicles.textContent = activeVehicles;
+    }
+    
+    // Función para filtrar datos
+    function filterData(searchTerm) {
+      const term = searchTerm.toLowerCase().trim();
+      
+      if (!term) {
+        filteredData = [...PERSONAL_DATA];
+      } else {
+        filteredData = PERSONAL_DATA.filter(person =>
+          person.nombre.toLowerCase().includes(term) ||
+          person.telefono.toLowerCase().includes(term) ||
+          person.descripcion.toLowerCase().includes(term) ||
+          person.direccion.toLowerCase().includes(term) ||
+          person.zona.toLowerCase().includes(term)
+        );
+      }
+      
+      renderTable(filteredData);
+    }
+    
+    // Event Listeners
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const inputKey = document.getElementById('accessKey').value;
+      
+      if (inputKey === ACCESS_KEY) {
+        isAuthenticated = true;
+        loginScreen.style.display = 'none';
+        dashboard.style.display = 'block';
+        errorMessage.style.display = 'none';
+        
+        // Renderizar tabla inicial
+        renderTable(PERSONAL_DATA);
+      } else {
+        errorMessage.style.display = 'block';
+        document.getElementById('accessKey').value = '';
+        document.getElementById('accessKey').focus();
+      }
+    });
+    
+    logoutBtn.addEventListener('click', function() {
+      isAuthenticated = false;
+      dashboard.style.display = 'none';
+      loginScreen.style.display = 'block';
+      document.getElementById('accessKey').value = '';
+      errorMessage.style.display = 'none';
+    });
+    
+    searchInput.addEventListener('input', function(e) {
+      filterData(e.target.value);
+    });
+    
+    // Permitir acceso con Enter en el campo de contraseña
+    document.getElementById('accessKey').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        loginForm.dispatchEvent(new Event('submit'));
+      }
+    });
+    
+    // Inicializar
+    renderTable(PERSONAL_DATA);
+    
+    // Hacer funciones disponibles globalmente para los botones
+    window.openWhatsApp = openWhatsApp;
+    window.openGoogleMaps = openGoogleMaps;
+  </script>
+</body>
+</html>
