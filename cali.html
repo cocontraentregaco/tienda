@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contraentrega Cali Valle - Mapa</title>
+  <title>Contraentrega Cali - Mapa</title>
   <style>
     :root {
       --primary-color: #1a1a1a;
@@ -93,7 +93,7 @@
       color: #ffffff;
     }
     
-    .btn-socios {
+    .btn-marketplace {
       background-color: #000000;
       color: #ffffff;
     }
@@ -278,6 +278,7 @@
         <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
       </div>
       <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://cali.qrcontraentrega.com', '_blank')">MARKETPLACE</button>
     </div>
     <div id="mapa"></div>
     <div class="map-type-selector">
@@ -299,41 +300,53 @@
     let googleSatelliteLayer;
     let currentLayer;
 
-    // Datos de ubicaciones - Cali, Valle del Cauca
+    // Datos de ubicaciones - Cali
     const UBICACIONES = [
       { 
         "id": "cali-norte",
         "nombre": "QRContraentrega Cali Norte", 
-        "direccion": "Cra. 100 #5-169, Cali, Valle del Cauca", 
-        "latlng": [3.452441, -76.533894], 
+        "direccion": "Avenida 6 Norte # 25N-100, Granada, Cali, Colombia", 
+        "latlng": [3.4516, -76.5320], 
         "url": "https://cali.qrcontraentrega.com/",
-        "telefono": "+573146824438",
+        "telefono": "+573128765432",
         "horario": "Lunes a Viernes: 8am-7pm, Sábados: 9am-5pm",
         "servicios": "Almacenes QRContraentrega, Logística",
         "pais": "Colombia",
         "tipo": "socio"
       },
       { 
-        "id": "cali-sur",
-        "nombre": "QRContraentrega Cali Sur", 
-        "direccion": "Av. Ciudad de Cali #15-45, Cali, Valle del Cauca", 
-        "latlng": [3.396829, -76.544258], 
+        "id": "cali-centro",
+        "nombre": "QRContraentrega Centro Cali", 
+        "direccion": "Carrera 4 # 10-45, Centro, Cali, Colombia", 
+        "latlng": [3.4510, -76.5352], 
         "url": "https://cali.qrcontraentrega.com/",
-        "telefono": "+573206789012",
+        "telefono": "+573105432198",
         "horario": "Lunes a Domingo: 7am-9pm",
         "servicios": "Punto de recogida, Entrega inmediata",
         "pais": "Colombia",
         "tipo": "socio"
       },
       { 
-        "id": "centro-cali",
-        "nombre": "QRContraentrega Centro Cali", 
-        "direccion": "Calle 10 #4-39, Cali, Valle del Cauca", 
-        "latlng": [3.451646, -76.531985], 
+        "id": "cali-sur",
+        "nombre": "QRContraentrega Cali Sur", 
+        "direccion": "Calle 70 # 28-50, Ciudad Jardín, Cali, Colombia", 
+        "latlng": [3.4200, -76.5500], 
         "url": "https://cali.qrcontraentrega.com/",
-        "telefono": "+573155432109",
+        "telefono": "+573209876543",
         "horario": "24/7 para recogidas urgentes",
         "servicios": "Centro logístico principal",
+        "pais": "Colombia",
+        "tipo": "socio"
+      },
+      { 
+        "id": "cali-almendros",
+        "nombre": "QRContraentrega Los Almendros", 
+        "direccion": "Carrera 100 # 15-200, Los Almendros, Cali, Colombia", 
+        "latlng": [3.4300, -76.5100], 
+        "url": "https://cali.qrcontraentrega.com/",
+        "telefono": "+573215432109",
+        "horario": "Lunes a Sábado: 8am-8pm, Domingos: 9am-3pm",
+        "servicios": "Punto de entrega express",
         "pais": "Colombia",
         "tipo": "socio"
       }
@@ -371,7 +384,7 @@
     function initializeMap() {
       // Inicializar mapa con vista centrada en Cali
       mapa = L.map('mapa', {
-        center: [3.4516, -76.5319], // Centro de Cali
+        center: [3.4516, -76.5319], // Centro de Cali (Plaza de Cayzedo)
         zoom: 13,
         zoomControl: false
       });
@@ -523,37 +536,73 @@
       setTimeout(() => {
         sugerenciasContainer.innerHTML = '';
         
-        // Resultados específicos para Cali y Valle del Cauca
+        // Resultados específicos para Cali
         const resultadosSimulados = [
           {
+            name: "Plaza de Cayzedo",
+            lat: 3.4516,
+            lng: -76.5319,
+            formatted_address: "Carrera 4 con Calle 11, Centro, Cali, Colombia"
+          },
+          {
             name: "Centro Comercial Chipichape",
-            lat: 3.4833,
-            lng: -76.4917,
-            formatted_address: "Cra. 38 #6N-25, Cali, Valle del Cauca"
-          },
-          {
-            name: "Estadio Pascual Guerrero",
-            lat: 3.4500,
-            lng: -76.5500,
-            formatted_address: "Cra. 36 #5-185, Cali, Valle del Cauca"
-          },
-          {
-            name: "Zoológico de Cali",
-            lat: 3.4467,
-            lng: -76.5517,
-            formatted_address: "Cra. 2 Oeste #14-00, Cali, Valle del Cauca"
+            lat: 3.4817,
+            lng: -76.5114,
+            formatted_address: "Avenida 6N # 37N-100, Cali, Colombia"
           },
           {
             name: "Aeropuerto Alfonso Bonilla Aragón",
-            lat: 3.5436,
-            lng: -76.3839,
-            formatted_address: "Palmira, Valle del Cauca"
+            lat: 3.5431,
+            lng: -76.3817,
+            formatted_address: "Palmaseca, Palmira, Valle del Cauca, Colombia"
           },
           {
-            name: "Plaza de Cayzedo",
-            lat: 3.4511,
-            lng: -76.5319,
-            formatted_address: "Centro, Cali, Valle del Cauca"
+            name: "Estadio Pascual Guerrero",
+            lat: 3.4411,
+            lng: -76.5458,
+            formatted_address: "Calle 5 # 36-00, San Fernando, Cali, Colombia"
+          },
+          {
+            name: "Parque del Perro",
+            lat: 3.4114,
+            lng: -76.5517,
+            formatted_address: "Carrera 37 con Calle 2 Oeste, San Fernando, Cali, Colombia"
+          },
+          {
+            name: "Centro Comercial Jardín Plaza",
+            lat: 3.4853,
+            lng: -76.4889,
+            formatted_address: "Carrera 98 # 17-100, Cali, Colombia"
+          },
+          {
+            name: "Zoológico de Cali",
+            lat: 3.4347,
+            lng: -76.5492,
+            formatted_address: "Calle 14 Oeste # 14-00, Santa Teresita, Cali, Colombia"
+          },
+          {
+            name: "Parque Artesanal Loma de la Cruz",
+            lat: 3.4514,
+            lng: -76.5458,
+            formatted_address: "Calle 5 con Carrera 15, Loma de la Cruz, Cali, Colombia"
+          },
+          {
+            name: "Terminal de Transportes",
+            lat: 3.4647,
+            lng: -76.5058,
+            formatted_address: "Carrera 28 # 29B-91, Cali, Colombia"
+          },
+          {
+            name: "Museo La Tertulia",
+            lat: 3.4350,
+            lng: -76.5492,
+            formatted_address: "Avenida Colombia # 5 Oeste-105, Cali, Colombia"
+          },
+          {
+            name: "Plaza de Toros Cañaveralejo",
+            lat: 3.4283,
+            lng: -76.5381,
+            formatted_address: "Carrera 28 # 5-225, Cali, Colombia"
           }
         ];
         
@@ -583,14 +632,28 @@
               const nombre = this.getAttribute('data-nombre');
               
               // Redirigir según el lugar seleccionado
-              if (nombre.toLowerCase().includes("chipichape")) {
+              if (nombre.toLowerCase().includes("plaza") && nombre.toLowerCase().includes("cayzedo")) {
+                window.open("https://cali.gov.co/plaza-de-cayzedo", "_blank");
+              } else if (nombre.toLowerCase().includes("chipichape")) {
                 window.open("https://www.chipichape.com.co", "_blank");
-              } else if (nombre.toLowerCase().includes("estadio") || nombre.toLowerCase().includes("pascual")) {
-                window.open("https://www.deportivocali.com.co", "_blank");
-              } else if (nombre.toLowerCase().includes("zoológico") || nombre.toLowerCase().includes("zoologico")) {
-                window.open("https://www.zoologicodecali.com.co", "_blank");
-              } else if (nombre.toLowerCase().includes("aeropuerto")) {
+              } else if (nombre.toLowerCase().includes("aeropuerto") || nombre.toLowerCase().includes("alfonso") || nombre.toLowerCase().includes("bonilla")) {
                 window.open("https://www.aerocali.com.co", "_blank");
+              } else if (nombre.toLowerCase().includes("estadio") || nombre.toLowerCase().includes("pascual")) {
+                window.open("https://www.estadiopascualguerrero.com", "_blank");
+              } else if (nombre.toLowerCase().includes("parque del perro")) {
+                window.open("https://cali.travel/parque-del-perro", "_blank");
+              } else if (nombre.toLowerCase().includes("jardín plaza")) {
+                window.open("https://www.jardinplaza.com.co", "_blank");
+              } else if (nombre.toLowerCase().includes("zoológico")) {
+                window.open("https://www.zoologicodecali.com.co", "_blank");
+              } else if (nombre.toLowerCase().includes("loma de la cruz")) {
+                window.open("https://cali.travel/loma-de-la-cruz", "_blank");
+              } else if (nombre.toLowerCase().includes("terminal")) {
+                window.open("https://www.terminalcali.com.co", "_blank");
+              } else if (nombre.toLowerCase().includes("museo") && nombre.toLowerCase().includes("tertulia")) {
+                window.open("https://www.museolatertulia.com", "_blank");
+              } else if (nombre.toLowerCase().includes("plaza de toros") || nombre.toLowerCase().includes("cañaveralejo")) {
+                window.open("https://www.plazadetoroscanaveralejo.com", "_blank");
               } else {
                 // Por defecto, abrir el marketplace de Cali
                 window.open("https://cali.qrcontraentrega.com", "_blank");
@@ -637,16 +700,28 @@
 
     // Función para redirigir al sitio web basado en el nombre
     function redirigirSitioWeb(nombre) {
-      if (nombre.toLowerCase().includes("chipichape")) {
+      if (nombre.toLowerCase().includes("plaza") && nombre.toLowerCase().includes("cayzedo")) {
+        window.open("https://cali.gov.co/plaza-de-cayzedo", "_blank");
+      } else if (nombre.toLowerCase().includes("chipichape")) {
         window.open("https://www.chipichape.com.co", "_blank");
-      } else if (nombre.toLowerCase().includes("estadio") || nombre.toLowerCase().includes("pascual")) {
-        window.open("https://www.deportivocali.com.co", "_blank");
-      } else if (nombre.toLowerCase().includes("zoológico") || nombre.toLowerCase().includes("zoologico")) {
-        window.open("https://www.zoologicodecali.com.co", "_blank");
-      } else if (nombre.toLowerCase().includes("aeropuerto")) {
+      } else if (nombre.toLowerCase().includes("aeropuerto") || nombre.toLowerCase().includes("alfonso") || nombre.toLowerCase().includes("bonilla")) {
         window.open("https://www.aerocali.com.co", "_blank");
-      } else if (nombre.toLowerCase().includes("plaza") || nombre.toLowerCase().includes("cayzedo")) {
-        window.open("https://www.cali.gov.co", "_blank");
+      } else if (nombre.toLowerCase().includes("estadio") || nombre.toLowerCase().includes("pascual")) {
+        window.open("https://www.estadiopascualguerrero.com", "_blank");
+      } else if (nombre.toLowerCase().includes("parque del perro")) {
+        window.open("https://cali.travel/parque-del-perro", "_blank");
+      } else if (nombre.toLowerCase().includes("jardín plaza")) {
+        window.open("https://www.jardinplaza.com.co", "_blank");
+      } else if (nombre.toLowerCase().includes("zoológico")) {
+        window.open("https://www.zoologicodecali.com.co", "_blank");
+      } else if (nombre.toLowerCase().includes("loma de la cruz")) {
+        window.open("https://cali.travel/loma-de-la-cruz", "_blank");
+      } else if (nombre.toLowerCase().includes("terminal")) {
+        window.open("https://www.terminalcali.com.co", "_blank");
+      } else if (nombre.toLowerCase().includes("museo") && nombre.toLowerCase().includes("tertulia")) {
+        window.open("https://www.museolatertulia.com", "_blank");
+      } else if (nombre.toLowerCase().includes("plaza de toros") || nombre.toLowerCase().includes("cañaveralejo")) {
+        window.open("https://www.plazadetoroscanaveralejo.com", "_blank");
       } else {
         window.open("https://cali.qrcontraentrega.com", "_blank");
       }
