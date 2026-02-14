@@ -3,11 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contraentrega</title>
+    <title>Contraentrega - Global Marketplace</title>
+    
+    <!-- PWA Meta Tags for Google -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Contraentrega">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Contraentrega">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- Favicons for all platforms -->
+    <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
+    <link rel="apple-touch-icon" href="img/icon-192.png">
+    
+    <!-- Existing CSS and Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --primary: #ffffff;
@@ -31,6 +47,29 @@
             line-height: 1.6;
         }
         
+        /* Install button for PWA */
+        #install-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--text);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: none;
+        }
+        
+        #install-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        
         header {
             background-color: var(--primary);
             padding: 2rem 0;
@@ -52,7 +91,6 @@
             object-fit: contain;
         }
         
-        /* Estilo para imagen de respaldo */
         .fallback-logo {
             font-size: 2rem;
             font-weight: bold;
@@ -135,12 +173,7 @@
             background-position: center;
             position: relative;
             border-bottom: 1px solid var(--border);
-            background-color: #f0f0f0; /* Color de respaldo */
-        }
-        
-        /* Estilo para imágenes que no cargan */
-        .city-image.fallback {
-            background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #f0f0f0;
         }
         
         .city-info {
@@ -184,6 +217,26 @@
             color: var(--text);
         }
         
+        /* Offline indicator */
+        .offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #ff4444;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 0.9rem;
+            z-index: 2000;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .offline-indicator.show {
+            transform: translateY(0);
+        }
+        
         footer {
             background: var(--secondary);
             padding: 2rem 0;
@@ -217,7 +270,6 @@
             font-size: 0.9rem;
         }
         
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             .logo-container {
                 max-width: 300px;
@@ -259,9 +311,15 @@
                 flex-direction: column;
                 gap: 1rem;
             }
+            
+            #install-button {
+                bottom: 10px;
+                right: 10px;
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
         }
         
-        /* Animation */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -274,9 +332,18 @@
     </style>
 </head>
 <body>
+    <!-- Offline indicator -->
+    <div class="offline-indicator" id="offline-indicator">
+        🔴 You are offline - Showing cached content
+    </div>
+    
+    <!-- Install button for PWA -->
+    <button id="install-button" style="display: none;">
+        📱 Install App
+    </button>
+    
     <header>
         <div class="logo-container">
-            <!-- Fallback en caso de que la imagen no exista -->
             <img src="img/c-index.png" 
                  alt="Contraentrega" 
                  onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<div class=\'fallback-logo\'>CONTRAENTREGA</div>';">
@@ -302,77 +369,242 @@
     </footer>
 
     <script>
-        // City data with images and links
+        // All 196 countries with subdomains
         const cities = [
-            {
-                "code": "FZ Colombia",
-                "name": "Free Zone Colombia",
-                "region": "FZ",
-                "country": "Colombia",
-                "flag": "flag-icon flag-icon-co",
-                "description": "FZ Marketplace Colombia",
-                "link": "https://co.qrcontraentrega.com/",
-                "image": "https://qrcontraentrega.com/img/c.jpg"
-            },
-            {
-                "code": "FZ United States",
-                "name": "Free Zone United States",
-                "region": "FZ",
-                "country": "United States",
-                "flag": "flag-icon flag-icon-us",
-                "description": "FZ Marketplace United States",
-                "link": "https://us.qrcontraentrega.com/",
-                "image": "https://qrcontraentrega.com/img/c.jpg"
-            },
-            {
-                "code": "FZ China",
-                "name": "Free Zone China",
-                "region": "FZ",
-                "country": "China",
-                "flag": "flag-icon flag-icon-cn",
-                "description": "FZ Marketplace China",
-                "link": "https://cn.qrcontraentrega.com/",
-                "image": "https://qrcontraentrega.com/img/c.jpg"
-            },
-            {
-                "code": "FZ UAE",
-                "name": "Free Zone United Arab Emirates",
-                "region": "FZ",
-                "country": "United Arab Emirates",
-                "flag": "flag-icon flag-icon-ae",
-                "description": "Marketplace Barranquilla",
-                "link": "https://ae.qrcontraentrega.com/",
-                "image": "https://qrcontraentrega.com/img/c.jpg"
-            },
-            {
-                "code": "FZ United Kingdom",
-                "name": "Free Zone United Kingdom",
-                "region": "FZ",
-                "country": "United Kingdom",
-                "flag": "flag-icon flag-icon-gb", // Corregido: uk no es válido, usar gb
-                "description": "Marketplace Cali",
-                "link": "https://uk.qrcontraentrega.com/",
-                "image": "https://qrcontraentrega.com/img/c.jpg"
-            },
-            {
-                "code": "FZ Panamá",
-                "name": "Free Zone Panamá",
-                "region": "FZ",
-                "country": "Panamá",
-                "flag": "flag-icon flag-icon-pa",
-                "description": "FZ Marketplace Panamá",
-                "link": "https://pa.qrcontraentrega.com/",
-                "image": "https://qrcontraentrega.com/img/c.jpg"
-            }
+            { code: "FZ Afghanistan", name: "Free Zone Afghanistan", region: "FZ", country: "Afghanistan", flag: "flag-icon flag-icon-af", description: "FZ Marketplace Afghanistan", link: "https://af.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Albania", name: "Free Zone Albania", region: "FZ", country: "Albania", flag: "flag-icon flag-icon-al", description: "FZ Marketplace Albania", link: "https://al.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Algeria", name: "Free Zone Algeria", region: "FZ", country: "Algeria", flag: "flag-icon flag-icon-dz", description: "FZ Marketplace Algeria", link: "https://dz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Andorra", name: "Free Zone Andorra", region: "FZ", country: "Andorra", flag: "flag-icon flag-icon-ad", description: "FZ Marketplace Andorra", link: "https://ad.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Angola", name: "Free Zone Angola", region: "FZ", country: "Angola", flag: "flag-icon flag-icon-ao", description: "FZ Marketplace Angola", link: "https://ao.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Antigua and Barbuda", name: "Free Zone Antigua and Barbuda", region: "FZ", country: "Antigua and Barbuda", flag: "flag-icon flag-icon-ag", description: "FZ Marketplace Antigua and Barbuda", link: "https://ag.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Argentina", name: "Free Zone Argentina", region: "FZ", country: "Argentina", flag: "flag-icon flag-icon-ar", description: "FZ Marketplace Argentina", link: "https://ar.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Armenia", name: "Free Zone Armenia", region: "FZ", country: "Armenia", flag: "flag-icon flag-icon-am", description: "FZ Marketplace Armenia", link: "https://am.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Australia", name: "Free Zone Australia", region: "FZ", country: "Australia", flag: "flag-icon flag-icon-au", description: "FZ Marketplace Australia", link: "https://au.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Austria", name: "Free Zone Austria", region: "FZ", country: "Austria", flag: "flag-icon flag-icon-at", description: "FZ Marketplace Austria", link: "https://at.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Azerbaijan", name: "Free Zone Azerbaijan", region: "FZ", country: "Azerbaijan", flag: "flag-icon flag-icon-az", description: "FZ Marketplace Azerbaijan", link: "https://az.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Bahamas", name: "Free Zone Bahamas", region: "FZ", country: "Bahamas", flag: "flag-icon flag-icon-bs", description: "FZ Marketplace Bahamas", link: "https://bs.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Bahrain", name: "Free Zone Bahrain", region: "FZ", country: "Bahrain", flag: "flag-icon flag-icon-bh", description: "FZ Marketplace Bahrain", link: "https://bh.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Bangladesh", name: "Free Zone Bangladesh", region: "FZ", country: "Bangladesh", flag: "flag-icon flag-icon-bd", description: "FZ Marketplace Bangladesh", link: "https://bd.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Barbados", name: "Free Zone Barbados", region: "FZ", country: "Barbados", flag: "flag-icon flag-icon-bb", description: "FZ Marketplace Barbados", link: "https://bb.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Belarus", name: "Free Zone Belarus", region: "FZ", country: "Belarus", flag: "flag-icon flag-icon-by", description: "FZ Marketplace Belarus", link: "https://by.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Belgium", name: "Free Zone Belgium", region: "FZ", country: "Belgium", flag: "flag-icon flag-icon-be", description: "FZ Marketplace Belgium", link: "https://be.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Belize", name: "Free Zone Belize", region: "FZ", country: "Belize", flag: "flag-icon flag-icon-bz", description: "FZ Marketplace Belize", link: "https://bz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Benin", name: "Free Zone Benin", region: "FZ", country: "Benin", flag: "flag-icon flag-icon-bj", description: "FZ Marketplace Benin", link: "https://bj.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Bhutan", name: "Free Zone Bhutan", region: "FZ", country: "Bhutan", flag: "flag-icon flag-icon-bt", description: "FZ Marketplace Bhutan", link: "https://bt.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Bolivia", name: "Free Zone Bolivia", region: "FZ", country: "Bolivia", flag: "flag-icon flag-icon-bo", description: "FZ Marketplace Bolivia", link: "https://bo.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Bosnia and Herzegovina", name: "Free Zone Bosnia and Herzegovina", region: "FZ", country: "Bosnia and Herzegovina", flag: "flag-icon flag-icon-ba", description: "FZ Marketplace Bosnia and Herzegovina", link: "https://ba.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Botswana", name: "Free Zone Botswana", region: "FZ", country: "Botswana", flag: "flag-icon flag-icon-bw", description: "FZ Marketplace Botswana", link: "https://bw.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Brazil", name: "Free Zone Brazil", region: "FZ", country: "Brazil", flag: "flag-icon flag-icon-br", description: "FZ Marketplace Brazil", link: "https://br.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Brunei", name: "Free Zone Brunei", region: "FZ", country: "Brunei", flag: "flag-icon flag-icon-bn", description: "FZ Marketplace Brunei", link: "https://bn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Bulgaria", name: "Free Zone Bulgaria", region: "FZ", country: "Bulgaria", flag: "flag-icon flag-icon-bg", description: "FZ Marketplace Bulgaria", link: "https://bg.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Burkina Faso", name: "Free Zone Burkina Faso", region: "FZ", country: "Burkina Faso", flag: "flag-icon flag-icon-bf", description: "FZ Marketplace Burkina Faso", link: "https://bf.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Burundi", name: "Free Zone Burundi", region: "FZ", country: "Burundi", flag: "flag-icon flag-icon-bi", description: "FZ Marketplace Burundi", link: "https://bi.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Cabo Verde", name: "Free Zone Cabo Verde", region: "FZ", country: "Cabo Verde", flag: "flag-icon flag-icon-cv", description: "FZ Marketplace Cabo Verde", link: "https://cv.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Cambodia", name: "Free Zone Cambodia", region: "FZ", country: "Cambodia", flag: "flag-icon flag-icon-kh", description: "FZ Marketplace Cambodia", link: "https://kh.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Cameroon", name: "Free Zone Cameroon", region: "FZ", country: "Cameroon", flag: "flag-icon flag-icon-cm", description: "FZ Marketplace Cameroon", link: "https://cm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Canada", name: "Free Zone Canada", region: "FZ", country: "Canada", flag: "flag-icon flag-icon-ca", description: "FZ Marketplace Canada", link: "https://ca.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Central African Republic", name: "Free Zone Central African Republic", region: "FZ", country: "Central African Republic", flag: "flag-icon flag-icon-cf", description: "FZ Marketplace Central African Republic", link: "https://cf.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Chad", name: "Free Zone Chad", region: "FZ", country: "Chad", flag: "flag-icon flag-icon-td", description: "FZ Marketplace Chad", link: "https://td.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Chile", name: "Free Zone Chile", region: "FZ", country: "Chile", flag: "flag-icon flag-icon-cl", description: "FZ Marketplace Chile", link: "https://cl.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ China", name: "Free Zone China", region: "FZ", country: "China", flag: "flag-icon flag-icon-cn", description: "FZ Marketplace China", link: "https://cn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Colombia", name: "Free Zone Colombia", region: "FZ", country: "Colombia", flag: "flag-icon flag-icon-co", description: "FZ Marketplace Colombia", link: "https://co.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Comoros", name: "Free Zone Comoros", region: "FZ", country: "Comoros", flag: "flag-icon flag-icon-km", description: "FZ Marketplace Comoros", link: "https://km.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Congo", name: "Free Zone Congo", region: "FZ", country: "Congo", flag: "flag-icon flag-icon-cg", description: "FZ Marketplace Congo", link: "https://cg.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Costa Rica", name: "Free Zone Costa Rica", region: "FZ", country: "Costa Rica", flag: "flag-icon flag-icon-cr", description: "FZ Marketplace Costa Rica", link: "https://cr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Côte d'Ivoire", name: "Free Zone Côte d'Ivoire", region: "FZ", country: "Côte d'Ivoire", flag: "flag-icon flag-icon-ci", description: "FZ Marketplace Côte d'Ivoire", link: "https://ci.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Croatia", name: "Free Zone Croatia", region: "FZ", country: "Croatia", flag: "flag-icon flag-icon-hr", description: "FZ Marketplace Croatia", link: "https://hr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Cuba", name: "Free Zone Cuba", region: "FZ", country: "Cuba", flag: "flag-icon flag-icon-cu", description: "FZ Marketplace Cuba", link: "https://cu.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Cyprus", name: "Free Zone Cyprus", region: "FZ", country: "Cyprus", flag: "flag-icon flag-icon-cy", description: "FZ Marketplace Cyprus", link: "https://cy.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Czech Republic", name: "Free Zone Czech Republic", region: "FZ", country: "Czech Republic", flag: "flag-icon flag-icon-cz", description: "FZ Marketplace Czech Republic", link: "https://cz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Denmark", name: "Free Zone Denmark", region: "FZ", country: "Denmark", flag: "flag-icon flag-icon-dk", description: "FZ Marketplace Denmark", link: "https://dk.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Djibouti", name: "Free Zone Djibouti", region: "FZ", country: "Djibouti", flag: "flag-icon flag-icon-dj", description: "FZ Marketplace Djibouti", link: "https://dj.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Dominica", name: "Free Zone Dominica", region: "FZ", country: "Dominica", flag: "flag-icon flag-icon-dm", description: "FZ Marketplace Dominica", link: "https://dm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Dominican Republic", name: "Free Zone Dominican Republic", region: "FZ", country: "Dominican Republic", flag: "flag-icon flag-icon-do", description: "FZ Marketplace Dominican Republic", link: "https://do.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Ecuador", name: "Free Zone Ecuador", region: "FZ", country: "Ecuador", flag: "flag-icon flag-icon-ec", description: "FZ Marketplace Ecuador", link: "https://ec.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Egypt", name: "Free Zone Egypt", region: "FZ", country: "Egypt", flag: "flag-icon flag-icon-eg", description: "FZ Marketplace Egypt", link: "https://eg.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ El Salvador", name: "Free Zone El Salvador", region: "FZ", country: "El Salvador", flag: "flag-icon flag-icon-sv", description: "FZ Marketplace El Salvador", link: "https://sv.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Equatorial Guinea", name: "Free Zone Equatorial Guinea", region: "FZ", country: "Equatorial Guinea", flag: "flag-icon flag-icon-gq", description: "FZ Marketplace Equatorial Guinea", link: "https://gq.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Eritrea", name: "Free Zone Eritrea", region: "FZ", country: "Eritrea", flag: "flag-icon flag-icon-er", description: "FZ Marketplace Eritrea", link: "https://er.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Estonia", name: "Free Zone Estonia", region: "FZ", country: "Estonia", flag: "flag-icon flag-icon-ee", description: "FZ Marketplace Estonia", link: "https://ee.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Eswatini", name: "Free Zone Eswatini", region: "FZ", country: "Eswatini", flag: "flag-icon flag-icon-sz", description: "FZ Marketplace Eswatini", link: "https://sz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Ethiopia", name: "Free Zone Ethiopia", region: "FZ", country: "Ethiopia", flag: "flag-icon flag-icon-et", description: "FZ Marketplace Ethiopia", link: "https://et.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Fiji", name: "Free Zone Fiji", region: "FZ", country: "Fiji", flag: "flag-icon flag-icon-fj", description: "FZ Marketplace Fiji", link: "https://fj.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Finland", name: "Free Zone Finland", region: "FZ", country: "Finland", flag: "flag-icon flag-icon-fi", description: "FZ Marketplace Finland", link: "https://fi.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ France", name: "Free Zone France", region: "FZ", country: "France", flag: "flag-icon flag-icon-fr", description: "FZ Marketplace France", link: "https://fr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Gabon", name: "Free Zone Gabon", region: "FZ", country: "Gabon", flag: "flag-icon flag-icon-ga", description: "FZ Marketplace Gabon", link: "https://ga.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Gambia", name: "Free Zone Gambia", region: "FZ", country: "Gambia", flag: "flag-icon flag-icon-gm", description: "FZ Marketplace Gambia", link: "https://gm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Georgia", name: "Free Zone Georgia", region: "FZ", country: "Georgia", flag: "flag-icon flag-icon-ge", description: "FZ Marketplace Georgia", link: "https://ge.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Germany", name: "Free Zone Germany", region: "FZ", country: "Germany", flag: "flag-icon flag-icon-de", description: "FZ Marketplace Germany", link: "https://de.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Ghana", name: "Free Zone Ghana", region: "FZ", country: "Ghana", flag: "flag-icon flag-icon-gh", description: "FZ Marketplace Ghana", link: "https://gh.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Greece", name: "Free Zone Greece", region: "FZ", country: "Greece", flag: "flag-icon flag-icon-gr", description: "FZ Marketplace Greece", link: "https://gr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Grenada", name: "Free Zone Grenada", region: "FZ", country: "Grenada", flag: "flag-icon flag-icon-gd", description: "FZ Marketplace Grenada", link: "https://gd.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Guatemala", name: "Free Zone Guatemala", region: "FZ", country: "Guatemala", flag: "flag-icon flag-icon-gt", description: "FZ Marketplace Guatemala", link: "https://gt.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Guinea", name: "Free Zone Guinea", region: "FZ", country: "Guinea", flag: "flag-icon flag-icon-gn", description: "FZ Marketplace Guinea", link: "https://gn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Guinea-Bissau", name: "Free Zone Guinea-Bissau", region: "FZ", country: "Guinea-Bissau", flag: "flag-icon flag-icon-gw", description: "FZ Marketplace Guinea-Bissau", link: "https://gw.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Guyana", name: "Free Zone Guyana", region: "FZ", country: "Guyana", flag: "flag-icon flag-icon-gy", description: "FZ Marketplace Guyana", link: "https://gy.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Haiti", name: "Free Zone Haiti", region: "FZ", country: "Haiti", flag: "flag-icon flag-icon-ht", description: "FZ Marketplace Haiti", link: "https://ht.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Honduras", name: "Free Zone Honduras", region: "FZ", country: "Honduras", flag: "flag-icon flag-icon-hn", description: "FZ Marketplace Honduras", link: "https://hn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Hungary", name: "Free Zone Hungary", region: "FZ", country: "Hungary", flag: "flag-icon flag-icon-hu", description: "FZ Marketplace Hungary", link: "https://hu.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Iceland", name: "Free Zone Iceland", region: "FZ", country: "Iceland", flag: "flag-icon flag-icon-is", description: "FZ Marketplace Iceland", link: "https://is.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ India", name: "Free Zone India", region: "FZ", country: "India", flag: "flag-icon flag-icon-in", description: "FZ Marketplace India", link: "https://in.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Indonesia", name: "Free Zone Indonesia", region: "FZ", country: "Indonesia", flag: "flag-icon flag-icon-id", description: "FZ Marketplace Indonesia", link: "https://id.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Iran", name: "Free Zone Iran", region: "FZ", country: "Iran", flag: "flag-icon flag-icon-ir", description: "FZ Marketplace Iran", link: "https://ir.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Iraq", name: "Free Zone Iraq", region: "FZ", country: "Iraq", flag: "flag-icon flag-icon-iq", description: "FZ Marketplace Iraq", link: "https://iq.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Ireland", name: "Free Zone Ireland", region: "FZ", country: "Ireland", flag: "flag-icon flag-icon-ie", description: "FZ Marketplace Ireland", link: "https://ie.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Israel", name: "Free Zone Israel", region: "FZ", country: "Israel", flag: "flag-icon flag-icon-il", description: "FZ Marketplace Israel", link: "https://il.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Italy", name: "Free Zone Italy", region: "FZ", country: "Italy", flag: "flag-icon flag-icon-it", description: "FZ Marketplace Italy", link: "https://it.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Jamaica", name: "Free Zone Jamaica", region: "FZ", country: "Jamaica", flag: "flag-icon flag-icon-jm", description: "FZ Marketplace Jamaica", link: "https://jm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Japan", name: "Free Zone Japan", region: "FZ", country: "Japan", flag: "flag-icon flag-icon-jp", description: "FZ Marketplace Japan", link: "https://jp.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Jordan", name: "Free Zone Jordan", region: "FZ", country: "Jordan", flag: "flag-icon flag-icon-jo", description: "FZ Marketplace Jordan", link: "https://jo.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Kazakhstan", name: "Free Zone Kazakhstan", region: "FZ", country: "Kazakhstan", flag: "flag-icon flag-icon-kz", description: "FZ Marketplace Kazakhstan", link: "https://kz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Kenya", name: "Free Zone Kenya", region: "FZ", country: "Kenya", flag: "flag-icon flag-icon-ke", description: "FZ Marketplace Kenya", link: "https://ke.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Kiribati", name: "Free Zone Kiribati", region: "FZ", country: "Kiribati", flag: "flag-icon flag-icon-ki", description: "FZ Marketplace Kiribati", link: "https://ki.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ North Korea", name: "Free Zone North Korea", region: "FZ", country: "North Korea", flag: "flag-icon flag-icon-kp", description: "FZ Marketplace North Korea", link: "https://kp.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ South Korea", name: "Free Zone South Korea", region: "FZ", country: "South Korea", flag: "flag-icon flag-icon-kr", description: "FZ Marketplace South Korea", link: "https://kr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Kuwait", name: "Free Zone Kuwait", region: "FZ", country: "Kuwait", flag: "flag-icon flag-icon-kw", description: "FZ Marketplace Kuwait", link: "https://kw.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Kyrgyzstan", name: "Free Zone Kyrgyzstan", region: "FZ", country: "Kyrgyzstan", flag: "flag-icon flag-icon-kg", description: "FZ Marketplace Kyrgyzstan", link: "https://kg.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Laos", name: "Free Zone Laos", region: "FZ", country: "Laos", flag: "flag-icon flag-icon-la", description: "FZ Marketplace Laos", link: "https://la.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Latvia", name: "Free Zone Latvia", region: "FZ", country: "Latvia", flag: "flag-icon flag-icon-lv", description: "FZ Marketplace Latvia", link: "https://lv.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Lebanon", name: "Free Zone Lebanon", region: "FZ", country: "Lebanon", flag: "flag-icon flag-icon-lb", description: "FZ Marketplace Lebanon", link: "https://lb.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Lesotho", name: "Free Zone Lesotho", region: "FZ", country: "Lesotho", flag: "flag-icon flag-icon-ls", description: "FZ Marketplace Lesotho", link: "https://ls.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Liberia", name: "Free Zone Liberia", region: "FZ", country: "Liberia", flag: "flag-icon flag-icon-lr", description: "FZ Marketplace Liberia", link: "https://lr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Libya", name: "Free Zone Libya", region: "FZ", country: "Libya", flag: "flag-icon flag-icon-ly", description: "FZ Marketplace Libya", link: "https://ly.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Liechtenstein", name: "Free Zone Liechtenstein", region: "FZ", country: "Liechtenstein", flag: "flag-icon flag-icon-li", description: "FZ Marketplace Liechtenstein", link: "https://li.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Lithuania", name: "Free Zone Lithuania", region: "FZ", country: "Lithuania", flag: "flag-icon flag-icon-lt", description: "FZ Marketplace Lithuania", link: "https://lt.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Luxembourg", name: "Free Zone Luxembourg", region: "FZ", country: "Luxembourg", flag: "flag-icon flag-icon-lu", description: "FZ Marketplace Luxembourg", link: "https://lu.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Madagascar", name: "Free Zone Madagascar", region: "FZ", country: "Madagascar", flag: "flag-icon flag-icon-mg", description: "FZ Marketplace Madagascar", link: "https://mg.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Malawi", name: "Free Zone Malawi", region: "FZ", country: "Malawi", flag: "flag-icon flag-icon-mw", description: "FZ Marketplace Malawi", link: "https://mw.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Malaysia", name: "Free Zone Malaysia", region: "FZ", country: "Malaysia", flag: "flag-icon flag-icon-my", description: "FZ Marketplace Malaysia", link: "https://my.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Maldives", name: "Free Zone Maldives", region: "FZ", country: "Maldives", flag: "flag-icon flag-icon-mv", description: "FZ Marketplace Maldives", link: "https://mv.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Mali", name: "Free Zone Mali", region: "FZ", country: "Mali", flag: "flag-icon flag-icon-ml", description: "FZ Marketplace Mali", link: "https://ml.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Malta", name: "Free Zone Malta", region: "FZ", country: "Malta", flag: "flag-icon flag-icon-mt", description: "FZ Marketplace Malta", link: "https://mt.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Marshall Islands", name: "Free Zone Marshall Islands", region: "FZ", country: "Marshall Islands", flag: "flag-icon flag-icon-mh", description: "FZ Marketplace Marshall Islands", link: "https://mh.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Mauritania", name: "Free Zone Mauritania", region: "FZ", country: "Mauritania", flag: "flag-icon flag-icon-mr", description: "FZ Marketplace Mauritania", link: "https://mr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Mauritius", name: "Free Zone Mauritius", region: "FZ", country: "Mauritius", flag: "flag-icon flag-icon-mu", description: "FZ Marketplace Mauritius", link: "https://mu.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Mexico", name: "Free Zone Mexico", region: "FZ", country: "Mexico", flag: "flag-icon flag-icon-mx", description: "FZ Marketplace Mexico", link: "https://mx.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Micronesia", name: "Free Zone Micronesia", region: "FZ", country: "Micronesia", flag: "flag-icon flag-icon-fm", description: "FZ Marketplace Micronesia", link: "https://fm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Moldova", name: "Free Zone Moldova", region: "FZ", country: "Moldova", flag: "flag-icon flag-icon-md", description: "FZ Marketplace Moldova", link: "https://md.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Monaco", name: "Free Zone Monaco", region: "FZ", country: "Monaco", flag: "flag-icon flag-icon-mc", description: "FZ Marketplace Monaco", link: "https://mc.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Mongolia", name: "Free Zone Mongolia", region: "FZ", country: "Mongolia", flag: "flag-icon flag-icon-mn", description: "FZ Marketplace Mongolia", link: "https://mn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Montenegro", name: "Free Zone Montenegro", region: "FZ", country: "Montenegro", flag: "flag-icon flag-icon-me", description: "FZ Marketplace Montenegro", link: "https://me.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Morocco", name: "Free Zone Morocco", region: "FZ", country: "Morocco", flag: "flag-icon flag-icon-ma", description: "FZ Marketplace Morocco", link: "https://ma.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Mozambique", name: "Free Zone Mozambique", region: "FZ", country: "Mozambique", flag: "flag-icon flag-icon-mz", description: "FZ Marketplace Mozambique", link: "https://mz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Myanmar", name: "Free Zone Myanmar", region: "FZ", country: "Myanmar", flag: "flag-icon flag-icon-mm", description: "FZ Marketplace Myanmar", link: "https://mm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Namibia", name: "Free Zone Namibia", region: "FZ", country: "Namibia", flag: "flag-icon flag-icon-na", description: "FZ Marketplace Namibia", link: "https://na.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Nauru", name: "Free Zone Nauru", region: "FZ", country: "Nauru", flag: "flag-icon flag-icon-nr", description: "FZ Marketplace Nauru", link: "https://nr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Nepal", name: "Free Zone Nepal", region: "FZ", country: "Nepal", flag: "flag-icon flag-icon-np", description: "FZ Marketplace Nepal", link: "https://np.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Netherlands", name: "Free Zone Netherlands", region: "FZ", country: "Netherlands", flag: "flag-icon flag-icon-nl", description: "FZ Marketplace Netherlands", link: "https://nl.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ New Zealand", name: "Free Zone New Zealand", region: "FZ", country: "New Zealand", flag: "flag-icon flag-icon-nz", description: "FZ Marketplace New Zealand", link: "https://nz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Nicaragua", name: "Free Zone Nicaragua", region: "FZ", country: "Nicaragua", flag: "flag-icon flag-icon-ni", description: "FZ Marketplace Nicaragua", link: "https://ni.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Niger", name: "Free Zone Niger", region: "FZ", country: "Niger", flag: "flag-icon flag-icon-ne", description: "FZ Marketplace Niger", link: "https://ne.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Nigeria", name: "Free Zone Nigeria", region: "FZ", country: "Nigeria", flag: "flag-icon flag-icon-ng", description: "FZ Marketplace Nigeria", link: "https://ng.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ North Macedonia", name: "Free Zone North Macedonia", region: "FZ", country: "North Macedonia", flag: "flag-icon flag-icon-mk", description: "FZ Marketplace North Macedonia", link: "https://mk.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Norway", name: "Free Zone Norway", region: "FZ", country: "Norway", flag: "flag-icon flag-icon-no", description: "FZ Marketplace Norway", link: "https://no.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Oman", name: "Free Zone Oman", region: "FZ", country: "Oman", flag: "flag-icon flag-icon-om", description: "FZ Marketplace Oman", link: "https://om.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Pakistan", name: "Free Zone Pakistan", region: "FZ", country: "Pakistan", flag: "flag-icon flag-icon-pk", description: "FZ Marketplace Pakistan", link: "https://pk.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Palau", name: "Free Zone Palau", region: "FZ", country: "Palau", flag: "flag-icon flag-icon-pw", description: "FZ Marketplace Palau", link: "https://pw.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Palestine", name: "Free Zone Palestine", region: "FZ", country: "Palestine", flag: "flag-icon flag-icon-ps", description: "FZ Marketplace Palestine", link: "https://ps.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Panama", name: "Free Zone Panama", region: "FZ", country: "Panama", flag: "flag-icon flag-icon-pa", description: "FZ Marketplace Panama", link: "https://pa.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Papua New Guinea", name: "Free Zone Papua New Guinea", region: "FZ", country: "Papua New Guinea", flag: "flag-icon flag-icon-pg", description: "FZ Marketplace Papua New Guinea", link: "https://pg.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Paraguay", name: "Free Zone Paraguay", region: "FZ", country: "Paraguay", flag: "flag-icon flag-icon-py", description: "FZ Marketplace Paraguay", link: "https://py.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Peru", name: "Free Zone Peru", region: "FZ", country: "Peru", flag: "flag-icon flag-icon-pe", description: "FZ Marketplace Peru", link: "https://pe.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Philippines", name: "Free Zone Philippines", region: "FZ", country: "Philippines", flag: "flag-icon flag-icon-ph", description: "FZ Marketplace Philippines", link: "https://ph.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Poland", name: "Free Zone Poland", region: "FZ", country: "Poland", flag: "flag-icon flag-icon-pl", description: "FZ Marketplace Poland", link: "https://pl.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Portugal", name: "Free Zone Portugal", region: "FZ", country: "Portugal", flag: "flag-icon flag-icon-pt", description: "FZ Marketplace Portugal", link: "https://pt.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Qatar", name: "Free Zone Qatar", region: "FZ", country: "Qatar", flag: "flag-icon flag-icon-qa", description: "FZ Marketplace Qatar", link: "https://qa.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Romania", name: "Free Zone Romania", region: "FZ", country: "Romania", flag: "flag-icon flag-icon-ro", description: "FZ Marketplace Romania", link: "https://ro.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Russia", name: "Free Zone Russia", region: "FZ", country: "Russia", flag: "flag-icon flag-icon-ru", description: "FZ Marketplace Russia", link: "https://ru.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Rwanda", name: "Free Zone Rwanda", region: "FZ", country: "Rwanda", flag: "flag-icon flag-icon-rw", description: "FZ Marketplace Rwanda", link: "https://rw.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Saint Kitts and Nevis", name: "Free Zone Saint Kitts and Nevis", region: "FZ", country: "Saint Kitts and Nevis", flag: "flag-icon flag-icon-kn", description: "FZ Marketplace Saint Kitts and Nevis", link: "https://kn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Saint Lucia", name: "Free Zone Saint Lucia", region: "FZ", country: "Saint Lucia", flag: "flag-icon flag-icon-lc", description: "FZ Marketplace Saint Lucia", link: "https://lc.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Saint Vincent and the Grenadines", name: "Free Zone Saint Vincent and the Grenadines", region: "FZ", country: "Saint Vincent and the Grenadines", flag: "flag-icon flag-icon-vc", description: "FZ Marketplace Saint Vincent and the Grenadines", link: "https://vc.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Samoa", name: "Free Zone Samoa", region: "FZ", country: "Samoa", flag: "flag-icon flag-icon-ws", description: "FZ Marketplace Samoa", link: "https://ws.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ San Marino", name: "Free Zone San Marino", region: "FZ", country: "San Marino", flag: "flag-icon flag-icon-sm", description: "FZ Marketplace San Marino", link: "https://sm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Sao Tome and Principe", name: "Free Zone Sao Tome and Principe", region: "FZ", country: "Sao Tome and Principe", flag: "flag-icon flag-icon-st", description: "FZ Marketplace Sao Tome and Principe", link: "https://st.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Saudi Arabia", name: "Free Zone Saudi Arabia", region: "FZ", country: "Saudi Arabia", flag: "flag-icon flag-icon-sa", description: "FZ Marketplace Saudi Arabia", link: "https://sa.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Senegal", name: "Free Zone Senegal", region: "FZ", country: "Senegal", flag: "flag-icon flag-icon-sn", description: "FZ Marketplace Senegal", link: "https://sn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Serbia", name: "Free Zone Serbia", region: "FZ", country: "Serbia", flag: "flag-icon flag-icon-rs", description: "FZ Marketplace Serbia", link: "https://rs.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Seychelles", name: "Free Zone Seychelles", region: "FZ", country: "Seychelles", flag: "flag-icon flag-icon-sc", description: "FZ Marketplace Seychelles", link: "https://sc.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Sierra Leone", name: "Free Zone Sierra Leone", region: "FZ", country: "Sierra Leone", flag: "flag-icon flag-icon-sl", description: "FZ Marketplace Sierra Leone", link: "https://sl.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Singapore", name: "Free Zone Singapore", region: "FZ", country: "Singapore", flag: "flag-icon flag-icon-sg", description: "FZ Marketplace Singapore", link: "https://sg.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Slovakia", name: "Free Zone Slovakia", region: "FZ", country: "Slovakia", flag: "flag-icon flag-icon-sk", description: "FZ Marketplace Slovakia", link: "https://sk.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Slovenia", name: "Free Zone Slovenia", region: "FZ", country: "Slovenia", flag: "flag-icon flag-icon-si", description: "FZ Marketplace Slovenia", link: "https://si.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Solomon Islands", name: "Free Zone Solomon Islands", region: "FZ", country: "Solomon Islands", flag: "flag-icon flag-icon-sb", description: "FZ Marketplace Solomon Islands", link: "https://sb.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Somalia", name: "Free Zone Somalia", region: "FZ", country: "Somalia", flag: "flag-icon flag-icon-so", description: "FZ Marketplace Somalia", link: "https://so.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ South Africa", name: "Free Zone South Africa", region: "FZ", country: "South Africa", flag: "flag-icon flag-icon-za", description: "FZ Marketplace South Africa", link: "https://za.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ South Sudan", name: "Free Zone South Sudan", region: "FZ", country: "South Sudan", flag: "flag-icon flag-icon-ss", description: "FZ Marketplace South Sudan", link: "https://ss.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Spain", name: "Free Zone Spain", region: "FZ", country: "Spain", flag: "flag-icon flag-icon-es", description: "FZ Marketplace Spain", link: "https://es.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Sri Lanka", name: "Free Zone Sri Lanka", region: "FZ", country: "Sri Lanka", flag: "flag-icon flag-icon-lk", description: "FZ Marketplace Sri Lanka", link: "https://lk.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Sudan", name: "Free Zone Sudan", region: "FZ", country: "Sudan", flag: "flag-icon flag-icon-sd", description: "FZ Marketplace Sudan", link: "https://sd.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Suriname", name: "Free Zone Suriname", region: "FZ", country: "Suriname", flag: "flag-icon flag-icon-sr", description: "FZ Marketplace Suriname", link: "https://sr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Sweden", name: "Free Zone Sweden", region: "FZ", country: "Sweden", flag: "flag-icon flag-icon-se", description: "FZ Marketplace Sweden", link: "https://se.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Switzerland", name: "Free Zone Switzerland", region: "FZ", country: "Switzerland", flag: "flag-icon flag-icon-ch", description: "FZ Marketplace Switzerland", link: "https://ch.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Syria", name: "Free Zone Syria", region: "FZ", country: "Syria", flag: "flag-icon flag-icon-sy", description: "FZ Marketplace Syria", link: "https://sy.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Taiwan", name: "Free Zone Taiwan", region: "FZ", country: "Taiwan", flag: "flag-icon flag-icon-tw", description: "FZ Marketplace Taiwan", link: "https://tw.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Tajikistan", name: "Free Zone Tajikistan", region: "FZ", country: "Tajikistan", flag: "flag-icon flag-icon-tj", description: "FZ Marketplace Tajikistan", link: "https://tj.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Tanzania", name: "Free Zone Tanzania", region: "FZ", country: "Tanzania", flag: "flag-icon flag-icon-tz", description: "FZ Marketplace Tanzania", link: "https://tz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Thailand", name: "Free Zone Thailand", region: "FZ", country: "Thailand", flag: "flag-icon flag-icon-th", description: "FZ Marketplace Thailand", link: "https://th.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Timor-Leste", name: "Free Zone Timor-Leste", region: "FZ", country: "Timor-Leste", flag: "flag-icon flag-icon-tl", description: "FZ Marketplace Timor-Leste", link: "https://tl.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Togo", name: "Free Zone Togo", region: "FZ", country: "Togo", flag: "flag-icon flag-icon-tg", description: "FZ Marketplace Togo", link: "https://tg.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Tonga", name: "Free Zone Tonga", region: "FZ", country: "Tonga", flag: "flag-icon flag-icon-to", description: "FZ Marketplace Tonga", link: "https://to.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Trinidad and Tobago", name: "Free Zone Trinidad and Tobago", region: "FZ", country: "Trinidad and Tobago", flag: "flag-icon flag-icon-tt", description: "FZ Marketplace Trinidad and Tobago", link: "https://tt.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Tunisia", name: "Free Zone Tunisia", region: "FZ", country: "Tunisia", flag: "flag-icon flag-icon-tn", description: "FZ Marketplace Tunisia", link: "https://tn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Turkey", name: "Free Zone Turkey", region: "FZ", country: "Turkey", flag: "flag-icon flag-icon-tr", description: "FZ Marketplace Turkey", link: "https://tr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Turkmenistan", name: "Free Zone Turkmenistan", region: "FZ", country: "Turkmenistan", flag: "flag-icon flag-icon-tm", description: "FZ Marketplace Turkmenistan", link: "https://tm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Tuvalu", name: "Free Zone Tuvalu", region: "FZ", country: "Tuvalu", flag: "flag-icon flag-icon-tv", description: "FZ Marketplace Tuvalu", link: "https://tv.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Uganda", name: "Free Zone Uganda", region: "FZ", country: "Uganda", flag: "flag-icon flag-icon-ug", description: "FZ Marketplace Uganda", link: "https://ug.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Ukraine", name: "Free Zone Ukraine", region: "FZ", country: "Ukraine", flag: "flag-icon flag-icon-ua", description: "FZ Marketplace Ukraine", link: "https://ua.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ United Arab Emirates", name: "Free Zone United Arab Emirates", region: "FZ", country: "United Arab Emirates", flag: "flag-icon flag-icon-ae", description: "FZ Marketplace United Arab Emirates", link: "https://ae.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ United Kingdom", name: "Free Zone United Kingdom", region: "FZ", country: "United Kingdom", flag: "flag-icon flag-icon-gb", description: "FZ Marketplace United Kingdom", link: "https://uk.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ United States", name: "Free Zone United States", region: "FZ", country: "United States", flag: "flag-icon flag-icon-us", description: "FZ Marketplace United States", link: "https://us.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Uruguay", name: "Free Zone Uruguay", region: "FZ", country: "Uruguay", flag: "flag-icon flag-icon-uy", description: "FZ Marketplace Uruguay", link: "https://uy.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Uzbekistan", name: "Free Zone Uzbekistan", region: "FZ", country: "Uzbekistan", flag: "flag-icon flag-icon-uz", description: "FZ Marketplace Uzbekistan", link: "https://uz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Vanuatu", name: "Free Zone Vanuatu", region: "FZ", country: "Vanuatu", flag: "flag-icon flag-icon-vu", description: "FZ Marketplace Vanuatu", link: "https://vu.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Vatican City", name: "Free Zone Vatican City", region: "FZ", country: "Vatican City", flag: "flag-icon flag-icon-va", description: "FZ Marketplace Vatican City", link: "https://va.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Venezuela", name: "Free Zone Venezuela", region: "FZ", country: "Venezuela", flag: "flag-icon flag-icon-ve", description: "FZ Marketplace Venezuela", link: "https://ve.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Vietnam", name: "Free Zone Vietnam", region: "FZ", country: "Vietnam", flag: "flag-icon flag-icon-vn", description: "FZ Marketplace Vietnam", link: "https://vn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Yemen", name: "Free Zone Yemen", region: "FZ", country: "Yemen", flag: "flag-icon flag-icon-ye", description: "FZ Marketplace Yemen", link: "https://ye.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Zambia", name: "Free Zone Zambia", region: "FZ", country: "Zambia", flag: "flag-icon flag-icon-zm", description: "FZ Marketplace Zambia", link: "https://zm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
+            { code: "FZ Zimbabwe", name: "Free Zone Zimbabwe", region: "FZ", country: "Zimbabwe", flag: "flag-icon flag-icon-zw", description: "FZ Marketplace Zimbabwe", link: "https://zw.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" }
         ];
 
-        // Función para manejar errores de carga de imágenes
-        function handleImageError(img) {
-            img.style.display = 'none';
-            // Opcional: Agregar un div con color de fondo
-            img.parentElement.style.backgroundColor = '#e0e0e0';
-            img.parentElement.style.backgroundImage = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        // PWA Install Button Logic
+        let deferredPrompt;
+        const installButton = document.getElementById('install-button');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installButton.style.display = 'block';
+
+            installButton.addEventListener('click', () => {
+                installButton.style.display = 'none';
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    } else {
+                        console.log('User dismissed the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            });
+        });
+
+        // Network status indicator
+        const offlineIndicator = document.getElementById('offline-indicator');
+        
+        function updateOnlineStatus() {
+            if (navigator.onLine) {
+                offlineIndicator.classList.remove('show');
+            } else {
+                offlineIndicator.classList.add('show');
+            }
         }
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
 
         // Function to normalize text for search
         function normalizeText(text) {
@@ -393,17 +625,6 @@
                 card.className = 'city-card';
                 card.style.animationDelay = `${index * 0.1}s`;
                 
-                // Crear el HTML con manejo de error para la imagen
-                const imageDiv = document.createElement('div');
-                imageDiv.className = 'city-image';
-                imageDiv.style.backgroundImage = `url('${city.image}')`;
-                
-                // Manejar error de carga de la imagen de fondo
-                imageDiv.onerror = function() {
-                    this.style.backgroundColor = '#e0e0e0';
-                    this.style.backgroundImage = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                };
-                
                 card.innerHTML = `
                     <div class="city-image" style="background-image: url('${city.image}')" 
                          onerror="this.style.backgroundColor='#e0e0e0'; this.style.backgroundImage='linear-gradient(135deg, #667eea 0%, #764ba2 100%)';">
@@ -421,7 +642,6 @@
                 
                 // Make entire card clickable
                 card.addEventListener('click', (e) => {
-                    // Prevenir que se abra dos veces si hacen clic en el enlace
                     if (e.target.tagName !== 'A') {
                         window.open(city.link, '_blank');
                     }
@@ -431,7 +651,7 @@
             });
         }
 
-        // Search functionality with intelligent filtering
+        // Search functionality
         function performSearch(searchTerm) {
             const normalizedSearch = normalizeText(searchTerm);
             const filteredCities = cities.filter(city => 
@@ -447,6 +667,9 @@
 
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
+            // Sort cities alphabetically by country name
+            cities.sort((a, b) => a.country.localeCompare(b.country));
+            
             // Initial render
             renderCities(cities);
             
@@ -468,17 +691,34 @@
         });
     </script>
     
-    <!-- Service Worker Registration - Ahora con ruta relativa -->
+    <!-- Service Worker Registration - Enhanced for PWA -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('sw.js')
                     .then(function(registration) {
                         console.log('✅ Service Worker registrado con éxito:', registration.scope);
+                        
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            console.log('🔄 Nuevo Service Worker encontrado');
+                            
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('📦 Nueva versión disponible - Actualiza la página');
+                                }
+                            });
+                        });
                     })
                     .catch(function(error) {
                         console.log('❌ Error al registrar Service Worker:', error);
                     });
+                    
+                // Handle controller changes
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    console.log('⚡ Service Worker actualizado');
+                });
             });
         }
     </script>
