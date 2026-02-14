@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contraentrega</title>
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ffffff">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
@@ -50,6 +50,17 @@
             height: auto;
             max-height: 80px;
             object-fit: contain;
+        }
+        
+        /* Estilo para imagen de respaldo */
+        .fallback-logo {
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: var(--text);
+            border: 2px solid var(--text);
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
         }
         
         .tagline {
@@ -124,6 +135,12 @@
             background-position: center;
             position: relative;
             border-bottom: 1px solid var(--border);
+            background-color: #f0f0f0; /* Color de respaldo */
+        }
+        
+        /* Estilo para imágenes que no cargan */
+        .city-image.fallback {
+            background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         
         .city-info {
@@ -254,16 +271,15 @@
             animation: fadeIn 0.5s ease forwards;
             opacity: 0;
         }
-        
-        /* Delay animations for each card */
-        .city-card:nth-child(1) { animation-delay: 0.1s; }
-        .city-card:nth-child(2) { animation-delay: 0.2s; }
     </style>
 </head>
 <body>
     <header>
         <div class="logo-container">
-            <img src="img/c-index.png" alt="Contraentrega">
+            <!-- Fallback en caso de que la imagen no exista -->
+            <img src="img/c-index.png" 
+                 alt="Contraentrega" 
+                 onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<div class=\'fallback-logo\'>CONTRAENTREGA</div>';">
         </div>
         <div class="tagline">CONTRAENTREGA</div>
     </header>
@@ -333,7 +349,7 @@
                 "name": "Free Zone United Kingdom",
                 "region": "FZ",
                 "country": "United Kingdom",
-                "flag": "flag-icon flag-icon-uk",
+                "flag": "flag-icon flag-icon-gb", // Corregido: uk no es válido, usar gb
                 "description": "Marketplace Cali",
                 "link": "https://uk.qrcontraentrega.com/",
                 "image": "https://qrcontraentrega.com/img/c.jpg"
@@ -360,7 +376,15 @@
             }
         ];
 
-        // Function to normalize text for search (remove accents, trim, lowercase)
+        // Función para manejar errores de carga de imágenes
+        function handleImageError(img) {
+            img.style.display = 'none';
+            // Opcional: Agregar un div con color de fondo
+            img.parentElement.style.backgroundColor = '#e0e0e0';
+            img.parentElement.style.backgroundImage = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        }
+
+        // Function to normalize text for search
         function normalizeText(text) {
             return text
                 .normalize("NFD")
@@ -378,8 +402,22 @@
                 const card = document.createElement('div');
                 card.className = 'city-card';
                 card.style.animationDelay = `${index * 0.1}s`;
+                
+                // Crear el HTML con manejo de error para la imagen
+                const imageDiv = document.createElement('div');
+                imageDiv.className = 'city-image';
+                imageDiv.style.backgroundImage = `url('${city.image}')`;
+                
+                // Manejar error de carga de la imagen de fondo
+                imageDiv.onerror = function() {
+                    this.style.backgroundColor = '#e0e0e0';
+                    this.style.backgroundImage = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                };
+                
                 card.innerHTML = `
-                    <div class="city-image" style="background-image: url('${city.image}')"></div>
+                    <div class="city-image" style="background-image: url('${city.image}')" 
+                         onerror="this.style.backgroundColor='#e0e0e0'; this.style.backgroundImage='linear-gradient(135deg, #667eea 0%, #764ba2 100%)';">
+                    </div>
                     <div class="city-info">
                         <h3 class="city-name">
                             <span class="${city.flag}"></span>
@@ -392,8 +430,11 @@
                 `;
                 
                 // Make entire card clickable
-                card.addEventListener('click', () => {
-                    window.open(city.link, '_blank');
+                card.addEventListener('click', (e) => {
+                    // Prevenir que se abra dos veces si hacen clic en el enlace
+                    if (e.target.tagName !== 'A') {
+                        window.open(city.link, '_blank');
+                    }
                 });
                 
                 container.appendChild(card);
@@ -411,7 +452,6 @@
             );
             renderCities(filteredCities);
             
-            // Return first result for Enter key functionality
             return filteredCities.length > 0 ? filteredCities[0] : null;
         }
 
@@ -438,11 +478,11 @@
         });
     </script>
     
-    <!-- Service Worker Registration -->
+    <!-- Service Worker Registration - Ahora con ruta relativa -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('sw.js')
                     .then(function(registration) {
                         console.log('✅ Service Worker registrado con éxito:', registration.scope);
                     })
