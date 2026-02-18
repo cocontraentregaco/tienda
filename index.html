@@ -47,27 +47,75 @@
             line-height: 1.6;
         }
         
-        /* Install button for PWA */
-        #install-button {
+        /* Install buttons container for PWA */
+        #install-container {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: var(--text);
-            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+        
+        .install-button {
             border: none;
             border-radius: 50px;
             padding: 12px 24px;
             font-size: 1rem;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 1000;
             transition: all 0.3s ease;
-            display: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+            min-width: 200px;
         }
         
-        #install-button:hover {
+        .install-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        
+        #install-pwa {
+            background: var(--text);
+            color: white;
+        }
+        
+        #install-playstore {
+            background: #3b7e5c;
+            color: white;
+        }
+        
+        #install-appstore {
+            background: #5c5c5c;
+            color: white;
+        }
+        
+        .install-button i {
+            font-size: 1.2rem;
+        }
+        
+        /* Offline indicator */
+        .offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #ff4444;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 0.9rem;
+            z-index: 2000;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .offline-indicator.show {
+            transform: translateY(0);
         }
         
         header {
@@ -217,26 +265,6 @@
             color: var(--text);
         }
         
-        /* Offline indicator */
-        .offline-indicator {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: #ff4444;
-            color: white;
-            text-align: center;
-            padding: 8px;
-            font-size: 0.9rem;
-            z-index: 2000;
-            transform: translateY(-100%);
-            transition: transform 0.3s ease;
-        }
-        
-        .offline-indicator.show {
-            transform: translateY(0);
-        }
-        
         footer {
             background: var(--secondary);
             padding: 2rem 0;
@@ -296,6 +324,17 @@
             .city-name {
                 font-size: 1.1rem;
             }
+            
+            #install-container {
+                bottom: 10px;
+                right: 10px;
+            }
+            
+            .install-button {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+                min-width: 160px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -312,11 +351,14 @@
                 gap: 1rem;
             }
             
-            #install-button {
-                bottom: 10px;
+            #install-container {
+                left: 10px;
                 right: 10px;
-                padding: 8px 16px;
-                font-size: 0.9rem;
+                bottom: 10px;
+            }
+            
+            .install-button {
+                width: 100%;
             }
         }
         
@@ -337,10 +379,18 @@
         🔴 You are offline - Showing cached content
     </div>
     
-    <!-- Install button for PWA -->
-    <button id="install-button" style="display: none;">
-        📱 Install App
-    </button>
+    <!-- Install buttons container for PWA and App Stores -->
+    <div id="install-container">
+        <button id="install-pwa" class="install-button" style="display: none;">
+            📱 Install PWA
+        </button>
+        <button id="install-playstore" class="install-button" onclick="window.open('https://play.google.com/store/apps/details?id=com.qrcontraentrega.twa&pcampaignid=web_share', '_blank')">
+            <span>📲</span> Google Play
+        </button>
+        <button id="install-appstore" class="install-button" onclick="window.open('https://apps.apple.com/app/contraentrega', '_blank')">
+            <span>🍎</span> App Store
+        </button>
+    </div>
     
     <header>
         <div class="logo-container">
@@ -571,15 +621,15 @@
 
         // PWA Install Button Logic
         let deferredPrompt;
-        const installButton = document.getElementById('install-button');
+        const installPwaButton = document.getElementById('install-pwa');
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            installButton.style.display = 'block';
+            installPwaButton.style.display = 'flex';
 
-            installButton.addEventListener('click', () => {
-                installButton.style.display = 'none';
+            installPwaButton.addEventListener('click', () => {
+                installPwaButton.style.display = 'none';
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
