@@ -1,913 +1,1804 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Afiliación - QRContraentrega Colombia</title>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --color-blanco: #ffffff;
-            --color-negro: #000000;
-            --color-gris-claro: #f5f5f5;
-            --color-gris-medio: #e0e0e0;
-            --color-gris-oscuro: #333333;
-            --color-verde: #25D366;
-            --color-azul: #007bff;
-            --color-rojo: #dc3545;
-            --color-dorado: #FFD700;
-            --color-naranja: #FF8C00;
-            --color-bronce: #CD7F32;
-            --color-plata: #C0C0C0;
-            --color-oro: #FFD700;
-            --color-platino: #E5E4E2;
-            --color-azul-profesional: #2C3E50;
-            --color-verde-empresarial: #27AE60;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Libre Baskerville', serif;
-            background-color: var(--color-blanco);
-            color: var(--color-negro);
-            line-height: 1.6;
-            font-size: 16px;
-        }
-        
-        /* Header */
-        header {
-            background-color: var(--color-negro);
-            color: var(--color-blanco);
-            padding: 1rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-            color: white;
-        }
-        
-        .logo-img {
-            height: 40px;
-            width: auto;
-            max-width: 100%;
-        }
-        
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.9)), url('https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-            color: var(--color-blanco);
-            text-align: center;
-            padding: 3rem 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        /* Main Content */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem 3rem;
-        }
-        
-        /* Plan Selection */
-        .plan-selection {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-            flex-wrap: wrap;
-        }
-        
-        .plan-option {
-            border: 2px solid var(--color-gris-medio);
-            border-radius: 8px;
-            padding: 1.5rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 300px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .plan-option:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-        
-        .plan-option.selected {
-            border-color: var(--color-verde-empresarial);
-            background-color: var(--color-gris-claro);
-        }
-        
-        .plan-badge {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background-color: var(--color-verde-empresarial);
-            color: var(--color-blanco);
-            padding: 0.3rem 0.8rem;
-            font-weight: bold;
-            font-size: 0.8rem;
-        }
-        
-        .plan-badge.socios {
-            background-color: var(--color-azul-profesional);
-            color: var(--color-blanco);
-        }
-        
-        .plan-price {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 1rem 0;
-            color: var(--color-azul-profesional);
-        }
-        
-        .plan-price span {
-            font-size: 1rem;
-            font-weight: normal;
-            color: var(--color-gris-oscuro);
-        }
-        
-        .plan-description {
-            margin-bottom: 1rem;
-            min-height: 80px;
-            color: var(--color-gris-oscuro);
-        }
-        
-        .select-plan {
-            background-color: var(--color-azul-profesional);
-            color: var(--color-blanco);
-            border: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Libre Baskerville', serif;
-            transition: background-color 0.3s;
-        }
-        
-        .select-plan:hover {
-            background-color: var(--color-verde-empresarial);
-        }
-        
-        /* Plan Details */
-        .plan-details {
-            display: none;
-            margin-bottom: 2rem;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .plan-details.active {
-            display: block;
-        }
-        
-        .plan-section {
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background-color: var(--color-gris-claro);
-            border-radius: 8px;
-        }
-        
-        .plan-section h3 {
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--color-gris-medio);
-            color: var(--color-azul-profesional);
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1rem;
-        }
-        
-        .feature-item {
-            background-color: var(--color-blanco);
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-        }
-        
-        .feature-item i {
-            color: var(--color-verde-empresarial);
-            margin-top: 0.2rem;
-        }
-        
-        /* Form */
-        .affiliation-form {
-            background-color: var(--color-gris-claro);
-            padding: 2rem;
-            border-radius: 8px;
-            margin-top: 2rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-        
-        .form-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .form-header h2 {
-            margin-bottom: 0.5rem;
-            color: var(--color-azul-profesional);
-        }
-        
-        .form-header p {
-            color: var(--color-gris-oscuro);
-        }
-        
-        .form-section {
-            margin-bottom: 1.5rem;
-            padding: 1.5rem;
-            background-color: var(--color-blanco);
-            border-radius: 8px;
-        }
-        
-        .form-section h3 {
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--color-gris-medio);
-            color: var(--color-azul-profesional);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .form-section h3 i {
-            color: var(--color-verde-empresarial);
-        }
-        
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-            color: var(--color-gris-oscuro);
-        }
-        
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid var(--color-gris-medio);
-            border-radius: 4px;
-            font-family: 'Libre Baskerville', serif;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            border-color: var(--color-verde-empresarial);
-            outline: none;
-        }
-        
-        .form-group textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        
-        .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .checkbox-item input[type="radio"] {
-            width: auto;
-        }
-        
-        .required-field::after {
-            content: " *";
-            color: var(--color-rojo);
-        }
-        
-        .submit-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 2rem;
-            justify-content: center;
-        }
-        
-        .submit-btn {
-            padding: 1rem 1.5rem;
-            border: none;
-            border-radius: 4px;
-            font-family: 'Libre Baskerville', serif;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            flex: 1;
-            min-width: 200px;
-        }
-        
-        .whatsapp-btn {
-            background-color: var(--color-verde);
-            color: white;
-        }
-        
-        .whatsapp-btn:hover {
-            background-color: #128C7E;
-            transform: translateY(-2px);
-        }
-        
-        /* Notification */
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--color-azul-profesional);
-            color: var(--color-blanco);
-            padding: 15px 25px;
-            border-radius: 4px;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            transition: opacity 0.5s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .notification.error {
-            background-color: var(--color-rojo);
-        }
-        
-        /* Footer */
-        footer {
-            background-color: var(--color-azul-profesional);
-            color: var(--color-blanco);
-            padding: 2rem 1rem;
-            margin-top: 3rem;
-        }
-        
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 2rem;
-        }
-        
-        .footer-section {
-            flex: 1;
-            min-width: 250px;
-        }
-        
-        .footer-section h3 {
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-        
-        .footer-section p, .footer-section a {
-            margin-bottom: 0.5rem;
-            color: var(--color-gris-medio);
-            text-decoration: none;
-            display: block;
-        }
-        
-        .footer-section a:hover {
-            color: var(--color-blanco);
-        }
-        
-        .social-icons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .social-icons a {
-            font-size: 1.5rem;
-        }
-        
-        .copyright {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--color-gris-oscuro);
-            color: var(--color-gris-medio);
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .plan-selection {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .submit-buttons {
-                flex-direction: column;
-            }
-            
-            .submit-btn {
-                width: 100%;
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .hero p {
-                font-size: 1rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .affiliation-form {
-                padding: 1rem;
-            }
-            
-            .form-section {
-                padding: 1rem;
-            }
-            
-            .checkbox-group {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Marketplace CE - Viajes y Envíos con Conductores en Vivo</title>
+  
+  <style>
+    /* Mismos estilos que antes... */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    :root {
+      --primary: #0066cc;
+      --secondary: #34c759;
+      --warning: #ff9f0a;
+      --danger: #ff3b30;
+      --dark: #1c1c1e;
+      --light: #f2f2f7;
+      --gray: #8e8e93;
+      --border: #c6c6c8;
+      --whatsapp: #25D366;
+    }
+
+    body {
+      height: 100vh;
+      overflow: hidden;
+      background: var(--light);
+    }
+
+    #app {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    #mapa {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      background: #e5e5e5;
+    }
+
+    /* Header superior */
+    #header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 12px 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .search-box {
+      flex: 1;
+      background: var(--light);
+      border-radius: 25px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .search-box input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 15px;
+      outline: none;
+    }
+
+    /* Selector de modo - AHORA CON 3 OPCIONES */
+    #modo-selector {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      border-radius: 40px;
+      padding: 4px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      z-index: 1000;
+      display: flex;
+      gap: 4px;
+      width: 420px;
+    }
+
+    .modo-btn {
+      flex: 1;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 36px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: transparent;
+      color: var(--gray);
+    }
+
+    .modo-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .modo-btn.envio.active {
+      background: var(--secondary);
+    }
+
+    .modo-btn.conductor.active {
+      background: var(--warning);
+      color: white;
+    }
+
+    /* Panel de dirección principal */
+    #panel-direccion {
+      position: absolute;
+      bottom: 20px;
+      left: 10px;
+      right: 10px;
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+      z-index: 1000;
+      max-width: 400px;
+      margin: 0 auto;
+      transition: all 0.3s;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    /* Panel para conductores */
+    #panel-conductor {
+      position: absolute;
+      bottom: 20px;
+      left: 10px;
+      right: 10px;
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+      z-index: 1000;
+      max-width: 400px;
+      margin: 0 auto;
+      display: none;
+    }
+
+    #panel-conductor.mostrar {
+      display: block;
+    }
+
+    .conductor-status {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 20px 0;
+      padding: 15px;
+      background: var(--light);
+      border-radius: 12px;
+    }
+
+    .status-indicator {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--gray);
+    }
+
+    .status-indicator.activo {
+      background: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(52,199,89,0.2);
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--secondary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    .direccion-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: var(--light);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .direccion-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .origen-icon {
+      background: #e8f0fe;
+      color: var(--primary);
+    }
+
+    .destino-icon {
+      background: #fee8e8;
+      color: var(--danger);
+    }
+
+    .direccion-text {
+      flex: 1;
+      font-size: 14px;
+    }
+
+    .direccion-label {
+      font-size: 11px;
+      color: var(--gray);
+    }
+
+    .telefono-input {
+      margin: 15px 0;
+      padding: 12px;
+      background: var(--light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .telefono-input input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .subtipo-selector {
+      display: flex;
+      gap: 8px;
+      margin: 15px 0;
+    }
+
+    .subtipo-btn {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.3s;
+    }
+
+    .subtipo-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .subtipo-btn.envio.active {
+      background: var(--secondary);
+      border-color: var(--secondary);
+    }
+
+    .opciones-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin: 15px 0;
+    }
+
+    .opcion-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px;
+      background: var(--light);
+      border-radius: 10px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+      font-size: 13px;
+    }
+
+    .opcion-item.selected {
+      border-color: var(--primary);
+      background: #e8f0fe;
+    }
+
+    .opcion-item.envio.selected {
+      border-color: var(--secondary);
+      background: #e3f5e9;
+    }
+
+    .precio-panel {
+      background: linear-gradient(135deg, var(--primary), #004999);
+      color: white;
+      padding: 16px;
+      border-radius: 16px;
+      margin: 15px 0;
+    }
+
+    .precio-panel.envio {
+      background: linear-gradient(135deg, var(--secondary), #2a9b47);
+    }
+
+    .precio-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 6px 0;
+      font-size: 13px;
+    }
+
+    .precio-total {
+      font-size: 28px;
+      font-weight: 700;
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 16px;
+      background: var(--primary);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-action.envio {
+      background: var(--secondary);
+    }
+
+    .btn-action.warning {
+      background: var(--warning);
+    }
+
+    .btn-action:active {
+      transform: scale(0.98);
+    }
+
+    #panel-conductores {
+      position: absolute;
+      top: 140px;
+      right: 10px;
+      background: white;
+      border-radius: 16px;
+      padding: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      z-index: 900;
+      max-width: 260px;
+      display: none;
+    }
+
+    #panel-conductores.mostrar {
+      display: block;
+    }
+
+    .conductor-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    .conductor-item:hover {
+      background: var(--light);
+    }
+
+    .conductor-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--warning);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .conductor-info {
+      flex: 1;
+    }
+
+    .conductor-nombre {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .conductor-distancia {
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    .conductor-precio {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    #sugerencias-lugares {
+      position: absolute;
+      bottom: 400px;
+      left: 10px;
+      right: 10px;
+      max-width: 400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      padding: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      z-index: 900;
+      display: none;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    #sugerencias-lugares.mostrar {
+      display: block;
+    }
+
+    .sugerencia-item {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    #panel-seguimiento {
+      position: absolute;
+      top: 140px;
+      left: 10px;
+      background: white;
+      border-radius: 16px;
+      padding: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      z-index: 900;
+      max-width: 260px;
+      display: none;
+    }
+
+    #panel-seguimiento.mostrar {
+      display: block;
+    }
+
+    .estado-paso {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 8px 0;
+      font-size: 13px;
+    }
+
+    .estado-circle {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--gray);
+    }
+
+    .estado-circle.completado {
+      background: var(--secondary);
+    }
+
+    .estado-circle.activo {
+      background: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0,102,204,0.2);
+    }
+
+    @media (max-width: 768px) {
+      #modo-selector {
+        width: 360px;
+        top: 70px;
+      }
+      
+      .modo-btn {
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+      
+      #panel-conductores, #panel-seguimiento {
+        top: 130px;
+        left: 10px;
+        right: 10px;
+        max-width: none;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div id="app">
+    <div id="mapa"></div>
+    
     <!-- Header -->
-    <header>
-        <div class="header-container">
-            <a href="#" class="logo">
-                <img src="https://qrcontraentrega.com/img/c.jpg" alt="Logo Contraentrega" class="logo-img">
-                <span></span>
-            </a>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <h1>Afiliación Colombia</h1>
-        <p>Únete a nuestra red global de socios empresariales con una solución completa de e-commerce profesional. Implementación en WooCommerce con integración de ERP, pasarelas de pago y visibilidad en el mapa mundial de socios para maximizar tu retorno de inversión.</p>
-    </section>
-
-<!-- Main Content -->
-    <div class="container">
-        <!-- Plan Selection -->
-        <div class="plan-selection">
-            <div class="plan-option" data-plan="socios">
-                <div class="plan-badge socios">EXCLUSIVO</div>
-                <h2>Plan Socios</h2>
-                <div class="plan-price">$750.000<span>/año</span></div>
-                <p class="plan-description">Solución empresarial completa con WooCommerce, ERP profesional, pasarelas de pago y visibilidad global. Aumenta tu publicidad y ROI con nuestra red mundial.</p>
-                <button class="select-plan">Seleccionar</button>
-            </div>
-        </div>
-
-<!-- Affiliation Form -->
-        <div class="affiliation-form">
-            <div class="form-header">
-                <h2>Solicita tu Afiliación al Plan Socios</h2>
-                <p>Completa el formulario para unirte a nuestra red global y acceder a la solución empresarial completa de e-commerce</p>
-            </div>
-            
-            <form id="affiliationForm">
-                <input type="hidden" id="selectedPlan" name="selectedPlan" value="Plan Socios - $750.000/año">
-                
-                <div class="form-section">
-                    <h3><i class="fas fa-building"></i> Información de tu Empresa</h3>
-                    
-                    <div class="form-group">
-                        <label for="businessName" class="required-field">Nombre comercial</label>
-                        <input type="text" id="businessName" name="businessName" required placeholder="Ingresa el nombre de tu negocio">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="businessDescription" class="required-field">Descripción de tu empresa</label>
-                        <textarea id="businessDescription" name="businessDescription" placeholder="Cuéntanos sobre tu negocio, productos o servicios que ofreces" required></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="businessCountry" class="required-field">País donde opera tu negocio</label>
-                        <select id="businessCountry" name="businessCountry" required>
-                            <option value="">Selecciona tu país</option>
-                            <option value="Colombia" selected>Colombia</option>
-                            <option value="Otro">Otro país</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="businessDepartment" class="required-field">Departamento</label>
-                        <input type="text" id="businessDepartment" name="businessDepartment" required placeholder="Tu departamento">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="businessCity" class="required-field">Ciudad</label>
-                        <input type="text" id="businessCity" name="businessCity" required placeholder="Tu ciudad">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="businessAddress" class="required-field">Dirección completa</label>
-                        <input type="text" id="businessAddress" name="businessAddress" required placeholder="Dirección de tu negocio">
-                    </div>
-                </div>
-                
-                <div class="form-section">
-                    <h3><i class="fas fa-user-tie"></i> Datos del Representante Legal</h3>
-                    
-                    <div class="form-group">
-                        <label for="legalName" class="required-field">Nombre completo del representante</label>
-                        <input type="text" id="legalName" name="legalName" required placeholder="Nombre y apellidos">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="required-field">Tipo de documento de identidad</label>
-                        <div class="checkbox-group">
-                            <div class="checkbox-item">
-                                <input type="radio" id="idTypeCedula" name="idType" value="Cédula" required>
-                                <label for="idTypeCedula">Cédula</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="radio" id="idTypePasaporte" name="idType" value="Pasaporte">
-                                <label for="idTypePasaporte">Pasaporte</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="radio" id="idTypeExtranjeria" name="idType" value="Cédula de extranjería">
-                                <label for="idTypeExtranjeria">Cédula de extranjería</label>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="idNumber" class="required-field">Número de identificación</label>
-                        <input type="text" id="idNumber" name="idNumber" required placeholder="Tu número de documento">
-                    </div>
-                </div>
-                
-                <div class="form-section">
-                    <h3><i class="fas fa-store"></i> Información del E-commerce</h3>
-                    
-                    <div class="form-group">
-                        <label for="websiteUrl">URL deseada para tu tienda (opcional)</label>
-                        <input type="text" id="websiteUrl" name="websiteUrl" placeholder="Ej: mitienda.com">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="paymentPreferences">Preferencias de pasarelas de pago</label>
-                        <select id="paymentPreferences" name="paymentPreferences">
-                            <option value="">Selecciona una opción</option>
-                            <option value="Todas las disponibles">Todas las disponibles</option>
-                            <option value="PayU">PayU</option>
-                            <option value="MercadoPago">MercadoPago</option>
-                            <option value="Wompi">Wompi</option>
-                            <option value="Stripe">Stripe</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="advertisingInterest">¿Te interesa el servicio opcional de campañas publicitarias?</label>
-                        <select id="advertisingInterest" name="advertisingInterest">
-                            <option value="">Selecciona una opción</option>
-                            <option value="Sí, me interesa">Sí, me interesa</option>
-                            <option value="Quiero más información">Quiero más información</option>
-                            <option value="No por ahora">No por ahora</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="form-section">
-                    <h3><i class="fas fa-address-card"></i> Contacto para Comunicación</h3>
-                    
-                    <div class="form-group">
-                        <label for="contactPhone" class="required-field">Número de WhatsApp/Teléfono</label>
-                        <input type="tel" id="contactPhone" name="contactPhone" required placeholder="Ej: +57 3146824438">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contactEmail" class="required-field">Correo electrónico principal</label>
-                        <input type="email" id="contactEmail" name="contactEmail" required placeholder="Ej: contacto@tunegocio.com">
-                    </div>
-                </div>
-                
-                <div class="form-section">
-                    <h3><i class="fas fa-palette"></i> Preferencia de Color (Captcha)</h3>
-                    
-                    <div class="form-group">
-                        <label class="required-field">Seleccionar color para validación</label>
-                        <div class="checkbox-group">
-                            <div class="checkbox-item">
-                                <input type="radio" id="colorWhite" name="colorPreference" value="Blanco" required>
-                                <label for="colorWhite">Blanco</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="radio" id="colorBlack" name="colorPreference" value="Negro">
-                                <label for="colorBlack">Negro</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <p style="margin: 10px 0; font-size: 14px; line-height: 1.4;">
-                        Confirmo que he leído y acepto los 
-                        <a href="https://calivalle.qrcontraentrega.com/acuerdo-comercial" 
-                           target="_blank" 
-                           style="color: var(--color-verde-empresarial); text-decoration: underline;">
-                            términos y condiciones del acuerdo comercial
-                        </a>
-                    </p>
-                </div>
-                
-                <div class="submit-buttons">
-                    <button type="button" class="submit-btn whatsapp-btn" id="submitWhatsApp">
-                        <i class="fab fa-whatsapp"></i> Enviar Solicitud por WhatsApp
-                    </button>
-                </div>
-            </form>
-        </div>
+    <div id="header">
+      <div class="logo" id="logo">Marketplace CE</div>
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" id="buscador" placeholder="Buscar lugar...">
+      </div>
     </div>
+    
+    <!-- Selector modo - AHORA CON 3 OPCIONES -->
+    <div id="modo-selector">
+      <button class="modo-btn active" id="modo-viaje">🚗 VIAJE</button>
+      <button class="modo-btn" id="modo-envio">📦 ENVÍO</button>
+      <button class="modo-btn" id="modo-conductor">🚚 SOY CONDUCTOR</button>
+    </div>
+    
+    <!-- Panel para VIAJES / ENVÍOS (usuarios normales) -->
+    <div id="panel-direccion">
+      <div class="direccion-item" id="origen-item">
+        <div class="direccion-icon origen-icon">📍</div>
+        <div class="direccion-text">
+          <div class="direccion-label">MI UBICACIÓN</div>
+          <div id="origen-texto">Usar ubicación actual</div>
+        </div>
+      </div>
+      
+      <div class="direccion-item" id="destino-item">
+        <div class="direccion-icon destino-icon">🏁</div>
+        <div class="direccion-text">
+          <div class="direccion-label">DESTINO</div>
+          <div id="destino-texto">¿A dónde vas?</div>
+        </div>
+      </div>
+      
+      <!-- Teléfono (único dato necesario) -->
+      <div class="telefono-input">
+        <span>📱</span>
+        <input type="tel" id="telefono" placeholder="Tu número de teléfono" value="+57">
+      </div>
+      
+      <div class="subtipo-selector" id="subtipo-container"></div>
+      
+      <div class="opciones-grid" id="opciones-container"></div>
+      
+      <div class="precio-panel" id="precio-panel">
+        <div class="precio-row">
+          <span>Distancia:</span>
+          <span id="distancia">-- km</span>
+        </div>
+        <div class="precio-row">
+          <span>Tiempo:</span>
+          <span id="tiempo">-- min</span>
+        </div>
+        <div class="precio-row" id="detalle-peso" style="display:none;">
+          <span>Peso:</span>
+          <span id="peso">0 kg</span>
+        </div>
+        <div class="precio-total" id="precio-total">$0.00</div>
+      </div>
+      
+      <button class="btn-action" id="btn-action">SOLICITAR</button>
+    </div>
+    
+    <!-- Panel para CONDUCTORES -->
+    <div id="panel-conductor">
+      <h3 style="margin-bottom:15px;">🚚 Modo Conductor</h3>
+      
+      <div class="telefono-input">
+        <span>📱</span>
+        <input type="tel" id="telefono-conductor" placeholder="Tu número de teléfono" value="+57">
+      </div>
+      
+      <div class="conductor-status">
+        <div>
+          <div style="font-weight:600;margin-bottom:5px;">Estado:</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="status-indicator" id="status-indicator"></div>
+            <span id="status-text">Desconectado</span>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-disponible">
+          <span class="slider"></span>
+        </label>
+      </div>
+      
+      <div style="background:var(--light);padding:15px;border-radius:12px;margin:15px 0;">
+        <p style="margin-bottom:8px;"><strong>Vehículo:</strong> <span id="vehiculo-info"></span></p>
+        <p><strong>Ganancias hoy:</strong> <span id="ganancias-hoy">$0</span></p>
+      </div>
+      
+      <div id="solicitudes-pendientes" style="margin:15px 0;">
+        <h4 style="margin-bottom:10px;">📋 Solicitudes pendientes</h4>
+        <div id="lista-solicitudes"></div>
+      </div>
+      
+      <button class="btn-action warning" id="btn-actualizar-ubicacion">📍 Actualizar mi ubicación</button>
+    </div>
+    
+    <!-- Panel de conductores disponibles (para usuarios) -->
+    <div id="panel-conductores">
+      <h4 style="margin-bottom:10px;">🚚 Conductores cerca</h4>
+      <div id="lista-conductores"></div>
+    </div>
+    
+    <!-- Sugerencias Google Places -->
+    <div id="sugerencias-lugares"></div>
+    
+    <!-- Panel seguimiento -->
+    <div id="panel-seguimiento"></div>
+  </div>
 
-        <!-- Plan Socios Details -->
-        <div class="plan-details active" id="socios-details">
-            <div class="plan-section">
-                <h3><i class="fas fa-check-circle"></i> Características Principales del Plan Socios</h3>
-                <div class="features-grid">
-                    <div class="feature-item"><i class="fas fa-check"></i> Tienda WooCommerce profesional totalmente configurada</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Dominio personalizado y hosting optimizado</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Integración con múltiples pasarelas de pago</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Sistema ERP empresarial profesional integrado</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Visibilidad en el mapa mundial de socios</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Dashboard de análisis y métricas avanzadas</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Configuración de logística y envíos automatizados</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Sistema de inventario y gestión de stock</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Soporte técnico prioritario 24/7</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Certificado SSL empresarial incluido</div>
-                </div>
-            </div>
-            
-            <div class="plan-section">
-                <h3><i class="fas fa-chart-line"></i> Beneficios de Publicidad y Retorno de Inversión</h3>
-                <div class="features-grid">
-                    <div class="feature-item"><i class="fas fa-check"></i> Posicionamiento en mapa global de socios</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Incremento en visibilidad y tráfico orgánico</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Campañas publicitarias gestionadas (opcional)</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> SEO avanzado para mejor posicionamiento</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Análisis de competencia y mercado</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Estrategias de marketing digital integradas</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Reportes de ROI mensuales detallados</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Conexión con red mundial de negocios</div>
-                </div>
-            </div>
-            
-            <div class="plan-section">
-                <h3><i class="fas fa-cogs"></i> Servicios Adicionales Opcionales</h3>
-                <div class="features-grid">
-                    <div class="feature-item"><i class="fas fa-check"></i> Creación y manejo de campañas publicitarias</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Gestión de redes sociales profesional</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Email marketing automatizado</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Desarrollo de aplicaciones móviles</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Integración con marketplaces adicionales</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Consultoría empresarial personalizada</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Capacitación para tu equipo de trabajo</div>
-                    <div class="feature-item"><i class="fas fa-check"></i> Desarrollo de marca y identidad corporativa</div>
-                </div>
-            </div>
-        </div>
-        
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Sobre Contraentrega</h3>
-                <p>Red global de socios empresariales con soluciones completas de e-commerce. Integramos WooCommerce, ERP profesional y pasarelas de pago para maximizar el crecimiento de tu negocio.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto Directo</h3>
-                <p><i class="fas fa-phone"></i> +57 3215343562</p>
-                <p><i class="fas fa-envelope"></i> socios@qrcontraentrega.com</p>
-                <p><i class="fas fa-map-marker-alt"></i> Carrera 16 # 9 - 44, Cali, Colombia</p>
-                <div class="social-icons">
-                    <a href="https://www.facebook.com/share/17Dmzvi5ei/?mibextid=wwXIfr"><i class="fab fa-facebook"></i></a>
-                    <a href="https://instagram.com/colombia_qrcontraentrega"><i class="fab fa-instagram"></i></a>
-                    <a href="https://wa.me/573215343562"><i class="fab fa-whatsapp"></i></a>
-                </div>
-            </div>
-            <div class="footer-section">
-                <h3>Accesos Rápidos</h3>
-                <a href="#">Página Principal</a>
-                <a href="#">Mapa Mundial de Socios</a>
-                <a href="#">Términos y Condiciones</a>
-                <a href="#">Política de Privacidad</a>
-            </div>
-        </div>
-        <div class="copyright">
-            <p>&copy; 2024 Contraentrega - Plan Socios. Todos los derechos reservados.</p>
-        </div>
-    </footer>
+  <!-- API Google Maps -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPziXU02y9bKbL-7XkzbaIpOFp_N8nXBM&libraries=places,geometry&callback=inicializarMapa" async defer></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Plan selection functionality
-            const planOptions = document.querySelectorAll('.plan-option');
-            const planSocios = document.getElementById('socios-details');
-            const selectedPlanInput = document.getElementById('selectedPlan');
-            
-            // Select Plan Socios by default
-            document.querySelector('[data-plan="socios"]').classList.add('selected');
-            planSocios.classList.add('active');
-            selectedPlanInput.value = 'Plan Socios - $750.000/año';
-            
-            planOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    const planType = this.getAttribute('data-plan');
-                    
-                    // Remove selected class from all options
-                    planOptions.forEach(opt => opt.classList.remove('selected'));
-                    
-                    // Add selected class to clicked option
-                    this.classList.add('selected');
-                    
-                    // Hide all plan details
-                    planSocios.classList.remove('active');
-                    
-                    // Show the corresponding plan details
-                    if (planType === 'socios') {
-                        planSocios.classList.add('active');
-                        selectedPlanInput.value = 'Plan Socios - $750.000/año';
-                    }
-                });
-            });
-            
-            // Form submission handlers
-            const form = document.getElementById('affiliationForm');
-            
-            document.getElementById('submitWhatsApp').addEventListener('click', function() {
-                if (validateForm()) {
-                    const message = generateWhatsAppMessage();
-                    window.open(`https://wa.me/573215343562?text=${encodeURIComponent(message)}`, '_blank');
-                }
-            });
-            
-            // Form validation
-            function validateForm() {
-                if (!selectedPlanInput.value) {
-                    showNotification('Por favor selecciona un plan para continuar', true);
-                    return false;
-                }
-                
-                // Check all required fields
-                const requiredFields = form.querySelectorAll('[required]');
-                let valid = true;
-                
-                requiredFields.forEach(field => {
-                    if (!field.value.trim()) {
-                        valid = false;
-                        field.style.borderColor = 'red';
-                        
-                        // Remove error style when user starts typing
-                        field.addEventListener('input', function() {
-                            this.style.borderColor = '';
-                        });
-                    }
-                });
-                
-                // Check if at least one radio button is selected for idType
-                const idTypeSelected = document.querySelector('input[name="idType"]:checked');
-                if (!idTypeSelected) {
-                    valid = false;
-                    showNotification('Selecciona un tipo de documento de identidad', true);
-                }
-                
-                // Check if at least one radio button is selected for colorPreference
-                const colorSelected = document.querySelector('input[name="colorPreference"]:checked');
-                if (!colorSelected) {
-                    valid = false;
-                    showNotification('Elige un color para el diseño de tu tienda', true);
-                }
-                
-                if (!valid) {
-                    showNotification('Completa todos los campos obligatorios marcados con *', true);
-                    return false;
-                }
-                
-                showNotification('Información validada correctamente. Conectando con WhatsApp...');
-                return true;
+  <script>
+    // ============================================
+    // CONFIGURACIÓN EDITABLE POR EL ADMIN (TÚ)
+    // ============================================
+    
+    const CONFIG = {
+      // Tarifas por país
+      paises: {
+        co: { // Colombia
+          moneda: 'COP',
+          simbolo: '$',
+          viaje: {
+            base: 5000,
+            porKm: 1500,
+            extraPersona: 2000,
+            extraMascota: 3000,
+            ciudadCiudad: 1.2
+          },
+          envio: {
+            base: 4000,
+            porKm: 1200,
+            porKg: 500,
+            paqueteGrande: 5000
+          }
+        },
+        mx: { // México
+          moneda: 'MXN',
+          simbolo: '$',
+          viaje: {
+            base: 60,
+            porKm: 15,
+            extraPersona: 20,
+            extraMascota: 30,
+            ciudadCiudad: 1.2
+          },
+          envio: {
+            base: 50,
+            porKm: 12,
+            porKg: 5,
+            paqueteGrande: 50
+          }
+        },
+        us: { // Estados Unidos
+          moneda: 'USD',
+          simbolo: '$',
+          viaje: {
+            base: 8,
+            porKm: 2,
+            extraPersona: 3,
+            extraMascota: 5,
+            ciudadCiudad: 1.3
+          },
+          envio: {
+            base: 7,
+            porKm: 1.8,
+            porKg: 0.8,
+            paqueteGrande: 8
+          }
+        }
+      },
+      
+      // Conductores BASE (se cargan inicialmente)
+      conductoresBase: [
+        {
+          id: 'conductor_1',
+          nombre: 'Carlos Rodríguez',
+          telefono: '+57 300 123 4567',
+          vehiculo: '🚗 Chevrolet Spark',
+          placa: 'ABC-123',
+          calificacion: 4.8,
+          foto: 'https://randomuser.me/api/portraits/men/1.jpg'
+        },
+        {
+          id: 'conductor_2',
+          nombre: 'María González',
+          telefono: '+57 310 987 6543',
+          vehiculo: '🚙 Renault Duster',
+          placa: 'XYZ-789',
+          calificacion: 4.9,
+          foto: 'https://randomuser.me/api/portraits/women/1.jpg'
+        },
+        {
+          id: 'conductor_3',
+          nombre: 'Juan Pérez',
+          telefono: '+57 320 456 7890',
+          vehiculo: '🛵 Yamaha NMax',
+          placa: 'MNO-456',
+          calificacion: 4.7,
+          foto: 'https://randomuser.me/api/portraits/men/2.jpg'
+        },
+        {
+          id: 'conductor_4',
+          nombre: 'Ana Martínez',
+          telefono: '+57 315 789 0123',
+          vehiculo: '🚗 Mazda 3',
+          placa: 'PQR-789',
+          calificacion: 4.9,
+          foto: 'https://randomuser.me/api/portraits/women/2.jpg'
+        }
+      ],
+      
+      // Marketplaces (solo algunos para ejemplo, puedes poner los 197)
+      marketplaces: [
+        { id: "colombia", nombre: "Marketplace Colombia", capital: "Bogotá", pais: "Colombia", lat: 4.7110, lng: -74.0721, codigo: "co", telefono: "+571234567890", horario: "Lun-Vie 8am-6pm", servicios: "Envíos nacionales", url: "https://co.qrcontraentrega.com" },
+        { id: "mexico", nombre: "Marketplace México", capital: "CDMX", pais: "México", lat: 19.4326, lng: -99.1332, codigo: "mx", telefono: "+525599999999", horario: "Lun-Vie 8am-6pm", servicios: "Envíos nacionales", url: "https://mx.qrcontraentrega.com" },
+        { id: "espana", nombre: "Marketplace España", capital: "Madrid", pais: "España", lat: 40.4168, lng: -3.7038, codigo: "es", telefono: "+34666666666", horario: "Lun-Vie 8am-6pm", servicios: "Envíos nacionales", url: "https://es.qrcontraentrega.com" }
+      ]
+    };
+
+    // ============================================
+    // VARIABLES GLOBALES
+    // ============================================
+    
+    let googleMap;
+    let userMarker;
+    let destinoMarker;
+    let directionsService;
+    let directionsRenderer;
+    let geocoder;
+    let placesService;
+    let infoWindow;
+    let marketplacesMarkers = [];
+    let conductoresMarkers = [];
+    let watchPositionId = null;
+    
+    // Estado actual
+    let modoActual = 'viaje';
+    let subtipoActual = 'punto';
+    let ubicacionActual = null;
+    let destinoActual = null;
+    let paisActual = 'co';
+    let rutaActual = null;
+    let tarifasActuales = null;
+    
+    // Estado de conductores (en tiempo real)
+    let conductoresActivos = []; // Se llena desde localStorage
+    
+    // Opciones seleccionadas por el usuario
+    let opciones = {
+      personas: false,
+      silla: false,
+      mascota: false,
+      paquete: false,
+      peso: 1
+    };
+    
+    // Cache para optimizar costos
+    const cacheRutas = new Map();
+    const CACHE_DURACION = 1000 * 60 * 60; // 1 hora
+    let solicitudesUltimoMinuto = [];
+    const MAX_SOLICITUDES = 30;
+
+    // ============================================
+    // INICIALIZACIÓN
+    // ============================================
+    
+    function inicializarMapa() {
+      const centroInicial = { lat: 4.5709, lng: -74.2973 };
+      
+      googleMap = new google.maps.Map(document.getElementById('mapa'), {
+        center: centroInicial,
+        zoom: 5,
+        mapTypeId: 'roadmap',
+        mapTypeControl: false,
+        fullscreenControl: true,
+        streetViewControl: false,
+        zoomControl: true
+      });
+      
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer({
+        map: googleMap,
+        suppressMarkers: false
+      });
+      geocoder = new google.maps.Geocoder();
+      placesService = new google.maps.places.PlacesService(googleMap);
+      infoWindow = new google.maps.InfoWindow();
+      
+      // Cargar conductores desde localStorage
+      cargarConductoresDesdeStorage();
+      
+      // Autocompletado
+      const autocomplete = new google.maps.places.Autocomplete(
+        document.getElementById('buscador'),
+        { types: ['geocode', 'establishment'] }
+      );
+      
+      autocomplete.addListener('place_changed', function() {
+        const place = autocomplete.getPlace();
+        if (place.geometry) {
+          googleMap.setCenter(place.geometry.location);
+          googleMap.setZoom(16);
+          seleccionarDestino(place.geometry.location, place.formatted_address);
+        }
+      });
+      
+      // Obtener ubicación del usuario
+      obtenerUbicacionUsuario();
+      
+      // Cargar marketplaces
+      cargarMarketplaces();
+      
+      // Configurar UI
+      configurarUI();
+      configurarEventos();
+      
+      // Verificar si hay un conductor en sesión
+      verificarSesionConductor();
+    }
+    
+    // ============================================
+    // FUNCIONES DE CONDUCTORES EN TIEMPO REAL
+    // ============================================
+    
+    function cargarConductoresDesdeStorage() {
+      // Cargar conductores activos guardados
+      const guardados = localStorage.getItem('conductoresActivos');
+      
+      if (guardados) {
+        conductoresActivos = JSON.parse(guardados);
+      } else {
+        // Inicializar con los conductores base (todos offline)
+        conductoresActivos = CONFIG.conductoresBase.map(c => ({
+          ...c,
+          disponible: false,
+          ubicacion: null,
+          ultimaActualizacion: null,
+          gananciasHoy: 0
+        }));
+        guardarConductores();
+      }
+      
+      actualizarMarcadoresConductores();
+    }
+    
+    function guardarConductores() {
+      localStorage.setItem('conductoresActivos', JSON.stringify(conductoresActivos));
+    }
+    
+    function actualizarMarcadoresConductores() {
+      // Limpiar marcadores existentes
+      conductoresMarkers.forEach(m => m.setMap(null));
+      conductoresMarkers = [];
+      
+      // Crear marcadores solo para conductores disponibles
+      conductoresActivos.forEach(cond => {
+        if (cond.disponible && cond.ubicacion) {
+          const marker = new google.maps.Marker({
+            position: cond.ubicacion,
+            map: googleMap,
+            title: cond.nombre,
+            icon: {
+              url: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
+              scaledSize: new google.maps.Size(40, 40)
+            },
+            animation: google.maps.Animation.DROP
+          });
+          
+          marker.conductorData = cond;
+          
+          marker.addListener('click', function() {
+            mostrarPopupConductor(this.conductorData);
+          });
+          
+          conductoresMarkers.push(marker);
+        }
+      });
+      
+      // Actualizar lista para usuarios
+      actualizarListaConductores();
+    }
+    
+    function activarModoConductor(telefono) {
+      // Buscar si el conductor ya existe
+      let conductor = conductoresActivos.find(c => c.telefono === telefono);
+      
+      if (!conductor) {
+        // Crear nuevo conductor (para demo)
+        const nuevoId = 'conductor_' + Date.now();
+        conductor = {
+          id: nuevoId,
+          nombre: `Conductor ${telefono.slice(-4)}`,
+          telefono: telefono,
+          vehiculo: '🚗 Vehículo registrado',
+          placa: 'ABC-123',
+          calificacion: 5.0,
+          disponible: true,
+          ubicacion: ubicacionActual ? { lat: ubicacionActual.lat(), lng: ubicacionActual.lng() } : null,
+          ultimaActualizacion: new Date().toISOString(),
+          gananciasHoy: 0
+        };
+        conductoresActivos.push(conductor);
+      } else {
+        conductor.disponible = true;
+        conductor.ultimaActualizacion = new Date().toISOString();
+        if (ubicacionActual) {
+          conductor.ubicacion = { lat: ubicacionActual.lat(), lng: ubicacionActual.lng() };
+        }
+      }
+      
+      guardarConductores();
+      actualizarMarcadoresConductores();
+      
+      // Guardar sesión del conductor
+      localStorage.setItem('conductorSesion', JSON.stringify({
+        telefono: telefono,
+        activo: true,
+        timestamp: Date.now()
+      }));
+      
+      // Iniciar seguimiento de ubicación
+      iniciarSeguimientoConductor();
+      
+      // Actualizar UI del panel conductor
+      document.getElementById('telefono-conductor').value = telefono;
+      document.getElementById('toggle-disponible').checked = true;
+      document.getElementById('status-indicator').className = 'status-indicator activo';
+      document.getElementById('status-text').textContent = 'Disponible';
+      document.getElementById('vehiculo-info').textContent = conductor.vehiculo;
+      
+      actualizarSolicitudesPendientes();
+    }
+    
+    function desactivarModoConductor() {
+      const sesion = JSON.parse(localStorage.getItem('conductorSesion') || '{}');
+      
+      if (sesion.telefono) {
+        const conductor = conductoresActivos.find(c => c.telefono === sesion.telefono);
+        if (conductor) {
+          conductor.disponible = false;
+          conductor.ubicacion = null;
+          guardarConductores();
+        }
+      }
+      
+      // Detener seguimiento
+      if (watchPositionId) {
+        navigator.geolocation.clearWatch(watchPositionId);
+        watchPositionId = null;
+      }
+      
+      localStorage.removeItem('conductorSesion');
+      
+      document.getElementById('toggle-disponible').checked = false;
+      document.getElementById('status-indicator').className = 'status-indicator';
+      document.getElementById('status-text').textContent = 'Desconectado';
+      
+      actualizarMarcadoresConductores();
+    }
+    
+    function iniciarSeguimientoConductor() {
+      if (watchPositionId) {
+        navigator.geolocation.clearWatch(watchPositionId);
+      }
+      
+      watchPositionId = navigator.geolocation.watchPosition(
+        (position) => {
+          const pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          
+          const sesion = JSON.parse(localStorage.getItem('conductorSesion') || '{}');
+          if (sesion.telefono) {
+            const conductor = conductoresActivos.find(c => c.telefono === sesion.telefono);
+            if (conductor && conductor.disponible) {
+              conductor.ubicacion = pos;
+              conductor.ultimaActualizacion = new Date().toISOString();
+              guardarConductores();
+              actualizarMarcadoresConductores();
             }
-            
-            // Show notification
-            function showNotification(message, isError = false) {
-                // Remove existing notification if any
-                const existingNotification = document.querySelector('.notification');
-                if (existingNotification) {
-                    existingNotification.remove();
-                }
-                
-                const notification = document.createElement('div');
-                notification.className = isError ? 'notification error' : 'notification';
-                notification.innerHTML = `
-                    <i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
-                    <span>${message}</span>
-                `;
-                
-                document.body.appendChild(notification);
-                
-                setTimeout(() => {
-                    notification.style.opacity = '0';
-                    setTimeout(() => {
-                        document.body.removeChild(notification);
-                    }, 500);
-                }, 3000);
-            }
-            
-            // Message generators
-            function generateWhatsAppMessage() {
-                let message = "¡Hola! Me interesa el PLAN SOCIOS:\n\n";
-                
-                message += `*Plan seleccionado:* ${selectedPlanInput.value}\n\n`;
-                message += "*Información de mi negocio:*\n";
-                message += `• Nombre: ${document.getElementById('businessName').value}\n`;
-                message += `• Descripción: ${document.getElementById('businessDescription').value}\n`;
-                message += `• País: ${document.getElementById('businessCountry').value}\n`;
-                message += `• Departamento: ${document.getElementById('businessDepartment').value}\n`;
-                message += `• Ciudad: ${document.getElementById('businessCity').value}\n`;
-                message += `• Dirección: ${document.getElementById('businessAddress').value}\n\n`;
-                
-                message += "*Datos del representante:*\n";
-                message += `• Nombre: ${document.getElementById('legalName').value}\n`;
-                message += `• Tipo de documento: ${document.querySelector('input[name="idType"]:checked').value}\n`;
-                message += `• Número: ${document.getElementById('idNumber').value}\n\n`;
-                
-                message += "*Información del E-commerce:*\n";
-                message += `• URL deseada: ${document.getElementById('websiteUrl').value || 'No especificada'}\n`;
-                message += `• Pasarelas de pago: ${document.getElementById('paymentPreferences').value || 'No especificada'}\n`;
-                message += `• Interés en publicidad: ${document.getElementById('advertisingInterest').value || 'No especificada'}\n\n`;
-                
-                message += "*Contacto:*\n";
-                message += `• Teléfono: ${document.getElementById('contactPhone').value}\n`;
-                message += `• Email: ${document.getElementById('contactEmail').value}\n`;
-                message += `• Color validación: ${document.querySelector('input[name="colorPreference"]:checked').value}\n\n`;
-                
-                message += "*Beneficios esperados:*\n";
-                message += "• Red global de socios\n";
-                message += "• WooCommerce profesional\n";
-                message += "• ERP integrado\n";
-                message += "• Visibilidad en mapa mundial\n";
-                message += "• Mayor ROI y publicidad\n";
-                
-                return message;
-            }
+          }
+        },
+        (error) => console.log('Error en seguimiento:', error),
+        { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
+      );
+    }
+    
+    function verificarSesionConductor() {
+      const sesion = JSON.parse(localStorage.getItem('conductorSesion') || '{}');
+      
+      if (sesion.activo && sesion.telefono) {
+        // Verificar que no haya expirado (24 horas)
+        if (Date.now() - sesion.timestamp < 24 * 60 * 60 * 1000) {
+          activarModoConductor(sesion.telefono);
+        } else {
+          localStorage.removeItem('conductorSesion');
+        }
+      }
+    }
+    
+    function actualizarSolicitudesPendientes() {
+      const container = document.getElementById('lista-solicitudes');
+      if (!container) return;
+      
+      // Simular algunas solicitudes (en producción vendrían de un backend)
+      const solicitudes = [
+        { id: 1, usuario: '+57 300 111 2233', destino: 'Centro', distancia: '2.3 km', precio: '$8,500' },
+        { id: 2, usuario: '+57 310 444 5566', destino: 'Aeropuerto', distancia: '8.1 km', precio: '$18,200' }
+      ];
+      
+      if (solicitudes.length === 0) {
+        container.innerHTML = '<p style="color:var(--gray);text-align:center;">No hay solicitudes pendientes</p>';
+        return;
+      }
+      
+      let html = '';
+      solicitudes.forEach(s => {
+        html += `
+          <div style="background:var(--light);padding:12px;border-radius:12px;margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+              <span>${s.usuario}</span>
+              <span style="font-weight:700;">${s.precio}</span>
+            </div>
+            <div style="font-size:13px;color:var(--gray);">📍 ${s.destino} · ${s.distancia}</div>
+            <div style="display:flex;gap:8px;margin-top:8px;">
+              <button style="flex:1;padding:8px;background:var(--secondary);color:white;border:none;border-radius:8px;cursor:pointer;" onclick="aceptarSolicitud(${s.id})">✅ Aceptar</button>
+              <button style="flex:1;padding:8px;background:var(--danger);color:white;border:none;border-radius:8px;cursor:pointer;" onclick="rechazarSolicitud(${s.id})">❌ Rechazar</button>
+            </div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+    
+    // ============================================
+    // FUNCIONES DE MARKETPLACES
+    // ============================================
+    
+    function cargarMarketplaces() {
+      CONFIG.marketplaces.forEach(mp => {
+        const marker = new google.maps.Marker({
+          position: { lat: mp.lat, lng: mp.lng },
+          map: googleMap,
+          title: mp.nombre,
+          icon: {
+            url: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+            scaledSize: new google.maps.Size(32, 32)
+          },
+          animation: google.maps.Animation.DROP
         });
-    </script>
+        
+        marker.mpData = mp;
+        
+        marker.addListener('click', function() {
+          mostrarPopupMarketplace(this.mpData);
+        });
+        
+        marketplacesMarkers.push(marker);
+      });
+    }
+    
+    function mostrarPopupMarketplace(mp) {
+      const contenido = `
+        <div style="padding:10px;max-width:250px;">
+          <h3 style="color:#0066cc;margin-bottom:8px;">${mp.nombre}</h3>
+          <p><strong>📍 ${mp.capital}, ${mp.pais}</strong></p>
+          <p>📞 ${mp.telefono}</p>
+          <p>🕒 ${mp.horario}</p>
+          <p>📦 ${mp.servicios}</p>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <button onclick="window.open('${mp.url}')" style="flex:1;padding:8px;background:#0066cc;color:white;border:none;border-radius:8px;cursor:pointer;">🌐 Web</button>
+            <button onclick="window.abrirWhatsApp('${mp.telefono}')" style="flex:1;padding:8px;background:#25D366;color:white;border:none;border-radius:8px;cursor:pointer;">💬 WhatsApp</button>
+          </div>
+          <button onclick="window.calcularRutaDestino(${mp.lat}, ${mp.lng})" style="width:100%;margin-top:8px;padding:8px;background:#34c759;color:white;border:none;border-radius:8px;cursor:pointer;">🗺️ Cómo llegar</button>
+        </div>
+      `;
+      
+      infoWindow.setContent(contenido);
+      infoWindow.open(googleMap, this);
+    }
+    
+    function mostrarPopupConductor(conductor) {
+      const contenido = `
+        <div style="padding:10px;max-width:200px;">
+          <h4>🚚 ${conductor.nombre}</h4>
+          <p>⭐ ${conductor.calificacion} · ${conductor.vehiculo}</p>
+          <p>📞 ${conductor.telefono}</p>
+          <p>🔢 ${conductor.placa}</p>
+          <button onclick="window.solicitarConductor('${conductor.id}')" style="width:100%;padding:10px;background:#34c759;color:white;border:none;border-radius:8px;margin-top:8px;cursor:pointer;">
+            Solicitar este conductor
+          </button>
+        </div>
+      `;
+      
+      infoWindow.setContent(contenido);
+      infoWindow.open(googleMap, this);
+    }
+    
+    function actualizarListaConductores() {
+      if (!ubicacionActual) return;
+      
+      const lista = document.getElementById('lista-conductores');
+      if (!lista) return;
+      
+      const conductoresCerca = conductoresActivos
+        .filter(c => c.disponible && c.ubicacion)
+        .map(c => {
+          const distancia = google.maps.geometry.spherical.computeDistanceBetween(
+            ubicacionActual,
+            new google.maps.LatLng(c.ubicacion.lat, c.ubicacion.lng)
+          ) / 1000;
+          
+          return { ...c, distancia };
+        })
+        .filter(c => c.distancia < 20)
+        .sort((a, b) => a.distancia - b.distancia)
+        .slice(0, 5);
+      
+      if (conductoresCerca.length === 0) {
+        lista.innerHTML = '<p style="text-align:center;color:#666;padding:10px;">No hay conductores cerca</p>';
+        return;
+      }
+      
+      let html = '';
+      conductoresCerca.forEach(c => {
+        const tarifaBase = tarifasActuales?.viaje.base || CONFIG.paises.co.viaje.base;
+        const tarifaKm = tarifasActuales?.viaje.porKm || CONFIG.paises.co.viaje.porKm;
+        const precioEstimado = tarifaBase + (c.distancia * tarifaKm);
+        
+        html += `
+          <div class="conductor-item" onclick="seleccionarConductor('${c.id}')">
+            <div class="conductor-avatar">🚗</div>
+            <div class="conductor-info">
+              <div class="conductor-nombre">${c.nombre}</div>
+              <div class="conductor-distancia">${c.distancia.toFixed(1)} km · ⭐ ${c.calificacion}</div>
+            </div>
+            <div class="conductor-precio">$${precioEstimado.toFixed(0)}</div>
+          </div>
+        `;
+      });
+      
+      lista.innerHTML = html;
+    }
+    
+    // ============================================
+    // FUNCIONES DE UI
+    // ============================================
+    
+    function configurarUI() {
+      actualizarSubtipoUI();
+      actualizarOpcionesUI();
+    }
+    
+    function actualizarSubtipoUI() {
+      const container = document.getElementById('subtipo-container');
+      if (!container) return;
+      
+      if (modoActual === 'viaje') {
+        container.innerHTML = `
+          <button class="subtipo-btn ${subtipoActual === 'punto' ? 'active' : ''}" id="subtipo-punto">📍 Punto a punto</button>
+          <button class="subtipo-btn ${subtipoActual === 'ciudad' ? 'active' : ''}" id="subtipo-ciudad">🏙️ Ciudad a ciudad</button>
+        `;
+      } else {
+        container.innerHTML = `
+          <button class="subtipo-btn ${subtipoActual === 'punto' ? 'active' : ''}" id="subtipo-punto">📦 Envío local</button>
+          <button class="subtipo-btn ${subtipoActual === 'ciudad' ? 'active' : ''}" id="subtipo-ciudad">🚚 Envío nacional</button>
+        `;
+      }
+      
+      document.getElementById('subtipo-punto')?.addEventListener('click', () => cambiarSubtipo('punto'));
+      document.getElementById('subtipo-ciudad')?.addEventListener('click', () => cambiarSubtipo('ciudad'));
+    }
+    
+    function actualizarOpcionesUI() {
+      const container = document.getElementById('opciones-container');
+      if (!container) return;
+      
+      if (modoActual === 'viaje') {
+        container.innerHTML = `
+          <div class="opcion-item ${opciones.personas ? 'selected' : ''}" data-opcion="personas">
+            <span>👥</span> +4 pasajeros
+          </div>
+          <div class="opcion-item ${opciones.silla ? 'selected' : ''}" data-opcion="silla">
+            <span>🍼</span> Silla bebé
+          </div>
+          <div class="opcion-item ${opciones.mascota ? 'selected' : ''}" data-opcion="mascota">
+            <span>🐕</span> Mascota
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="opcion-item ${opciones.paquete ? 'selected' : ''}" data-opcion="paquete">
+            <span>📦</span> Paquete grande
+          </div>
+          <div class="opcion-item" data-opcion="peso">
+            <span>⚖️</span> 
+            <select id="select-peso" style="border:none;background:transparent;width:100%;cursor:pointer;">
+              <option value="1">1 kg</option>
+              <option value="2">2 kg</option>
+              <option value="5">5 kg</option>
+              <option value="10">10 kg</option>
+              <option value="20">20 kg</option>
+            </select>
+          </div>
+        `;
+        
+        document.getElementById('select-peso')?.addEventListener('change', (e) => {
+          opciones.peso = parseInt(e.target.value);
+          calcularPrecio();
+        });
+      }
+      
+      document.querySelectorAll('.opcion-item[data-opcion]').forEach(item => {
+        item.addEventListener('click', function(e) {
+          if (e.target.tagName === 'SELECT') return;
+          
+          const opcion = this.getAttribute('data-opcion');
+          if (modoActual === 'viaje') {
+            opciones[opcion] = !opciones[opcion];
+          } else if (opcion === 'paquete') {
+            opciones.paquete = !opciones.paquete;
+          }
+          
+          this.classList.toggle('selected');
+          calcularPrecio();
+        });
+      });
+    }
+    
+    function configurarEventos() {
+      // Botones de modo
+      document.getElementById('modo-viaje').addEventListener('click', () => {
+        modoActual = 'viaje';
+        document.getElementById('modo-viaje').classList.add('active');
+        document.getElementById('modo-envio').classList.remove('active');
+        document.getElementById('modo-conductor').classList.remove('active');
+        document.getElementById('panel-direccion').style.display = 'block';
+        document.getElementById('panel-conductor').classList.remove('mostrar');
+        document.getElementById('btn-action').className = 'btn-action';
+        document.getElementById('precio-panel').className = 'precio-panel';
+        actualizarSubtipoUI();
+        actualizarOpcionesUI();
+        calcularPrecio();
+      });
+      
+      document.getElementById('modo-envio').addEventListener('click', () => {
+        modoActual = 'envio';
+        document.getElementById('modo-envio').classList.add('active');
+        document.getElementById('modo-viaje').classList.remove('active');
+        document.getElementById('modo-conductor').classList.remove('active');
+        document.getElementById('panel-direccion').style.display = 'block';
+        document.getElementById('panel-conductor').classList.remove('mostrar');
+        document.getElementById('btn-action').className = 'btn-action envio';
+        document.getElementById('precio-panel').className = 'precio-panel envio';
+        actualizarSubtipoUI();
+        actualizarOpcionesUI();
+        calcularPrecio();
+      });
+      
+      document.getElementById('modo-conductor').addEventListener('click', () => {
+        modoActual = 'conductor';
+        document.getElementById('modo-conductor').classList.add('active');
+        document.getElementById('modo-viaje').classList.remove('active');
+        document.getElementById('modo-envio').classList.remove('active');
+        document.getElementById('panel-direccion').style.display = 'none';
+        document.getElementById('panel-conductor').classList.add('mostrar');
+      });
+      
+      // Toggle de disponibilidad conductor
+      document.getElementById('toggle-disponible').addEventListener('change', function(e) {
+        if (this.checked) {
+          const telefono = document.getElementById('telefono-conductor').value.trim();
+          if (!telefono || telefono.length < 10) {
+            alert('📱 Ingresa un número de teléfono válido');
+            this.checked = false;
+            return;
+          }
+          activarModoConductor(telefono);
+        } else {
+          desactivarModoConductor();
+        }
+      });
+      
+      // Botón actualizar ubicación conductor
+      document.getElementById('btn-actualizar-ubicacion').addEventListener('click', function() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition((position) => {
+            const pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            
+            const sesion = JSON.parse(localStorage.getItem('conductorSesion') || '{}');
+            if (sesion.telefono) {
+              const conductor = conductoresActivos.find(c => c.telefono === sesion.telefono);
+              if (conductor) {
+                conductor.ubicacion = pos;
+                conductor.ultimaActualizacion = new Date().toISOString();
+                guardarConductores();
+                actualizarMarcadoresConductores();
+                alert('✅ Ubicación actualizada');
+              }
+            }
+          });
+        }
+      });
+      
+      // Origen
+      document.getElementById('origen-item').addEventListener('click', () => {
+        if (ubicacionActual) {
+          googleMap.setCenter(ubicacionActual);
+          googleMap.setZoom(16);
+        } else {
+          obtenerUbicacionUsuario();
+        }
+      });
+      
+      // Destino
+      document.getElementById('destino-item').addEventListener('click', () => {
+        mostrarSugerenciasLugares();
+      });
+      
+      // Botón acción
+      document.getElementById('btn-action').addEventListener('click', accionPrincipal);
+      
+      // Logo
+      document.getElementById('logo').addEventListener('click', () => {
+        if (ubicacionActual) {
+          googleMap.setCenter(ubicacionActual);
+          googleMap.setZoom(14);
+        }
+      });
+    }
+    
+    function obtenerUbicacionUsuario() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            
+            ubicacionActual = new google.maps.LatLng(pos.lat, pos.lng);
+            
+            if (userMarker) {
+              userMarker.setPosition(pos);
+            } else {
+              userMarker = new google.maps.Marker({
+                position: pos,
+                map: googleMap,
+                title: 'Tu ubicación',
+                icon: {
+                  url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                  scaledSize: new google.maps.Size(40, 40)
+                }
+              });
+            }
+            
+            googleMap.setCenter(pos);
+            googleMap.setZoom(16);
+            
+            geocoder.geocode({ location: pos }, (results, status) => {
+              if (status === 'OK' && results[0]) {
+                document.getElementById('origen-texto').textContent = results[0].formatted_address;
+              }
+            });
+            
+            detectarPais(pos);
+            actualizarListaConductores();
+          },
+          (error) => {
+            console.log('Error:', error);
+            document.getElementById('origen-texto').textContent = 'Usar ubicación actual';
+          }
+        );
+      }
+    }
+    
+    function detectarPais(latLng) {
+      geocoder.geocode({ location: latLng }, (results, status) => {
+        if (status === 'OK' && results[0]) {
+          const address = results[0].formatted_address;
+          
+          if (address.includes('Colombia')) {
+            paisActual = 'co';
+            tarifasActuales = CONFIG.paises.co;
+          } else if (address.includes('México')) {
+            paisActual = 'mx';
+            tarifasActuales = CONFIG.paises.mx;
+          } else if (address.includes('United States')) {
+            paisActual = 'us';
+            tarifasActuales = CONFIG.paises.us;
+          } else {
+            paisActual = 'co';
+            tarifasActuales = CONFIG.paises.co;
+          }
+        }
+      });
+    }
+    
+    function mostrarSugerenciasLugares() {
+      const container = document.getElementById('sugerencias-lugares');
+      if (!container) return;
+      
+      container.innerHTML = '<div style="text-align:center;padding:20px;">Buscando lugares...</div>';
+      container.classList.add('mostrar');
+      
+      if (!ubicacionActual) return;
+      
+      const request = {
+        location: ubicacionActual,
+        radius: 2000,
+        types: ['establishment', 'geocode']
+      };
+      
+      placesService.nearbySearch(request, (results, status) => {
+        if (status === 'OK' && results) {
+          let html = '<h4 style="margin-bottom:10px;">📍 Lugares cercanos</h4>';
+          
+          results.slice(0, 8).forEach(place => {
+            html += `
+              <div class="sugerencia-item" data-lat="${place.geometry.location.lat()}" data-lng="${place.geometry.location.lng()}" data-name="${place.name}">
+                <div class="sugerencia-icon">📍</div>
+                <div>
+                  <div><strong>${place.name}</strong></div>
+                  <div style="font-size:12px;color:var(--gray);">${place.vicinity || ''}</div>
+                </div>
+              </div>
+            `;
+          });
+          
+          container.innerHTML = html;
+          
+          document.querySelectorAll('.sugerencia-item').forEach(item => {
+            item.addEventListener('click', function() {
+              const lat = parseFloat(this.getAttribute('data-lat'));
+              const lng = parseFloat(this.getAttribute('data-lng'));
+              const name = this.getAttribute('data-name');
+              
+              seleccionarDestino(new google.maps.LatLng(lat, lng), name);
+              container.classList.remove('mostrar');
+            });
+          });
+        }
+      });
+    }
+    
+    function seleccionarDestino(location, nombre) {
+      destinoActual = location;
+      document.getElementById('destino-texto').textContent = nombre;
+      
+      if (destinoMarker) destinoMarker.setMap(null);
+      destinoMarker = new google.maps.Marker({
+        position: location,
+        map: googleMap,
+        title: nombre,
+        animation: google.maps.Animation.DROP,
+        icon: {
+          url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+          scaledSize: new google.maps.Size(40, 40)
+        }
+      });
+      
+      calcularRuta();
+    }
+    
+    function verificarLimiteSolicitudes() {
+      const ahora = Date.now();
+      solicitudesUltimoMinuto = solicitudesUltimoMinuto.filter(t => ahora - t < 60000);
+      
+      if (solicitudesUltimoMinuto.length >= MAX_SOLICITUDES) {
+        console.warn('Límite de solicitudes');
+        return false;
+      }
+      
+      solicitudesUltimoMinuto.push(ahora);
+      return true;
+    }
+    
+    function getCacheKey(origen, destino) {
+      return `${origen.lat()},${origen.lng()}|${destino.lat()},${destino.lng()}`;
+    }
+    
+    function calcularRuta() {
+      if (!ubicacionActual || !destinoActual) return;
+      if (!verificarLimiteSolicitudes()) return;
+      
+      const cacheKey = getCacheKey(ubicacionActual, destinoActual);
+      
+      if (cacheRutas.has(cacheKey)) {
+        const cached = cacheRutas.get(cacheKey);
+        if (Date.now() - cached.timestamp < CACHE_DURACION) {
+          mostrarRuta(cached.data);
+          return;
+        }
+      }
+      
+      directionsService.route({
+        origin: ubicacionActual,
+        destination: destinoActual,
+        travelMode: google.maps.TravelMode.DRIVING
+      }, (response, status) => {
+        if (status === 'OK') {
+          cacheRutas.set(cacheKey, {
+            data: response,
+            timestamp: Date.now()
+          });
+          mostrarRuta(response);
+        }
+      });
+    }
+    
+    function mostrarRuta(response) {
+      directionsRenderer.setDirections(response);
+      rutaActual = response;
+      
+      const ruta = response.routes[0].legs[0];
+      const distancia = ruta.distance.value / 1000;
+      const duracion = Math.round(ruta.duration.value / 60);
+      
+      document.getElementById('distancia').textContent = distancia.toFixed(1) + ' km';
+      document.getElementById('tiempo').textContent = duracion + ' min';
+      
+      calcularPrecio(distancia);
+    }
+    
+    function calcularPrecio(distancia) {
+      if (!distancia && rutaActual) {
+        distancia = rutaActual.routes[0].legs[0].distance.value / 1000;
+      }
+      
+      if (!distancia || !tarifasActuales) return;
+      
+      let precio = 0;
+      
+      if (modoActual === 'viaje') {
+        precio = tarifasActuales.viaje.base + (distancia * tarifasActuales.viaje.porKm);
+        
+        if (opciones.personas) precio += tarifasActuales.viaje.extraPersona;
+        if (opciones.mascota) precio += tarifasActuales.viaje.extraMascota;
+        
+        if (subtipoActual === 'ciudad') {
+          precio *= tarifasActuales.viaje.ciudadCiudad;
+        }
+        
+        document.getElementById('detalle-peso').style.display = 'none';
+      } else {
+        precio = tarifasActuales.envio.base + (distancia * tarifasActuales.envio.porKm) + (opciones.peso * tarifasActuales.envio.porKg);
+        
+        if (opciones.paquete) precio += tarifasActuales.envio.paqueteGrande;
+        
+        document.getElementById('detalle-peso').style.display = 'flex';
+        document.getElementById('peso').textContent = opciones.peso + ' kg';
+      }
+      
+      document.getElementById('precio-total').textContent = tarifasActuales.simbolo + precio.toFixed(0);
+    }
+    
+    function accionPrincipal() {
+      const telefono = document.getElementById('telefono').value.trim();
+      
+      if (!telefono || telefono.length < 10) {
+        alert('📱 Por favor ingresa un número de teléfono válido');
+        return;
+      }
+      
+      if (!ubicacionActual || !destinoActual) {
+        alert('📍 Por favor selecciona origen y destino');
+        return;
+      }
+      
+      // Buscar conductor cercano
+      const conductorCercano = conductoresActivos
+        .filter(c => c.disponible && c.ubicacion)
+        .map(c => ({
+          ...c,
+          distancia: google.maps.geometry.spherical.computeDistanceBetween(
+            ubicacionActual,
+            new google.maps.LatLng(c.ubicacion.lat, c.ubicacion.lng)
+          ) / 1000
+        }))
+        .filter(c => c.distancia < 10)
+        .sort((a, b) => a.distancia - b.distancia)[0];
+      
+      if (modoActual === 'viaje') {
+        if (conductorCercano) {
+          alert(`✅ Viaje solicitado desde ${telefono}\n\nConductor asignado: ${conductorCercano.nombre}\nLlegará en aproximadamente ${Math.round(conductorCercano.distancia * 3)} minutos.`);
+        } else {
+          alert(`✅ Viaje solicitado desde ${telefono}\n\nBuscando conductor disponible...`);
+        }
+        mostrarPanelSeguimiento('viaje');
+      } else {
+        alert(`📦 Envío solicitado desde ${telefono}\n\nTu guía será enviada por WhatsApp.`);
+        mostrarPanelSeguimiento('envio');
+      }
+    }
+    
+    function mostrarPanelSeguimiento(tipo) {
+      const panel = document.getElementById('panel-seguimiento');
+      
+      if (tipo === 'viaje') {
+        panel.innerHTML = `
+          <h4 style="margin-bottom:10px;">🚗 Estado del viaje</h4>
+          <div class="estado-paso"><div class="estado-circle completado"></div> Solicitud enviada</div>
+          <div class="estado-paso"><div class="estado-circle activo"></div> Buscando conductor</div>
+          <div class="estado-paso"><div class="estado-circle"></div> Conductor asignado</div>
+          <div class="estado-paso"><div class="estado-circle"></div> En camino</div>
+          <div class="estado-paso"><div class="estado-circle"></div> Viaje completado</div>
+          <p style="font-size:12px;color:var(--gray);margin-top:10px;">Te contactaremos al 📱 ${document.getElementById('telefono').value}</p>
+        `;
+      } else {
+        panel.innerHTML = `
+          <h4 style="margin-bottom:10px;">📦 Estado del envío</h4>
+          <div class="estado-paso"><div class="estado-circle completado"></div> Guía generada</div>
+          <div class="estado-paso"><div class="estado-circle activo"></div> En centro de acopio</div>
+          <div class="estado-paso"><div class="estado-circle"></div> En tránsito</div>
+          <div class="estado-paso"><div class="estado-circle"></div> En ciudad destino</div>
+          <div class="estado-paso"><div class="estado-circle"></div> En reparto</div>
+          <div class="estado-paso"><div class="estado-circle"></div> Entregado</div>
+          <p style="font-size:12px;color:var(--gray);margin-top:10px;">Notificaciones al 📱 ${document.getElementById('telefono').value}</p>
+        `;
+      }
+      
+      panel.classList.add('mostrar');
+      
+      setTimeout(() => {
+        panel.classList.remove('mostrar');
+      }, 30000);
+    }
+    
+    function cambiarSubtipo(subtipo) {
+      subtipoActual = subtipo;
+      actualizarSubtipoUI();
+      calcularPrecio();
+    }
+    
+    function seleccionarConductor(conductorId) {
+      const conductor = conductoresActivos.find(c => c.id === conductorId);
+      if (!conductor || !conductor.ubicacion) return;
+      
+      destinoActual = new google.maps.LatLng(conductor.ubicacion.lat, conductor.ubicacion.lng);
+      document.getElementById('destino-texto').textContent = `Conductor: ${conductor.nombre}`;
+      
+      if (destinoMarker) destinoMarker.setMap(null);
+      destinoMarker = new google.maps.Marker({
+        position: conductor.ubicacion,
+        map: googleMap,
+        title: conductor.nombre,
+        icon: {
+          url: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
+          scaledSize: new google.maps.Size(40, 40)
+        }
+      });
+      
+      calcularRuta();
+    }
+    
+    function calcularRutaDestino(lat, lng) {
+      if (!ubicacionActual) return;
+      
+      destinoActual = new google.maps.LatLng(lat, lng);
+      
+      geocoder.geocode({ location: destinoActual }, (results, status) => {
+        if (status === 'OK' && results[0]) {
+          document.getElementById('destino-texto').textContent = results[0].formatted_address;
+        } else {
+          document.getElementById('destino-texto').textContent = 'Destino seleccionado';
+        }
+      });
+      
+      if (destinoMarker) destinoMarker.setMap(null);
+      destinoMarker = new google.maps.Marker({
+        position: destinoActual,
+        map: googleMap,
+        icon: {
+          url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+          scaledSize: new google.maps.Size(40, 40)
+        }
+      });
+      
+      calcularRuta();
+    }
+    
+    function solicitarConductor(conductorId) {
+      const telefono = document.getElementById('telefono').value.trim();
+      
+      if (!telefono || telefono.length < 10) {
+        alert('📱 Primero ingresa tu número de teléfono');
+        return;
+      }
+      
+      const conductor = conductoresActivos.find(c => c.id === conductorId);
+      if (conductor) {
+        alert(`✅ Solicitud enviada a ${conductor.nombre}\n\nTe contactará al ${telefono}`);
+      }
+    }
+    
+    function abrirWhatsApp(telefono) {
+      const numero = telefono.replace(/\D/g, '');
+      window.open(`https://wa.me/${numero}`, '_blank');
+    }
+    
+    // Funciones para solicitudes (demo)
+    function aceptarSolicitud(id) {
+      alert(`✅ Solicitud #${id} aceptada`);
+      actualizarSolicitudesPendientes();
+    }
+    
+    function rechazarSolicitud(id) {
+      alert(`❌ Solicitud #${id} rechazada`);
+      actualizarSolicitudesPendientes();
+    }
+    
+    // Limpiar caché cada hora
+    setInterval(() => {
+      const ahora = Date.now();
+      for (let [key, value] of cacheRutas) {
+        if (ahora - value.timestamp > CACHE_DURACION) {
+          cacheRutas.delete(key);
+        }
+      }
+    }, 60000);
+    
+    // Funciones globales
+    window.calcularRutaDestino = calcularRutaDestino;
+    window.solicitarConductor = solicitarConductor;
+    window.abrirWhatsApp = abrirWhatsApp;
+    window.seleccionarConductor = seleccionarConductor;
+    window.aceptarSolicitud = aceptarSolicitud;
+    window.rechazarSolicitud = rechazarSolicitud;
+    window.inicializarMapa = inicializarMapa;
+  </script>
 </body>
 </html>
