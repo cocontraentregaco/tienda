@@ -290,6 +290,18 @@
       color: white;
     }
     
+    /* Estilo personalizado para el marcador con emoji */
+    .money-marker {
+      background: transparent;
+      border: none;
+      font-size: 28px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
@@ -333,6 +345,10 @@
         left: 10px;
         max-width: none;
         font-size: 0.75rem;
+      }
+      
+      .money-marker {
+        font-size: 24px;
       }
     }
   </style>
@@ -574,12 +590,17 @@
         zoomToBoundsOnClick: true
       });
 
+      // Crear un ícono personalizado con el emoji 💰
+      const moneyIcon = L.divIcon({
+        className: 'money-marker',
+        html: '💰',
+        iconSize: [32, 32],
+        popupAnchor: [0, -16]
+      });
+
       INMUEBLES.forEach(inmueble => {
         const marcador = L.marker(inmueble.latlng, {
-          icon: L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/1998/1998592.png',
-            iconSize: [32, 32]
-          })
+          icon: moneyIcon
         }).bindPopup(`
           <div style="min-width:280px; max-width:320px;">
             <div class="propiedad-imagen" style="background-image: url('${inmueble.imagen}'); background-size: cover; background-position: center;"></div>
@@ -724,7 +745,11 @@
             if (userMarker) mapa.removeLayer(userMarker);
             if (estaEnCali(latitude, longitude)) {
               userMarker = L.marker([latitude, longitude], {
-                icon: L.icon({ iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png', iconSize: [32, 32] })
+                icon: L.divIcon({
+                  className: 'money-marker',
+                  html: '📍',
+                  iconSize: [24, 24]
+                })
               }).addTo(mapa).bindPopup('📍 Tu ubicación en Cali');
               mapa.setView([latitude, longitude], 14);
               userMarker.openPopup();
@@ -732,7 +757,11 @@
               mostrarNotificacion("Servicio exclusivo para Cali. Estás fuera del área de cobertura.");
               mapa.setView([3.4516, -76.5320], 13);
               userMarker = L.marker([latitude, longitude], {
-                icon: L.icon({ iconUrl: 'https://cdn-icons-png.flaticon.com/512/1828/1828843.png', iconSize: [32, 32] })
+                icon: L.divIcon({
+                  className: 'money-marker',
+                  html: '⚠️',
+                  iconSize: [24, 24]
+                })
               }).addTo(mapa).bindPopup('⚠️ Fuera de Cali');
             }
           },
