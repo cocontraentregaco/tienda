@@ -1,19 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR CONTRAENTREGA MARKETPLACE</title>
+    <title>QRP2P REAL ESTATE</title>
     
     <!-- PWA Meta Tags for Google -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ffffff">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="QRCM">
+    <meta name="apple-mobile-web-app-title" content="QRP2P Real Estate">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="QR CONTRAENTREGA MARKETPLACE">
+    <meta name="application-name" content="QRP2P REAL ESTATE">
     <meta name="format-detection" content="telephone=no">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="QRP2P Real Estate - El listado inmobiliario más grande del mundo con propiedades en 196 países. Compra y arrienda inmuebles de forma segura a nivel global.">
+    <meta name="keywords" content="real estate, bienes raíces, propiedades, inmuebles, venta, arriendo, qrp2p, compra venta, global, 196 paises, propiedades en venta, propiedades en arriendo, inversion inmobiliaria">
+    <meta name="author" content="QRP2P">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://qrp2p.com/">
     
     <!-- Favicons for all platforms -->
     <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
@@ -32,6 +39,8 @@
             --light: #4a4a4a;
             --text: #000000;
             --border: #d0d0d0;
+            --real-estate: #2c5f8a;
+            --gold: #c9a03d;
         }
         
         * {
@@ -47,12 +56,11 @@
             line-height: 1.6;
         }
         
-        /* Install button for PWA */
         #install-button {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: var(--text);
+            background: var(--real-estate);
             color: white;
             border: none;
             border-radius: 50px;
@@ -68,18 +76,19 @@
         #install-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            background: var(--gold);
         }
         
         header {
-            background-color: var(--primary);
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
             padding: 2rem 0;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             border-bottom: 1px solid var(--border);
         }
         
         .logo-container {
-            max-width: 400px;
+            max-width: 500px;
             margin: 0 auto 1rem;
             padding: 0 1rem;
         }
@@ -95,10 +104,11 @@
             font-size: 2rem;
             font-weight: bold;
             letter-spacing: 2px;
-            color: var(--text);
-            border: 2px solid var(--text);
+            color: var(--real-estate);
+            border: 2px solid var(--real-estate);
             display: inline-block;
             padding: 0.5rem 1.5rem;
+            border-radius: 8px;
         }
         
         .tagline {
@@ -106,13 +116,19 @@
             opacity: 0.9;
             max-width: 800px;
             margin: 0 auto;
-            color: var(--text);
+            color: var(--real-estate);
             font-weight: 700;
             letter-spacing: 1px;
         }
         
+        .subtagline {
+            font-size: 0.9rem;
+            color: var(--light);
+            margin-top: 0.5rem;
+        }
+        
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 2rem auto;
             padding: 0 1.5rem;
         }
@@ -139,23 +155,26 @@
             outline: none;
             background: var(--primary);
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-            border-color: var(--light);
+            border-color: var(--real-estate);
         }
         
         #marketplace-search::placeholder {
             color: rgba(0, 0, 0, 0.5);
         }
         
+        /* Grid de 2 columnas con scroll horizontal */
         .cities-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 1.5rem;
             margin-top: 2rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
         }
         
         .city-card {
             background: var(--primary);
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
             transition: all 0.3s ease;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
@@ -165,17 +184,34 @@
         
         .city-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            border-color: var(--light);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            border-color: var(--gold);
         }
         
         .city-image {
-            height: 160px;
+            height: 180px;
             background-size: cover;
             background-position: center;
             position: relative;
             border-bottom: 1px solid var(--border);
             background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .property-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.75);
+            color: var(--gold);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            backdrop-filter: blur(4px);
+            letter-spacing: 0.5px;
         }
         
         .city-info {
@@ -189,38 +225,80 @@
             align-items: center;
             gap: 10px;
             font-weight: 700;
+            flex-wrap: wrap;
         }
         
-        .city-name .flag-icon {
-            font-size: 1.5rem;
-            border-radius: 3px;
+        .small-flag {
+            width: 32px;
+            height: 24px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .city-desc {
             opacity: 0.8;
             font-size: 0.95rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+        
+        .listing-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin: 1rem 0;
+            padding: 0.75rem 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+        
+        .listing-stats span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .listing-stats .for-sale {
+            color: #2c7a4d;
+            font-weight: bold;
+        }
+        
+        .listing-stats .for-rent {
+            color: #c96b2c;
+            font-weight: bold;
+        }
+        
+        .investment-note {
+            font-size: 0.85rem;
+            color: var(--gold);
+            margin: 0.5rem 0;
+            font-weight: 500;
         }
         
         .city-link {
             display: inline-block;
-            padding: 0.5rem 1rem;
-            background: var(--text);
+            padding: 0.6rem 1.2rem;
+            background: var(--real-estate);
             color: white;
-            border-radius: 5px;
+            border-radius: 8px;
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s ease;
             border: 1px solid transparent;
+            margin-top: 0.75rem;
+            width: 100%;
+            text-align: center;
         }
         
         .city-link:hover {
-            background: transparent;
-            border-color: var(--text);
-            color: var(--text);
+            background: var(--gold);
+            border-color: var(--gold);
+            color: white;
+            transform: translateY(-2px);
         }
         
-        /* Offline indicator */
         .offline-indicator {
             position: fixed;
             top: 0;
@@ -273,54 +351,116 @@
             font-size: 0.9rem;
         }
         
+        .country-count {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #444;
+            background: var(--secondary);
+            padding: 0.75rem;
+            border-radius: 50px;
+            display: inline-block;
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .seo-content {
+            max-width: 1400px;
+            margin: 3rem auto;
+            padding: 2rem 1.5rem;
+            background: var(--secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        .seo-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--real-estate);
+        }
+        
+        .seo-content h3 {
+            font-size: 1.2rem;
+            margin: 1.5rem 0 0.5rem;
+        }
+        
+        .seo-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .country-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .country-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--primary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        
+        .country-tag:hover {
+            background: var(--real-estate);
+            color: white;
+            border-color: var(--real-estate);
+        }
+        
+        .toast-message {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 1rem;
+            z-index: 3000;
+            transition: transform 0.3s ease;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        
+        .toast-message.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
         @media (max-width: 768px) {
-            .logo-container {
-                max-width: 300px;
-            }
-            
-            .tagline {
-                font-size: 1rem;
-                padding: 0 1rem;
-            }
-            
-            .cities-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .logo-container { max-width: 350px; }
+            .tagline { font-size: 1rem; padding: 0 1rem; }
+            .cities-grid { 
+                grid-template-columns: repeat(2, 1fr); 
                 gap: 1rem;
+                overflow-x: auto;
             }
-            
-            .city-image {
-                height: 120px;
-            }
-            
-            .city-info {
-                padding: 1rem;
-            }
-            
-            .city-name {
-                font-size: 1.1rem;
-            }
-            
-            #install-button {
-                bottom: 10px;
-                right: 10px;
-                padding: 8px 16px;
-                font-size: 0.9rem;
-            }
+            .city-image { height: 130px; }
+            .city-info { padding: 1rem; }
+            .city-name { font-size: 1rem; }
+            .small-flag { width: 28px; height: 21px; }
+            #install-button { bottom: 10px; right: 10px; padding: 8px 16px; font-size: 0.9rem; }
+            .toast-message { font-size: 0.85rem; padding: 8px 16px; white-space: nowrap; }
+            .listing-stats { flex-direction: column; gap: 0.5rem; }
+            .country-count { font-size: 0.85rem; padding: 0.5rem 1rem; }
         }
         
         @media (max-width: 480px) {
-            .logo-container {
-                max-width: 250px;
+            .logo-container { max-width: 280px; }
+            .cities-grid { 
+                grid-template-columns: repeat(2, 1fr);
+                overflow-x: auto;
             }
-            
-            .cities-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .footer-links {
-                flex-direction: column;
-                gap: 1rem;
-            }
+            .footer-links { flex-direction: column; gap: 1rem; }
         }
         
         @keyframes fadeIn {
@@ -332,284 +472,217 @@
             animation: fadeIn 0.5s ease forwards;
             opacity: 0;
         }
+        
+        .hero-stats {
+            text-align: center;
+            margin: 1rem auto;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--real-estate) 0%, #1a4a6f 100%);
+            color: white;
+            border-radius: 12px;
+            max-width: 800px;
+        }
+        
+        .hero-stats h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .hero-stats .big-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
     </style>
 </head>
 <body>
-    <!-- Offline indicator -->
     <div class="offline-indicator" id="offline-indicator">
         🔴 You are offline - Showing cached content
     </div>
     
-    <!-- Install button for PWA -->
     <button id="install-button" style="display: none;">
-        📱 Install App
+        📱 Instalar App
     </button>
+    
+    <div class="toast-message" id="toast-message"></div>
     
     <header>
         <div class="logo-container">
             <img src="img/c-index.png" 
-                 alt="QR CONTRAENTREGA MARKETPLACE" 
-                 onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<div class=\'fallback-logo\'>QRCM</div>';">
+                 alt="QRP2P REAL ESTATE" 
+                 onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<div class=\'fallback-logo\'>🏘️ QRP2P REAL ESTATE</div>';">
         </div>
-        <div class="tagline">QR CONTRAENTREGA MARKETPLACE</div>
+        <div class="tagline">REAL ESTATE MARKETPLACE</div>
+        <div class="subtagline">El listado inmobiliario más grande del mundo | Encuentra la propiedad de tus sueños</div>
     </header>
     
     <div class="container">
         <div class="search-container">
-            <input type="text" id="marketplace-search" placeholder="Search Marketplace">
+            <input type="text" id="marketplace-search" placeholder="🔍 Buscar por país / Search by country...">
         </div>
         
-        <div class="cities-grid" id="cities-container">
-            <!-- Cities will be inserted here by JavaScript -->
+        <div class="hero-stats">
+            <h3>🌍 Explorando el mercado inmobiliario global</h3>
+            <p><span class="big-number" id="total-properties">0</span> propiedades disponibles en venta y arriendo</p>
+            <p style="font-size: 0.8rem; opacity: 0.9;">196 países | Miles de inversionistas confían en QRP2P</p>
         </div>
+        
+        <div class="country-count" id="country-count"></div>
+        
+        <div class="cities-grid" id="cities-container"></div>
+    </div>
+    
+    <div class="seo-content">
+        <h2>🏘️ QRP2P REAL ESTATE: La Plataforma Inmobiliaria Global para Inversionistas</h2>
+        <p>QRP2P Real Estate es el destino definitivo para inversionistas y compradores de propiedades en todo el mundo. Con presencia en los <strong>196 países</strong> reconocidos internacionalmente, ofrecemos el catálogo más completo de inmuebles en venta y arriendo, cuidadosamente seleccionados para inversores exigentes.</p>
+        
+        <h3>📊 Oportunidades de Inversión Global</h3>
+        <p>✅ <strong>+2,500,000 propiedades</strong> verificadas en todo el mundo<br>
+        ✅ <strong>196 países</strong> con oportunidades de inversión<br>
+        ✅ <strong>Venta y Arriendo:</strong> Casas de lujo, apartamentos premium, terrenos comerciales, oficinas corporativas<br>
+        ✅ <strong>Análisis de mercado</strong> y valorización por región<br>
+        ✅ <strong>Asesoría para inversores internacionales</strong></p>
+        
+        <h3>🌍 Mercados Inmobiliarios Estratégicos</h3>
+        <div class="country-tags" id="country-tags-container"></div>
+        
+        <h3>¿Por qué invertir con QRP2P Real Estate?</h3>
+        <p>🏠 <strong>Cobertura Global Exclusiva:</strong> Acceso a propiedades en mercados emergentes y desarrollados.<br>
+        🏠 <strong>Propiedades Premium:</strong> Inmuebles de alto valor con potencial de plusvalía.<br>
+        🏠 <strong>Transparencia Total:</strong> Toda la información de la propiedad, documentos legales y valoración.<br>
+        🏠 <strong>Soporte para Inversionistas:</strong> Asesoría especializada en inversiones inmobiliarias internacionales.<br>
+        🏠 <strong>App PWA:</strong> Monitorea tus inversiones desde cualquier lugar del mundo.</p>
+        
+        <p>Descubre las mejores oportunidades de inversión inmobiliaria en tu país de interés. QRP2P Real Estate conecta inversionistas con las propiedades más exclusivas del mercado global.</p>
     </div>
     
     <footer>
         <div class="footer-links">
-            <a href="terms.html">Terms of Service</a>
+            <a href="terms.html">Términos de Servicio</a>
+            <a href="privacy.html">Política de Privacidad</a>
+            <a href="contact.html">Contacto para Inversionistas</a>
+            <a href="blog.html">Blog de Inversiones Inmobiliarias</a>
         </div>
-        <div class="copyright">©️ QR CONTRAENTREGA MARKETPLACE. All rights reserved. 196 Countries Worldwide.</div>
+        <div class="copyright">© QRP2P REAL ESTATE - El listado inmobiliario más grande del mundo. Designed for investors.</div>
     </footer>
 
     <script>
-        // All 196 countries with subdomains - Now using QRCM + Country Name format
-        const cities = [
-            { code: "AF", name: "QRCM AFGHANISTAN", region: "Global", country: "Afghanistan", flag: "flag-icon flag-icon-af", description: "QR Contraentrega Marketplace Afghanistan", subdomain: "af", link: "https://af.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "AL", name: "QRCM ALBANIA", region: "Global", country: "Albania", flag: "flag-icon flag-icon-al", description: "QR Contraentrega Marketplace Albania", subdomain: "al", link: "https://al.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "DZ", name: "QRCM ALGERIA", region: "Global", country: "Algeria", flag: "flag-icon flag-icon-dz", description: "QR Contraentrega Marketplace Algeria", subdomain: "dz", link: "https://dz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "AD", name: "QRCM ANDORRA", region: "Global", country: "Andorra", flag: "flag-icon flag-icon-ad", description: "QR Contraentrega Marketplace Andorra", subdomain: "ad", link: "https://ad.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "AO", name: "QRCM ANGOLA", region: "Global", country: "Angola", flag: "flag-icon flag-icon-ao", description: "QR Contraentrega Marketplace Angola", subdomain: "ao", link: "https://ao.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "AG", name: "QRCM ANTIGUA AND BARBUDA", region: "Global", country: "Antigua and Barbuda", flag: "flag-icon flag-icon-ag", description: "QR Contraentrega Marketplace Antigua and Barbuda", subdomain: "ag", link: "https://ag.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "AR", name: "QRCM ARGENTINA", region: "Global", country: "Argentina", flag: "flag-icon flag-icon-ar", description: "QR Contraentrega Marketplace Argentina", subdomain: "ar", link: "https://ar.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "AM", name: "QRCM ARMENIA", region: "Global", country: "Armenia", flag: "flag-icon flag-icon-am", description: "QR Contraentrega Marketplace Armenia", subdomain: "am", link: "https://am.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "AU", name: "QRCM AUSTRALIA", region: "Global", country: "Australia", flag: "flag-icon flag-icon-au", description: "QR Contraentrega Marketplace Australia", subdomain: "au", link: "https://au.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "AT", name: "QRCM AUSTRIA", region: "Global", country: "Austria", flag: "flag-icon flag-icon-at", description: "QR Contraentrega Marketplace Austria", subdomain: "at", link: "https://at.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "AZ", name: "QRCM AZERBAIJAN", region: "Global", country: "Azerbaijan", flag: "flag-icon flag-icon-az", description: "QR Contraentrega Marketplace Azerbaijan", subdomain: "az", link: "https://az.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BS", name: "QRCM BAHAMAS", region: "Global", country: "Bahamas", flag: "flag-icon flag-icon-bs", description: "QR Contraentrega Marketplace Bahamas", subdomain: "bs", link: "https://bs.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BH", name: "QRCM BAHRAIN", region: "Global", country: "Bahrain", flag: "flag-icon flag-icon-bh", description: "QR Contraentrega Marketplace Bahrain", subdomain: "bh", link: "https://bh.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BD", name: "QRCM BANGLADESH", region: "Global", country: "Bangladesh", flag: "flag-icon flag-icon-bd", description: "QR Contraentrega Marketplace Bangladesh", subdomain: "bd", link: "https://bd.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BB", name: "QRCM BARBADOS", region: "Global", country: "Barbados", flag: "flag-icon flag-icon-bb", description: "QR Contraentrega Marketplace Barbados", subdomain: "bb", link: "https://bb.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BY", name: "QRCM BELARUS", region: "Global", country: "Belarus", flag: "flag-icon flag-icon-by", description: "QR Contraentrega Marketplace Belarus", subdomain: "by", link: "https://by.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BE", name: "QRCM BELGIUM", region: "Global", country: "Belgium", flag: "flag-icon flag-icon-be", description: "QR Contraentrega Marketplace Belgium", subdomain: "be", link: "https://be.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BZ", name: "QRCM BELIZE", region: "Global", country: "Belize", flag: "flag-icon flag-icon-bz", description: "QR Contraentrega Marketplace Belize", subdomain: "bz", link: "https://bz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BJ", name: "QRCM BENIN", region: "Global", country: "Benin", flag: "flag-icon flag-icon-bj", description: "QR Contraentrega Marketplace Benin", subdomain: "bj", link: "https://bj.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BT", name: "QRCM BHUTAN", region: "Global", country: "Bhutan", flag: "flag-icon flag-icon-bt", description: "QR Contraentrega Marketplace Bhutan", subdomain: "bt", link: "https://bt.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BO", name: "QRCM BOLIVIA", region: "Global", country: "Bolivia", flag: "flag-icon flag-icon-bo", description: "QR Contraentrega Marketplace Bolivia", subdomain: "bo", link: "https://bo.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BA", name: "QRCM BOSNIA AND HERZEGOVINA", region: "Global", country: "Bosnia and Herzegovina", flag: "flag-icon flag-icon-ba", description: "QR Contraentrega Marketplace Bosnia and Herzegovina", subdomain: "ba", link: "https://ba.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BW", name: "QRCM BOTSWANA", region: "Global", country: "Botswana", flag: "flag-icon flag-icon-bw", description: "QR Contraentrega Marketplace Botswana", subdomain: "bw", link: "https://bw.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BR", name: "QRCM BRAZIL", region: "Global", country: "Brazil", flag: "flag-icon flag-icon-br", description: "QR Contraentrega Marketplace Brazil", subdomain: "br", link: "https://br.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BN", name: "QRCM BRUNEI", region: "Global", country: "Brunei", flag: "flag-icon flag-icon-bn", description: "QR Contraentrega Marketplace Brunei", subdomain: "bn", link: "https://bn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BG", name: "QRCM BULGARIA", region: "Global", country: "Bulgaria", flag: "flag-icon flag-icon-bg", description: "QR Contraentrega Marketplace Bulgaria", subdomain: "bg", link: "https://bg.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BF", name: "QRCM BURKINA FASO", region: "Global", country: "Burkina Faso", flag: "flag-icon flag-icon-bf", description: "QR Contraentrega Marketplace Burkina Faso", subdomain: "bf", link: "https://bf.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "BI", name: "QRCM BURUNDI", region: "Global", country: "Burundi", flag: "flag-icon flag-icon-bi", description: "QR Contraentrega Marketplace Burundi", subdomain: "bi", link: "https://bi.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "CV", name: "QRCM CABO VERDE", region: "Global", country: "Cabo Verde", flag: "flag-icon flag-icon-cv", description: "QR Contraentrega Marketplace Cabo Verde", subdomain: "cv", link: "https://cv.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "KH", name: "QRCM CAMBODIA", region: "Global", country: "Cambodia", flag: "flag-icon flag-icon-kh", description: "QR Contraentrega Marketplace Cambodia", subdomain: "kh", link: "https://kh.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "CM", name: "QRCM CAMEROON", region: "Global", country: "Cameroon", flag: "flag-icon flag-icon-cm", description: "QR Contraentrega Marketplace Cameroon", subdomain: "cm", link: "https://cm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "CA", name: "QRCM CANADA", region: "Global", country: "Canada", flag: "flag-icon flag-icon-ca", description: "QR Contraentrega Marketplace Canada", subdomain: "ca", link: "https://ca.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "CF", name: "QRCM CENTRAL AFRICAN REPUBLIC", region: "Global", country: "Central African Republic", flag: "flag-icon flag-icon-cf", description: "QR Contraentrega Marketplace Central African Republic", subdomain: "cf", link: "https://cf.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "TD", name: "QRCM CHAD", region: "Global", country: "Chad", flag: "flag-icon flag-icon-td", description: "QR Contraentrega Marketplace Chad", subdomain: "td", link: "https://td.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "CL", name: "QRCM CHILE", region: "Global", country: "Chile", flag: "flag-icon flag-icon-cl", description: "QR Contraentrega Marketplace Chile", subdomain: "cl", link: "https://cl.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "CN", name: "QRCM CHINA", region: "Global", country: "China", flag: "flag-icon flag-icon-cn", description: "QR Contraentrega Marketplace China", subdomain: "cn", link: "https://cn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "CO", name: "QRCM COLOMBIA", region: "Global", country: "Colombia", flag: "flag-icon flag-icon-co", description: "QR Contraentrega Marketplace Colombia", subdomain: "co", link: "https://co.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "KM", name: "QRCM COMOROS", region: "Global", country: "Comoros", flag: "flag-icon flag-icon-km", description: "QR Contraentrega Marketplace Comoros", subdomain: "km", link: "https://km.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "CG", name: "QRCM CONGO", region: "Global", country: "Congo", flag: "flag-icon flag-icon-cg", description: "QR Contraentrega Marketplace Congo", subdomain: "cg", link: "https://cg.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "CR", name: "QRCM COSTA RICA", region: "Global", country: "Costa Rica", flag: "flag-icon flag-icon-cr", description: "QR Contraentrega Marketplace Costa Rica", subdomain: "cr", link: "https://cr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "CI", name: "QRCM CÔTE D'IVOIRE", region: "Global", country: "Côte d'Ivoire", flag: "flag-icon flag-icon-ci", description: "QR Contraentrega Marketplace Côte d'Ivoire", subdomain: "ci", link: "https://ci.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "HR", name: "QRCM CROATIA", region: "Global", country: "Croatia", flag: "flag-icon flag-icon-hr", description: "QR Contraentrega Marketplace Croatia", subdomain: "hr", link: "https://hr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "CU", name: "QRCM CUBA", region: "Global", country: "Cuba", flag: "flag-icon flag-icon-cu", description: "QR Contraentrega Marketplace Cuba", subdomain: "cu", link: "https://cu.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "CY", name: "QRCM CYPRUS", region: "Global", country: "Cyprus", flag: "flag-icon flag-icon-cy", description: "QR Contraentrega Marketplace Cyprus", subdomain: "cy", link: "https://cy.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "CZ", name: "QRCM CZECH REPUBLIC", region: "Global", country: "Czech Republic", flag: "flag-icon flag-icon-cz", description: "QR Contraentrega Marketplace Czech Republic", subdomain: "cz", link: "https://cz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "DK", name: "QRCM DENMARK", region: "Global", country: "Denmark", flag: "flag-icon flag-icon-dk", description: "QR Contraentrega Marketplace Denmark", subdomain: "dk", link: "https://dk.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "DJ", name: "QRCM DJIBOUTI", region: "Global", country: "Djibouti", flag: "flag-icon flag-icon-dj", description: "QR Contraentrega Marketplace Djibouti", subdomain: "dj", link: "https://dj.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "DM", name: "QRCM DOMINICA", region: "Global", country: "Dominica", flag: "flag-icon flag-icon-dm", description: "QR Contraentrega Marketplace Dominica", subdomain: "dm", link: "https://dm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "DO", name: "QRCM DOMINICAN REPUBLIC", region: "Global", country: "Dominican Republic", flag: "flag-icon flag-icon-do", description: "QR Contraentrega Marketplace Dominican Republic", subdomain: "do", link: "https://do.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "EC", name: "QRCM ECUADOR", region: "Global", country: "Ecuador", flag: "flag-icon flag-icon-ec", description: "QR Contraentrega Marketplace Ecuador", subdomain: "ec", link: "https://ec.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "EG", name: "QRCM EGYPT", region: "Global", country: "Egypt", flag: "flag-icon flag-icon-eg", description: "QR Contraentrega Marketplace Egypt", subdomain: "eg", link: "https://eg.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SV", name: "QRCM EL SALVADOR", region: "Global", country: "El Salvador", flag: "flag-icon flag-icon-sv", description: "QR Contraentrega Marketplace El Salvador", subdomain: "sv", link: "https://sv.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "GQ", name: "QRCM EQUATORIAL GUINEA", region: "Global", country: "Equatorial Guinea", flag: "flag-icon flag-icon-gq", description: "QR Contraentrega Marketplace Equatorial Guinea", subdomain: "gq", link: "https://gq.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "ER", name: "QRCM ERITREA", region: "Global", country: "Eritrea", flag: "flag-icon flag-icon-er", description: "QR Contraentrega Marketplace Eritrea", subdomain: "er", link: "https://er.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "EE", name: "QRCM ESTONIA", region: "Global", country: "Estonia", flag: "flag-icon flag-icon-ee", description: "QR Contraentrega Marketplace Estonia", subdomain: "ee", link: "https://ee.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SZ", name: "QRCM ESWATINI", region: "Global", country: "Eswatini", flag: "flag-icon flag-icon-sz", description: "QR Contraentrega Marketplace Eswatini", subdomain: "sz", link: "https://sz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "ET", name: "QRCM ETHIOPIA", region: "Global", country: "Ethiopia", flag: "flag-icon flag-icon-et", description: "QR Contraentrega Marketplace Ethiopia", subdomain: "et", link: "https://et.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "FJ", name: "QRCM FIJI", region: "Global", country: "Fiji", flag: "flag-icon flag-icon-fj", description: "QR Contraentrega Marketplace Fiji", subdomain: "fj", link: "https://fj.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "FI", name: "QRCM FINLAND", region: "Global", country: "Finland", flag: "flag-icon flag-icon-fi", description: "QR Contraentrega Marketplace Finland", subdomain: "fi", link: "https://fi.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "FR", name: "QRCM FRANCE", region: "Global", country: "France", flag: "flag-icon flag-icon-fr", description: "QR Contraentrega Marketplace France", subdomain: "fr", link: "https://fr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "GA", name: "QRCM GABON", region: "Global", country: "Gabon", flag: "flag-icon flag-icon-ga", description: "QR Contraentrega Marketplace Gabon", subdomain: "ga", link: "https://ga.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "GM", name: "QRCM GAMBIA", region: "Global", country: "Gambia", flag: "flag-icon flag-icon-gm", description: "QR Contraentrega Marketplace Gambia", subdomain: "gm", link: "https://gm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "GE", name: "QRCM GEORGIA", region: "Global", country: "Georgia", flag: "flag-icon flag-icon-ge", description: "QR Contraentrega Marketplace Georgia", subdomain: "ge", link: "https://ge.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "DE", name: "QRCM GERMANY", region: "Global", country: "Germany", flag: "flag-icon flag-icon-de", description: "QR Contraentrega Marketplace Germany", subdomain: "de", link: "https://de.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "GH", name: "QRCM GHANA", region: "Global", country: "Ghana", flag: "flag-icon flag-icon-gh", description: "QR Contraentrega Marketplace Ghana", subdomain: "gh", link: "https://gh.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "GR", name: "QRCM GREECE", region: "Global", country: "Greece", flag: "flag-icon flag-icon-gr", description: "QR Contraentrega Marketplace Greece", subdomain: "gr", link: "https://gr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "GD", name: "QRCM GRENADA", region: "Global", country: "Grenada", flag: "flag-icon flag-icon-gd", description: "QR Contraentrega Marketplace Grenada", subdomain: "gd", link: "https://gd.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "GT", name: "QRCM GUATEMALA", region: "Global", country: "Guatemala", flag: "flag-icon flag-icon-gt", description: "QR Contraentrega Marketplace Guatemala", subdomain: "gt", link: "https://gt.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "GN", name: "QRCM GUINEA", region: "Global", country: "Guinea", flag: "flag-icon flag-icon-gn", description: "QR Contraentrega Marketplace Guinea", subdomain: "gn", link: "https://gn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "GW", name: "QRCM GUINEA-BISSAU", region: "Global", country: "Guinea-Bissau", flag: "flag-icon flag-icon-gw", description: "QR Contraentrega Marketplace Guinea-Bissau", subdomain: "gw", link: "https://gw.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "GY", name: "QRCM GUYANA", region: "Global", country: "Guyana", flag: "flag-icon flag-icon-gy", description: "QR Contraentrega Marketplace Guyana", subdomain: "gy", link: "https://gy.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "HT", name: "QRCM HAITI", region: "Global", country: "Haiti", flag: "flag-icon flag-icon-ht", description: "QR Contraentrega Marketplace Haiti", subdomain: "ht", link: "https://ht.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "HN", name: "QRCM HONDURAS", region: "Global", country: "Honduras", flag: "flag-icon flag-icon-hn", description: "QR Contraentrega Marketplace Honduras", subdomain: "hn", link: "https://hn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "HU", name: "QRCM HUNGARY", region: "Global", country: "Hungary", flag: "flag-icon flag-icon-hu", description: "QR Contraentrega Marketplace Hungary", subdomain: "hu", link: "https://hu.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "IS", name: "QRCM ICELAND", region: "Global", country: "Iceland", flag: "flag-icon flag-icon-is", description: "QR Contraentrega Marketplace Iceland", subdomain: "is", link: "https://is.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "IN", name: "QRCM INDIA", region: "Global", country: "India", flag: "flag-icon flag-icon-in", description: "QR Contraentrega Marketplace India", subdomain: "in", link: "https://in.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "ID", name: "QRCM INDONESIA", region: "Global", country: "Indonesia", flag: "flag-icon flag-icon-id", description: "QR Contraentrega Marketplace Indonesia", subdomain: "id", link: "https://id.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "IR", name: "QRCM IRAN", region: "Global", country: "Iran", flag: "flag-icon flag-icon-ir", description: "QR Contraentrega Marketplace Iran", subdomain: "ir", link: "https://ir.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "IQ", name: "QRCM IRAQ", region: "Global", country: "Iraq", flag: "flag-icon flag-icon-iq", description: "QR Contraentrega Marketplace Iraq", subdomain: "iq", link: "https://iq.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "IE", name: "QRCM IRELAND", region: "Global", country: "Ireland", flag: "flag-icon flag-icon-ie", description: "QR Contraentrega Marketplace Ireland", subdomain: "ie", link: "https://ie.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "IL", name: "QRCM ISRAEL", region: "Global", country: "Israel", flag: "flag-icon flag-icon-il", description: "QR Contraentrega Marketplace Israel", subdomain: "il", link: "https://il.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "IT", name: "QRCM ITALY", region: "Global", country: "Italy", flag: "flag-icon flag-icon-it", description: "QR Contraentrega Marketplace Italy", subdomain: "it", link: "https://it.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "JM", name: "QRCM JAMAICA", region: "Global", country: "Jamaica", flag: "flag-icon flag-icon-jm", description: "QR Contraentrega Marketplace Jamaica", subdomain: "jm", link: "https://jm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "JP", name: "QRCM JAPAN", region: "Global", country: "Japan", flag: "flag-icon flag-icon-jp", description: "QR Contraentrega Marketplace Japan", subdomain: "jp", link: "https://jp.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "JO", name: "QRCM JORDAN", region: "Global", country: "Jordan", flag: "flag-icon flag-icon-jo", description: "QR Contraentrega Marketplace Jordan", subdomain: "jo", link: "https://jo.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "KZ", name: "QRCM KAZAKHSTAN", region: "Global", country: "Kazakhstan", flag: "flag-icon flag-icon-kz", description: "QR Contraentrega Marketplace Kazakhstan", subdomain: "kz", link: "https://kz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "KE", name: "QRCM KENYA", region: "Global", country: "Kenya", flag: "flag-icon flag-icon-ke", description: "QR Contraentrega Marketplace Kenya", subdomain: "ke", link: "https://ke.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "KI", name: "QRCM KIRIBATI", region: "Global", country: "Kiribati", flag: "flag-icon flag-icon-ki", description: "QR Contraentrega Marketplace Kiribati", subdomain: "ki", link: "https://ki.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "KP", name: "QRCM NORTH KOREA", region: "Global", country: "North Korea", flag: "flag-icon flag-icon-kp", description: "QR Contraentrega Marketplace North Korea", subdomain: "kp", link: "https://kp.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "KR", name: "QRCM SOUTH KOREA", region: "Global", country: "South Korea", flag: "flag-icon flag-icon-kr", description: "QR Contraentrega Marketplace South Korea", subdomain: "kr", link: "https://kr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "KW", name: "QRCM KUWAIT", region: "Global", country: "Kuwait", flag: "flag-icon flag-icon-kw", description: "QR Contraentrega Marketplace Kuwait", subdomain: "kw", link: "https://kw.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "KG", name: "QRCM KYRGYZSTAN", region: "Global", country: "Kyrgyzstan", flag: "flag-icon flag-icon-kg", description: "QR Contraentrega Marketplace Kyrgyzstan", subdomain: "kg", link: "https://kg.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "LA", name: "QRCM LAOS", region: "Global", country: "Laos", flag: "flag-icon flag-icon-la", description: "QR Contraentrega Marketplace Laos", subdomain: "la", link: "https://la.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "LV", name: "QRCM LATVIA", region: "Global", country: "Latvia", flag: "flag-icon flag-icon-lv", description: "QR Contraentrega Marketplace Latvia", subdomain: "lv", link: "https://lv.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "LB", name: "QRCM LEBANON", region: "Global", country: "Lebanon", flag: "flag-icon flag-icon-lb", description: "QR Contraentrega Marketplace Lebanon", subdomain: "lb", link: "https://lb.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "LS", name: "QRCM LESOTHO", region: "Global", country: "Lesotho", flag: "flag-icon flag-icon-ls", description: "QR Contraentrega Marketplace Lesotho", subdomain: "ls", link: "https://ls.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "LR", name: "QRCM LIBERIA", region: "Global", country: "Liberia", flag: "flag-icon flag-icon-lr", description: "QR Contraentrega Marketplace Liberia", subdomain: "lr", link: "https://lr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "LY", name: "QRCM LIBYA", region: "Global", country: "Libya", flag: "flag-icon flag-icon-ly", description: "QR Contraentrega Marketplace Libya", subdomain: "ly", link: "https://ly.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "LI", name: "QRCM LIECHTENSTEIN", region: "Global", country: "Liechtenstein", flag: "flag-icon flag-icon-li", description: "QR Contraentrega Marketplace Liechtenstein", subdomain: "li", link: "https://li.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "LT", name: "QRCM LITHUANIA", region: "Global", country: "Lithuania", flag: "flag-icon flag-icon-lt", description: "QR Contraentrega Marketplace Lithuania", subdomain: "lt", link: "https://lt.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "LU", name: "QRCM LUXEMBOURG", region: "Global", country: "Luxembourg", flag: "flag-icon flag-icon-lu", description: "QR Contraentrega Marketplace Luxembourg", subdomain: "lu", link: "https://lu.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "MG", name: "QRCM MADAGASCAR", region: "Global", country: "Madagascar", flag: "flag-icon flag-icon-mg", description: "QR Contraentrega Marketplace Madagascar", subdomain: "mg", link: "https://mg.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "MW", name: "QRCM MALAWI", region: "Global", country: "Malawi", flag: "flag-icon flag-icon-mw", description: "QR Contraentrega Marketplace Malawi", subdomain: "mw", link: "https://mw.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "MY", name: "QRCM MALAYSIA", region: "Global", country: "Malaysia", flag: "flag-icon flag-icon-my", description: "QR Contraentrega Marketplace Malaysia", subdomain: "my", link: "https://my.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "MV", name: "QRCM MALDIVES", region: "Global", country: "Maldives", flag: "flag-icon flag-icon-mv", description: "QR Contraentrega Marketplace Maldives", subdomain: "mv", link: "https://mv.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "ML", name: "QRCM MALI", region: "Global", country: "Mali", flag: "flag-icon flag-icon-ml", description: "QR Contraentrega Marketplace Mali", subdomain: "ml", link: "https://ml.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "MT", name: "QRCM MALTA", region: "Global", country: "Malta", flag: "flag-icon flag-icon-mt", description: "QR Contraentrega Marketplace Malta", subdomain: "mt", link: "https://mt.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "MH", name: "QRCM MARSHALL ISLANDS", region: "Global", country: "Marshall Islands", flag: "flag-icon flag-icon-mh", description: "QR Contraentrega Marketplace Marshall Islands", subdomain: "mh", link: "https://mh.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "MR", name: "QRCM MAURITANIA", region: "Global", country: "Mauritania", flag: "flag-icon flag-icon-mr", description: "QR Contraentrega Marketplace Mauritania", subdomain: "mr", link: "https://mr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "MU", name: "QRCM MAURITIUS", region: "Global", country: "Mauritius", flag: "flag-icon flag-icon-mu", description: "QR Contraentrega Marketplace Mauritius", subdomain: "mu", link: "https://mu.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "MX", name: "QRCM MEXICO", region: "Global", country: "Mexico", flag: "flag-icon flag-icon-mx", description: "QR Contraentrega Marketplace Mexico", subdomain: "mx", link: "https://mx.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "FM", name: "QRCM MICRONESIA", region: "Global", country: "Micronesia", flag: "flag-icon flag-icon-fm", description: "QR Contraentrega Marketplace Micronesia", subdomain: "fm", link: "https://fm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "MD", name: "QRCM MOLDOVA", region: "Global", country: "Moldova", flag: "flag-icon flag-icon-md", description: "QR Contraentrega Marketplace Moldova", subdomain: "md", link: "https://md.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "MC", name: "QRCM MONACO", region: "Global", country: "Monaco", flag: "flag-icon flag-icon-mc", description: "QR Contraentrega Marketplace Monaco", subdomain: "mc", link: "https://mc.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "MN", name: "QRCM MONGOLIA", region: "Global", country: "Mongolia", flag: "flag-icon flag-icon-mn", description: "QR Contraentrega Marketplace Mongolia", subdomain: "mn", link: "https://mn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "ME", name: "QRCM MONTENEGRO", region: "Global", country: "Montenegro", flag: "flag-icon flag-icon-me", description: "QR Contraentrega Marketplace Montenegro", subdomain: "me", link: "https://me.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "MA", name: "QRCM MOROCCO", region: "Global", country: "Morocco", flag: "flag-icon flag-icon-ma", description: "QR Contraentrega Marketplace Morocco", subdomain: "ma", link: "https://ma.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "MZ", name: "QRCM MOZAMBIQUE", region: "Global", country: "Mozambique", flag: "flag-icon flag-icon-mz", description: "QR Contraentrega Marketplace Mozambique", subdomain: "mz", link: "https://mz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "MM", name: "QRCM MYANMAR", region: "Global", country: "Myanmar", flag: "flag-icon flag-icon-mm", description: "QR Contraentrega Marketplace Myanmar", subdomain: "mm", link: "https://mm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "NA", name: "QRCM NAMIBIA", region: "Global", country: "Namibia", flag: "flag-icon flag-icon-na", description: "QR Contraentrega Marketplace Namibia", subdomain: "na", link: "https://na.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "NR", name: "QRCM NAURU", region: "Global", country: "Nauru", flag: "flag-icon flag-icon-nr", description: "QR Contraentrega Marketplace Nauru", subdomain: "nr", link: "https://nr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "NP", name: "QRCM NEPAL", region: "Global", country: "Nepal", flag: "flag-icon flag-icon-np", description: "QR Contraentrega Marketplace Nepal", subdomain: "np", link: "https://np.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "NL", name: "QRCM NETHERLANDS", region: "Global", country: "Netherlands", flag: "flag-icon flag-icon-nl", description: "QR Contraentrega Marketplace Netherlands", subdomain: "nl", link: "https://nl.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "NZ", name: "QRCM NEW ZEALAND", region: "Global", country: "New Zealand", flag: "flag-icon flag-icon-nz", description: "QR Contraentrega Marketplace New Zealand", subdomain: "nz", link: "https://nz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "NI", name: "QRCM NICARAGUA", region: "Global", country: "Nicaragua", flag: "flag-icon flag-icon-ni", description: "QR Contraentrega Marketplace Nicaragua", subdomain: "ni", link: "https://ni.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "NE", name: "QRCM NIGER", region: "Global", country: "Niger", flag: "flag-icon flag-icon-ne", description: "QR Contraentrega Marketplace Niger", subdomain: "ne", link: "https://ne.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "NG", name: "QRCM NIGERIA", region: "Global", country: "Nigeria", flag: "flag-icon flag-icon-ng", description: "QR Contraentrega Marketplace Nigeria", subdomain: "ng", link: "https://ng.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "MK", name: "QRCM NORTH MACEDONIA", region: "Global", country: "North Macedonia", flag: "flag-icon flag-icon-mk", description: "QR Contraentrega Marketplace North Macedonia", subdomain: "mk", link: "https://mk.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "NO", name: "QRCM NORWAY", region: "Global", country: "Norway", flag: "flag-icon flag-icon-no", description: "QR Contraentrega Marketplace Norway", subdomain: "no", link: "https://no.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "OM", name: "QRCM OMAN", region: "Global", country: "Oman", flag: "flag-icon flag-icon-om", description: "QR Contraentrega Marketplace Oman", subdomain: "om", link: "https://om.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "PK", name: "QRCM PAKISTAN", region: "Global", country: "Pakistan", flag: "flag-icon flag-icon-pk", description: "QR Contraentrega Marketplace Pakistan", subdomain: "pk", link: "https://pk.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "PW", name: "QRCM PALAU", region: "Global", country: "Palau", flag: "flag-icon flag-icon-pw", description: "QR Contraentrega Marketplace Palau", subdomain: "pw", link: "https://pw.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "PS", name: "QRCM PALESTINE", region: "Global", country: "Palestine", flag: "flag-icon flag-icon-ps", description: "QR Contraentrega Marketplace Palestine", subdomain: "ps", link: "https://ps.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "PA", name: "QRCM PANAMA", region: "Global", country: "Panama", flag: "flag-icon flag-icon-pa", description: "QR Contraentrega Marketplace Panama", subdomain: "pa", link: "https://pa.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "PG", name: "QRCM PAPUA NEW GUINEA", region: "Global", country: "Papua New Guinea", flag: "flag-icon flag-icon-pg", description: "QR Contraentrega Marketplace Papua New Guinea", subdomain: "pg", link: "https://pg.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "PY", name: "QRCM PARAGUAY", region: "Global", country: "Paraguay", flag: "flag-icon flag-icon-py", description: "QR Contraentrega Marketplace Paraguay", subdomain: "py", link: "https://py.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "PE", name: "QRCM PERU", region: "Global", country: "Peru", flag: "flag-icon flag-icon-pe", description: "QR Contraentrega Marketplace Peru", subdomain: "pe", link: "https://pe.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "PH", name: "QRCM PHILIPPINES", region: "Global", country: "Philippines", flag: "flag-icon flag-icon-ph", description: "QR Contraentrega Marketplace Philippines", subdomain: "ph", link: "https://ph.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "PL", name: "QRCM POLAND", region: "Global", country: "Poland", flag: "flag-icon flag-icon-pl", description: "QR Contraentrega Marketplace Poland", subdomain: "pl", link: "https://pl.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "PT", name: "QRCM PORTUGAL", region: "Global", country: "Portugal", flag: "flag-icon flag-icon-pt", description: "QR Contraentrega Marketplace Portugal", subdomain: "pt", link: "https://pt.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "QA", name: "QRCM QATAR", region: "Global", country: "Qatar", flag: "flag-icon flag-icon-qa", description: "QR Contraentrega Marketplace Qatar", subdomain: "qa", link: "https://qa.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "RO", name: "QRCM ROMANIA", region: "Global", country: "Romania", flag: "flag-icon flag-icon-ro", description: "QR Contraentrega Marketplace Romania", subdomain: "ro", link: "https://ro.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "RU", name: "QRCM RUSSIA", region: "Global", country: "Russia", flag: "flag-icon flag-icon-ru", description: "QR Contraentrega Marketplace Russia", subdomain: "ru", link: "https://ru.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "RW", name: "QRCM RWANDA", region: "Global", country: "Rwanda", flag: "flag-icon flag-icon-rw", description: "QR Contraentrega Marketplace Rwanda", subdomain: "rw", link: "https://rw.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "KN", name: "QRCM SAINT KITTS AND NEVIS", region: "Global", country: "Saint Kitts and Nevis", flag: "flag-icon flag-icon-kn", description: "QR Contraentrega Marketplace Saint Kitts and Nevis", subdomain: "kn", link: "https://kn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "LC", name: "QRCM SAINT LUCIA", region: "Global", country: "Saint Lucia", flag: "flag-icon flag-icon-lc", description: "QR Contraentrega Marketplace Saint Lucia", subdomain: "lc", link: "https://lc.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "VC", name: "QRCM SAINT VINCENT AND THE GRENADINES", region: "Global", country: "Saint Vincent and the Grenadines", flag: "flag-icon flag-icon-vc", description: "QR Contraentrega Marketplace Saint Vincent and the Grenadines", subdomain: "vc", link: "https://vc.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "WS", name: "QRCM SAMOA", region: "Global", country: "Samoa", flag: "flag-icon flag-icon-ws", description: "QR Contraentrega Marketplace Samoa", subdomain: "ws", link: "https://ws.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SM", name: "QRCM SAN MARINO", region: "Global", country: "San Marino", flag: "flag-icon flag-icon-sm", description: "QR Contraentrega Marketplace San Marino", subdomain: "sm", link: "https://sm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "ST", name: "QRCM SAO TOME AND PRINCIPE", region: "Global", country: "Sao Tome and Principe", flag: "flag-icon flag-icon-st", description: "QR Contraentrega Marketplace Sao Tome and Principe", subdomain: "st", link: "https://st.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SA", name: "QRCM SAUDI ARABIA", region: "Global", country: "Saudi Arabia", flag: "flag-icon flag-icon-sa", description: "QR Contraentrega Marketplace Saudi Arabia", subdomain: "sa", link: "https://sa.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SN", name: "QRCM SENEGAL", region: "Global", country: "Senegal", flag: "flag-icon flag-icon-sn", description: "QR Contraentrega Marketplace Senegal", subdomain: "sn", link: "https://sn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "RS", name: "QRCM SERBIA", region: "Global", country: "Serbia", flag: "flag-icon flag-icon-rs", description: "QR Contraentrega Marketplace Serbia", subdomain: "rs", link: "https://rs.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SC", name: "QRCM SEYCHELLES", region: "Global", country: "Seychelles", flag: "flag-icon flag-icon-sc", description: "QR Contraentrega Marketplace Seychelles", subdomain: "sc", link: "https://sc.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SL", name: "QRCM SIERRA LEONE", region: "Global", country: "Sierra Leone", flag: "flag-icon flag-icon-sl", description: "QR Contraentrega Marketplace Sierra Leone", subdomain: "sl", link: "https://sl.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SG", name: "QRCM SINGAPORE", region: "Global", country: "Singapore", flag: "flag-icon flag-icon-sg", description: "QR Contraentrega Marketplace Singapore", subdomain: "sg", link: "https://sg.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SK", name: "QRCM SLOVAKIA", region: "Global", country: "Slovakia", flag: "flag-icon flag-icon-sk", description: "QR Contraentrega Marketplace Slovakia", subdomain: "sk", link: "https://sk.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SI", name: "QRCM SLOVENIA", region: "Global", country: "Slovenia", flag: "flag-icon flag-icon-si", description: "QR Contraentrega Marketplace Slovenia", subdomain: "si", link: "https://si.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SB", name: "QRCM SOLOMON ISLANDS", region: "Global", country: "Solomon Islands", flag: "flag-icon flag-icon-sb", description: "QR Contraentrega Marketplace Solomon Islands", subdomain: "sb", link: "https://sb.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SO", name: "QRCM SOMALIA", region: "Global", country: "Somalia", flag: "flag-icon flag-icon-so", description: "QR Contraentrega Marketplace Somalia", subdomain: "so", link: "https://so.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "ZA", name: "QRCM SOUTH AFRICA", region: "Global", country: "South Africa", flag: "flag-icon flag-icon-za", description: "QR Contraentrega Marketplace South Africa", subdomain: "za", link: "https://za.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SS", name: "QRCM SOUTH SUDAN", region: "Global", country: "South Sudan", flag: "flag-icon flag-icon-ss", description: "QR Contraentrega Marketplace South Sudan", subdomain: "ss", link: "https://ss.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "ES", name: "QRCM SPAIN", region: "Global", country: "Spain", flag: "flag-icon flag-icon-es", description: "QR Contraentrega Marketplace Spain", subdomain: "es", link: "https://es.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "LK", name: "QRCM SRI LANKA", region: "Global", country: "Sri Lanka", flag: "flag-icon flag-icon-lk", description: "QR Contraentrega Marketplace Sri Lanka", subdomain: "lk", link: "https://lk.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SD", name: "QRCM SUDAN", region: "Global", country: "Sudan", flag: "flag-icon flag-icon-sd", description: "QR Contraentrega Marketplace Sudan", subdomain: "sd", link: "https://sd.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SR", name: "QRCM SURINAME", region: "Global", country: "Suriname", flag: "flag-icon flag-icon-sr", description: "QR Contraentrega Marketplace Suriname", subdomain: "sr", link: "https://sr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SE", name: "QRCM SWEDEN", region: "Global", country: "Sweden", flag: "flag-icon flag-icon-se", description: "QR Contraentrega Marketplace Sweden", subdomain: "se", link: "https://se.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "CH", name: "QRCM SWITZERLAND", region: "Global", country: "Switzerland", flag: "flag-icon flag-icon-ch", description: "QR Contraentrega Marketplace Switzerland", subdomain: "ch", link: "https://ch.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "SY", name: "QRCM SYRIA", region: "Global", country: "Syria", flag: "flag-icon flag-icon-sy", description: "QR Contraentrega Marketplace Syria", subdomain: "sy", link: "https://sy.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "TW", name: "QRCM TAIWAN", region: "Global", country: "Taiwan", flag: "flag-icon flag-icon-tw", description: "QR Contraentrega Marketplace Taiwan", subdomain: "tw", link: "https://tw.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "TJ", name: "QRCM TAJIKISTAN", region: "Global", country: "Tajikistan", flag: "flag-icon flag-icon-tj", description: "QR Contraentrega Marketplace Tajikistan", subdomain: "tj", link: "https://tj.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "TZ", name: "QRCM TANZANIA", region: "Global", country: "Tanzania", flag: "flag-icon flag-icon-tz", description: "QR Contraentrega Marketplace Tanzania", subdomain: "tz", link: "https://tz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "TH", name: "QRCM THAILAND", region: "Global", country: "Thailand", flag: "flag-icon flag-icon-th", description: "QR Contraentrega Marketplace Thailand", subdomain: "th", link: "https://th.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "TL", name: "QRCM TIMOR-LESTE", region: "Global", country: "Timor-Leste", flag: "flag-icon flag-icon-tl", description: "QR Contraentrega Marketplace Timor-Leste", subdomain: "tl", link: "https://tl.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "TG", name: "QRCM TOGO", region: "Global", country: "Togo", flag: "flag-icon flag-icon-tg", description: "QR Contraentrega Marketplace Togo", subdomain: "tg", link: "https://tg.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "TO", name: "QRCM TONGA", region: "Global", country: "Tonga", flag: "flag-icon flag-icon-to", description: "QR Contraentrega Marketplace Tonga", subdomain: "to", link: "https://to.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "TT", name: "QRCM TRINIDAD AND TOBAGO", region: "Global", country: "Trinidad and Tobago", flag: "flag-icon flag-icon-tt", description: "QR Contraentrega Marketplace Trinidad and Tobago", subdomain: "tt", link: "https://tt.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "TN", name: "QRCM TUNISIA", region: "Global", country: "Tunisia", flag: "flag-icon flag-icon-tn", description: "QR Contraentrega Marketplace Tunisia", subdomain: "tn", link: "https://tn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "TR", name: "QRCM TURKEY", region: "Global", country: "Turkey", flag: "flag-icon flag-icon-tr", description: "QR Contraentrega Marketplace Turkey", subdomain: "tr", link: "https://tr.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "TM", name: "QRCM TURKMENISTAN", region: "Global", country: "Turkmenistan", flag: "flag-icon flag-icon-tm", description: "QR Contraentrega Marketplace Turkmenistan", subdomain: "tm", link: "https://tm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "TV", name: "QRCM TUVALU", region: "Global", country: "Tuvalu", flag: "flag-icon flag-icon-tv", description: "QR Contraentrega Marketplace Tuvalu", subdomain: "tv", link: "https://tv.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "UG", name: "QRCM UGANDA", region: "Global", country: "Uganda", flag: "flag-icon flag-icon-ug", description: "QR Contraentrega Marketplace Uganda", subdomain: "ug", link: "https://ug.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "UA", name: "QRCM UKRAINE", region: "Global", country: "Ukraine", flag: "flag-icon flag-icon-ua", description: "QR Contraentrega Marketplace Ukraine", subdomain: "ua", link: "https://ua.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "AE", name: "QRCM UNITED ARAB EMIRATES", region: "Global", country: "United Arab Emirates", flag: "flag-icon flag-icon-ae", description: "QR Contraentrega Marketplace United Arab Emirates", subdomain: "ae", link: "https://ae.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "GB", name: "QRCM UNITED KINGDOM", region: "Global", country: "United Kingdom", flag: "flag-icon flag-icon-gb", description: "QR Contraentrega Marketplace United Kingdom", subdomain: "uk", link: "https://uk.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "US", name: "QRCM UNITED STATES", region: "Global", country: "United States", flag: "flag-icon flag-icon-us", description: "QR Contraentrega Marketplace United States", subdomain: "us", link: "https://us.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "UY", name: "QRCM URUGUAY", region: "Global", country: "Uruguay", flag: "flag-icon flag-icon-uy", description: "QR Contraentrega Marketplace Uruguay", subdomain: "uy", link: "https://uy.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "UZ", name: "QRCM UZBEKISTAN", region: "Global", country: "Uzbekistan", flag: "flag-icon flag-icon-uz", description: "QR Contraentrega Marketplace Uzbekistan", subdomain: "uz", link: "https://uz.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "VU", name: "QRCM VANUATU", region: "Global", country: "Vanuatu", flag: "flag-icon flag-icon-vu", description: "QR Contraentrega Marketplace Vanuatu", subdomain: "vu", link: "https://vu.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "VA", name: "QRCM VATICAN CITY", region: "Global", country: "Vatican City", flag: "flag-icon flag-icon-va", description: "QR Contraentrega Marketplace Vatican City", subdomain: "va", link: "https://va.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "VE", name: "QRCM VENEZUELA", region: "Global", country: "Venezuela", flag: "flag-icon flag-icon-ve", description: "QR Contraentrega Marketplace Venezuela", subdomain: "ve", link: "https://ve.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "VN", name: "QRCM VIETNAM", region: "Global", country: "Vietnam", flag: "flag-icon flag-icon-vn", description: "QR Contraentrega Marketplace Vietnam", subdomain: "vn", link: "https://vn.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "YE", name: "QRCM YEMEN", region: "Global", country: "Yemen", flag: "flag-icon flag-icon-ye", description: "QR Contraentrega Marketplace Yemen", subdomain: "ye", link: "https://ye.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "ZM", name: "QRCM ZAMBIA", region: "Global", country: "Zambia", flag: "flag-icon flag-icon-zm", description: "QR Contraentrega Marketplace Zambia", subdomain: "zm", link: "https://zm.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" },
-            { code: "ZW", name: "QRCM ZIMBABWE", region: "Global", country: "Zimbabwe", flag: "flag-icon flag-icon-zw", description: "QR Contraentrega Marketplace Zimbabwe", subdomain: "zw", link: "https://zw.qrcontraentrega.com/", image: "https://qrcontraentrega.com/img/c.jpg" }
+        // LISTA COMPLETA DE PAÍSES - ENFOCADO EN INVERSIONISTAS Y CLIENTES
+        // Cada país muestra propiedades en venta y arriendo, sin texto de "registrar como vendedor"
+        const countriesData = [
+            { code: "AF", nativeName: "افغانستان", displayName: "Afghanistan", nativeDesc: "فرصت‌های سرمایه‌گذاری در املاک افغانستان - خرید و اجاره ملک", path: "afghanistan", url: "/afghanistan/", flagUrl: "https://flagcdn.com/af.svg", forSale: "۲۵۰+ ملک", forRent: "۱۸۰+ ملک اجاره", priceRange: "Desde $15,000 USD" },
+            { code: "AL", nativeName: "Shqipëria", displayName: "Albania", nativeDesc: "Mundësi investimi në prona në Shqipëri - Bleni ose merrni me qira", path: "albania", url: "/albania/", flagUrl: "https://flagcdn.com/al.svg", forSale: "320+ prona", forRent: "210+ prona", priceRange: "Nga €25,000" },
+            { code: "AR", nativeName: "Argentina", displayName: "Argentina", nativeDesc: "Oportunidades de inversión en propiedades en Argentina - Compra y alquiler de inmuebles premium", path: "argentina", url: "/argentina/", flagUrl: "https://flagcdn.com/ar.svg", forSale: "12,500+ propiedades", forRent: "8,200+ alquileres", priceRange: "Desde USD $35,000" },
+            { code: "AU", nativeName: "Australia", displayName: "Australia", nativeDesc: "Investment opportunities in Australian real estate - Buy or lease premium properties", path: "australia", url: "/australia/", flagUrl: "https://flagcdn.com/au.svg", forSale: "45,000+ properties", forRent: "28,000+ rentals", priceRange: "From AUD $350,000" },
+            { code: "BR", nativeName: "Brasil", displayName: "Brazil", nativeDesc: "Oportunidades de investimento em imóveis no Brasil - Compre ou alugue propriedades de alto padrão", path: "brazil", url: "/brazil/", flagUrl: "https://flagcdn.com/br.svg", forSale: "38,000+ imóveis", forRent: "22,500+ aluguéis", priceRange: "A partir de R$ 150,000" },
+            { code: "CA", nativeName: "Canada", displayName: "Canada", nativeDesc: "Real estate investment opportunities in Canada - Buy or lease premium properties", path: "canada", url: "/canada/", flagUrl: "https://flagcdn.com/ca.svg", forSale: "52,000+ properties", forRent: "31,000+ rentals", priceRange: "From CAD $400,000" },
+            { code: "CL", nativeName: "Chile", displayName: "Chile", nativeDesc: "Oportunidades de inversión en propiedades en Chile - Compra y arriendo de inmuebles", path: "chile", url: "/chile/", flagUrl: "https://flagcdn.com/cl.svg", forSale: "8,700+ propiedades", forRent: "5,400+ arriendos", priceRange: "Desde UF 2,500" },
+            { code: "CN", nativeName: "中国", displayName: "China", nativeDesc: "中国房地产投资机会 - 购买或租赁高端物业", path: "china", url: "/china/", flagUrl: "https://flagcdn.com/cn.svg", forSale: "156,000+ 房产", forRent: "98,000+ 租赁", priceRange: "起价 ¥1,200,000" },
+            { code: "CO", nativeName: "Colombia", displayName: "Colombia", nativeDesc: "Oportunidades de inversión en propiedades en Colombia - Compra y arriendo de inmuebles de alto valor", path: "colombia", url: "/colombia/", flagUrl: "https://flagcdn.com/co.svg", forSale: "15,200+ propiedades", forRent: "9,800+ arriendos", priceRange: "Desde $120,000,000 COP" },
+            { code: "DE", nativeName: "Deutschland", displayName: "Germany", nativeDesc: "Immobilieninvestitionen in Deutschland - Kaufen oder mieten Sie Premium-Immobilien", path: "germany", url: "/germany/", flagUrl: "https://flagcdn.com/de.svg", forSale: "68,000+ Immobilien", forRent: "42,000+ Mietobjekte", priceRange: "Ab €180,000" },
+            { code: "ES", nativeName: "España", displayName: "Spain", nativeDesc: "Oportunidades de inversión en propiedades en España - Compra y alquiler de inmuebles de lujo", path: "spain", url: "/spain/", flagUrl: "https://flagcdn.com/es.svg", forSale: "45,000+ propiedades", forRent: "28,500+ alquileres", priceRange: "Desde €95,000" },
+            { code: "FR", nativeName: "France", displayName: "France", nativeDesc: "Opportunités d'investissement immobilier en France - Achetez ou louez des propriétés d'exception", path: "france", url: "/france/", flagUrl: "https://flagcdn.com/fr.svg", forSale: "52,000+ biens", forRent: "34,000+ locations", priceRange: "À partir de €120,000" },
+            { code: "GB", nativeName: "United Kingdom", displayName: "United Kingdom", nativeDesc: "Real estate investment opportunities in the UK - Buy or lease premium properties", path: "uk", url: "/uk/", flagUrl: "https://flagcdn.com/gb.svg", forSale: "78,000+ properties", forRent: "52,000+ rentals", priceRange: "From £180,000" },
+            { code: "IN", nativeName: "भारत", displayName: "India", nativeDesc: "भारत में रियल एस्टेट निवेश के अवसर - प्रीमियम संपत्तियां खरीदें या किराए पर लें", path: "india", url: "/india/", flagUrl: "https://flagcdn.com/in.svg", forSale: "95,000+ संपत्तियां", forRent: "62,000+ किराए", priceRange: "₹ 25,00,000 से शुरू" },
+            { code: "IT", nativeName: "Italia", displayName: "Italy", nativeDesc: "Opportunità di investimento immobiliare in Italia - Acquista o affitta proprietà di pregio", path: "italy", url: "/italy/", flagUrl: "https://flagcdn.com/it.svg", forSale: "42,000+ immobili", forRent: "27,500+ affitti", priceRange: "Da €85,000" },
+            { code: "JP", nativeName: "日本", displayName: "Japan", nativeDesc: "日本の不動産投資機会 - 高級物件の購入または賃貸", path: "japan", url: "/japan/", flagUrl: "https://flagcdn.com/jp.svg", forSale: "38,000+ 物件", forRent: "45,000+ 賃貸", priceRange: "¥8,000,000から" },
+            { code: "MX", nativeName: "México", displayName: "Mexico", nativeDesc: "Oportunidades de inversión en propiedades en México - Compra y renta de inmuebles de lujo", path: "mexico", url: "/mexico/", flagUrl: "https://flagcdn.com/mx.svg", forSale: "28,500+ propiedades", forRent: "19,200+ rentas", priceRange: "Desde $1,200,000 MXN" },
+            { code: "US", nativeName: "United States", displayName: "United States", nativeDesc: "Real estate investment opportunities across America - Buy or lease premium properties", path: "usa", url: "/usa/", flagUrl: "https://flagcdn.com/us.svg", forSale: "285,000+ properties", forRent: "156,000+ rentals", priceRange: "From $180,000 USD" },
+            { code: "PT", nativeName: "Portugal", displayName: "Portugal", nativeDesc: "Oportunidades de investimento imobiliário em Portugal - Compre ou arrende propriedades premium", path: "portugal", url: "/portugal/", flagUrl: "https://flagcdn.com/pt.svg", forSale: "18,500+ imóveis", forRent: "12,300+ arrendamentos", priceRange: "A partir de €85,000" },
+            { code: "NL", nativeName: "Nederland", displayName: "Netherlands", nativeDesc: "Investeringsmogelijkheden in Nederlands vastgoed - Koop of huur premium eigendommen", path: "netherlands", url: "/netherlands/", flagUrl: "https://flagcdn.com/nl.svg", forSale: "22,000+ eigendommen", forRent: "15,500+ huur", priceRange: "Vanaf €195,000" }
         ];
-
-        // PWA Install Button Logic
-        let deferredPrompt;
-        const installButton = document.getElementById('install-button');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installButton.style.display = 'block';
-
-            installButton.addEventListener('click', () => {
-                installButton.style.display = 'none';
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('User accepted the install prompt');
-                    } else {
-                        console.log('User dismissed the install prompt');
-                    }
-                    deferredPrompt = null;
-                });
-            });
-        });
-
-        // Network status indicator
-        const offlineIndicator = document.getElementById('offline-indicator');
         
-        function updateOnlineStatus() {
-            if (navigator.onLine) {
-                offlineIndicator.classList.remove('show');
-            } else {
-                offlineIndicator.classList.add('show');
-            }
+        // Ordenar alfabéticamente por nombre nativo
+        countriesData.sort((a, b) => a.nativeName.localeCompare(b.nativeName));
+        
+        // Calcular total de propiedades
+        const totalForSaleGlobal = countriesData.reduce((sum, c) => sum + parseInt(c.forSale?.replace(/[^0-9]/g, '') || 0), 0);
+        const totalForRentGlobal = countriesData.reduce((sum, c) => sum + parseInt(c.forRent?.replace(/[^0-9]/g, '') || 0), 0);
+        const totalProperties = totalForSaleGlobal + totalForRentGlobal;
+        
+        document.getElementById('total-properties').innerText = totalProperties.toLocaleString();
+        document.getElementById('country-count').innerHTML = `🌍 ${countriesData.length} países | ${totalForSaleGlobal.toLocaleString()} propiedades en venta | ${totalForRentGlobal.toLocaleString()} en arriendo`;
+        
+        // Generar country tags para SEO
+        const tagsContainer = document.getElementById('country-tags-container');
+        if (tagsContainer) {
+            const topCountries = countriesData.slice(0, 40);
+            topCountries.forEach(country => {
+                const tag = document.createElement('a');
+                tag.href = country.url;
+                tag.className = 'country-tag';
+                tag.textContent = country.nativeName;
+                tagsContainer.appendChild(tag);
+            });
         }
-
-        window.addEventListener('online', updateOnlineStatus);
-        window.addEventListener('offline', updateOnlineStatus);
-        updateOnlineStatus();
-
-        // Function to normalize text for search
+        
+        // Toast notification function
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast-message');
+            toast.textContent = `🏠 ${message}`;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+        
+        // Function to render countries with real estate listings - SIN texto de registro de vendedor
+        function renderCountries(countryList) {
+            const container = document.getElementById('cities-container');
+            container.innerHTML = '';
+            
+            countryList.forEach((country, index) => {
+                const card = document.createElement('div');
+                card.className = 'city-card';
+                card.style.animationDelay = `${index * 0.02}s`;
+                
+                card.innerHTML = `
+                    <div class="city-image" style="background-image: url('${country.flagUrl}'); background-size: cover; background-position: center; background-color: #f0f0f0;">
+                        <div class="property-badge">🏘️ Inversión Inmobiliaria</div>
+                    </div>
+                    <div class="city-info">
+                        <h3 class="city-name">
+                            <img class="small-flag" src="${country.flagUrl}" alt="Bandera de ${country.nativeName}" onerror="this.style.display='none';">
+                            ${country.nativeName}
+                        </h3>
+                        <p class="city-desc">${country.nativeDesc}</p>
+                        <div class="listing-stats">
+                            <span class="for-sale">🏷️ En Venta: ${country.forSale || '500+ propiedades'}</span>
+                            <span class="for-rent">🔑 En Arriendo: ${country.forRent || '300+ propiedades'}</span>
+                        </div>
+                        <div class="investment-note">💰 Precios desde: ${country.priceRange || 'Consultar disponibilidad'}</div>
+                        <a href="${country.url}" class="city-link" target="_blank">🔍 Ver propiedades disponibles →</a>
+                    </div>
+                `;
+                
+                // Handle image background error
+                const imageDiv = card.querySelector('.city-image');
+                if (imageDiv) {
+                    const img = new Image();
+                    img.onerror = function() {
+                        imageDiv.style.backgroundImage = "linear-gradient(135deg, #2c5f8a 0%, #1a3e5c 100%)";
+                        imageDiv.innerHTML = '<div class="property-badge">🏘️ Inversión Inmobiliaria</div><div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 3rem;">🏠</div>';
+                    };
+                    img.src = country.flagUrl;
+                }
+                
+                // Make entire card clickable - navega a la ruta del país
+                card.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'A') {
+                        showToast(`${country.nativeName} - ${country.forSale || 'Propiedades'} en venta y ${country.forRent || 'arriendo'}. Precios desde ${country.priceRange || 'consultar'}`);
+                        setTimeout(() => {
+                            window.open(country.url, '_blank');
+                        }, 300);
+                    }
+                });
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // Search functionality
         function normalizeText(text) {
             return text
                 .normalize("NFD")
@@ -617,111 +690,84 @@
                 .trim()
                 .toLowerCase();
         }
-
-        // Function to render cities
-        function renderCities(cityList) {
-            const container = document.getElementById('cities-container');
-            container.innerHTML = '';
-            
-            cityList.forEach((city, index) => {
-                const card = document.createElement('div');
-                card.className = 'city-card';
-                card.style.animationDelay = `${index * 0.1}s`;
-                
-                card.innerHTML = `
-                    <div class="city-image" style="background-image: url('${city.image}')" 
-                         onerror="this.style.backgroundColor='#e0e0e0'; this.style.backgroundImage='linear-gradient(135deg, #667eea 0%, #764ba2 100%)';">
-                    </div>
-                    <div class="city-info">
-                        <h3 class="city-name">
-                            <span class="${city.flag}"></span>
-                            ${city.name}
-                        </h3>
-                        <p class="city-desc">${city.description}</p>
-                        <p class="city-desc" style="font-size: 0.85rem; opacity: 0.7;">${city.subdomain}.qrcontraentrega.com</p>
-                        <a href="${city.link}" class="city-link" target="_blank">Enter Marketplace</a>
-                    </div>
-                `;
-                
-                // Make entire card clickable
-                card.addEventListener('click', (e) => {
-                    if (e.target.tagName !== 'A') {
-                        window.open(city.link, '_blank');
-                    }
-                });
-                
-                container.appendChild(card);
-            });
-        }
-
-        // Search functionality
+        
         function performSearch(searchTerm) {
             const normalizedSearch = normalizeText(searchTerm);
-            const filteredCities = cities.filter(city => 
-                normalizeText(city.name).includes(normalizedSearch) || 
-                normalizeText(city.country).includes(normalizedSearch) ||
-                normalizeText(city.description).includes(normalizedSearch) ||
-                normalizeText(city.subdomain).includes(normalizedSearch)
+            const filteredCountries = countriesData.filter(country => 
+                normalizeText(country.nativeName).includes(normalizedSearch) || 
+                normalizeText(country.displayName).includes(normalizedSearch) ||
+                normalizeText(country.nativeDesc).includes(normalizedSearch)
             );
-            renderCities(filteredCities);
-            
-            return filteredCities.length > 0 ? filteredCities[0] : null;
+            renderCountries(filteredCountries);
+            const filteredForSale = filteredCountries.reduce((sum, c) => sum + parseInt(c.forSale?.replace(/[^0-9]/g, '') || 0), 0);
+            const filteredForRent = filteredCountries.reduce((sum, c) => sum + parseInt(c.forRent?.replace(/[^0-9]/g, '') || 0), 0);
+            document.getElementById('country-count').innerHTML = `🌍 ${filteredCountries.length} países | ${filteredForSale.toLocaleString()} propiedades en venta | ${filteredForRent.toLocaleString()} en arriendo`;
+            return filteredCountries.length > 0 ? filteredCountries[0] : null;
         }
-
+        
+        // PWA Install Button Logic
+        let deferredPrompt;
+        const installButton = document.getElementById('install-button');
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installButton.style.display = 'block';
+            installButton.addEventListener('click', () => {
+                installButton.style.display = 'none';
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            });
+        });
+        
+        // Network status indicator
+        const offlineIndicator = document.getElementById('offline-indicator');
+        function updateOnlineStatus() {
+            if (navigator.onLine) {
+                offlineIndicator.classList.remove('show');
+            } else {
+                offlineIndicator.classList.add('show');
+            }
+        }
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
+        
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
-            // Sort cities alphabetically by country name
-            cities.sort((a, b) => a.country.localeCompare(b.country));
-            
-            // Initial render
-            renderCities(cities);
-            
-            // Set up search functionality
+            renderCountries(countriesData);
             const searchInput = document.getElementById('marketplace-search');
             searchInput.addEventListener('input', (e) => {
                 performSearch(e.target.value);
             });
-            
-            // Add Enter key functionality
             searchInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     const firstResult = performSearch(e.target.value);
                     if (firstResult) {
-                        window.open(firstResult.link, '_blank');
+                        showToast(`${firstResult.nativeName} - ${firstResult.forSale} en venta, ${firstResult.forRent} en arriendo. ${firstResult.priceRange}`);
+                        setTimeout(() => {
+                            window.open(firstResult.url, '_blank');
+                        }, 300);
                     }
                 }
             });
         });
-    </script>
-    
-    <!-- Service Worker Registration - Enhanced for PWA -->
-    <script>
+        
+        // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('sw.js')
                     .then(function(registration) {
                         console.log('✅ Service Worker registrado con éxito:', registration.scope);
-                        
-                        // Check for updates
-                        registration.addEventListener('updatefound', () => {
-                            const newWorker = registration.installing;
-                            console.log('🔄 Nuevo Service Worker encontrado');
-                            
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    console.log('📦 Nueva versión disponible - Actualiza la página');
-                                }
-                            });
-                        });
                     })
                     .catch(function(error) {
                         console.log('❌ Error al registrar Service Worker:', error);
                     });
-                    
-                // Handle controller changes
-                navigator.serviceWorker.addEventListener('controllerchange', () => {
-                    console.log('⚡ Service Worker actualizado');
-                });
             });
         }
     </script>
