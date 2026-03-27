@@ -1,1804 +1,684 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Marketplace CE - Viajes y Envíos con Conductores en Vivo</title>
-  
-  <style>
-    /* Mismos estilos que antes... */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-
-    :root {
-      --primary: #0066cc;
-      --secondary: #34c759;
-      --warning: #ff9f0a;
-      --danger: #ff3b30;
-      --dark: #1c1c1e;
-      --light: #f2f2f7;
-      --gray: #8e8e93;
-      --border: #c6c6c8;
-      --whatsapp: #25D366;
-    }
-
-    body {
-      height: 100vh;
-      overflow: hidden;
-      background: var(--light);
-    }
-
-    #app {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-
-    #mapa {
-      flex: 1;
-      width: 100%;
-      height: 100%;
-      background: #e5e5e5;
-    }
-
-    /* Header superior */
-    #header {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: white;
-      padding: 12px 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--primary);
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .search-box {
-      flex: 1;
-      background: var(--light);
-      border-radius: 25px;
-      padding: 8px 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid var(--border);
-    }
-
-    .search-box input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      font-size: 15px;
-      outline: none;
-    }
-
-    /* Selector de modo - AHORA CON 3 OPCIONES */
-    #modo-selector {
-      position: absolute;
-      top: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: white;
-      border-radius: 40px;
-      padding: 4px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-      z-index: 1000;
-      display: flex;
-      gap: 4px;
-      width: 420px;
-    }
-
-    .modo-btn {
-      flex: 1;
-      padding: 12px 16px;
-      border: none;
-      border-radius: 36px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      background: transparent;
-      color: var(--gray);
-    }
-
-    .modo-btn.active {
-      background: var(--primary);
-      color: white;
-    }
-
-    .modo-btn.envio.active {
-      background: var(--secondary);
-    }
-
-    .modo-btn.conductor.active {
-      background: var(--warning);
-      color: white;
-    }
-
-    /* Panel de dirección principal */
-    #panel-direccion {
-      position: absolute;
-      bottom: 20px;
-      left: 10px;
-      right: 10px;
-      background: white;
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
-      z-index: 1000;
-      max-width: 400px;
-      margin: 0 auto;
-      transition: all 0.3s;
-      max-height: 60vh;
-      overflow-y: auto;
-    }
-
-    /* Panel para conductores */
-    #panel-conductor {
-      position: absolute;
-      bottom: 20px;
-      left: 10px;
-      right: 10px;
-      background: white;
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
-      z-index: 1000;
-      max-width: 400px;
-      margin: 0 auto;
-      display: none;
-    }
-
-    #panel-conductor.mostrar {
-      display: block;
-    }
-
-    .conductor-status {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin: 20px 0;
-      padding: 15px;
-      background: var(--light);
-      border-radius: 12px;
-    }
-
-    .status-indicator {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: var(--gray);
-    }
-
-    .status-indicator.activo {
-      background: var(--secondary);
-      box-shadow: 0 0 0 3px rgba(52,199,89,0.2);
-    }
-
-    .toggle-switch {
-      position: relative;
-      display: inline-block;
-      width: 60px;
-      height: 34px;
-    }
-
-    .toggle-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      transition: .4s;
-      border-radius: 34px;
-    }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 26px;
-      width: 26px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      transition: .4s;
-      border-radius: 50%;
-    }
-
-    input:checked + .slider {
-      background-color: var(--secondary);
-    }
-
-    input:checked + .slider:before {
-      transform: translateX(26px);
-    }
-
-    .direccion-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      background: var(--light);
-      border-radius: 12px;
-      margin-bottom: 8px;
-      cursor: pointer;
-    }
-
-    .direccion-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-    }
-
-    .origen-icon {
-      background: #e8f0fe;
-      color: var(--primary);
-    }
-
-    .destino-icon {
-      background: #fee8e8;
-      color: var(--danger);
-    }
-
-    .direccion-text {
-      flex: 1;
-      font-size: 14px;
-    }
-
-    .direccion-label {
-      font-size: 11px;
-      color: var(--gray);
-    }
-
-    .telefono-input {
-      margin: 15px 0;
-      padding: 12px;
-      background: var(--light);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .telefono-input input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      font-size: 15px;
-      outline: none;
-    }
-
-    .subtipo-selector {
-      display: flex;
-      gap: 8px;
-      margin: 15px 0;
-    }
-
-    .subtipo-btn {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: white;
-      cursor: pointer;
-      font-size: 13px;
-      transition: all 0.3s;
-    }
-
-    .subtipo-btn.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-
-    .subtipo-btn.envio.active {
-      background: var(--secondary);
-      border-color: var(--secondary);
-    }
-
-    .opciones-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin: 15px 0;
-    }
-
-    .opcion-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 10px;
-      background: var(--light);
-      border-radius: 10px;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: all 0.2s;
-      font-size: 13px;
-    }
-
-    .opcion-item.selected {
-      border-color: var(--primary);
-      background: #e8f0fe;
-    }
-
-    .opcion-item.envio.selected {
-      border-color: var(--secondary);
-      background: #e3f5e9;
-    }
-
-    .precio-panel {
-      background: linear-gradient(135deg, var(--primary), #004999);
-      color: white;
-      padding: 16px;
-      border-radius: 16px;
-      margin: 15px 0;
-    }
-
-    .precio-panel.envio {
-      background: linear-gradient(135deg, var(--secondary), #2a9b47);
-    }
-
-    .precio-row {
-      display: flex;
-      justify-content: space-between;
-      margin: 6px 0;
-      font-size: 13px;
-    }
-
-    .precio-total {
-      font-size: 28px;
-      font-weight: 700;
-      text-align: center;
-      margin: 10px 0;
-    }
-
-    .btn-action {
-      width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: 16px;
-      background: var(--primary);
-      color: white;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .btn-action.envio {
-      background: var(--secondary);
-    }
-
-    .btn-action.warning {
-      background: var(--warning);
-    }
-
-    .btn-action:active {
-      transform: scale(0.98);
-    }
-
-    #panel-conductores {
-      position: absolute;
-      top: 140px;
-      right: 10px;
-      background: white;
-      border-radius: 16px;
-      padding: 15px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-      z-index: 900;
-      max-width: 260px;
-      display: none;
-    }
-
-    #panel-conductores.mostrar {
-      display: block;
-    }
-
-    .conductor-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-    }
-
-    .conductor-item:hover {
-      background: var(--light);
-    }
-
-    .conductor-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--warning);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-    }
-
-    .conductor-info {
-      flex: 1;
-    }
-
-    .conductor-nombre {
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .conductor-distancia {
-      font-size: 12px;
-      color: var(--gray);
-    }
-
-    .conductor-precio {
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    #sugerencias-lugares {
-      position: absolute;
-      bottom: 400px;
-      left: 10px;
-      right: 10px;
-      max-width: 400px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 20px;
-      padding: 15px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-      z-index: 900;
-      display: none;
-      max-height: 300px;
-      overflow-y: auto;
-    }
-
-    #sugerencias-lugares.mostrar {
-      display: block;
-    }
-
-    .sugerencia-item {
-      padding: 12px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-    }
-
-    #panel-seguimiento {
-      position: absolute;
-      top: 140px;
-      left: 10px;
-      background: white;
-      border-radius: 16px;
-      padding: 15px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-      z-index: 900;
-      max-width: 260px;
-      display: none;
-    }
-
-    #panel-seguimiento.mostrar {
-      display: block;
-    }
-
-    .estado-paso {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 8px 0;
-      font-size: 13px;
-    }
-
-    .estado-circle {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--gray);
-    }
-
-    .estado-circle.completado {
-      background: var(--secondary);
-    }
-
-    .estado-circle.activo {
-      background: var(--primary);
-      box-shadow: 0 0 0 3px rgba(0,102,204,0.2);
-    }
-
-    @media (max-width: 768px) {
-      #modo-selector {
-        width: 360px;
-        top: 70px;
-      }
-      
-      .modo-btn {
-        padding: 8px 10px;
-        font-size: 12px;
-      }
-      
-      #panel-conductores, #panel-seguimiento {
-        top: 130px;
-        left: 10px;
-        right: 10px;
-        max-width: none;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRP2P REAL ESTATE COLOMBIA</title>
+    
+    <!-- PWA Meta Tags for Google -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="QRP2P Real Estate Colombia">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="QRP2P REAL ESTATE COLOMBIA">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="QRP2P Real Estate Colombia - El mercado inmobiliario líder en Colombia. Compra, venta, arriendo y avalúos de propiedades en todas las ciudades del país.">
+    <meta name="keywords" content="bienes raíces Colombia, compra venta inmuebles Colombia, arriendo propiedades Colombia, avalúos, QRP2P Colombia">
+    <meta name="author" content="QRP2P">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://qrp2p.com/colombia/">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
+    <link rel="apple-touch-icon" href="img/icon-192.png">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #ffffff;
+            --secondary: #f5f5f5;
+            --accent: #e0e0e0;
+            --light: #4a4a4a;
+            --text: #000000;
+            --border: #d0d0d0;
+            --real-estate: #2c5f8a;
+            --gold: #c9a03d;
+            --colombia-yellow: #FCD116;
+            --colombia-blue: #003893;
+            --colombia-red: #CE1126;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Libre Baskerville', 'Source Serif Pro', Georgia, serif;
+        }
+        
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        #install-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--real-estate);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: none;
+        }
+        
+        #install-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            background: var(--gold);
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--colombia-yellow) 0%, var(--colombia-blue) 50%, var(--colombia-red) 100%);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            letter-spacing: 4px;
+            color: white;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .tagline {
+            font-size: 1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            color: white;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        
+        .colombia-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.25rem 1rem;
+            border-radius: 50px;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        
+        .featured-colombia {
+            background: linear-gradient(135deg, #FCD11615 0%, #00389315 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        
+        .featured-colombia h2 {
+            color: var(--real-estate);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+        
+        .featured-colombia p {
+            max-width: 800px;
+            margin: 0 auto 1rem auto;
+        }
+        
+        .colombia-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0;
+        }
+        
+        .colombia-stats div {
+            background: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-weight: bold;
+        }
+        
+        .search-container {
+            margin: 2rem auto;
+            max-width: 600px;
+            position: relative;
+        }
+        
+        #marketplace-search {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: var(--primary);
+            color: var(--text);
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        #marketplace-search:focus {
+            outline: none;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            border-color: var(--real-estate);
+        }
+        
+        #marketplace-search::placeholder {
+            color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .cities-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+            padding-bottom: 1rem;
+        }
+        
+        .city-card {
+            background: var(--primary);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            border: 1px solid var(--border);
+        }
+        
+        .city-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            border-color: var(--gold);
+        }
+        
+        .city-image {
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .city-info {
+            padding: 1.5rem;
+        }
+        
+        .city-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            flex-wrap: wrap;
+        }
+        
+        .city-desc {
+            opacity: 0.8;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .city-link {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background: var(--real-estate);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            margin-top: 0.5rem;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .city-link:hover {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #ff4444;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 0.9rem;
+            z-index: 2000;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .offline-indicator.show {
+            transform: translateY(0);
+        }
+        
+        footer {
+            background: var(--secondary);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--text);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+        
+        .copyright {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        .city-count {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .seo-content {
+            max-width: 1400px;
+            margin: 3rem auto;
+            padding: 2rem 1.5rem;
+            background: var(--secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        .seo-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--real-estate);
+        }
+        
+        .seo-content h3 {
+            font-size: 1.2rem;
+            margin: 1.5rem 0 0.5rem;
+        }
+        
+        .seo-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .city-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .city-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--primary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        
+        .city-tag:hover {
+            background: var(--real-estate);
+            color: white;
+            border-color: var(--real-estate);
+        }
+        
+        .toast-message {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 1rem;
+            z-index: 3000;
+            transition: transform 0.3s ease;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        
+        .toast-message.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        @media (max-width: 768px) {
+            .logo { font-size: 2rem; }
+            .tagline { font-size: 0.85rem; }
+            .cities-grid { 
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 1rem;
+            }
+            .city-image { height: 120px; }
+            .city-info { padding: 1rem; }
+            .city-name { font-size: 1rem; }
+            #install-button { bottom: 10px; right: 10px; padding: 8px 16px; font-size: 0.9rem; }
+            .toast-message { font-size: 0.85rem; padding: 8px 16px; white-space: nowrap; }
+            .colombia-stats div { font-size: 0.75rem; padding: 0.4rem 0.8rem; }
+        }
+        
+        @media (max-width: 480px) {
+            .logo { font-size: 1.8rem; }
+            .cities-grid { 
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .footer-links { flex-direction: column; gap: 1rem; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .city-card {
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+    </style>
 </head>
 <body>
-  <div id="app">
-    <div id="mapa"></div>
-    
-    <!-- Header -->
-    <div id="header">
-      <div class="logo" id="logo">Marketplace CE</div>
-      <div class="search-box">
-        <span>🔍</span>
-        <input type="text" id="buscador" placeholder="Buscar lugar...">
-      </div>
+    <div class="offline-indicator" id="offline-indicator">
+        You are offline - Showing cached content
     </div>
     
-    <!-- Selector modo - AHORA CON 3 OPCIONES -->
-    <div id="modo-selector">
-      <button class="modo-btn active" id="modo-viaje">🚗 VIAJE</button>
-      <button class="modo-btn" id="modo-envio">📦 ENVÍO</button>
-      <button class="modo-btn" id="modo-conductor">🚚 SOY CONDUCTOR</button>
-    </div>
+    <button id="install-button" style="display: none;">
+        Instalar App
+    </button>
     
-    <!-- Panel para VIAJES / ENVÍOS (usuarios normales) -->
-    <div id="panel-direccion">
-      <div class="direccion-item" id="origen-item">
-        <div class="direccion-icon origen-icon">📍</div>
-        <div class="direccion-text">
-          <div class="direccion-label">MI UBICACIÓN</div>
-          <div id="origen-texto">Usar ubicación actual</div>
-        </div>
-      </div>
-      
-      <div class="direccion-item" id="destino-item">
-        <div class="direccion-icon destino-icon">🏁</div>
-        <div class="direccion-text">
-          <div class="direccion-label">DESTINO</div>
-          <div id="destino-texto">¿A dónde vas?</div>
-        </div>
-      </div>
-      
-      <!-- Teléfono (único dato necesario) -->
-      <div class="telefono-input">
-        <span>📱</span>
-        <input type="tel" id="telefono" placeholder="Tu número de teléfono" value="+57">
-      </div>
-      
-      <div class="subtipo-selector" id="subtipo-container"></div>
-      
-      <div class="opciones-grid" id="opciones-container"></div>
-      
-      <div class="precio-panel" id="precio-panel">
-        <div class="precio-row">
-          <span>Distancia:</span>
-          <span id="distancia">-- km</span>
-        </div>
-        <div class="precio-row">
-          <span>Tiempo:</span>
-          <span id="tiempo">-- min</span>
-        </div>
-        <div class="precio-row" id="detalle-peso" style="display:none;">
-          <span>Peso:</span>
-          <span id="peso">0 kg</span>
-        </div>
-        <div class="precio-total" id="precio-total">$0.00</div>
-      </div>
-      
-      <button class="btn-action" id="btn-action">SOLICITAR</button>
-    </div>
+    <div class="toast-message" id="toast-message"></div>
     
-    <!-- Panel para CONDUCTORES -->
-    <div id="panel-conductor">
-      <h3 style="margin-bottom:15px;">🚚 Modo Conductor</h3>
-      
-      <div class="telefono-input">
-        <span>📱</span>
-        <input type="tel" id="telefono-conductor" placeholder="Tu número de teléfono" value="+57">
-      </div>
-      
-      <div class="conductor-status">
-        <div>
-          <div style="font-weight:600;margin-bottom:5px;">Estado:</div>
-          <div style="display:flex;align-items:center;gap:10px;">
-            <div class="status-indicator" id="status-indicator"></div>
-            <span id="status-text">Desconectado</span>
-          </div>
-        </div>
-        <label class="toggle-switch">
-          <input type="checkbox" id="toggle-disponible">
-          <span class="slider"></span>
-        </label>
-      </div>
-      
-      <div style="background:var(--light);padding:15px;border-radius:12px;margin:15px 0;">
-        <p style="margin-bottom:8px;"><strong>Vehículo:</strong> <span id="vehiculo-info"></span></p>
-        <p><strong>Ganancias hoy:</strong> <span id="ganancias-hoy">$0</span></p>
-      </div>
-      
-      <div id="solicitudes-pendientes" style="margin:15px 0;">
-        <h4 style="margin-bottom:10px;">📋 Solicitudes pendientes</h4>
-        <div id="lista-solicitudes"></div>
-      </div>
-      
-      <button class="btn-action warning" id="btn-actualizar-ubicacion">📍 Actualizar mi ubicación</button>
-    </div>
+    <header>
+        <div class="logo">QRP2P</div>
+        <div class="tagline">REAL ESTATE MARKETPLACE - COLOMBIA</div>
+        <div class="colombia-badge">Compra, venta, arriendo y avalúos de inmuebles</div>
+    </header>
     
-    <!-- Panel de conductores disponibles (para usuarios) -->
-    <div id="panel-conductores">
-      <h4 style="margin-bottom:10px;">🚚 Conductores cerca</h4>
-      <div id="lista-conductores"></div>
-    </div>
-    
-    <!-- Sugerencias Google Places -->
-    <div id="sugerencias-lugares"></div>
-    
-    <!-- Panel seguimiento -->
-    <div id="panel-seguimiento"></div>
-  </div>
-
-  <!-- API Google Maps -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPziXU02y9bKbL-7XkzbaIpOFp_N8nXBM&libraries=places,geometry&callback=inicializarMapa" async defer></script>
-
-  <script>
-    // ============================================
-    // CONFIGURACIÓN EDITABLE POR EL ADMIN (TÚ)
-    // ============================================
-    
-    const CONFIG = {
-      // Tarifas por país
-      paises: {
-        co: { // Colombia
-          moneda: 'COP',
-          simbolo: '$',
-          viaje: {
-            base: 5000,
-            porKm: 1500,
-            extraPersona: 2000,
-            extraMascota: 3000,
-            ciudadCiudad: 1.2
-          },
-          envio: {
-            base: 4000,
-            porKm: 1200,
-            porKg: 500,
-            paqueteGrande: 5000
-          }
-        },
-        mx: { // México
-          moneda: 'MXN',
-          simbolo: '$',
-          viaje: {
-            base: 60,
-            porKm: 15,
-            extraPersona: 20,
-            extraMascota: 30,
-            ciudadCiudad: 1.2
-          },
-          envio: {
-            base: 50,
-            porKm: 12,
-            porKg: 5,
-            paqueteGrande: 50
-          }
-        },
-        us: { // Estados Unidos
-          moneda: 'USD',
-          simbolo: '$',
-          viaje: {
-            base: 8,
-            porKm: 2,
-            extraPersona: 3,
-            extraMascota: 5,
-            ciudadCiudad: 1.3
-          },
-          envio: {
-            base: 7,
-            porKm: 1.8,
-            porKg: 0.8,
-            paqueteGrande: 8
-          }
-        }
-      },
-      
-      // Conductores BASE (se cargan inicialmente)
-      conductoresBase: [
-        {
-          id: 'conductor_1',
-          nombre: 'Carlos Rodríguez',
-          telefono: '+57 300 123 4567',
-          vehiculo: '🚗 Chevrolet Spark',
-          placa: 'ABC-123',
-          calificacion: 4.8,
-          foto: 'https://randomuser.me/api/portraits/men/1.jpg'
-        },
-        {
-          id: 'conductor_2',
-          nombre: 'María González',
-          telefono: '+57 310 987 6543',
-          vehiculo: '🚙 Renault Duster',
-          placa: 'XYZ-789',
-          calificacion: 4.9,
-          foto: 'https://randomuser.me/api/portraits/women/1.jpg'
-        },
-        {
-          id: 'conductor_3',
-          nombre: 'Juan Pérez',
-          telefono: '+57 320 456 7890',
-          vehiculo: '🛵 Yamaha NMax',
-          placa: 'MNO-456',
-          calificacion: 4.7,
-          foto: 'https://randomuser.me/api/portraits/men/2.jpg'
-        },
-        {
-          id: 'conductor_4',
-          nombre: 'Ana Martínez',
-          telefono: '+57 315 789 0123',
-          vehiculo: '🚗 Mazda 3',
-          placa: 'PQR-789',
-          calificacion: 4.9,
-          foto: 'https://randomuser.me/api/portraits/women/2.jpg'
-        }
-      ],
-      
-      // Marketplaces (solo algunos para ejemplo, puedes poner los 197)
-      marketplaces: [
-        { id: "colombia", nombre: "Marketplace Colombia", capital: "Bogotá", pais: "Colombia", lat: 4.7110, lng: -74.0721, codigo: "co", telefono: "+571234567890", horario: "Lun-Vie 8am-6pm", servicios: "Envíos nacionales", url: "https://co.qrcontraentrega.com" },
-        { id: "mexico", nombre: "Marketplace México", capital: "CDMX", pais: "México", lat: 19.4326, lng: -99.1332, codigo: "mx", telefono: "+525599999999", horario: "Lun-Vie 8am-6pm", servicios: "Envíos nacionales", url: "https://mx.qrcontraentrega.com" },
-        { id: "espana", nombre: "Marketplace España", capital: "Madrid", pais: "España", lat: 40.4168, lng: -3.7038, codigo: "es", telefono: "+34666666666", horario: "Lun-Vie 8am-6pm", servicios: "Envíos nacionales", url: "https://es.qrcontraentrega.com" }
-      ]
-    };
-
-    // ============================================
-    // VARIABLES GLOBALES
-    // ============================================
-    
-    let googleMap;
-    let userMarker;
-    let destinoMarker;
-    let directionsService;
-    let directionsRenderer;
-    let geocoder;
-    let placesService;
-    let infoWindow;
-    let marketplacesMarkers = [];
-    let conductoresMarkers = [];
-    let watchPositionId = null;
-    
-    // Estado actual
-    let modoActual = 'viaje';
-    let subtipoActual = 'punto';
-    let ubicacionActual = null;
-    let destinoActual = null;
-    let paisActual = 'co';
-    let rutaActual = null;
-    let tarifasActuales = null;
-    
-    // Estado de conductores (en tiempo real)
-    let conductoresActivos = []; // Se llena desde localStorage
-    
-    // Opciones seleccionadas por el usuario
-    let opciones = {
-      personas: false,
-      silla: false,
-      mascota: false,
-      paquete: false,
-      peso: 1
-    };
-    
-    // Cache para optimizar costos
-    const cacheRutas = new Map();
-    const CACHE_DURACION = 1000 * 60 * 60; // 1 hora
-    let solicitudesUltimoMinuto = [];
-    const MAX_SOLICITUDES = 30;
-
-    // ============================================
-    // INICIALIZACIÓN
-    // ============================================
-    
-    function inicializarMapa() {
-      const centroInicial = { lat: 4.5709, lng: -74.2973 };
-      
-      googleMap = new google.maps.Map(document.getElementById('mapa'), {
-        center: centroInicial,
-        zoom: 5,
-        mapTypeId: 'roadmap',
-        mapTypeControl: false,
-        fullscreenControl: true,
-        streetViewControl: false,
-        zoomControl: true
-      });
-      
-      directionsService = new google.maps.DirectionsService();
-      directionsRenderer = new google.maps.DirectionsRenderer({
-        map: googleMap,
-        suppressMarkers: false
-      });
-      geocoder = new google.maps.Geocoder();
-      placesService = new google.maps.places.PlacesService(googleMap);
-      infoWindow = new google.maps.InfoWindow();
-      
-      // Cargar conductores desde localStorage
-      cargarConductoresDesdeStorage();
-      
-      // Autocompletado
-      const autocomplete = new google.maps.places.Autocomplete(
-        document.getElementById('buscador'),
-        { types: ['geocode', 'establishment'] }
-      );
-      
-      autocomplete.addListener('place_changed', function() {
-        const place = autocomplete.getPlace();
-        if (place.geometry) {
-          googleMap.setCenter(place.geometry.location);
-          googleMap.setZoom(16);
-          seleccionarDestino(place.geometry.location, place.formatted_address);
-        }
-      });
-      
-      // Obtener ubicación del usuario
-      obtenerUbicacionUsuario();
-      
-      // Cargar marketplaces
-      cargarMarketplaces();
-      
-      // Configurar UI
-      configurarUI();
-      configurarEventos();
-      
-      // Verificar si hay un conductor en sesión
-      verificarSesionConductor();
-    }
-    
-    // ============================================
-    // FUNCIONES DE CONDUCTORES EN TIEMPO REAL
-    // ============================================
-    
-    function cargarConductoresDesdeStorage() {
-      // Cargar conductores activos guardados
-      const guardados = localStorage.getItem('conductoresActivos');
-      
-      if (guardados) {
-        conductoresActivos = JSON.parse(guardados);
-      } else {
-        // Inicializar con los conductores base (todos offline)
-        conductoresActivos = CONFIG.conductoresBase.map(c => ({
-          ...c,
-          disponible: false,
-          ubicacion: null,
-          ultimaActualizacion: null,
-          gananciasHoy: 0
-        }));
-        guardarConductores();
-      }
-      
-      actualizarMarcadoresConductores();
-    }
-    
-    function guardarConductores() {
-      localStorage.setItem('conductoresActivos', JSON.stringify(conductoresActivos));
-    }
-    
-    function actualizarMarcadoresConductores() {
-      // Limpiar marcadores existentes
-      conductoresMarkers.forEach(m => m.setMap(null));
-      conductoresMarkers = [];
-      
-      // Crear marcadores solo para conductores disponibles
-      conductoresActivos.forEach(cond => {
-        if (cond.disponible && cond.ubicacion) {
-          const marker = new google.maps.Marker({
-            position: cond.ubicacion,
-            map: googleMap,
-            title: cond.nombre,
-            icon: {
-              url: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
-              scaledSize: new google.maps.Size(40, 40)
-            },
-            animation: google.maps.Animation.DROP
-          });
-          
-          marker.conductorData = cond;
-          
-          marker.addListener('click', function() {
-            mostrarPopupConductor(this.conductorData);
-          });
-          
-          conductoresMarkers.push(marker);
-        }
-      });
-      
-      // Actualizar lista para usuarios
-      actualizarListaConductores();
-    }
-    
-    function activarModoConductor(telefono) {
-      // Buscar si el conductor ya existe
-      let conductor = conductoresActivos.find(c => c.telefono === telefono);
-      
-      if (!conductor) {
-        // Crear nuevo conductor (para demo)
-        const nuevoId = 'conductor_' + Date.now();
-        conductor = {
-          id: nuevoId,
-          nombre: `Conductor ${telefono.slice(-4)}`,
-          telefono: telefono,
-          vehiculo: '🚗 Vehículo registrado',
-          placa: 'ABC-123',
-          calificacion: 5.0,
-          disponible: true,
-          ubicacion: ubicacionActual ? { lat: ubicacionActual.lat(), lng: ubicacionActual.lng() } : null,
-          ultimaActualizacion: new Date().toISOString(),
-          gananciasHoy: 0
-        };
-        conductoresActivos.push(conductor);
-      } else {
-        conductor.disponible = true;
-        conductor.ultimaActualizacion = new Date().toISOString();
-        if (ubicacionActual) {
-          conductor.ubicacion = { lat: ubicacionActual.lat(), lng: ubicacionActual.lng() };
-        }
-      }
-      
-      guardarConductores();
-      actualizarMarcadoresConductores();
-      
-      // Guardar sesión del conductor
-      localStorage.setItem('conductorSesion', JSON.stringify({
-        telefono: telefono,
-        activo: true,
-        timestamp: Date.now()
-      }));
-      
-      // Iniciar seguimiento de ubicación
-      iniciarSeguimientoConductor();
-      
-      // Actualizar UI del panel conductor
-      document.getElementById('telefono-conductor').value = telefono;
-      document.getElementById('toggle-disponible').checked = true;
-      document.getElementById('status-indicator').className = 'status-indicator activo';
-      document.getElementById('status-text').textContent = 'Disponible';
-      document.getElementById('vehiculo-info').textContent = conductor.vehiculo;
-      
-      actualizarSolicitudesPendientes();
-    }
-    
-    function desactivarModoConductor() {
-      const sesion = JSON.parse(localStorage.getItem('conductorSesion') || '{}');
-      
-      if (sesion.telefono) {
-        const conductor = conductoresActivos.find(c => c.telefono === sesion.telefono);
-        if (conductor) {
-          conductor.disponible = false;
-          conductor.ubicacion = null;
-          guardarConductores();
-        }
-      }
-      
-      // Detener seguimiento
-      if (watchPositionId) {
-        navigator.geolocation.clearWatch(watchPositionId);
-        watchPositionId = null;
-      }
-      
-      localStorage.removeItem('conductorSesion');
-      
-      document.getElementById('toggle-disponible').checked = false;
-      document.getElementById('status-indicator').className = 'status-indicator';
-      document.getElementById('status-text').textContent = 'Desconectado';
-      
-      actualizarMarcadoresConductores();
-    }
-    
-    function iniciarSeguimientoConductor() {
-      if (watchPositionId) {
-        navigator.geolocation.clearWatch(watchPositionId);
-      }
-      
-      watchPositionId = navigator.geolocation.watchPosition(
-        (position) => {
-          const pos = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          };
-          
-          const sesion = JSON.parse(localStorage.getItem('conductorSesion') || '{}');
-          if (sesion.telefono) {
-            const conductor = conductoresActivos.find(c => c.telefono === sesion.telefono);
-            if (conductor && conductor.disponible) {
-              conductor.ubicacion = pos;
-              conductor.ultimaActualizacion = new Date().toISOString();
-              guardarConductores();
-              actualizarMarcadoresConductores();
-            }
-          }
-        },
-        (error) => console.log('Error en seguimiento:', error),
-        { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
-      );
-    }
-    
-    function verificarSesionConductor() {
-      const sesion = JSON.parse(localStorage.getItem('conductorSesion') || '{}');
-      
-      if (sesion.activo && sesion.telefono) {
-        // Verificar que no haya expirado (24 horas)
-        if (Date.now() - sesion.timestamp < 24 * 60 * 60 * 1000) {
-          activarModoConductor(sesion.telefono);
-        } else {
-          localStorage.removeItem('conductorSesion');
-        }
-      }
-    }
-    
-    function actualizarSolicitudesPendientes() {
-      const container = document.getElementById('lista-solicitudes');
-      if (!container) return;
-      
-      // Simular algunas solicitudes (en producción vendrían de un backend)
-      const solicitudes = [
-        { id: 1, usuario: '+57 300 111 2233', destino: 'Centro', distancia: '2.3 km', precio: '$8,500' },
-        { id: 2, usuario: '+57 310 444 5566', destino: 'Aeropuerto', distancia: '8.1 km', precio: '$18,200' }
-      ];
-      
-      if (solicitudes.length === 0) {
-        container.innerHTML = '<p style="color:var(--gray);text-align:center;">No hay solicitudes pendientes</p>';
-        return;
-      }
-      
-      let html = '';
-      solicitudes.forEach(s => {
-        html += `
-          <div style="background:var(--light);padding:12px;border-radius:12px;margin-bottom:8px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
-              <span>${s.usuario}</span>
-              <span style="font-weight:700;">${s.precio}</span>
+    <div class="container">
+        <div class="featured-colombia">
+            <h2>Bienes Raíces en Colombia</h2>
+            <p>Compra, venta, arriendo y avalúos de propiedades en todas las ciudades de Colombia. QRP2P Real Estate Colombia es tu aliado para realizar transacciones inmobiliarias seguras y confiables.</p>
+            <div class="colombia-stats">
+                <div>Compra y Venta</div>
+                <div>Arrendamientos</div>
+                <div>Avalúos Profesionales</div>
+                <div>Cobertura Nacional</div>
             </div>
-            <div style="font-size:13px;color:var(--gray);">📍 ${s.destino} · ${s.distancia}</div>
-            <div style="display:flex;gap:8px;margin-top:8px;">
-              <button style="flex:1;padding:8px;background:var(--secondary);color:white;border:none;border-radius:8px;cursor:pointer;" onclick="aceptarSolicitud(${s.id})">✅ Aceptar</button>
-              <button style="flex:1;padding:8px;background:var(--danger);color:white;border:none;border-radius:8px;cursor:pointer;" onclick="rechazarSolicitud(${s.id})">❌ Rechazar</button>
-            </div>
-          </div>
-        `;
-      });
-      
-      container.innerHTML = html;
-    }
-    
-    // ============================================
-    // FUNCIONES DE MARKETPLACES
-    // ============================================
-    
-    function cargarMarketplaces() {
-      CONFIG.marketplaces.forEach(mp => {
-        const marker = new google.maps.Marker({
-          position: { lat: mp.lat, lng: mp.lng },
-          map: googleMap,
-          title: mp.nombre,
-          icon: {
-            url: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
-            scaledSize: new google.maps.Size(32, 32)
-          },
-          animation: google.maps.Animation.DROP
-        });
-        
-        marker.mpData = mp;
-        
-        marker.addListener('click', function() {
-          mostrarPopupMarketplace(this.mpData);
-        });
-        
-        marketplacesMarkers.push(marker);
-      });
-    }
-    
-    function mostrarPopupMarketplace(mp) {
-      const contenido = `
-        <div style="padding:10px;max-width:250px;">
-          <h3 style="color:#0066cc;margin-bottom:8px;">${mp.nombre}</h3>
-          <p><strong>📍 ${mp.capital}, ${mp.pais}</strong></p>
-          <p>📞 ${mp.telefono}</p>
-          <p>🕒 ${mp.horario}</p>
-          <p>📦 ${mp.servicios}</p>
-          <div style="display:flex;gap:8px;margin-top:10px;">
-            <button onclick="window.open('${mp.url}')" style="flex:1;padding:8px;background:#0066cc;color:white;border:none;border-radius:8px;cursor:pointer;">🌐 Web</button>
-            <button onclick="window.abrirWhatsApp('${mp.telefono}')" style="flex:1;padding:8px;background:#25D366;color:white;border:none;border-radius:8px;cursor:pointer;">💬 WhatsApp</button>
-          </div>
-          <button onclick="window.calcularRutaDestino(${mp.lat}, ${mp.lng})" style="width:100%;margin-top:8px;padding:8px;background:#34c759;color:white;border:none;border-radius:8px;cursor:pointer;">🗺️ Cómo llegar</button>
         </div>
-      `;
-      
-      infoWindow.setContent(contenido);
-      infoWindow.open(googleMap, this);
-    }
-    
-    function mostrarPopupConductor(conductor) {
-      const contenido = `
-        <div style="padding:10px;max-width:200px;">
-          <h4>🚚 ${conductor.nombre}</h4>
-          <p>⭐ ${conductor.calificacion} · ${conductor.vehiculo}</p>
-          <p>📞 ${conductor.telefono}</p>
-          <p>🔢 ${conductor.placa}</p>
-          <button onclick="window.solicitarConductor('${conductor.id}')" style="width:100%;padding:10px;background:#34c759;color:white;border:none;border-radius:8px;margin-top:8px;cursor:pointer;">
-            Solicitar este conductor
-          </button>
+        
+        <div class="search-container">
+            <input type="text" id="marketplace-search" placeholder="Buscar ciudad...">
         </div>
-      `;
-      
-      infoWindow.setContent(contenido);
-      infoWindow.open(googleMap, this);
-    }
-    
-    function actualizarListaConductores() {
-      if (!ubicacionActual) return;
-      
-      const lista = document.getElementById('lista-conductores');
-      if (!lista) return;
-      
-      const conductoresCerca = conductoresActivos
-        .filter(c => c.disponible && c.ubicacion)
-        .map(c => {
-          const distancia = google.maps.geometry.spherical.computeDistanceBetween(
-            ubicacionActual,
-            new google.maps.LatLng(c.ubicacion.lat, c.ubicacion.lng)
-          ) / 1000;
-          
-          return { ...c, distancia };
-        })
-        .filter(c => c.distancia < 20)
-        .sort((a, b) => a.distancia - b.distancia)
-        .slice(0, 5);
-      
-      if (conductoresCerca.length === 0) {
-        lista.innerHTML = '<p style="text-align:center;color:#666;padding:10px;">No hay conductores cerca</p>';
-        return;
-      }
-      
-      let html = '';
-      conductoresCerca.forEach(c => {
-        const tarifaBase = tarifasActuales?.viaje.base || CONFIG.paises.co.viaje.base;
-        const tarifaKm = tarifasActuales?.viaje.porKm || CONFIG.paises.co.viaje.porKm;
-        const precioEstimado = tarifaBase + (c.distancia * tarifaKm);
         
-        html += `
-          <div class="conductor-item" onclick="seleccionarConductor('${c.id}')">
-            <div class="conductor-avatar">🚗</div>
-            <div class="conductor-info">
-              <div class="conductor-nombre">${c.nombre}</div>
-              <div class="conductor-distancia">${c.distancia.toFixed(1)} km · ⭐ ${c.calificacion}</div>
-            </div>
-            <div class="conductor-precio">$${precioEstimado.toFixed(0)}</div>
-          </div>
-        `;
-      });
-      
-      lista.innerHTML = html;
-    }
-    
-    // ============================================
-    // FUNCIONES DE UI
-    // ============================================
-    
-    function configurarUI() {
-      actualizarSubtipoUI();
-      actualizarOpcionesUI();
-    }
-    
-    function actualizarSubtipoUI() {
-      const container = document.getElementById('subtipo-container');
-      if (!container) return;
-      
-      if (modoActual === 'viaje') {
-        container.innerHTML = `
-          <button class="subtipo-btn ${subtipoActual === 'punto' ? 'active' : ''}" id="subtipo-punto">📍 Punto a punto</button>
-          <button class="subtipo-btn ${subtipoActual === 'ciudad' ? 'active' : ''}" id="subtipo-ciudad">🏙️ Ciudad a ciudad</button>
-        `;
-      } else {
-        container.innerHTML = `
-          <button class="subtipo-btn ${subtipoActual === 'punto' ? 'active' : ''}" id="subtipo-punto">📦 Envío local</button>
-          <button class="subtipo-btn ${subtipoActual === 'ciudad' ? 'active' : ''}" id="subtipo-ciudad">🚚 Envío nacional</button>
-        `;
-      }
-      
-      document.getElementById('subtipo-punto')?.addEventListener('click', () => cambiarSubtipo('punto'));
-      document.getElementById('subtipo-ciudad')?.addEventListener('click', () => cambiarSubtipo('ciudad'));
-    }
-    
-    function actualizarOpcionesUI() {
-      const container = document.getElementById('opciones-container');
-      if (!container) return;
-      
-      if (modoActual === 'viaje') {
-        container.innerHTML = `
-          <div class="opcion-item ${opciones.personas ? 'selected' : ''}" data-opcion="personas">
-            <span>👥</span> +4 pasajeros
-          </div>
-          <div class="opcion-item ${opciones.silla ? 'selected' : ''}" data-opcion="silla">
-            <span>🍼</span> Silla bebé
-          </div>
-          <div class="opcion-item ${opciones.mascota ? 'selected' : ''}" data-opcion="mascota">
-            <span>🐕</span> Mascota
-          </div>
-        `;
-      } else {
-        container.innerHTML = `
-          <div class="opcion-item ${opciones.paquete ? 'selected' : ''}" data-opcion="paquete">
-            <span>📦</span> Paquete grande
-          </div>
-          <div class="opcion-item" data-opcion="peso">
-            <span>⚖️</span> 
-            <select id="select-peso" style="border:none;background:transparent;width:100%;cursor:pointer;">
-              <option value="1">1 kg</option>
-              <option value="2">2 kg</option>
-              <option value="5">5 kg</option>
-              <option value="10">10 kg</option>
-              <option value="20">20 kg</option>
-            </select>
-          </div>
-        `;
+        <div class="city-count" id="city-count"></div>
         
-        document.getElementById('select-peso')?.addEventListener('change', (e) => {
-          opciones.peso = parseInt(e.target.value);
-          calcularPrecio();
-        });
-      }
-      
-      document.querySelectorAll('.opcion-item[data-opcion]').forEach(item => {
-        item.addEventListener('click', function(e) {
-          if (e.target.tagName === 'SELECT') return;
-          
-          const opcion = this.getAttribute('data-opcion');
-          if (modoActual === 'viaje') {
-            opciones[opcion] = !opciones[opcion];
-          } else if (opcion === 'paquete') {
-            opciones.paquete = !opciones.paquete;
-          }
-          
-          this.classList.toggle('selected');
-          calcularPrecio();
-        });
-      });
-    }
+        <div class="cities-grid" id="cities-container"></div>
+    </div>
     
-    function configurarEventos() {
-      // Botones de modo
-      document.getElementById('modo-viaje').addEventListener('click', () => {
-        modoActual = 'viaje';
-        document.getElementById('modo-viaje').classList.add('active');
-        document.getElementById('modo-envio').classList.remove('active');
-        document.getElementById('modo-conductor').classList.remove('active');
-        document.getElementById('panel-direccion').style.display = 'block';
-        document.getElementById('panel-conductor').classList.remove('mostrar');
-        document.getElementById('btn-action').className = 'btn-action';
-        document.getElementById('precio-panel').className = 'precio-panel';
-        actualizarSubtipoUI();
-        actualizarOpcionesUI();
-        calcularPrecio();
-      });
-      
-      document.getElementById('modo-envio').addEventListener('click', () => {
-        modoActual = 'envio';
-        document.getElementById('modo-envio').classList.add('active');
-        document.getElementById('modo-viaje').classList.remove('active');
-        document.getElementById('modo-conductor').classList.remove('active');
-        document.getElementById('panel-direccion').style.display = 'block';
-        document.getElementById('panel-conductor').classList.remove('mostrar');
-        document.getElementById('btn-action').className = 'btn-action envio';
-        document.getElementById('precio-panel').className = 'precio-panel envio';
-        actualizarSubtipoUI();
-        actualizarOpcionesUI();
-        calcularPrecio();
-      });
-      
-      document.getElementById('modo-conductor').addEventListener('click', () => {
-        modoActual = 'conductor';
-        document.getElementById('modo-conductor').classList.add('active');
-        document.getElementById('modo-viaje').classList.remove('active');
-        document.getElementById('modo-envio').classList.remove('active');
-        document.getElementById('panel-direccion').style.display = 'none';
-        document.getElementById('panel-conductor').classList.add('mostrar');
-      });
-      
-      // Toggle de disponibilidad conductor
-      document.getElementById('toggle-disponible').addEventListener('change', function(e) {
-        if (this.checked) {
-          const telefono = document.getElementById('telefono-conductor').value.trim();
-          if (!telefono || telefono.length < 10) {
-            alert('📱 Ingresa un número de teléfono válido');
-            this.checked = false;
-            return;
-          }
-          activarModoConductor(telefono);
-        } else {
-          desactivarModoConductor();
-        }
-      });
-      
-      // Botón actualizar ubicación conductor
-      document.getElementById('btn-actualizar-ubicacion').addEventListener('click', function() {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition((position) => {
-            const pos = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            };
-            
-            const sesion = JSON.parse(localStorage.getItem('conductorSesion') || '{}');
-            if (sesion.telefono) {
-              const conductor = conductoresActivos.find(c => c.telefono === sesion.telefono);
-              if (conductor) {
-                conductor.ubicacion = pos;
-                conductor.ultimaActualizacion = new Date().toISOString();
-                guardarConductores();
-                actualizarMarcadoresConductores();
-                alert('✅ Ubicación actualizada');
-              }
-            }
-          });
-        }
-      });
-      
-      // Origen
-      document.getElementById('origen-item').addEventListener('click', () => {
-        if (ubicacionActual) {
-          googleMap.setCenter(ubicacionActual);
-          googleMap.setZoom(16);
-        } else {
-          obtenerUbicacionUsuario();
-        }
-      });
-      
-      // Destino
-      document.getElementById('destino-item').addEventListener('click', () => {
-        mostrarSugerenciasLugares();
-      });
-      
-      // Botón acción
-      document.getElementById('btn-action').addEventListener('click', accionPrincipal);
-      
-      // Logo
-      document.getElementById('logo').addEventListener('click', () => {
-        if (ubicacionActual) {
-          googleMap.setCenter(ubicacionActual);
-          googleMap.setZoom(14);
-        }
-      });
-    }
+    <div class="seo-content">
+        <h2>QRP2P REAL ESTATE COLOMBIA</h2>
+        <p>QRP2P Real Estate es la plataforma líder en compra, venta, arriendo y avalúos de inmuebles en Colombia. Conectamos compradores, vendedores e inversionistas con las mejores oportunidades inmobiliarias en Bogotá, Medellín, Cali, Barranquilla, Cartagena, Bucaramanga, Pereira, Manizales, Cúcuta, Santa Marta y todas las ciudades del país.</p>
+        
+        <h3>Servicios Inmobiliarios en Colombia</h3>
+        <div class="city-tags" id="city-tags-container"></div>
+        
+        <h3>Nuestros Servicios</h3>
+        <p>Compra y Venta de Inmuebles: Asesoría integral en la adquisición y comercialización de propiedades.<br>
+        Arrendamientos: Gestión profesional de contratos de arriendo residencial y comercial.<br>
+        Avalúos Comerciales: Tasación profesional de inmuebles con métodos reconocidos.<br>
+        Estudios de Mercado: Análisis de valorización y tendencias por ciudad y sector.<br>
+        App PWA: Accede a nuestra plataforma desde cualquier dispositivo.</p>
+        
+        <h3>Por qué elegir QRP2P Real Estate Colombia</h3>
+        <p>Cobertura Nacional: Presencia en todas las ciudades y principales municipios de Colombia.<br>
+        Transacciones Seguras: Respaldo legal y administrativo en cada operación.<br>
+        Profesionales Certificados: Nuestro equipo cuenta con amplia experiencia en el sector inmobiliario.<br>
+        Avalúos Precisos: Metodologías actualizadas para determinar el valor real de tu propiedad.<br>
+        Soporte Especializado: Atención personalizada para inversionistas nacionales e internacionales.</p>
+    </div>
     
-    function obtenerUbicacionUsuario() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const pos = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            };
+    <footer>
+        <div class="footer-links">
+            <a href="terms.html">Términos de Servicio</a>
+            <a href="privacy.html">Política de Privacidad</a>
+            <a href="contact.html">Contacto Colombia</a>
+        </div>
+        <div class="copyright">QRP2P REAL ESTATE COLOMBIA - Compra, venta, arriendo y avalúos de inmuebles. Todos los derechos reservados.</div>
+    </footer>
+
+    <script>
+        // CIUDADES DE COLOMBIA - DESCRIPCIONES GENERALES SIN EMOJIS
+        const citiesData = [
+            { name: "Bogotá D.C.", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Bogotá", actionText: "Ver servicios en Bogotá", path: "bogota", url: "/bogota/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Medellín", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Medellín", actionText: "Ver servicios en Medellín", path: "medellin", url: "/medellin/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Cali", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Cali", actionText: "Ver servicios en Cali", path: "cali", url: "/cali/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Barranquilla", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Barranquilla", actionText: "Ver servicios en Barranquilla", path: "barranquilla", url: "/barranquilla/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Cartagena", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Cartagena", actionText: "Ver servicios en Cartagena", path: "cartagena", url: "/cartagena/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Bucaramanga", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Bucaramanga", actionText: "Ver servicios en Bucaramanga", path: "bucaramanga", url: "/bucaramanga/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Pereira", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Pereira", actionText: "Ver servicios en Pereira", path: "pereira", url: "/pereira/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Manizales", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Manizales", actionText: "Ver servicios en Manizales", path: "manizales", url: "/manizales/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Cúcuta", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Cúcuta", actionText: "Ver servicios en Cúcuta", path: "cucuta", url: "/cucuta/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Santa Marta", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Santa Marta", actionText: "Ver servicios en Santa Marta", path: "santa-marta", url: "/santa-marta/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Ibagué", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Ibagué", actionText: "Ver servicios en Ibagué", path: "ibague", url: "/ibague/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Villavicencio", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Villavicencio", actionText: "Ver servicios en Villavicencio", path: "villavicencio", url: "/villavicencio/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Pasto", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Pasto", actionText: "Ver servicios en Pasto", path: "pasto", url: "/pasto/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Montería", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Montería", actionText: "Ver servicios en Montería", path: "monteria", url: "/monteria/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Neiva", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Neiva", actionText: "Ver servicios en Neiva", path: "neiva", url: "/neiva/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Armenia", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Armenia", actionText: "Ver servicios en Armenia", path: "armenia", url: "/armenia/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Popayán", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Popayán", actionText: "Ver servicios en Popayán", path: "popayan", url: "/popayan/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Valledupar", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Valledupar", actionText: "Ver servicios en Valledupar", path: "valledupar", url: "/valledupar/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Sincelejo", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Sincelejo", actionText: "Ver servicios en Sincelejo", path: "sincelejo", url: "/sincelejo/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" },
+            { name: "Riohacha", desc: "Compra y venta de inmuebles, arrendamientos y avalúos en Riohacha", actionText: "Ver servicios en Riohacha", path: "riohacha", url: "/riohacha/", imgBg: "linear-gradient(135deg, #2c5f8a, #1a3e5c)" }
+        ];
+        
+        // Ordenar alfabéticamente
+        citiesData.sort((a, b) => a.name.localeCompare(b.name));
+        
+        // Actualizar contador de ciudades
+        document.getElementById('city-count').innerHTML = citiesData.length + " ciudades - Compra, venta, arriendo y avalúos de inmuebles";
+        
+        // Generar city tags para SEO
+        const tagsContainer = document.getElementById('city-tags-container');
+        if (tagsContainer) {
+            citiesData.forEach(city => {
+                const tag = document.createElement('a');
+                tag.href = city.url;
+                tag.className = 'city-tag';
+                tag.textContent = city.name;
+                tagsContainer.appendChild(tag);
+            });
+        }
+        
+        // Toast notification function
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast-message');
+            toast.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+        
+        // Function to render cities
+        function renderCities(cityList) {
+            const container = document.getElementById('cities-container');
+            container.innerHTML = '';
             
-            ubicacionActual = new google.maps.LatLng(pos.lat, pos.lng);
-            
-            if (userMarker) {
-              userMarker.setPosition(pos);
+            cityList.forEach((city, index) => {
+                const card = document.createElement('div');
+                card.className = 'city-card';
+                card.style.animationDelay = `${index * 0.02}s`;
+                
+                card.innerHTML = `
+                    <div class="city-image" style="background: ${city.imgBg};">
+                        <div style="font-size: 3rem; color: white; opacity: 0.8;">🏢</div>
+                    </div>
+                    <div class="city-info">
+                        <h3 class="city-name">
+                            ${city.name}
+                        </h3>
+                        <p class="city-desc">${city.desc}</p>
+                        <a href="${city.url}" class="city-link" target="_blank">${city.actionText} →</a>
+                    </div>
+                `;
+                
+                // Make entire card clickable
+                card.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'A') {
+                        showToast(`${city.name} - Compra, venta, arriendo y avalúos de inmuebles`);
+                        setTimeout(() => {
+                            window.open(city.url, '_blank');
+                        }, 300);
+                    }
+                });
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // Search functionality
+        function normalizeText(text) {
+            return text
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .trim()
+                .toLowerCase();
+        }
+        
+        function performSearch(searchTerm) {
+            const normalizedSearch = normalizeText(searchTerm);
+            const filteredCities = citiesData.filter(city => 
+                normalizeText(city.name).includes(normalizedSearch) || 
+                normalizeText(city.desc).includes(normalizedSearch)
+            );
+            renderCities(filteredCities);
+            document.getElementById('city-count').innerHTML = filteredCities.length + " ciudades - Compra, venta, arriendo y avalúos de inmuebles";
+            return filteredCities.length > 0 ? filteredCities[0] : null;
+        }
+        
+        // PWA Install Button Logic
+        let deferredPrompt;
+        const installButton = document.getElementById('install-button');
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installButton.style.display = 'block';
+            installButton.addEventListener('click', () => {
+                installButton.style.display = 'none';
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            });
+        });
+        
+        // Network status indicator
+        const offlineIndicator = document.getElementById('offline-indicator');
+        function updateOnlineStatus() {
+            if (navigator.onLine) {
+                offlineIndicator.classList.remove('show');
             } else {
-              userMarker = new google.maps.Marker({
-                position: pos,
-                map: googleMap,
-                title: 'Tu ubicación',
-                icon: {
-                  url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                  scaledSize: new google.maps.Size(40, 40)
-                }
-              });
+                offlineIndicator.classList.add('show');
             }
-            
-            googleMap.setCenter(pos);
-            googleMap.setZoom(16);
-            
-            geocoder.geocode({ location: pos }, (results, status) => {
-              if (status === 'OK' && results[0]) {
-                document.getElementById('origen-texto').textContent = results[0].formatted_address;
-              }
+        }
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCities(citiesData);
+            const searchInput = document.getElementById('marketplace-search');
+            searchInput.addEventListener('input', (e) => {
+                performSearch(e.target.value);
             });
-            
-            detectarPais(pos);
-            actualizarListaConductores();
-          },
-          (error) => {
-            console.log('Error:', error);
-            document.getElementById('origen-texto').textContent = 'Usar ubicación actual';
-          }
-        );
-      }
-    }
-    
-    function detectarPais(latLng) {
-      geocoder.geocode({ location: latLng }, (results, status) => {
-        if (status === 'OK' && results[0]) {
-          const address = results[0].formatted_address;
-          
-          if (address.includes('Colombia')) {
-            paisActual = 'co';
-            tarifasActuales = CONFIG.paises.co;
-          } else if (address.includes('México')) {
-            paisActual = 'mx';
-            tarifasActuales = CONFIG.paises.mx;
-          } else if (address.includes('United States')) {
-            paisActual = 'us';
-            tarifasActuales = CONFIG.paises.us;
-          } else {
-            paisActual = 'co';
-            tarifasActuales = CONFIG.paises.co;
-          }
-        }
-      });
-    }
-    
-    function mostrarSugerenciasLugares() {
-      const container = document.getElementById('sugerencias-lugares');
-      if (!container) return;
-      
-      container.innerHTML = '<div style="text-align:center;padding:20px;">Buscando lugares...</div>';
-      container.classList.add('mostrar');
-      
-      if (!ubicacionActual) return;
-      
-      const request = {
-        location: ubicacionActual,
-        radius: 2000,
-        types: ['establishment', 'geocode']
-      };
-      
-      placesService.nearbySearch(request, (results, status) => {
-        if (status === 'OK' && results) {
-          let html = '<h4 style="margin-bottom:10px;">📍 Lugares cercanos</h4>';
-          
-          results.slice(0, 8).forEach(place => {
-            html += `
-              <div class="sugerencia-item" data-lat="${place.geometry.location.lat()}" data-lng="${place.geometry.location.lng()}" data-name="${place.name}">
-                <div class="sugerencia-icon">📍</div>
-                <div>
-                  <div><strong>${place.name}</strong></div>
-                  <div style="font-size:12px;color:var(--gray);">${place.vicinity || ''}</div>
-                </div>
-              </div>
-            `;
-          });
-          
-          container.innerHTML = html;
-          
-          document.querySelectorAll('.sugerencia-item').forEach(item => {
-            item.addEventListener('click', function() {
-              const lat = parseFloat(this.getAttribute('data-lat'));
-              const lng = parseFloat(this.getAttribute('data-lng'));
-              const name = this.getAttribute('data-name');
-              
-              seleccionarDestino(new google.maps.LatLng(lat, lng), name);
-              container.classList.remove('mostrar');
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const firstResult = performSearch(e.target.value);
+                    if (firstResult) {
+                        showToast(`${firstResult.name} - Compra, venta, arriendo y avalúos de inmuebles`);
+                        setTimeout(() => {
+                            window.open(firstResult.url, '_blank');
+                        }, 300);
+                    }
+                }
             });
-          });
-        }
-      });
-    }
-    
-    function seleccionarDestino(location, nombre) {
-      destinoActual = location;
-      document.getElementById('destino-texto').textContent = nombre;
-      
-      if (destinoMarker) destinoMarker.setMap(null);
-      destinoMarker = new google.maps.Marker({
-        position: location,
-        map: googleMap,
-        title: nombre,
-        animation: google.maps.Animation.DROP,
-        icon: {
-          url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
-          scaledSize: new google.maps.Size(40, 40)
-        }
-      });
-      
-      calcularRuta();
-    }
-    
-    function verificarLimiteSolicitudes() {
-      const ahora = Date.now();
-      solicitudesUltimoMinuto = solicitudesUltimoMinuto.filter(t => ahora - t < 60000);
-      
-      if (solicitudesUltimoMinuto.length >= MAX_SOLICITUDES) {
-        console.warn('Límite de solicitudes');
-        return false;
-      }
-      
-      solicitudesUltimoMinuto.push(ahora);
-      return true;
-    }
-    
-    function getCacheKey(origen, destino) {
-      return `${origen.lat()},${origen.lng()}|${destino.lat()},${destino.lng()}`;
-    }
-    
-    function calcularRuta() {
-      if (!ubicacionActual || !destinoActual) return;
-      if (!verificarLimiteSolicitudes()) return;
-      
-      const cacheKey = getCacheKey(ubicacionActual, destinoActual);
-      
-      if (cacheRutas.has(cacheKey)) {
-        const cached = cacheRutas.get(cacheKey);
-        if (Date.now() - cached.timestamp < CACHE_DURACION) {
-          mostrarRuta(cached.data);
-          return;
-        }
-      }
-      
-      directionsService.route({
-        origin: ubicacionActual,
-        destination: destinoActual,
-        travelMode: google.maps.TravelMode.DRIVING
-      }, (response, status) => {
-        if (status === 'OK') {
-          cacheRutas.set(cacheKey, {
-            data: response,
-            timestamp: Date.now()
-          });
-          mostrarRuta(response);
-        }
-      });
-    }
-    
-    function mostrarRuta(response) {
-      directionsRenderer.setDirections(response);
-      rutaActual = response;
-      
-      const ruta = response.routes[0].legs[0];
-      const distancia = ruta.distance.value / 1000;
-      const duracion = Math.round(ruta.duration.value / 60);
-      
-      document.getElementById('distancia').textContent = distancia.toFixed(1) + ' km';
-      document.getElementById('tiempo').textContent = duracion + ' min';
-      
-      calcularPrecio(distancia);
-    }
-    
-    function calcularPrecio(distancia) {
-      if (!distancia && rutaActual) {
-        distancia = rutaActual.routes[0].legs[0].distance.value / 1000;
-      }
-      
-      if (!distancia || !tarifasActuales) return;
-      
-      let precio = 0;
-      
-      if (modoActual === 'viaje') {
-        precio = tarifasActuales.viaje.base + (distancia * tarifasActuales.viaje.porKm);
+        });
         
-        if (opciones.personas) precio += tarifasActuales.viaje.extraPersona;
-        if (opciones.mascota) precio += tarifasActuales.viaje.extraMascota;
-        
-        if (subtipoActual === 'ciudad') {
-          precio *= tarifasActuales.viaje.ciudadCiudad;
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registrado con éxito:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('Error al registrar Service Worker:', error);
+                    });
+            });
         }
-        
-        document.getElementById('detalle-peso').style.display = 'none';
-      } else {
-        precio = tarifasActuales.envio.base + (distancia * tarifasActuales.envio.porKm) + (opciones.peso * tarifasActuales.envio.porKg);
-        
-        if (opciones.paquete) precio += tarifasActuales.envio.paqueteGrande;
-        
-        document.getElementById('detalle-peso').style.display = 'flex';
-        document.getElementById('peso').textContent = opciones.peso + ' kg';
-      }
-      
-      document.getElementById('precio-total').textContent = tarifasActuales.simbolo + precio.toFixed(0);
-    }
-    
-    function accionPrincipal() {
-      const telefono = document.getElementById('telefono').value.trim();
-      
-      if (!telefono || telefono.length < 10) {
-        alert('📱 Por favor ingresa un número de teléfono válido');
-        return;
-      }
-      
-      if (!ubicacionActual || !destinoActual) {
-        alert('📍 Por favor selecciona origen y destino');
-        return;
-      }
-      
-      // Buscar conductor cercano
-      const conductorCercano = conductoresActivos
-        .filter(c => c.disponible && c.ubicacion)
-        .map(c => ({
-          ...c,
-          distancia: google.maps.geometry.spherical.computeDistanceBetween(
-            ubicacionActual,
-            new google.maps.LatLng(c.ubicacion.lat, c.ubicacion.lng)
-          ) / 1000
-        }))
-        .filter(c => c.distancia < 10)
-        .sort((a, b) => a.distancia - b.distancia)[0];
-      
-      if (modoActual === 'viaje') {
-        if (conductorCercano) {
-          alert(`✅ Viaje solicitado desde ${telefono}\n\nConductor asignado: ${conductorCercano.nombre}\nLlegará en aproximadamente ${Math.round(conductorCercano.distancia * 3)} minutos.`);
-        } else {
-          alert(`✅ Viaje solicitado desde ${telefono}\n\nBuscando conductor disponible...`);
-        }
-        mostrarPanelSeguimiento('viaje');
-      } else {
-        alert(`📦 Envío solicitado desde ${telefono}\n\nTu guía será enviada por WhatsApp.`);
-        mostrarPanelSeguimiento('envio');
-      }
-    }
-    
-    function mostrarPanelSeguimiento(tipo) {
-      const panel = document.getElementById('panel-seguimiento');
-      
-      if (tipo === 'viaje') {
-        panel.innerHTML = `
-          <h4 style="margin-bottom:10px;">🚗 Estado del viaje</h4>
-          <div class="estado-paso"><div class="estado-circle completado"></div> Solicitud enviada</div>
-          <div class="estado-paso"><div class="estado-circle activo"></div> Buscando conductor</div>
-          <div class="estado-paso"><div class="estado-circle"></div> Conductor asignado</div>
-          <div class="estado-paso"><div class="estado-circle"></div> En camino</div>
-          <div class="estado-paso"><div class="estado-circle"></div> Viaje completado</div>
-          <p style="font-size:12px;color:var(--gray);margin-top:10px;">Te contactaremos al 📱 ${document.getElementById('telefono').value}</p>
-        `;
-      } else {
-        panel.innerHTML = `
-          <h4 style="margin-bottom:10px;">📦 Estado del envío</h4>
-          <div class="estado-paso"><div class="estado-circle completado"></div> Guía generada</div>
-          <div class="estado-paso"><div class="estado-circle activo"></div> En centro de acopio</div>
-          <div class="estado-paso"><div class="estado-circle"></div> En tránsito</div>
-          <div class="estado-paso"><div class="estado-circle"></div> En ciudad destino</div>
-          <div class="estado-paso"><div class="estado-circle"></div> En reparto</div>
-          <div class="estado-paso"><div class="estado-circle"></div> Entregado</div>
-          <p style="font-size:12px;color:var(--gray);margin-top:10px;">Notificaciones al 📱 ${document.getElementById('telefono').value}</p>
-        `;
-      }
-      
-      panel.classList.add('mostrar');
-      
-      setTimeout(() => {
-        panel.classList.remove('mostrar');
-      }, 30000);
-    }
-    
-    function cambiarSubtipo(subtipo) {
-      subtipoActual = subtipo;
-      actualizarSubtipoUI();
-      calcularPrecio();
-    }
-    
-    function seleccionarConductor(conductorId) {
-      const conductor = conductoresActivos.find(c => c.id === conductorId);
-      if (!conductor || !conductor.ubicacion) return;
-      
-      destinoActual = new google.maps.LatLng(conductor.ubicacion.lat, conductor.ubicacion.lng);
-      document.getElementById('destino-texto').textContent = `Conductor: ${conductor.nombre}`;
-      
-      if (destinoMarker) destinoMarker.setMap(null);
-      destinoMarker = new google.maps.Marker({
-        position: conductor.ubicacion,
-        map: googleMap,
-        title: conductor.nombre,
-        icon: {
-          url: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
-          scaledSize: new google.maps.Size(40, 40)
-        }
-      });
-      
-      calcularRuta();
-    }
-    
-    function calcularRutaDestino(lat, lng) {
-      if (!ubicacionActual) return;
-      
-      destinoActual = new google.maps.LatLng(lat, lng);
-      
-      geocoder.geocode({ location: destinoActual }, (results, status) => {
-        if (status === 'OK' && results[0]) {
-          document.getElementById('destino-texto').textContent = results[0].formatted_address;
-        } else {
-          document.getElementById('destino-texto').textContent = 'Destino seleccionado';
-        }
-      });
-      
-      if (destinoMarker) destinoMarker.setMap(null);
-      destinoMarker = new google.maps.Marker({
-        position: destinoActual,
-        map: googleMap,
-        icon: {
-          url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
-          scaledSize: new google.maps.Size(40, 40)
-        }
-      });
-      
-      calcularRuta();
-    }
-    
-    function solicitarConductor(conductorId) {
-      const telefono = document.getElementById('telefono').value.trim();
-      
-      if (!telefono || telefono.length < 10) {
-        alert('📱 Primero ingresa tu número de teléfono');
-        return;
-      }
-      
-      const conductor = conductoresActivos.find(c => c.id === conductorId);
-      if (conductor) {
-        alert(`✅ Solicitud enviada a ${conductor.nombre}\n\nTe contactará al ${telefono}`);
-      }
-    }
-    
-    function abrirWhatsApp(telefono) {
-      const numero = telefono.replace(/\D/g, '');
-      window.open(`https://wa.me/${numero}`, '_blank');
-    }
-    
-    // Funciones para solicitudes (demo)
-    function aceptarSolicitud(id) {
-      alert(`✅ Solicitud #${id} aceptada`);
-      actualizarSolicitudesPendientes();
-    }
-    
-    function rechazarSolicitud(id) {
-      alert(`❌ Solicitud #${id} rechazada`);
-      actualizarSolicitudesPendientes();
-    }
-    
-    // Limpiar caché cada hora
-    setInterval(() => {
-      const ahora = Date.now();
-      for (let [key, value] of cacheRutas) {
-        if (ahora - value.timestamp > CACHE_DURACION) {
-          cacheRutas.delete(key);
-        }
-      }
-    }, 60000);
-    
-    // Funciones globales
-    window.calcularRutaDestino = calcularRutaDestino;
-    window.solicitarConductor = solicitarConductor;
-    window.abrirWhatsApp = abrirWhatsApp;
-    window.seleccionarConductor = seleccionarConductor;
-    window.aceptarSolicitud = aceptarSolicitud;
-    window.rechazarSolicitud = rechazarSolicitud;
-    window.inicializarMapa = inicializarMapa;
-  </script>
+    </script>
 </body>
 </html>
