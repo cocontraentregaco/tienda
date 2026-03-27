@@ -290,27 +290,6 @@
       color: white;
     }
     
-    .logo-qrp2p {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 1000;
-      background: rgba(0,0,0,0.7);
-      padding: 8px 16px;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: bold;
-      font-size: 1rem;
-      color: white;
-      text-decoration: none;
-    }
-    
-    .logo-qrp2p:hover {
-      background: #0066cc;
-      transform: scale(1.05);
-    }
-    
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
@@ -355,13 +334,6 @@
         max-width: none;
         font-size: 0.75rem;
       }
-      
-      .logo-qrp2p {
-        top: 5px;
-        right: 5px;
-        padding: 5px 12px;
-        font-size: 0.8rem;
-      }
     }
   </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -377,7 +349,7 @@
       </div>
       <div class="botones-secundarios">
         <button class="btn btn-centrar" id="centrar-btn">Centrar mi ubicación</button>
-        <button class="btn btn-registro" id="registro-btn">Publicar inmueble</button>
+        <button class="btn btn-registro" id="registro-btn">VENDER INMUEBLE</button>
       </div>
     </div>
     <div id="mapa"></div>
@@ -385,7 +357,6 @@
       <button class="map-type-btn active" id="map-btn">Mapa</button>
       <button class="map-type-btn" id="satellite-btn">Satélite</button>
     </div>
-    <a href="https://qrp2p.com/colombia/" class="logo-qrp2p" target="_blank">QRP2P REAL ESTATE</a>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -402,6 +373,7 @@
     let notificacionActual = null;
 
     // DATOS DE INMUEBLES EN CALI
+    // mostrarArriendo: false = solo muestra venta, true = muestra ambas opciones
     const INMUEBLES = [
       { 
         "id": "aparta-estadio-1",
@@ -415,7 +387,7 @@
         "banos": 2,
         "metros": 85,
         "precio": "$280,000,000 COP",
-        "precioArriendo": "$1,800,000 COP/mes"
+        "mostrarArriendo": false
       },
       { 
         "id": "casa-granada",
@@ -429,7 +401,7 @@
         "banos": 3,
         "metros": 220,
         "precio": "$650,000,000 COP",
-        "precioArriendo": "$3,500,000 COP/mes"
+        "mostrarArriendo": false
       },
       { 
         "id": "apto-ciudad-jardin",
@@ -443,7 +415,7 @@
         "banos": 2,
         "metros": 95,
         "precio": "$320,000,000 COP",
-        "precioArriendo": "$2,200,000 COP/mes"
+        "mostrarArriendo": false
       },
       { 
         "id": "casa-sur",
@@ -457,7 +429,7 @@
         "banos": 4,
         "metros": 280,
         "precio": "$780,000,000 COP",
-        "precioArriendo": "$4,200,000 COP/mes"
+        "mostrarArriendo": false
       },
       { 
         "id": "apto-norte",
@@ -471,7 +443,7 @@
         "banos": 2,
         "metros": 68,
         "precio": "$195,000,000 COP",
-        "precioArriendo": "$1,400,000 COP/mes"
+        "mostrarArriendo": false
       },
       { 
         "id": "casa-pance",
@@ -485,7 +457,7 @@
         "banos": 3,
         "metros": 350,
         "precio": "$950,000,000 COP",
-        "precioArriendo": "$5,500,000 COP/mes"
+        "mostrarArriendo": false
       },
       { 
         "id": "apto-chimney",
@@ -499,7 +471,7 @@
         "banos": 1,
         "metros": 55,
         "precio": "$165,000,000 COP",
-        "precioArriendo": "$1,200,000 COP/mes"
+        "mostrarArriendo": false
       },
       { 
         "id": "casa-penon",
@@ -513,7 +485,7 @@
         "banos": 3,
         "metros": 180,
         "precio": "$520,000,000 COP",
-        "precioArriendo": "$3,200,000 COP/mes"
+        "mostrarArriendo": false
       }
     ];
 
@@ -553,7 +525,7 @@
 
     function abrirWhatsApp(telefono, nombre, direccion, habitaciones, banos, metros, precio) {
       const numeroLimpio = telefono.replace(/\D/g, '');
-      const mensaje = `Hola, me interesa obtener más información sobre el inmueble:\n\n🏠 Nombre: ${nombre}\n📍 Dirección: ${direccion}\n🛏️ Habitaciones: ${habitaciones}\n🚽 Baños: ${banos}\n📐 Metros cuadrados: ${metros}\n💰 Precio: ${precio}\n\n¿Podría darme más detalles? ¡Gracias!`;
+      const mensaje = `Hola, me interesa obtener más información sobre el inmueble:\n\n💰 Nombre: ${nombre}\n📍 Dirección: ${direccion}\n🛏️ Habitaciones: ${habitaciones}\n🚽 Baños: ${banos}\n📐 Metros cuadrados: ${metros}\n💰 Precio: ${precio}\n\n¿Podría darme más detalles? ¡Gracias!`;
       window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
     }
 
@@ -561,7 +533,7 @@
       initializeMap();
       document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
       document.getElementById('registro-btn').addEventListener('click', function() {
-        window.open('https://qrp2p.com/afiliacion-colombia', '_blank');
+        window.open('https://qrp2p.com/vender-inmueble', '_blank');
       });
       document.getElementById('map-btn').addEventListener('click', switchToMapView);
       document.getElementById('satellite-btn').addEventListener('click', switchToSatelliteView);
@@ -611,7 +583,7 @@
         }).bindPopup(`
           <div style="min-width:280px; max-width:320px;">
             <div class="propiedad-imagen" style="background-image: url('${inmueble.imagen}'); background-size: cover; background-position: center;"></div>
-            <h3 style="margin:5px 0;color:#0066cc">${inmueble.nombre}</h3>
+            <h3 style="margin:5px 0;color:#0066cc">💰 ${inmueble.nombre}</h3>
             <p style="margin:5px 0;font-size:0.85rem">📍 ${inmueble.direccion}</p>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin:8px 0;">
               <div class="propiedad-detalle"><strong>🛏️ Habitaciones:</strong> ${inmueble.habitaciones}</div>
@@ -621,7 +593,7 @@
             </div>
             <div style="margin:5px 0;">
               <div class="propiedad-detalle"><strong>💰 Venta:</strong> ${inmueble.precio}</div>
-              <div class="propiedad-detalle"><strong>🔑 Arriendo:</strong> ${inmueble.precioArriendo}</div>
+              ${inmueble.mostrarArriendo && inmueble.precioArriendo ? `<div class="propiedad-detalle"><strong>🔑 Arriendo:</strong> ${inmueble.precioArriendo}</div>` : ''}
             </div>
             <div class="popup-buttons">
               <div class="popup-button-row">
@@ -693,7 +665,7 @@
           item.className = 'sugerencia-item';
           item.innerHTML = `
             <div class="sugerencia-texto">
-              <strong>🏠 ${inm.nombre}</strong><br>
+              <strong>💰 ${inm.nombre}</strong><br>
               <small>📍 ${inm.direccion}</small><br>
               <small>🛏️ ${inm.habitaciones} hab | 🚽 ${inm.banos} baños | 📐 ${inm.metros} m²</small>
             </div>
