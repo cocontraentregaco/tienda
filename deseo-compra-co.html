@@ -107,12 +107,6 @@
             gap: 1rem;
         }
 
-        .row-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 1rem;
-        }
-
         .radio-group, .checkbox-group {
             display: flex;
             gap: 1.5rem;
@@ -224,6 +218,15 @@
             border-radius: 12px;
         }
 
+        .info-box-blue {
+            background: #e8f0fe;
+            border-left: 4px solid #0a2b3e;
+            padding: 0.8rem 1rem;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+            border-radius: 12px;
+        }
+
         .referido-box {
             background: #e8f0fe;
             border-left: 4px solid #0a2b3e;
@@ -267,8 +270,15 @@
             color: #4b5563;
         }
 
+        .warning-text {
+            color: #dc2626;
+            font-size: 0.75rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
         @media (max-width: 768px) {
-            .row-2, .row-3 {
+            .row-2 {
                 grid-template-columns: 1fr;
                 gap: 0.8rem;
             }
@@ -325,7 +335,7 @@
                 </div>
                 <div class="row-2">
                     <div class="form-group">
-                        <label>Rango de precio deseado (COP) *</label>
+                        <label>Precio del inmueble (COP) *</label>
                         <input type="number" id="precioDeseado" placeholder="Ej: 250000000" required>
                     </div>
                     <div class="form-group">
@@ -342,31 +352,41 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN 2: FORMA DE PAGO Y FINANCIACIÓN -->
+            <!-- SECCIÓN 2: FORMA DE PAGO (REORGANIZADA) -->
             <div class="section">
                 <div class="section-title">💰 ¿Cómo vas a pagar?</div>
                 
                 <div class="form-group">
                     <label>Forma de pago principal *</label>
                     <div class="radio-group">
-                        <label><input type="radio" name="formaPago" value="Contado" required> Contado (recursos propios)</label>
-                        <label><input type="radio" name="formaPago" value="Crédito"> Crédito hipotecario / Leasing</label>
-                        <label><input type="radio" name="formaPago" value="Mixto"> Mixto (propios + crédito)</label>
+                        <label><input type="radio" name="formaPago" value="Contado" required> Contado (pago total de contado)</label>
+                        <label><input type="radio" name="formaPago" value="Credito"> 100% financiado (crédito hipotecario)</label>
+                        <label><input type="radio" name="formaPago" value="Mixto"> Mixto (cuota inicial + crédito)</label>
                     </div>
                 </div>
 
-                <div id="recursosSection">
-                    <div class="section-subtitle">💵 Recursos para la compra (puedes seleccionar varios)</div>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="recursos" value="Recursos propios"> Recursos propios (ahorros)</label>
-                        <label><input type="checkbox" name="recursos" value="Crédito hipotecario"> Crédito hipotecario / Leasing</label>
-                        <label><input type="checkbox" name="recursos" value="Cesantías"> Cesantías</label>
-                        <label><input type="checkbox" name="recursos" value="Subsidio (Mi Casa Ya / FNA)"> Subsidio (Mi Casa Ya / FNA)</label>
+                <!-- Campo de cuota inicial (visible solo cuando es Mixto) -->
+                <div id="cuotaInicialSection" style="display: none;">
+                    <div class="form-group">
+                        <label>💰 ¿Qué porcentaje o valor tienes para cuota inicial?</label>
+                        <input type="text" id="cuotaInicial" placeholder="Ej: 30% ($75.000.000) o tengo $50.000.000">
+                        <div class="info-box" style="margin-top: 5px;">
+                            💡 Recuerda: el crédito hipotecario generalmente financia hasta el 80% del valor del inmueble. Entre mayor sea tu cuota inicial, mejores condiciones de crédito podrás obtener.
+                        </div>
                     </div>
                 </div>
 
+                <div class="section-subtitle">💵 Recursos que vas a utilizar para la compra (puedes seleccionar varios)</div>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="recursos" value="Recursos propios"> Recursos propios (ahorros)</label>
+                    <label><input type="checkbox" name="recursos" value="Crédito hipotecario"> Crédito hipotecario / Leasing</label>
+                    <label><input type="checkbox" name="recursos" value="Cesantías"> Cesantías</label>
+                    <label><input type="checkbox" name="recursos" value="Subsidio (Mi Casa Ya / FNA)"> Subsidio (Mi Casa Ya / FNA)</label>
+                </div>
+
+                <!-- Soporte de crédito (visible solo cuando hay crédito) -->
                 <div id="soporteCredito" style="display: none;">
-                    <div class="section-subtitle">📄 Soporte de crédito</div>
+                    <div class="section-subtitle">📄 Información del crédito</div>
                     <div class="row-2">
                         <div class="form-group">
                             <label>Tipo de carta con la que cuenta el cliente</label>
@@ -374,6 +394,8 @@
                                 <option value="">Selecciona</option>
                                 <option value="Pre-aprobado">Pre-aprobado</option>
                                 <option value="Aprobado">Aprobado</option>
+                                <option value="En estudio">En estudio</option>
+                                <option value="No tengo">No tengo aún</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -382,6 +404,7 @@
                                 <option value="">Selecciona</option>
                                 <option value="Crédito bancario">Crédito bancario</option>
                                 <option value="Crédito leasing habitacional">Crédito leasing habitacional</option>
+                                <option value="FNA">Fondo Nacional del Ahorro (FNA)</option>
                             </select>
                         </div>
                     </div>
@@ -389,25 +412,23 @@
                         <label>Banco / Entidad financiera</label>
                         <select id="bancoCredito">
                             <option value="">Selecciona</option>
-                            <option>Bancolombia</option><option>Davivienda</option><option>BBVA</option><option>Banco de Bogotá</option><option>FNA</option><option>Otro</option>
+                            <option>Bancolombia</option><option>Davivienda</option><option>BBVA</option>
+                            <option>Banco de Bogotá</option><option>FNA</option><option>Otro</option>
                         </select>
                     </div>
                 </div>
 
+                <!-- Detalle de cesantías (visible solo cuando se selecciona Cesantías) -->
                 <div id="cesantiasDetalle" style="display: none;">
                     <div class="section-subtitle">💰 Detalle de Cesantías</div>
                     <div class="form-group">
                         <label>Entidad donde tienes tus cesantías</label>
                         <select id="entidadCesantias">
                             <option value="">Selecciona</option>
-                            <option>Porvenir</option><option>Protección</option><option>Colfondos</option><option>Fondo Nacional del Ahorro</option><option>Caja Honor</option><option>Otro</option>
+                            <option>Porvenir</option><option>Protección</option><option>Colfondos</option>
+                            <option>Fondo Nacional del Ahorro</option><option>Caja Honor</option><option>Otro</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label>¿Cuentas con cuota inicial separada? (aprox % o valor)</label>
-                    <input type="text" id="cuotaInicial" placeholder="Ej: Tengo el 30% ($75M) separado">
                 </div>
 
                 <div class="form-group">
@@ -419,42 +440,54 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN 3: COMPRADORES -->
+            <!-- SECCIÓN 3: COMPRADORES (OBLIGATORIO MÍNIMO 1) -->
             <div class="section">
                 <div class="section-title">👥 Compradores participantes</div>
-                <p style="margin-bottom: 1rem; font-size: 0.9rem;">Agrega todos los compradores (personas naturales o jurídicas) que harán parte del negocio.</p>
-                <div id="compradoresContainer"></div>
+                <p style="margin-bottom: 1rem; font-size: 0.9rem;">
+                    <strong>⚠️ Importante:</strong> Debes agregar al menos <strong>1 comprador</strong> (persona natural o jurídica).
+                </p>
+                <div id="compradoresContainer">
+                    <!-- Se agrega un comprador natural por defecto para cumplir el mínimo -->
+                </div>
                 <div style="display: flex; gap: 1rem; margin-top: 1rem;">
                     <button type="button" id="agregarNaturalBtn" class="btn btn-secondary">+ Agregar comprador natural</button>
                     <button type="button" id="agregarJuridicaBtn" class="btn btn-secondary">+ Agregar comprador jurídica</button>
+                </div>
+                <div id="compradorWarning" class="warning-text" style="color: #dc2626; margin-top: 0.8rem; font-size: 0.8rem;">
+                    ⚠️ Debes agregar al menos un comprador para continuar.
                 </div>
             </div>
 
             <!-- SECCIÓN 4: OFERTA Y VALORES -->
             <div class="section">
-                <div class="section-title">📝 Valor de oferta y comisión</div>
-                <div class="row-2">
-                    <div class="form-group">
-                        <label>Valor ofertado (COP) *</label>
-                        <input type="number" id="valorOfertado" placeholder="Ej: 215000000" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Comisión acordada (%)</label>
-                        <input type="number" id="comision" step="0.1" placeholder="1.5" value="1.5">
-                    </div>
+                <div class="section-title">📝 Valor de oferta</div>
+                <div class="form-group">
+                    <label>Valor ofertado (COP) *</label>
+                    <input type="number" id="valorOfertado" placeholder="Ej: 215000000" required>
                 </div>
             </div>
 
-            <!-- SECCIÓN 5: NEGOCIO CONVENCIONADO -->
+            <!-- SECCIÓN 5: NEGOCIO CONVENCIONADO CON EXPLICACIÓN -->
             <div class="section">
                 <div class="section-title">🤝 Negocio convencionado</div>
+                <div class="info-box-blue">
+                    <strong>📌 ¿Qué es un negocio convencionado?</strong><br>
+                    Es cuando existe un acuerdo previo entre comprador y vendedor antes de formalizar la oferta. Puede ser:
+                    <ul style="margin-top: 8px; margin-left: 20px;">
+                        <li>✅ Un contrato de opción de compra</li>
+                        <li>✅ Un preacuerdo notariado</li>
+                        <li>✅ Una venta sujeta a condiciones especiales</li>
+                        <li>✅ Un acuerdo con empleados donde el crédito cubre el 100%</li>
+                    </ul>
+                    <strong style="display: block; margin-top: 8px;">💡 Beneficio:</strong> Si ya existe un convenio, el proceso puede ser más ágil y en algunos casos el crédito hipotecario puede cubrir hasta el 100% del valor del inmueble.
+                </div>
                 <div class="radio-group">
                     <label><input type="radio" name="negocioConvencionado" value="Sí"> Sí, ya existe un acuerdo previo</label>
                     <label><input type="radio" name="negocioConvencionado" value="No" checked> No, es una nueva negociación</label>
                 </div>
             </div>
 
-            <!-- SECCIÓN 6: REFERIDO (NUEVO) -->
+            <!-- SECCIÓN 6: REFERIDO -->
             <div class="section">
                 <div class="section-title">⭐ ¿Cómo nos conociste?</div>
                 <div class="referido-box">
@@ -531,7 +564,34 @@
             return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(value);
         }
 
-        // Mostrar/ocultar campos de referido
+        // ========== MOSTRAR/OCULTAR SEGÚN FORMA DE PAGO ==========
+        const formaPagoRadios = document.querySelectorAll('input[name="formaPago"]');
+        const cuotaInicialSection = document.getElementById('cuotaInicialSection');
+        const soporteDiv = document.getElementById('soporteCredito');
+        const cesantiasDiv = document.getElementById('cesantiasDetalle');
+        const recursosCheckboxes = document.querySelectorAll('input[name="recursos"]');
+
+        function actualizarSeccionesFinancieras() {
+            const forma = document.querySelector('input[name="formaPago"]:checked')?.value;
+            
+            // Mostrar campo de cuota inicial solo si es Mixto
+            cuotaInicialSection.style.display = (forma === 'Mixto') ? 'block' : 'none';
+            
+            // Mostrar soporte de crédito si hay crédito involucrado
+            const creditoSeleccionado = Array.from(recursosCheckboxes).some(cb => cb.value === 'Crédito hipotecario' && cb.checked);
+            const formaConCredito = (forma === 'Credito' || forma === 'Mixto');
+            soporteDiv.style.display = (formaConCredito || creditoSeleccionado) ? 'block' : 'none';
+            
+            // Mostrar detalle de cesantías si está seleccionado
+            const cesantiasSeleccionado = Array.from(recursosCheckboxes).some(cb => cb.value === 'Cesantías' && cb.checked);
+            cesantiasDiv.style.display = cesantiasSeleccionado ? 'block' : 'none';
+        }
+
+        formaPagoRadios.forEach(r => r.addEventListener('change', actualizarSeccionesFinancieras));
+        recursosCheckboxes.forEach(cb => cb.addEventListener('change', actualizarSeccionesFinancieras));
+        actualizarSeccionesFinancieras();
+
+        // ========== REFERIDO ==========
         const referidoSi = document.getElementById('referidoSi');
         const referidoNo = document.getElementById('referidoNo');
         const datosReferido = document.getElementById('datosReferido');
@@ -543,13 +603,15 @@
         referidoNo.addEventListener('change', toggleReferido);
         toggleReferido();
 
-        // Lógica para compradores dinámicos
-        let compradorCount = 0;
+        // ========== COMPRADORES (CON MÍNIMO 1 OBLIGATORIO) ==========
+        let compradorCount = 1;
         const compradoresContainer = document.getElementById('compradoresContainer');
+        const compradorWarning = document.getElementById('compradorWarning');
 
         function crearCompradorNatural(idx, data = {}) {
             const div = document.createElement('div');
             div.className = 'comprador-card';
+            div.setAttribute('data-tipo', 'natural');
             div.innerHTML = `
                 <button type="button" class="eliminar-item">✖</button>
                 <span class="badge-tipo">👤 Persona Natural</span>
@@ -566,13 +628,21 @@
                     <div class="form-group"><label>Email *</label><input type="email" class="nat_email" value="${data.email || ''}" required></div>
                 </div>
             `;
-            div.querySelector('.eliminar-item').addEventListener('click', () => div.remove());
+            div.querySelector('.eliminar-item').addEventListener('click', () => {
+                if (document.querySelectorAll('#compradoresContainer .comprador-card').length > 1) {
+                    div.remove();
+                    validarCompradores();
+                } else {
+                    alert("Debe haber al menos un comprador en la solicitud.");
+                }
+            });
             return div;
         }
 
         function crearCompradorJuridico(idx, data = {}) {
             const div = document.createElement('div');
             div.className = 'comprador-card';
+            div.setAttribute('data-tipo', 'juridica');
             div.innerHTML = `
                 <button type="button" class="eliminar-item">✖</button>
                 <span class="badge-tipo">🏢 Persona Jurídica</span>
@@ -586,37 +656,42 @@
                     <div class="form-group"><label>Email *</label><input type="email" class="jur_email" value="${data.email || ''}" required></div>
                 </div>
             `;
-            div.querySelector('.eliminar-item').addEventListener('click', () => div.remove());
+            div.querySelector('.eliminar-item').addEventListener('click', () => {
+                if (document.querySelectorAll('#compradoresContainer .comprador-card').length > 1) {
+                    div.remove();
+                    validarCompradores();
+                } else {
+                    alert("Debe haber al menos un comprador en la solicitud.");
+                }
+            });
             return div;
         }
 
-        document.getElementById('agregarNaturalBtn').addEventListener('click', () => {
-            compradoresContainer.appendChild(crearCompradorNatural(++compradorCount));
-        });
-        document.getElementById('agregarJuridicaBtn').addEventListener('click', () => {
-            compradoresContainer.appendChild(crearCompradorJuridico(++compradorCount));
-        });
-
-        // Mostrar/ocultar secciones según forma de pago
-        const formaPagoRadios = document.querySelectorAll('input[name="formaPago"]');
-        const soporteDiv = document.getElementById('soporteCredito');
-        const cesantiasDiv = document.getElementById('cesantiasDetalle');
-        const recursosCheckboxes = document.querySelectorAll('input[name="recursos"]');
-
-        function actualizarSeccionesFinancieras() {
-            const forma = document.querySelector('input[name="formaPago"]:checked')?.value;
-            const creditoSeleccionado = Array.from(recursosCheckboxes).some(cb => cb.value === 'Crédito hipotecario' && cb.checked);
-            const cesantiasSeleccionado = Array.from(recursosCheckboxes).some(cb => cb.value === 'Cesantías' && cb.checked);
-            
-            soporteDiv.style.display = (forma === 'Crédito' || forma === 'Mixto' || creditoSeleccionado) ? 'block' : 'none';
-            cesantiasDiv.style.display = cesantiasSeleccionado ? 'block' : 'none';
+        function validarCompradores() {
+            const cantidad = document.querySelectorAll('#compradoresContainer .comprador-card').length;
+            if (cantidad === 0) {
+                compradorWarning.style.display = 'block';
+                return false;
+            } else {
+                compradorWarning.style.display = 'none';
+                return true;
+            }
         }
 
-        formaPagoRadios.forEach(r => r.addEventListener('change', actualizarSeccionesFinancieras));
-        recursosCheckboxes.forEach(cb => cb.addEventListener('change', actualizarSeccionesFinancieras));
-        actualizarSeccionesFinancieras();
+        // Agregar un comprador natural por defecto
+        compradoresContainer.appendChild(crearCompradorNatural(1));
 
-        // Selección de opción final
+        document.getElementById('agregarNaturalBtn').addEventListener('click', () => {
+            compradoresContainer.appendChild(crearCompradorNatural(++compradorCount));
+            validarCompradores();
+        });
+        
+        document.getElementById('agregarJuridicaBtn').addEventListener('click', () => {
+            compradoresContainer.appendChild(crearCompradorJuridico(++compradorCount));
+            validarCompradores();
+        });
+
+        // ========== SELECCIÓN DE PROCESO FINAL ==========
         const optionCards = document.querySelectorAll('.option-card');
         const tipoProcesoInput = document.getElementById('tipoProceso');
         optionCards.forEach(card => {
@@ -627,9 +702,15 @@
             });
         });
 
-        // Envío del formulario por WhatsApp
+        // ========== ENVÍO DEL FORMULARIO ==========
         document.getElementById('deseoCompraForm').addEventListener('submit', function(e) {
             e.preventDefault();
+
+            // Validar que haya al menos un comprador
+            if (!validarCompradores()) {
+                alert("⚠️ Debes agregar al menos un comprador (persona natural o jurídica) para continuar.");
+                return;
+            }
 
             // Validaciones básicas
             const tipoInmueble = document.getElementById('tipoInmueble').value;
@@ -655,52 +736,52 @@
             mensaje += "*📍 INMUEBLE DESEADO*\n";
             mensaje += `Tipo: ${tipoInmueble}\n`;
             mensaje += `Ubicación: ${ubicacion}\n`;
-            mensaje += `Precio deseado: ${formatCOP(precioDeseado)}\n`;
+            mensaje += `Precio: ${formatCOP(precioDeseado)}\n`;
             mensaje += `Estrato: ${document.getElementById('estrato').value || 'No especifica'}\n`;
             mensaje += `Características: ${document.getElementById('caracteristicas').value || 'No indicó'}\n\n`;
             
             mensaje += "*💰 FORMA DE PAGO*\n";
-            mensaje += `Modalidad: ${formaPago}\n`;
+            mensaje += `Modalidad: ${formaPago === 'Contado' ? 'Contado' : formaPago === 'Credito' ? '100% Financiado' : 'Mixto (Cuota inicial + Crédito)'}\n`;
+            
+            if(formaPago === 'Mixto') {
+                const cuotaInicialVal = document.getElementById('cuotaInicial').value;
+                if(cuotaInicialVal) mensaje += `Cuota inicial: ${cuotaInicialVal}\n`;
+            }
+            
             let recursosSeleccionados = Array.from(document.querySelectorAll('input[name="recursos"]:checked')).map(cb => cb.value);
-            mensaje += `Recursos: ${recursosSeleccionados.length ? recursosSeleccionados.join(', ') : 'No seleccionó'}\n`;
+            mensaje += `Recursos a utilizar: ${recursosSeleccionados.length ? recursosSeleccionados.join(', ') : 'No seleccionó'}\n`;
             
             const tipoCarta = document.getElementById('tipoCartaCredito')?.value;
-            if(tipoCarta) mensaje += `Soporte crédito: ${tipoCarta}\n`;
+            if(tipoCarta && soporteDiv.style.display !== 'none') mensaje += `Soporte crédito: ${tipoCarta}\n`;
             const tipoCred = document.getElementById('tipoCredito')?.value;
-            if(tipoCred) mensaje += `Tipo crédito: ${tipoCred}\n`;
+            if(tipoCred && soporteDiv.style.display !== 'none') mensaje += `Tipo crédito: ${tipoCred}\n`;
             const banco = document.getElementById('bancoCredito')?.value;
-            if(banco) mensaje += `Banco: ${banco}\n`;
+            if(banco && soporteDiv.style.display !== 'none') mensaje += `Banco: ${banco}\n`;
             const entidadCes = document.getElementById('entidadCesantias')?.value;
-            if(entidadCes) mensaje += `Entidad cesantías: ${entidadCes}\n`;
+            if(entidadCes && cesantiasDiv.style.display !== 'none') mensaje += `Entidad cesantías: ${entidadCes}\n`;
             
-            mensaje += `Cuota inicial: ${document.getElementById('cuotaInicial').value || 'No especifica'}\n`;
             mensaje += `Asesoría crédito: ${document.querySelector('input[name="asesoriaCredito"]:checked')?.value || 'No responde'}\n\n`;
             
             mensaje += "*👥 COMPRADORES*\n";
             const compradores = document.querySelectorAll('#compradoresContainer .comprador-card');
-            if(compradores.length === 0) {
-                mensaje += "No se agregaron compradores (se tomará como comprador único por defecto).\n";
-            } else {
-                compradores.forEach((comp, idx) => {
-                    const esNatural = !!comp.querySelector('.nat_nombres');
-                    if(esNatural) {
-                        const nom = comp.querySelector('.nat_nombres')?.value || '';
-                        const ape = comp.querySelector('.nat_apellidos')?.value || '';
-                        const doc = comp.querySelector('.nat_numDoc')?.value || '';
-                        const tel = comp.querySelector('.nat_telefono')?.value || '';
-                        mensaje += `${idx+1}. ${nom} ${ape} (${doc}) - Tel: ${tel}\n`;
-                    } else {
-                        const razon = comp.querySelector('.jur_razon')?.value || '';
-                        const nit = comp.querySelector('.jur_nit')?.value || '';
-                        mensaje += `${idx+1}. ${razon} - NIT: ${nit}\n`;
-                    }
-                });
-            }
+            compradores.forEach((comp, idx) => {
+                const esNatural = comp.querySelector('.nat_nombres') !== null;
+                if(esNatural) {
+                    const nom = comp.querySelector('.nat_nombres')?.value || '';
+                    const ape = comp.querySelector('.nat_apellidos')?.value || '';
+                    const doc = comp.querySelector('.nat_numDoc')?.value || '';
+                    const tel = comp.querySelector('.nat_telefono')?.value || '';
+                    mensaje += `${idx+1}. ${nom} ${ape} (${doc}) - Tel: ${tel}\n`;
+                } else {
+                    const razon = comp.querySelector('.jur_razon')?.value || '';
+                    const nit = comp.querySelector('.jur_nit')?.value || '';
+                    mensaje += `${idx+1}. ${razon} - NIT: ${nit}\n`;
+                }
+            });
             mensaje += "\n";
             
             mensaje += "*📝 OFERTA*\n";
             mensaje += `Valor ofertado: ${formatCOP(valorOfertado)}\n`;
-            mensaje += `Comisión: ${document.getElementById('comision').value}%\n`;
             mensaje += `Negocio convencionado: ${document.querySelector('input[name="negocioConvencionado"]:checked')?.value}\n\n`;
             
             // SECCIÓN REFERIDO
@@ -724,7 +805,6 @@
             mensaje += "\n────────────────────────\n";
             mensaje += "📲 *Iniciar proceso de compra - QRP2P*";
 
-            // Codificar el mensaje para URL
             const telefonoDestino = "573146824438";
             const url = `https://wa.me/${telefonoDestino}?text=${encodeURIComponent(mensaje)}`;
             window.open(url, '_blank');
