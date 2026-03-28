@@ -335,8 +335,11 @@
                 </div>
                 <div class="row-2">
                     <div class="form-group">
-                        <label>Precio del inmueble (COP) *</label>
+                        <label>💰 Precio máximo presupuestado (COP) *</label>
                         <input type="number" id="precioDeseado" placeholder="Ej: 250000000" required>
+                        <div class="info-box" style="margin-top: 5px;">
+                            💡 Este es el valor máximo que estás dispuesto(a) a pagar por el inmueble.
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Estrato social (opcional)</label>
@@ -352,7 +355,7 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN 2: FORMA DE PAGO (REORGANIZADA) -->
+            <!-- SECCIÓN 2: FORMA DE PAGO -->
             <div class="section">
                 <div class="section-title">💰 ¿Cómo vas a pagar?</div>
                 
@@ -368,8 +371,8 @@
                 <!-- Campo de cuota inicial (visible solo cuando es Mixto) -->
                 <div id="cuotaInicialSection" style="display: none;">
                     <div class="form-group">
-                        <label>💰 ¿Qué porcentaje o valor tienes para cuota inicial?</label>
-                        <input type="text" id="cuotaInicial" placeholder="Ej: 30% ($75.000.000) o tengo $50.000.000">
+                        <label>💰 ¿Qué valor tienes para cuota inicial?</label>
+                        <input type="text" id="cuotaInicial" placeholder="Ej: $50.000.000 o 30% del valor">
                         <div class="info-box" style="margin-top: 5px;">
                             💡 Recuerda: el crédito hipotecario generalmente financia hasta el 80% del valor del inmueble. Entre mayor sea tu cuota inicial, mejores condiciones de crédito podrás obtener.
                         </div>
@@ -447,7 +450,7 @@
                     <strong>⚠️ Importante:</strong> Debes agregar al menos <strong>1 comprador</strong> (persona natural o jurídica).
                 </p>
                 <div id="compradoresContainer">
-                    <!-- Se agrega un comprador natural por defecto para cumplir el mínimo -->
+                    <!-- Se agrega un comprador natural por defecto -->
                 </div>
                 <div style="display: flex; gap: 1rem; margin-top: 1rem;">
                     <button type="button" id="agregarNaturalBtn" class="btn btn-secondary">+ Agregar comprador natural</button>
@@ -458,36 +461,7 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN 4: OFERTA Y VALORES -->
-            <div class="section">
-                <div class="section-title">📝 Valor de oferta</div>
-                <div class="form-group">
-                    <label>Valor ofertado (COP) *</label>
-                    <input type="number" id="valorOfertado" placeholder="Ej: 215000000" required>
-                </div>
-            </div>
-
-            <!-- SECCIÓN 5: NEGOCIO CONVENCIONADO CON EXPLICACIÓN -->
-            <div class="section">
-                <div class="section-title">🤝 Negocio convencionado</div>
-                <div class="info-box-blue">
-                    <strong>📌 ¿Qué es un negocio convencionado?</strong><br>
-                    Es cuando existe un acuerdo previo entre comprador y vendedor antes de formalizar la oferta. Puede ser:
-                    <ul style="margin-top: 8px; margin-left: 20px;">
-                        <li>✅ Un contrato de opción de compra</li>
-                        <li>✅ Un preacuerdo notariado</li>
-                        <li>✅ Una venta sujeta a condiciones especiales</li>
-                        <li>✅ Un acuerdo con empleados donde el crédito cubre el 100%</li>
-                    </ul>
-                    <strong style="display: block; margin-top: 8px;">💡 Beneficio:</strong> Si ya existe un convenio, el proceso puede ser más ágil y en algunos casos el crédito hipotecario puede cubrir hasta el 100% del valor del inmueble.
-                </div>
-                <div class="radio-group">
-                    <label><input type="radio" name="negocioConvencionado" value="Sí"> Sí, ya existe un acuerdo previo</label>
-                    <label><input type="radio" name="negocioConvencionado" value="No" checked> No, es una nueva negociación</label>
-                </div>
-            </div>
-
-            <!-- SECCIÓN 6: REFERIDO -->
+            <!-- SECCIÓN 4: REFERIDO -->
             <div class="section">
                 <div class="section-title">⭐ ¿Cómo nos conociste?</div>
                 <div class="referido-box">
@@ -528,7 +502,7 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN 7: ELECCIÓN FINAL -->
+            <!-- SECCIÓN 5: ELECCIÓN FINAL -->
             <div class="section">
                 <div class="section-title">📌 ¿Cómo quieres continuar?</div>
                 <div class="final-options" id="finalOptions">
@@ -717,15 +691,10 @@
             const ubicacion = document.getElementById('ubicacion').value.trim();
             const precioDeseado = document.getElementById('precioDeseado').value;
             const formaPago = document.querySelector('input[name="formaPago"]:checked')?.value;
-            const valorOfertado = document.getElementById('valorOfertado').value;
             const tipoProceso = tipoProcesoInput.value;
 
-            if(!tipoInmueble || !ubicacion || !precioDeseado || !formaPago || !valorOfertado) {
-                alert("Por favor completa los campos obligatorios: tipo de inmueble, ubicación, precio deseado, forma de pago y valor ofertado.");
-                return;
-            }
-            if(!tipoProceso) {
-                alert("Por favor elige si deseas agendar una visita o realizar el proceso digital.");
+            if(!tipoInmueble || !ubicacion || !precioDeseado || !formaPago || !tipoProceso) {
+                alert("Por favor completa los campos obligatorios: tipo de inmueble, ubicación, precio máximo presupuestado, forma de pago y cómo quieres continuar.");
                 return;
             }
 
@@ -736,14 +705,17 @@
             mensaje += "*📍 INMUEBLE DESEADO*\n";
             mensaje += `Tipo: ${tipoInmueble}\n`;
             mensaje += `Ubicación: ${ubicacion}\n`;
-            mensaje += `Precio: ${formatCOP(precioDeseado)}\n`;
+            mensaje += `Precio máximo presupuestado: ${formatCOP(precioDeseado)}\n`;
             mensaje += `Estrato: ${document.getElementById('estrato').value || 'No especifica'}\n`;
             mensaje += `Características: ${document.getElementById('caracteristicas').value || 'No indicó'}\n\n`;
             
             mensaje += "*💰 FORMA DE PAGO*\n";
-            mensaje += `Modalidad: ${formaPago === 'Contado' ? 'Contado' : formaPago === 'Credito' ? '100% Financiado' : 'Mixto (Cuota inicial + Crédito)'}\n`;
-            
-            if(formaPago === 'Mixto') {
+            if (formaPago === 'Contado') {
+                mensaje += `Modalidad: Contado (pago total de contado)\n`;
+            } else if (formaPago === 'Credito') {
+                mensaje += `Modalidad: 100% financiado (crédito hipotecario)\n`;
+            } else {
+                mensaje += `Modalidad: Mixto (cuota inicial + crédito)\n`;
                 const cuotaInicialVal = document.getElementById('cuotaInicial').value;
                 if(cuotaInicialVal) mensaje += `Cuota inicial: ${cuotaInicialVal}\n`;
             }
@@ -769,9 +741,8 @@
                 if(esNatural) {
                     const nom = comp.querySelector('.nat_nombres')?.value || '';
                     const ape = comp.querySelector('.nat_apellidos')?.value || '';
-                    const doc = comp.querySelector('.nat_numDoc')?.value || '';
                     const tel = comp.querySelector('.nat_telefono')?.value || '';
-                    mensaje += `${idx+1}. ${nom} ${ape} (${doc}) - Tel: ${tel}\n`;
+                    mensaje += `${idx+1}. ${nom} ${ape} - Tel: ${tel}\n`;
                 } else {
                     const razon = comp.querySelector('.jur_razon')?.value || '';
                     const nit = comp.querySelector('.jur_nit')?.value || '';
@@ -779,10 +750,6 @@
                 }
             });
             mensaje += "\n";
-            
-            mensaje += "*📝 OFERTA*\n";
-            mensaje += `Valor ofertado: ${formatCOP(valorOfertado)}\n`;
-            mensaje += `Negocio convencionado: ${document.querySelector('input[name="negocioConvencionado"]:checked')?.value}\n\n`;
             
             // SECCIÓN REFERIDO
             const tieneReferido = document.querySelector('input[name="tieneReferido"]:checked')?.value;
