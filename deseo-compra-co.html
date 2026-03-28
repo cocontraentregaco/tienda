@@ -1,0 +1,661 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="Formulario DESEO DE COMPRA - Completa todos los datos para iniciar el proceso de compra de tu inmueble. Especifica tipo de propiedad, ubicación, forma de pago, recursos, crédito y más. Elige entre agendar visita o proceso digital.">
+    <meta name="keywords" content="deseo de compra, inmueble, apartamento, casa, lote, crédito hipotecario, cesantías, recursos propios, QRP2P, comprador">
+    <title>DESEO DE COMPRA | QRP2P - Inicia tu proceso de compra</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fb;
+            color: #111111;
+            line-height: 1.5;
+        }
+
+        /* Header con gradiente */
+        .hero {
+            background: linear-gradient(135deg, #0a2b3e 0%, #1a4a6f 100%);
+            color: #ffffff;
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Tarjetas de sección */
+        .section {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+            border: 1px solid #eef2f6;
+        }
+
+        .section:hover {
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0a2b3e;
+            border-left: 5px solid #f5a623;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e4663;
+            margin: 1.2rem 0 1rem 0;
+            border-bottom: 2px solid #eef2f6;
+            padding-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+            color: #1f2f3e;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #d0dbe8;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            background: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #f5a623;
+            box-shadow: 0 0 0 3px rgba(245,166,35,0.1);
+        }
+
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .radio-group, .checkbox-group {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            margin-top: 0.3rem;
+            flex-wrap: wrap;
+        }
+
+        .radio-group label, .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: normal;
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        .radio-group input, .checkbox-group input {
+            width: auto;
+            transform: scale(1.1);
+        }
+
+        /* Tarjetas de compradores */
+        .comprador-card {
+            background: #fafcff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .badge-tipo {
+            display: inline-block;
+            background: #eef2ff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1e4663;
+            margin-bottom: 1rem;
+        }
+
+        .eliminar-item {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #94a3b8;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.3rem;
+            border-radius: 50%;
+            width: auto;
+        }
+
+        .eliminar-item:hover {
+            color: #dc2626;
+            background: #fee2e2;
+        }
+
+        .btn {
+            background: #0a2b3e;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: #1a4a6f;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #0a2b3e;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-primary {
+            background: #f5a623;
+            color: #1e2a3a;
+            font-size: 1rem;
+            padding: 1rem;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background: #e59410;
+            transform: translateY(-2px);
+        }
+
+        .info-box {
+            background: #fef9e6;
+            border-left: 4px solid #f5a623;
+            padding: 0.8rem 1rem;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+            border-radius: 12px;
+        }
+
+        .final-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0;
+        }
+
+        .option-card {
+            flex: 1;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-card.selected {
+            border-color: #f5a623;
+            background: #fff8ed;
+            box-shadow: 0 4px 12px rgba(245,166,35,0.2);
+        }
+
+        .option-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #0a2b3e;
+        }
+
+        .option-card p {
+            font-size: 0.8rem;
+            color: #4b5563;
+        }
+
+        @media (max-width: 768px) {
+            .row-2, .row-3 {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+            }
+            .section {
+                padding: 1.2rem;
+            }
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+            .final-options {
+                flex-direction: column;
+            }
+        }
+
+        footer {
+            background: #0a2b3e;
+            text-align: center;
+            padding: 1.5rem;
+            color: #cbd5e1;
+            font-size: 0.8rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <h1>🏡 DESEO DE COMPRA</h1>
+        <p>Cuéntanos todo sobre la propiedad que deseas, cómo la vas a pagar y tu perfil como comprador. Recibirás asesoría personalizada y podrás elegir entre agendar una visita o continuar 100% digital.</p>
+    </header>
+
+    <div class="container">
+        <form id="deseoCompraForm">
+            <!-- ================= SECCIÓN 1: INMUEBLE DESEADO ================= -->
+            <div class="section">
+                <div class="section-title">📍 ¿Qué inmueble estás buscando?</div>
+                <div class="row-2">
+                    <div class="form-group">
+                        <label>Tipo de inmueble *</label>
+                        <select id="tipoInmueble" required>
+                            <option value="">Selecciona</option>
+                            <option value="Apartamento">Apartamento</option>
+                            <option value="Casa">Casa</option>
+                            <option value="Lote / Terreno">Lote / Terreno</option>
+                            <option value="Local comercial">Local comercial</option>
+                            <option value="Oficina">Oficina</option>
+                            <option value="Bodega">Bodega</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ciudad / Zona de búsqueda *</label>
+                        <input type="text" id="ubicacion" placeholder="Ej: Bogotá, Chapinero / Medellín, El Poblado" required>
+                    </div>
+                </div>
+                <div class="row-2">
+                    <div class="form-group">
+                        <label>Rango de precio deseado (COP) *</label>
+                        <input type="number" id="precioDeseado" placeholder="Ej: 250000000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Estrato social (opcional)</label>
+                        <select id="estrato">
+                            <option value="">No aplica</option>
+                            <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Características especiales (habitaciones, baños, área, etc.)</label>
+                    <textarea rows="2" id="caracteristicas" placeholder="Ej: 3 habitaciones, 2 baños, área 80m², balcón, parqueadero..."></textarea>
+                </div>
+            </div>
+
+            <!-- ================= SECCIÓN 2: FORMA DE PAGO Y FINANCIACIÓN ================= -->
+            <div class="section">
+                <div class="section-title">💰 ¿Cómo vas a pagar?</div>
+                
+                <div class="form-group">
+                    <label>Forma de pago principal *</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="formaPago" value="Contado" required> Contado (recursos propios)</label>
+                        <label><input type="radio" name="formaPago" value="Credito"> Crédito hipotecario / Leasing</label>
+                        <label><input type="radio" name="formaPago" value="Mixto"> Mixto (propios + crédito)</label>
+                    </div>
+                </div>
+
+                <div id="recursosSection">
+                    <div class="section-subtitle">💵 Recursos para la compra (puedes seleccionar varios)</div>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="recursos" value="Recursos propios"> Recursos propios (ahorros)</label>
+                        <label><input type="checkbox" name="recursos" value="Crédito hipotecario"> Crédito hipotecario / Leasing</label>
+                        <label><input type="checkbox" name="recursos" value="Cesantías"> Cesantías</label>
+                        <label><input type="checkbox" name="recursos" value="Subsidio (Mi Casa Ya / FNA)"> Subsidio (Mi Casa Ya / FNA)</label>
+                    </div>
+                </div>
+
+                <!-- Soporte de crédito detallado (similar a las imágenes) -->
+                <div id="soporteCredito" style="display: none;">
+                    <div class="section-subtitle">📄 Soporte de crédito</div>
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label>Tipo de carta con la que cuenta el cliente</label>
+                            <select id="tipoCartaCredito">
+                                <option value="">Selecciona</option>
+                                <option value="Pre-aprobado">Pre-aprobado</option>
+                                <option value="Aprobado">Aprobado</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo de crédito</label>
+                            <select id="tipoCredito">
+                                <option value="">Selecciona</option>
+                                <option value="Crédito bancario">Crédito bancario</option>
+                                <option value="Crédito leasing habitacional">Crédito leasing habitacional</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Banco / Entidad financiera</label>
+                        <select id="bancoCredito">
+                            <option value="">Selecciona</option>
+                            <option>Bancolombia</option><option>Davivienda</option><option>BBVA</option><option>Banco de Bogotá</option><option>FNA</option><option>Otro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Cesantías detalladas -->
+                <div id="cesantiasDetalle" style="display: none;">
+                    <div class="section-subtitle">💰 Detalle de Cesantías</div>
+                    <div class="form-group">
+                        <label>Entidad donde tienes tus cesantías</label>
+                        <select id="entidadCesantias">
+                            <option value="">Selecciona</option>
+                            <option>Porvenir</option><option>Protección</option><option>Colfondos</option><option>Fondo Nacional del Ahorro</option><option>Caja Honor</option><option>Otro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>¿Cuentas con cuota inicial separada? (aprox % o valor)</label>
+                    <input type="text" id="cuotaInicial" placeholder="Ej: Tengo el 30% ($75M) separado">
+                </div>
+
+                <div class="form-group">
+                    <label>¿Necesitas asesoría para el crédito o subsidios?</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="asesoriaCredito" value="Sí"> Sí, requiero asesoría</label>
+                        <label><input type="radio" name="asesoriaCredito" value="No"> No, ya tengo pre-aprobado</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= SECCIÓN 3: COMPRADORES (NATURALES Y JURÍDICOS) ================= -->
+            <div class="section">
+                <div class="section-title">👥 Compradores participantes</div>
+                <p style="margin-bottom: 1rem; font-size: 0.9rem;">Agrega todos los compradores (personas naturales o jurídicas) que harán parte del negocio.</p>
+                <div id="compradoresContainer">
+                    <!-- Aquí se agregarán dinámicamente los compradores -->
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button type="button" id="agregarNaturalBtn" class="btn btn-secondary">+ Agregar comprador natural</button>
+                    <button type="button" id="agregarJuridicaBtn" class="btn btn-secondary">+ Agregar comprador jurídica</button>
+                </div>
+            </div>
+
+            <!-- ================= SECCIÓN 4: OFERTA Y VALORES ================= -->
+            <div class="section">
+                <div class="section-title">📝 Valor de oferta y comisión</div>
+                <div class="row-2">
+                    <div class="form-group">
+                        <label>Valor ofertado (COP) *</label>
+                        <input type="number" id="valorOfertado" placeholder="Ej: 215000000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Comisión acordada (%)</label>
+                        <input type="number" id="comision" step="0.1" placeholder="1.5" value="1.5">
+                    </div>
+                </div>
+                <div class="info-box">
+                    💡 La Tarifa DdC (Derechos de Compra) será calculada según el negocio. Si aplica, te la informaremos en la asesoría.
+                </div>
+            </div>
+
+            <!-- ================= SECCIÓN 5: NEGOCIO CONVENCIONADO (IMPORTANTE) ================= -->
+            <div class="section">
+                <div class="section-title">🤝 Negocio convencionado</div>
+                <div class="radio-group">
+                    <label><input type="radio" name="negocioConvencionado" value="Sí"> Sí, ya existe un acuerdo previo</label>
+                    <label><input type="radio" name="negocioConvencionado" value="No" checked> No, es una nueva negociación</label>
+                </div>
+                <div class="info-box">
+                    🔔 Si seleccionas "Sí", el crédito puede cubrir hasta el 100% del valor del inmueble según convenio con empleados o acuerdos especiales.
+                </div>
+            </div>
+
+            <!-- ================= SECCIÓN 6: ELECCIÓN FINAL: VISITA O PROCESO DIGITAL ================= -->
+            <div class="section">
+                <div class="section-title">📌 ¿Cómo quieres continuar?</div>
+                <div class="final-options" id="finalOptions">
+                    <div class="option-card" data-option="visita">
+                        <h3>🏠 Agendar una visita</h3>
+                        <p>Quiero conocer el inmueble físicamente con un asesor.</p>
+                    </div>
+                    <div class="option-card" data-option="digital">
+                        <h3>💻 Proceso 100% digital</h3>
+                        <p>Quiero que inicien el estudio rápido, me soliciten documentos y formalicemos sin desplazarme.</p>
+                    </div>
+                </div>
+                <input type="hidden" id="tipoProceso" value="">
+                <div class="form-group">
+                    <label>Comentarios adicionales (horario preferido para visita o cualquier detalle)</label>
+                    <textarea rows="3" id="comentariosFinal" placeholder="Ej: Prefiero visita el fin de semana, o necesito que me contacten para enviar documentos por WhatsApp..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">🚀 Enviar mi DESEO DE COMPRA - Iniciar proceso</button>
+                <small style="display: block; text-align: center; margin-top: 1rem;">Al enviar, un asesor QRP2P revisará tu información y te contactará en menos de 24 horas para iniciar el proceso de compra y solicitar documentos.</small>
+            </div>
+        </form>
+    </div>
+
+    <footer>
+        <p>QRP2P · Asesoría integral para tu compra de inmueble</p>
+        <p>📲 +57 3146824438 · ✉️ asesoria@qrp2p.com</p>
+        <p>© 2025 DESEO DE COMPRA - Todos los derechos reservados</p>
+    </footer>
+
+    <script>
+        // Lógica para compradores dinámicos
+        let compradorCount = 0;
+        const compradoresContainer = document.getElementById('compradoresContainer');
+
+        function crearCompradorNatural(idx, data = {}) {
+            const div = document.createElement('div');
+            div.className = 'comprador-card';
+            div.innerHTML = `
+                <button type="button" class="eliminar-item">✖</button>
+                <span class="badge-tipo">👤 Persona Natural</span>
+                <div class="row-2">
+                    <div class="form-group"><label>Nombres *</label><input type="text" class="nat_nombres" value="${data.nombres || ''}" required></div>
+                    <div class="form-group"><label>Apellidos *</label><input type="text" class="nat_apellidos" value="${data.apellidos || ''}" required></div>
+                </div>
+                <div class="row-2">
+                    <div class="form-group"><label>Tipo documento</label><select class="nat_tipoDoc"><option>CC</option><option>CE</option><option>Pasaporte</option></select></div>
+                    <div class="form-group"><label>Número documento *</label><input type="text" class="nat_numDoc" value="${data.numDoc || ''}" required></div>
+                </div>
+                <div class="row-2">
+                    <div class="form-group"><label>Teléfono *</label><input type="tel" class="nat_telefono" value="${data.telefono || ''}" required></div>
+                    <div class="form-group"><label>Email *</label><input type="email" class="nat_email" value="${data.email || ''}" required></div>
+                </div>
+                <div class="form-group"><label>Estado civil</label><select class="nat_estadoCivil"><option>Soltero(a)</option><option>Casado(a)</option><option>Unión libre</option></select></div>
+            `;
+            div.querySelector('.eliminar-item').addEventListener('click', () => div.remove());
+            return div;
+        }
+
+        function crearCompradorJuridico(idx, data = {}) {
+            const div = document.createElement('div');
+            div.className = 'comprador-card';
+            div.innerHTML = `
+                <button type="button" class="eliminar-item">✖</button>
+                <span class="badge-tipo">🏢 Persona Jurídica</span>
+                <div class="form-group"><label>Razón social *</label><input type="text" class="jur_razon" value="${data.razon || ''}" required></div>
+                <div class="row-2">
+                    <div class="form-group"><label>NIT *</label><input type="text" class="jur_nit" value="${data.nit || ''}" required></div>
+                    <div class="form-group"><label>Representante legal *</label><input type="text" class="jur_representante" value="${data.representante || ''}" required></div>
+                </div>
+                <div class="row-2">
+                    <div class="form-group"><label>Teléfono *</label><input type="tel" class="jur_telefono" value="${data.telefono || ''}" required></div>
+                    <div class="form-group"><label>Email *</label><input type="email" class="jur_email" value="${data.email || ''}" required></div>
+                </div>
+            `;
+            div.querySelector('.eliminar-item').addEventListener('click', () => div.remove());
+            return div;
+        }
+
+        document.getElementById('agregarNaturalBtn').addEventListener('click', () => {
+            compradoresContainer.appendChild(crearCompradorNatural(++compradorCount));
+        });
+        document.getElementById('agregarJuridicaBtn').addEventListener('click', () => {
+            compradoresContainer.appendChild(crearCompradorJuridico(++compradorCount));
+        });
+
+        // Mostrar/ocultar secciones según forma de pago
+        const formaPagoRadios = document.querySelectorAll('input[name="formaPago"]');
+        const soporteDiv = document.getElementById('soporteCredito');
+        const cesantiasDiv = document.getElementById('cesantiasDetalle');
+        const recursosCheckboxes = document.querySelectorAll('input[name="recursos"]');
+
+        function actualizarSeccionesFinancieras() {
+            const forma = document.querySelector('input[name="formaPago"]:checked')?.value;
+            const creditoSeleccionado = Array.from(recursosCheckboxes).some(cb => cb.value === 'Crédito hipotecario' && cb.checked);
+            const cesantiasSeleccionado = Array.from(recursosCheckboxes).some(cb => cb.value === 'Cesantías' && cb.checked);
+            
+            soporteDiv.style.display = (forma === 'Credito' || forma === 'Mixto' || creditoSeleccionado) ? 'block' : 'none';
+            cesantiasDiv.style.display = cesantiasSeleccionado ? 'block' : 'none';
+        }
+
+        formaPagoRadios.forEach(r => r.addEventListener('change', actualizarSeccionesFinancieras));
+        recursosCheckboxes.forEach(cb => cb.addEventListener('change', actualizarSeccionesFinancieras));
+        actualizarSeccionesFinancieras();
+
+        // Selección de opción final (visita o digital)
+        const optionCards = document.querySelectorAll('.option-card');
+        const tipoProcesoInput = document.getElementById('tipoProceso');
+        optionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                optionCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                tipoProcesoInput.value = card.dataset.option;
+            });
+        });
+
+        // Envío del formulario por WhatsApp
+        document.getElementById('deseoCompraForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Validaciones básicas
+            const tipoInmueble = document.getElementById('tipoInmueble').value;
+            const ubicacion = document.getElementById('ubicacion').value.trim();
+            const precioDeseado = document.getElementById('precioDeseado').value;
+            const formaPago = document.querySelector('input[name="formaPago"]:checked')?.value;
+            const valorOfertado = document.getElementById('valorOfertado').value;
+            const tipoProceso = tipoProcesoInput.value;
+
+            if(!tipoInmueble || !ubicacion || !precioDeseado || !formaPago || !valorOfertado) {
+                alert("Por favor completa los campos obligatorios: tipo de inmueble, ubicación, precio deseado, forma de pago y valor ofertado.");
+                return;
+            }
+            if(!tipoProceso) {
+                alert("Por favor elige si deseas agendar una visita o realizar el proceso digital.");
+                return;
+            }
+
+            // Construir mensaje
+            let mensaje = "🏡 *DESEO DE COMPRA - QRP2P*%0A";
+            mensaje += "────────────────────────%0A";
+            mensaje += "*📍 INMUEBLE DESEADO*%0A";
+            mensaje += `Tipo: ${tipoInmueble}%0A`;
+            mensaje += `Ubicación: ${ubicacion}%0A`;
+            mensaje += `Precio deseado: COP $${parseInt(precioDeseado).toLocaleString('es-CO')}%0A`;
+            mensaje += `Estrato: ${document.getElementById('estrato').value || 'No especifica'}%0A`;
+            mensaje += `Características: ${document.getElementById('caracteristicas').value || 'No indicó'}%0A`;
+            mensaje += "%0A*💰 FORMA DE PAGO*%0A";
+            mensaje += `Modalidad: ${formaPago}%0A`;
+            let recursosSeleccionados = Array.from(document.querySelectorAll('input[name="recursos"]:checked')).map(cb => cb.value);
+            mensaje += `Recursos: ${recursosSeleccionados.length ? recursosSeleccionados.join(', ') : 'No seleccionó'}%0A`;
+            if(document.getElementById('tipoCartaCredito')?.value) mensaje += `Soporte crédito: ${document.getElementById('tipoCartaCredito').value}%0A`;
+            if(document.getElementById('tipoCredito')?.value) mensaje += `Tipo crédito: ${document.getElementById('tipoCredito').value}%0A`;
+            if(document.getElementById('bancoCredito')?.value) mensaje += `Banco: ${document.getElementById('bancoCredito').value}%0A`;
+            if(document.getElementById('entidadCesantias')?.value) mensaje += `Entidad cesantías: ${document.getElementById('entidadCesantias').value}%0A`;
+            mensaje += `Cuota inicial: ${document.getElementById('cuotaInicial').value || 'No especifica'}%0A`;
+            mensaje += `Asesoría crédito: ${document.querySelector('input[name="asesoriaCredito"]:checked')?.value || 'No responde'}%0A`;
+            mensaje += "%0A*👥 COMPRADORES*%0A";
+            const compradores = document.querySelectorAll('#compradoresContainer .comprador-card');
+            if(compradores.length === 0) mensaje += "No se agregaron compradores (se tomará como comprador único por defecto).%0A";
+            compradores.forEach((comp, idx) => {
+                const esNatural = !!comp.querySelector('.nat_nombres');
+                if(esNatural) {
+                    const nom = comp.querySelector('.nat_nombres')?.value || '';
+                    const ape = comp.querySelector('.nat_apellidos')?.value || '';
+                    const doc = comp.querySelector('.nat_numDoc')?.value || '';
+                    const tel = comp.querySelector('.nat_telefono')?.value || '';
+                    mensaje += `Comprador Natural ${idx+1}: ${nom} ${ape} (Doc: ${doc}, Tel: ${tel})%0A`;
+                } else {
+                    const razon = comp.querySelector('.jur_razon')?.value || '';
+                    const nit = comp.querySelector('.jur_nit')?.value || '';
+                    const rep = comp.querySelector('.jur_representante')?.value || '';
+                    mensaje += `Comprador Jurídico ${idx+1}: ${razon} - NIT ${nit} - Rep: ${rep}%0A`;
+                }
+            });
+            mensaje += "%0A*📝 OFERTA*%0A";
+            mensaje += `Valor ofertado: COP $${parseInt(valorOfertado).toLocaleString('es-CO')}%0A`;
+            mensaje += `Comisión: ${document.getElementById('comision').value}%%0A`;
+            mensaje += `Negocio convencionado: ${document.querySelector('input[name="negocioConvencionado"]:checked')?.value}%0A`;
+            mensaje += "%0A*📌 PROCESO ELEGIDO*%0A";
+            mensaje += tipoProceso === 'visita' ? "🏠 Agendar visita física al inmueble" : "💻 Proceso 100% digital (estudio rápido y envío de documentos)";
+            mensaje += `%0A*Comentarios:* ${document.getElementById('comentariosFinal').value || 'Ninguno'}%0A`;
+            mensaje += "────────────────────────%0A";
+            mensaje += "📲 *Iniciar proceso de compra - QRP2P*";
+
+            const telefonoDestino = "573146824438";
+            const url = `https://wa.me/${telefonoDestino}?text=${encodeURIComponent(mensaje)}`;
+            window.open(url, '_blank');
+        });
+    </script>
+</body>
+</html>
