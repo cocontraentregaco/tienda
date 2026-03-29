@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <meta name="description" content="Regístrate como agente inmobiliario independiente en QRP2P Colombia. Vende propiedades en todo el mundo, gana comisiones y accede a listados globales desde Colombia.">
-    <meta name="keywords" content="agente inmobiliario Colombia, QRP2P, registro corredor, vender propiedades Colombia, comisiones inmobiliarias, listados globales">
+    <meta name="keywords" content="agente inmobiliario Colombia, QRP2P, registro corredor, vender propiedades Colombia, comisiones inmobiliarias">
     <title>Registro Agente Inmobiliario | QRP2P Colombia - Vende en Colombia y el Mundo</title>
     <style>
         * {
@@ -164,17 +164,6 @@
             transform: translateY(-2px);
         }
 
-        .btn-outline {
-            background: transparent;
-            color: #0a2b3e;
-            border: 2px solid #f5a623;
-        }
-
-        .btn-outline:hover {
-            background: #f5a623;
-            color: #1e2a3a;
-        }
-
         .info-box {
             background: #fef9e6;
             border-left: 4px solid #f5a623;
@@ -226,9 +215,9 @@
 
         .global-stats {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
+            gap: 2rem;
             flex-wrap: wrap;
-            gap: 1rem;
             margin: 1.5rem 0;
             text-align: center;
         }
@@ -237,7 +226,7 @@
             background: #f1f5f9;
             padding: 1rem;
             border-radius: 20px;
-            min-width: 120px;
+            min-width: 150px;
         }
 
         .stat-number {
@@ -263,9 +252,76 @@
             text-decoration: underline;
         }
 
-        .flag-icon {
-            font-size: 1.2rem;
-            margin-right: 0.3rem;
+        /* Modal para términos y condiciones */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            border-radius: 24px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #eef2f6;
+        }
+
+        .modal-header h3 {
+            color: #0a2b3e;
+            font-size: 1.3rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #94a3b8;
+        }
+
+        .close-modal:hover {
+            color: #dc2626;
+        }
+
+        .modal-body {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #1f2f3e;
+        }
+
+        .modal-body h4 {
+            color: #0a2b3e;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        .terms-link {
+            color: #f5a623;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .terms-link:hover {
+            color: #e59410;
         }
 
         @media (max-width: 768px) {
@@ -284,6 +340,7 @@
             }
             .global-stats {
                 flex-direction: column;
+                align-items: center;
             }
         }
 
@@ -294,17 +351,6 @@
             color: #cbd5e1;
             font-size: 0.8rem;
             margin-top: 2rem;
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .cta-buttons .btn {
-            flex: 1;
         }
     </style>
 </head>
@@ -319,7 +365,7 @@
         <!-- Botón para volver al formulario principal -->
         <a href="#" id="backToDeseoBtn" class="back-link" style="display: none;">← Volver al formulario DESEO DE COMPRA</a>
         
-        <!-- SECCIÓN DE ESTADÍSTICAS GLOBALES -->
+        <!-- SECCIÓN DE ESTADÍSTICAS GLOBALES (sin propiedades activas) -->
         <div class="section">
             <div class="section-title">🌍 QRP2P en el Mundo</div>
             <div class="global-stats">
@@ -330,10 +376,6 @@
                 <div class="stat-item">
                     <div class="stat-number">🌎 5</div>
                     <div class="stat-label">Continentes</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">+10K</div>
-                    <div class="stat-label">Propiedades Activas</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number">24/7</div>
@@ -459,7 +501,7 @@
                     </div>
                 </div>
 
-                <!-- Información Profesional -->
+                <!-- Información Profesional (sin licencia inmobiliaria) -->
                 <div class="section-subtitle">🏢 Información profesional</div>
                 <div class="form-group">
                     <label>¿Ya eres agente inmobiliario?</label>
@@ -469,26 +511,15 @@
                         <label><input type="radio" name="experiencia" value="Tengo experiencia en otro sector"> Tengo experiencia en otro sector</label>
                     </div>
                 </div>
-                <div class="row-2">
-                    <div class="form-group">
-                        <label>Años de experiencia (si aplica)</label>
-                        <select id="anosExperiencia">
-                            <option value="">Selecciona</option>
-                            <option>Menos de 1 año</option>
-                            <option>1 - 3 años</option>
-                            <option>4 - 7 años</option>
-                            <option>Más de 7 años</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>¿Tienes licencia inmobiliaria en Colombia?</label>
-                        <select id="tieneLicencia">
-                            <option value="">Selecciona</option>
-                            <option value="Sí, tengo licencia">Sí, tengo licencia</option>
-                            <option value="No, pero puedo obtenerla">No, pero puedo obtenerla</option>
-                            <option value="No aplica">No aplica</option>
-                        </select>
-                    </div>
+                <div class="form-group">
+                    <label>Años de experiencia (si aplica)</label>
+                    <select id="anosExperiencia">
+                        <option value="">Selecciona</option>
+                        <option>Menos de 1 año</option>
+                        <option>1 - 3 años</option>
+                        <option>4 - 7 años</option>
+                        <option>Más de 7 años</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>¿En qué ciudades o zonas de Colombia te gustaría operar principalmente?</label>
@@ -548,19 +579,65 @@
                     <textarea rows="3" id="comentarios" placeholder="Cuéntanos algo más sobre ti, tu experiencia o expectativas como agente..."></textarea>
                 </div>
 
-                <!-- Términos y Condiciones -->
+                <!-- Términos y Condiciones con modal -->
                 <div class="form-group">
                     <div class="checkbox-group">
-                        <label><input type="checkbox" id="aceptaTerminos" required> Acepto los <a href="#" style="color: #f5a623;">términos y condiciones</a> y autorizo el tratamiento de mis datos personales según la política de privacidad de QRP2P Colombia.</label>
+                        <label><input type="checkbox" id="aceptaTerminos" required> Acepto los <span class="terms-link" id="openTermsModal">términos y condiciones</span> y autorizo el tratamiento de mis datos personales según la política de privacidad de QRP2P Colombia.</label>
                     </div>
                 </div>
 
-                <div class="cta-buttons">
-                    <button type="submit" class="btn btn-primary">🚀 Enviar solicitud - Quiero ser agente QRP2P Colombia</button>
-                    <a href="https://real.qrp2p.com/colombia" target="_blank" class="btn btn-outline">🌍 Ver listados globales</a>
-                </div>
+                <button type="submit" class="btn btn-primary">🚀 Enviar solicitud - Quiero ser agente QRP2P Colombia</button>
                 <small style="display: block; text-align: center; margin-top: 1rem;">Al enviar, un asesor QRP2P Colombia se comunicará contigo para activar tu cuenta como agente independiente y darte acceso a los listados en 196 países.</small>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal para Términos y Condiciones -->
+    <div id="termsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📜 Términos y Condiciones</h3>
+                <button class="close-modal" id="closeTermsModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4>1. Aceptación de los Términos</h4>
+                <p>Al registrarte como agente inmobiliario independiente en QRP2P Colombia, aceptas cumplir con estos términos y condiciones, así como con las políticas establecidas por la plataforma.</p>
+                
+                <h4>2. Rol del Agente</h4>
+                <p>El agente actúa como un profesional independiente, no como empleado de QRP2P. Cada agente es responsable de su propia gestión comercial, cumplimiento normativo y relaciones con clientes.</p>
+                
+                <h4>3. Comisiones</h4>
+                <p>Las comisiones se calculan sobre el valor de cada transacción exitosa y se pagan conforme a las políticas establecidas. Los porcentajes serán acordados previamente y pueden variar según el tipo de propiedad y mercado.</p>
+                
+                <h4>4. Acceso a la Plataforma</h4>
+                <p>QRP2P otorga al agente una licencia no exclusiva para acceder y utilizar la plataforma, sus listados y herramientas. El agente se compromete a usar la plataforma de manera ética y profesional.</p>
+                
+                <h4>5. Responsabilidades del Agente</h4>
+                <p>El agente es responsable de:</p>
+                <ul style="margin-left: 1.5rem; margin-bottom: 0.5rem;">
+                    <li>Mantener actualizada su información de contacto</li>
+                    <li>Cumplir con las leyes y regulaciones locales aplicables</li>
+                    <li>Brindar asesoría profesional a sus clientes</li>
+                    <li>Gestionar adecuadamente los leads y oportunidades de negocio</li>
+                </ul>
+                
+                <h4>6. Protección de Datos</h4>
+                <p>QRP2P trata los datos personales conforme a la Ley 1581 de 2012 y el Decreto 1377 de 2013 en Colombia. Los datos serán utilizados exclusivamente para la gestión de la relación comercial y operación de la plataforma.</p>
+                
+                <h4>7. Propiedad Intelectual</h4>
+                <p>Todos los derechos de propiedad intelectual sobre la plataforma, su contenido y funcionalidades pertenecen a QRP2P. El agente no podrá replicar, modificar o distribuir dichos elementos sin autorización expresa.</p>
+                
+                <h4>8. Modificaciones</h4>
+                <p>QRP2P se reserva el derecho de modificar estos términos en cualquier momento. Los cambios serán notificados a través de la plataforma o por correo electrónico.</p>
+                
+                <h4>9. Cancelación</h4>
+                <p>Cualquiera de las partes puede terminar la relación con previa notificación. En caso de incumplimiento grave por parte del agente, QRP2P puede cancelar el acceso sin previo aviso.</p>
+                
+                <h4>10. Legislación Aplicable</h4>
+                <p>Estos términos se rigen por las leyes de la República de Colombia. Cualquier controversia será sometida a los tribunales competentes de Bogotá D.C.</p>
+                
+                <p style="margin-top: 1rem; font-size: 0.8rem; color: #666;"><strong>Última actualización:</strong> Marzo 2025</p>
+            </div>
         </div>
     </div>
 
@@ -571,6 +648,26 @@
     </footer>
 
     <script>
+        // Modal para términos y condiciones
+        const modal = document.getElementById('termsModal');
+        const openModalBtn = document.getElementById('openTermsModal');
+        const closeModalBtn = document.getElementById('closeTermsModal');
+
+        openModalBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            modal.style.display = 'flex';
+        });
+
+        closeModalBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
         // Función para obtener parámetros de la URL
         function getUrlParameter(name) {
             const urlParams = new URLSearchParams(window.location.search);
@@ -651,8 +748,6 @@
             mensaje += `Experiencia: ${experiencia || 'No indicó'}\n`;
             const anosExp = document.getElementById('anosExperiencia').value;
             if(anosExp) mensaje += `Años experiencia: ${anosExp}\n`;
-            const licencia = document.getElementById('tieneLicencia').value;
-            if(licencia) mensaje += `Licencia inmobiliaria: ${licencia}\n`;
             const zonasOperacion = document.getElementById('zonasOperacion').value.trim();
             if(zonasOperacion) mensaje += `Zonas de operación: ${zonasOperacion}\n`;
             
