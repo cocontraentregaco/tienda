@@ -480,7 +480,8 @@
             <div class="section">
                 <div class="section-title">👥 Compradores participantes</div>
                 <p style="margin-bottom: 1rem; font-size: 0.9rem;">
-                    <strong>⚠️ Importante:</strong> Debes agregar al menos <strong>1 comprador</strong> (persona natural o jurídica).
+                    <strong>⚠️ Importante:</strong> Debes agregar al menos <strong>1 comprador</strong> (persona natural o jurídica).<br>
+                    <strong>📱 El teléfono celular es obligatorio</strong> para poder contactarte. El correo es opcional pero recomendado.
                 </p>
                 <div id="compradoresContainer">
                     <!-- Se agrega un comprador natural por defecto -->
@@ -539,7 +540,7 @@
                             <h3>🤝 ¿Eres agente inmobiliario o quieres generar ingresos extra?</h3>
                             <p>Únete a QRP2P como corredor independiente y vende propiedades en todo el mundo. Gana comisiones, accede a listados exclusivos y sé parte de la red inmobiliaria global.</p>
                         </div>
-                        <a href="https://real.qrp2p.com/registro-corredor-co" target="_blank" rel="noopener noreferrer" class="btn">🚀 Quiero ser agente QRP2P</a>
+                        <a href="registro-agente.html" target="_blank" rel="noopener noreferrer" class="btn">🚀 Quiero ser agente QRP2P</a>
                     </div>
                 </div>
             </div>
@@ -590,15 +591,12 @@
         function actualizarSeccionesFinancieras() {
             const forma = document.querySelector('input[name="formaPago"]:checked')?.value;
             
-            // Mostrar campo de cuota inicial solo si es Mixto
             cuotaInicialSection.style.display = (forma === 'Mixto') ? 'block' : 'none';
             
-            // Mostrar soporte de crédito si hay crédito involucrado
             const creditoSeleccionado = Array.from(recursosCheckboxes).some(cb => cb.value === 'Crédito hipotecario' && cb.checked);
             const formaConCredito = (forma === 'Credito' || forma === 'Mixto');
             soporteDiv.style.display = (formaConCredito || creditoSeleccionado) ? 'block' : 'none';
             
-            // Mostrar detalle de cesantías si está seleccionado
             const cesantiasSeleccionado = Array.from(recursosCheckboxes).some(cb => cb.value === 'Cesantías' && cb.checked);
             cesantiasDiv.style.display = cesantiasSeleccionado ? 'block' : 'none';
         }
@@ -636,12 +634,12 @@
                     <div class="form-group"><label>Apellidos *</label><input type="text" class="nat_apellidos" value="${data.apellidos || ''}" required></div>
                 </div>
                 <div class="row-2">
-                    <div class="form-group"><label>Tipo documento</label><select class="nat_tipoDoc"><option>CC</option><option>CE</option><option>Pasaporte</option></select></div>
+                    <div class="form-group"><label>Tipo documento *</label><select class="nat_tipoDoc" required><option>CC</option><option>CE</option><option>Pasaporte</option></select></div>
                     <div class="form-group"><label>Número documento *</label><input type="text" class="nat_numDoc" value="${data.numDoc || ''}" required></div>
                 </div>
                 <div class="row-2">
-                    <div class="form-group"><label>Teléfono *</label><input type="tel" class="nat_telefono" value="${data.telefono || ''}" required></div>
-                    <div class="form-group"><label>Email *</label><input type="email" class="nat_email" value="${data.email || ''}" required></div>
+                    <div class="form-group"><label>Teléfono / WhatsApp *</label><input type="tel" class="nat_telefono" value="${data.telefono || ''}" required></div>
+                    <div class="form-group"><label>Correo electrónico (opcional)</label><input type="email" class="nat_email" value="${data.email || ''}"></div>
                 </div>
             `;
             div.querySelector('.eliminar-item').addEventListener('click', () => {
@@ -668,8 +666,8 @@
                     <div class="form-group"><label>Representante legal *</label><input type="text" class="jur_representante" value="${data.representante || ''}" required></div>
                 </div>
                 <div class="row-2">
-                    <div class="form-group"><label>Teléfono *</label><input type="tel" class="jur_telefono" value="${data.telefono || ''}" required></div>
-                    <div class="form-group"><label>Email *</label><input type="email" class="jur_email" value="${data.email || ''}" required></div>
+                    <div class="form-group"><label>Teléfono / WhatsApp *</label><input type="tel" class="jur_telefono" value="${data.telefono || ''}" required></div>
+                    <div class="form-group"><label>Correo electrónico (opcional)</label><input type="email" class="jur_email" value="${data.email || ''}"></div>
                 </div>
             `;
             div.querySelector('.eliminar-item').addEventListener('click', () => {
@@ -728,6 +726,23 @@
                 return;
             }
 
+            // Validar que todos los compradores tengan teléfono (obligatorio)
+            let telefonoFaltante = false;
+            document.querySelectorAll('#compradoresContainer .comprador-card').forEach((comp, idx) => {
+                const esNatural = comp.querySelector('.nat_telefono') !== null;
+                let telefono;
+                if (esNatural) {
+                    telefono = comp.querySelector('.nat_telefono')?.value.trim();
+                } else {
+                    telefono = comp.querySelector('.jur_telefono')?.value.trim();
+                }
+                if (!telefono) {
+                    telefonoFaltante = true;
+                    alert(`⚠️ El comprador ${idx + 1} debe tener un teléfono de contacto obligatorio.`);
+                }
+            });
+            if (telefonoFaltante) return;
+
             // Validaciones básicas
             const tipoInmueble = document.getElementById('tipoInmueble').value;
             const ubicacion = document.getElementById('ubicacion').value.trim();
@@ -781,14 +796,26 @@
             compradores.forEach((comp, idx) => {
                 const esNatural = comp.querySelector('.nat_nombres') !== null;
                 if(esNatural) {
-                    const nom = comp.querySelector('.nat_nombres')?.value || '';
-                    const ape = comp.querySelector('.nat_apellidos')?.value || '';
-                    const tel = comp.querySelector('.nat_telefono')?.value || '';
-                    mensaje += `${idx+1}. ${nom} ${ape} - Tel: ${tel}\n`;
+                    const nombres = comp.querySelector('.nat_nombres')?.value || '';
+                    const apellidos = comp.querySelector('.nat_apellidos')?.value || '';
+                    const tipoDoc = comp.querySelector('.nat_tipoDoc')?.value || '';
+                    const numDoc = comp.querySelector('.nat_numDoc')?.value || '';
+                    const telefono = comp.querySelector('.nat_telefono')?.value || '';
+                    const email = comp.querySelector('.nat_email')?.value || '';
+                    mensaje += `${idx+1}. ${nombres} ${apellidos}\n`;
+                    mensaje += `   Documento: ${tipoDoc} ${numDoc}\n`;
+                    mensaje += `   Teléfono: ${telefono}\n`;
+                    if(email) mensaje += `   Email: ${email}\n`;
                 } else {
                     const razon = comp.querySelector('.jur_razon')?.value || '';
                     const nit = comp.querySelector('.jur_nit')?.value || '';
-                    mensaje += `${idx+1}. ${razon} - NIT: ${nit}\n`;
+                    const representante = comp.querySelector('.jur_representante')?.value || '';
+                    const telefono = comp.querySelector('.jur_telefono')?.value || '';
+                    const email = comp.querySelector('.jur_email')?.value || '';
+                    mensaje += `${idx+1}. ${razon} (NIT: ${nit})\n`;
+                    mensaje += `   Representante: ${representante}\n`;
+                    mensaje += `   Teléfono: ${telefono}\n`;
+                    if(email) mensaje += `   Email: ${email}\n`;
                 }
             });
             mensaje += "\n";
