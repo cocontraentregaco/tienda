@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="Formulario DESEO DE VENTA - Completa todos los datos para iniciar el proceso de venta de tu inmueble">
+    <title>DESEO DE VENTA | QRP2P - Inicia tu proceso de venta</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fb;
+            color: #111111;
+            line-height: 1.5;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #0a2b3e 0%, #1a4a6f 100%);
+            color: #ffffff;
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .section {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eef2f6;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0a2b3e;
+            border-left: 5px solid #f5a623;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e4663;
+            margin: 1.2rem 0 1rem 0;
+            border-bottom: 2px solid #eef2f6;
+            padding-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+            color: #1f2f3e;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #d0dbe8;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            background: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #f5a623;
+            box-shadow: 0 0 0 3px rgba(245,166,35,0.1);
+        }
+
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .radio-group, .checkbox-group {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            margin-top: 0.3rem;
+            flex-wrap: wrap;
+        }
+
+        .radio-group label, .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: normal;
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        .radio-group input, .checkbox-group input {
+            width: auto;
+            transform: scale(1.1);
+        }
+
+        .vendedor-card {
+            background: #fafcff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .badge-tipo {
+            display: inline-block;
+            background: #eef2ff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1e4663;
+            margin-bottom: 1rem;
+        }
+
+        .eliminar-item {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #94a3b8;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.3rem;
+            border-radius: 50%;
+            width: auto;
+        }
+
+        .eliminar-item:hover {
+            color: #dc2626;
+            background: #fee2e2;
+        }
+
+        .btn {
+            background: #0a2b3e;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: #1a4a6f;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #0a2b3e;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-primary {
+            background: #f5a623;
+            color: #1e2a3a;
+            font-size: 1rem;
+            padding: 1rem;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background: #e59410;
+            transform: translateY(-2px);
+        }
+
+        .info-box {
+            background: #fef9e6;
+            border-left: 4px solid #f5a623;
+            padding: 0.8rem 1rem;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+            border-radius: 12px;
+        }
+
+        .info-box-blue {
+            background: #e8f0fe;
+            border-left: 4px solid #0a2b3e;
+            padding: 0.8rem 1rem;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+            border-radius: 12px;
+        }
+
+        .referido-box {
+            background: #e8f0fe;
+            border-left: 4px solid #0a2b3e;
+            padding: 1rem 1.2rem;
+            margin: 1rem 0;
+            border-radius: 16px;
+        }
+
+        .final-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0;
+        }
+
+        .option-card {
+            flex: 1;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-card.selected {
+            border-color: #f5a623;
+            background: #fff8ed;
+            box-shadow: 0 4px 12px rgba(245,166,35,0.2);
+        }
+
+        .option-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #0a2b3e;
+        }
+
+        .option-card p {
+            font-size: 0.8rem;
+            color: #4b5563;
+        }
+
+        .warning-text {
+            color: #dc2626;
+            font-size: 0.75rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .agente-section {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .agente-text {
+            flex: 1;
+        }
+
+        .agente-text h3 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+            color: #0a2b3e;
+        }
+
+        .agente-text p {
+            font-size: 0.85rem;
+            color: #4b5563;
+        }
+
+        @media (max-width: 768px) {
+            .row-2, .row-3 {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+            }
+            .section {
+                padding: 1.2rem;
+            }
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+            .final-options {
+                flex-direction: column;
+            }
+            .agente-section {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        footer {
+            background: #0a2b3e;
+            text-align: center;
+            padding: 1.5rem;
+            color: #cbd5e1;
+            font-size: 0.8rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <h1>🏷️ DESEO DE VENTA</h1>
+        <p>Cuéntanos todo sobre la propiedad que deseas vender, tus datos como vendedor y cómo quieres gestionar el proceso. Recibirás asesoría personalizada.</p>
+    </header>
+
+    <div class="container">
+        <form id="deseoVentaForm">
+            <!-- SECCIÓN 1: DATOS DEL INMUEBLE A VENDER -->
+            <div class="section">
+                <div class="section-title">🏠 Datos del inmueble a vender</div>
+                <div class="row-2">
+                    <div class="form-group">
+                        <label>Tipo de inmueble *</label>
+                        <select id="tipoInmueble" required>
+                            <option value="">Selecciona</option>
+                            <option value="Apartamento">Apartamento</option>
+                            <option value="Casa">Casa</option>
+                            <option value="Lote / Terreno">Lote / Terreno</option>
+                            <option value="Local comercial">Local comercial</option>
+                            <option value="Oficina">Oficina</option>
+                            <option value="Bodega">Bodega</option>
+                            <option value="Edificio completo">Edificio completo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Dirección completa *</label>
+                        <input type="text" id="direccion" placeholder="Ej: Calle 70 # 45-12, Chapinero, Bogotá" required>
+                    </div>
+                </div>
+                <div class="row-2">
+                    <div class="form-group">
+                        <label>Ciudad / Municipio *</label>
+                        <input type="text" id="ciudad" placeholder="Ej: Bogotá, Medellín, Cali" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Matrícula inmobiliaria (si tiene)</label>
+                        <input type="text" id="matricula" placeholder="Ej: 050N-1234567">
+                        <div class="info-box" style="margin-top: 5px;">
+                            📄 La matrícula inmobiliaria es el folio de registro en la Oficina de Registro de Instrumentos Públicos.
+                        </div>
+                    </div>
+                </div>
+                <div class="row-3">
+                    <div class="form-group">
+                        <label>Área construida (m²) *</label>
+                        <input type="number" id="areaConstruida" placeholder="Ej: 85" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Área privada (m²) *</label>
+                        <input type="number" id="areaPrivada" placeholder="Ej: 75" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Estrato social</label>
+                        <select id="estrato">
+                            <option value="">No aplica</option>
+                            <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row-2">
+                    <div class="form-group">
+                        <label>Número de habitaciones</label>
+                        <input type="number" id="habitaciones" placeholder="Ej: 3">
+                    </div>
+                    <div class="form-group">
+                        <label>Número de baños</label>
+                        <input type="number" id="banios" placeholder="Ej: 2">
+                    </div>
+                </div>
+                <div class="row-2">
+                    <div class="form-group">
+                        <label>Parqueaderos</label>
+                        <input type="number" id="parqueaderos" placeholder="Ej: 1">
+                    </div>
+                    <div class="form-group">
+                        <label>Antigüedad (años)</label>
+                        <input type="number" id="antiguedad" placeholder="Ej: 5">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Características adicionales (balcón, piscina, terraza, etc.)</label>
+                    <textarea rows="2" id="caracteristicas" placeholder="Ej: Balcón, vista a la ciudad, acabados de lujo, piscina comunitaria..."></textarea>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 2: PRECIO Y CONDICIONES DE VENTA -->
+            <div class="section">
+                <div class="section-title">💰 Precio y condiciones de venta</div>
+                <div class="row-2">
+                    <div class="form-group">
+                        <label>Precio de venta (COP) *</label>
+                        <input type="number" id="precioVenta" placeholder="Ej: 350000000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Precio mínimo negociable (COP)</label>
+                        <input type="number" id="precioMinimo" placeholder="Ej: 320000000">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Forma de pago deseada *</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="formaPago" value="Contado" required> Contado</label>
+                        <label><input type="radio" name="formaPago" value="Credito comprador"> Financiado por comprador (crédito)</label>
+                        <label><input type="radio" name="formaPago" value="Mixto"> Mixto (cuota inicial + saldo financiado)</label>
+                        <label><input type="radio" name="formaPago" value="Permuta"> Permuta / Intercambio</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Tiempo estimado para venta</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="tiempoVenta" value="Inmediata (menos de 1 mes)"> Inmediata (menos de 1 mes)</label>
+                        <label><input type="radio" name="tiempoVenta" value="1-3 meses"> 1-3 meses</label>
+                        <label><input type="radio" name="tiempoVenta" value="3-6 meses"> 3-6 meses</label>
+                        <label><input type="radio" name="tiempoVenta" value="Más de 6 meses"> Más de 6 meses</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Documentación del inmueble</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="documentos" value="Escrituras"> Escrituras</label>
+                        <label><input type="checkbox" name="documentos" value="Certificado de libertad"> Certificado de libertad</label>
+                        <label><input type="checkbox" name="documentos" value="Paz y salvo de impuestos"> Paz y salvo de impuestos</label>
+                        <label><input type="checkbox" name="documentos" value="Paz y salvo de administración"> Paz y salvo de administración</label>
+                        <label><input type="checkbox" name="documentos" value="Planos"> Planos</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 3: VENDEDORES (DUEÑO DIRECTO, INMOBILIARIA, CORREDOR INDEPENDIENTE, FAMILIAR/AMIGO) -->
+            <div class="section">
+                <div class="section-title">👥 ¿Quién vende el inmueble?</div>
+                <p style="margin-bottom: 1rem; font-size: 0.9rem;">
+                    <strong>⚠️ Importante:</strong> Debes agregar al menos <strong>1 vendedor</strong> (dueño directo, inmobiliaria, corredor independiente o familiar/amigo).<br>
+                    <strong>📱 El teléfono celular es obligatorio</strong> para poder contactarte.
+                </p>
+                <div id="vendedoresContainer">
+                    <!-- Se agrega un vendedor dueño directo por defecto -->
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+                    <button type="button" id="agregarDueñoBtn" class="btn btn-secondary">+ Dueño directo</button>
+                    <button type="button" id="agregarInmobiliariaBtn" class="btn btn-secondary">+ Inmobiliaria</button>
+                    <button type="button" id="agregarCorredorBtn" class="btn btn-secondary">+ Corredor independiente</button>
+                    <button type="button" id="agregarFamiliarBtn" class="btn btn-secondary">+ Familiar / Amigo</button>
+                </div>
+                <div id="vendedorWarning" class="warning-text">
+                    ⚠️ Debes agregar al menos un vendedor para continuar.
+                </div>
+            </div>
+
+            <!-- SECCIÓN 4: REFERIDO Y OPORTUNIDAD -->
+            <div class="section">
+                <div class="section-title">⭐ ¿Cómo nos conociste?</div>
+                <div class="referido-box">
+                    <div class="form-group">
+                        <label>¿Fuiste referido por alguien?</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="tieneReferido" value="Si" id="referidoSi"> Sí, me recomendaron</label>
+                            <label><input type="radio" name="tieneReferido" value="No" id="referidoNo" checked> No, llegué por mi cuenta</label>
+                        </div>
+                    </div>
+
+                    <div id="datosReferido" style="display: none;">
+                        <div class="row-2">
+                            <div class="form-group">
+                                <label>Tipo de referido</label>
+                                <select id="tipoReferido">
+                                    <option value="">Selecciona</option>
+                                    <option value="Agente inmobiliario">Agente inmobiliario</option>
+                                    <option value="Conocido / Amigo">Conocido / Amigo</option>
+                                    <option value="Familiar">Familiar</option>
+                                    <option value="Cliente anterior">Cliente anterior</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Nombre del referido (quien te recomendó)</label>
+                                <input type="text" id="nombreReferido" placeholder="Ej: Juan Pérez, Agencia XYZ, etc.">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono o contacto del referido (opcional)</label>
+                            <input type="text" id="contactoReferido" placeholder="Ej: 3001234567 o email@ejemplo.com">
+                        </div>
+                        <div class="info-box">
+                            💡 Si tu referido es un agente inmobiliario, podremos coordinar la comisión correspondiente.
+                        </div>
+                    </div>
+
+                    <div class="agente-section">
+                        <div class="agente-text">
+                            <h3>🤝 ¿Eres agente inmobiliario o quieres generar ingresos extra?</h3>
+                            <p>Únete a QRP2P como corredor independiente y vende propiedades en todo el mundo. Gana comisiones, accede a listados exclusivos y sé parte de la red inmobiliaria global.</p>
+                        </div>
+                        <a href="registro-agente-co.html" target="_blank" rel="noopener noreferrer" class="btn">🚀 Quiero ser agente QRP2P</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 5: ELECCIÓN FINAL -->
+            <div class="section">
+                <div class="section-title">📌 ¿Cómo quieres continuar?</div>
+                <div class="final-options" id="finalOptions">
+                    <div class="option-card" data-option="tasacion">
+                        <h3>📊 Solicitar tasación profesional</h3>
+                        <p>Quiero que un experto valore mi inmueble para definir mejor precio.</p>
+                    </div>
+                    <div class="option-card" data-option="marketing">
+                        <h3>🚀 Iniciar marketing y venta</h3>
+                        <p>Quiero que QRP2P publique mi inmueble, gestione visitas y cierre la venta.</p>
+                    </div>
+                    <div class="option-card" data-option="asesoria">
+                        <h3>📋 Solo asesoría legal y documental</h3>
+                        <p>Necesito revisar papeles, certificados y preparar el inmueble para la venta.</p>
+                    </div>
+                </div>
+                <input type="hidden" id="tipoProceso" value="">
+                <div class="form-group">
+                    <label>Comentarios adicionales</label>
+                    <textarea rows="3" id="comentariosFinal" placeholder="Ej: Prefiero que me contacten por WhatsApp, necesito vender rápido, el inmueble está arrendado..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">🚀 Enviar mi DESEO DE VENTA - Iniciar proceso</button>
+                <small style="display: block; text-align: center; margin-top: 1rem;">Al enviar, un asesor QRP2P revisará tu información y te contactará en menos de 24 horas.</small>
+            </div>
+        </form>
+    </div>
+
+    <footer>
+        <p>QRP2P · Asesoría integral para la venta de tu inmueble</p>
+        <p>📲 +57 3146824438 · ✉️ asesoria@qrp2p.com</p>
+    </footer>
+
+    <script>
+        function formatCOP(value) {
+            if (!value) return '0';
+            return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(value);
+        }
+
+        // ========== VENDEDORES (MÍNIMO 1 OBLIGATORIO) ==========
+        let vendedorCount = 1;
+        const vendedoresContainer = document.getElementById('vendedoresContainer');
+        const vendedorWarning = document.getElementById('vendedorWarning');
+
+        function crearDueñoDirecto(idx, data = {}) {
+            const div = document.createElement('div');
+            div.className = 'vendedor-card';
+            div.setAttribute('data-tipo', 'dueño');
+            div.innerHTML = `
+                <button type="button" class="eliminar-item">✖</button>
+                <span class="badge-tipo">🏠 Dueño Directo</span>
+                <div class="row-2">
+                    <div class="form-group"><label>Nombres completos *</label><input type="text" class="duenio_nombres" value="${data.nombres || ''}" required></div>
+                    <div class="form-group"><label>Apellidos *</label><input type="text" class="duenio_apellidos" value="${data.apellidos || ''}" required></div>
+                </div>
+                <div class="row-2">
+                    <div class="form-group"><label>Tipo documento *</label><select class="duenio_tipoDoc" required><option>CC</option><option>CE</option><option>Pasaporte</option><option>NIT</option></select></div>
+                    <div class="form-group"><label>Número documento *</label><input type="text" class="duenio_numDoc" value="${data.numDoc || ''}" required></div>
+                </div>
+                <div class="row-2">
+                    <div class="form-group"><label>Teléfono / WhatsApp *</label><input type="tel" class="duenio_telefono" value="${data.telefono || ''}" required></div>
+                    <div class="form-group"><label>Correo electrónico (opcional)</label><input type="email" class="duenio_email" value="${data.email || ''}"></div>
+                </div>
+            `;
+            div.querySelector('.eliminar-item').addEventListener('click', () => {
+                if (document.querySelectorAll('#vendedoresContainer .vendedor-card').length > 1) {
+                    div.remove();
+                    validarVendedores();
+                } else {
+                    alert("Debe haber al menos un vendedor en la solicitud.");
+                }
+            });
+            return div;
+        }
+
+        function crearInmobiliaria(idx, data = {}) {
+            const div = document.createElement('div');
+            div.className = 'vendedor-card';
+            div.setAttribute('data-tipo', 'inmobiliaria');
+            div.innerHTML = `
+                <button type="button" class="eliminar-item">✖</button>
+                <span class="badge-tipo">🏢 Inmobiliaria</span>
+                <div class="form-group"><label>Nombre de la inmobiliaria *</label><input type="text" class="inm_nombre" value="${data.nombre || ''}" required></div>
+                <div class="row-2">
+                    <div class="form-group"><label>NIT *</label><input type="text" class="inm_nit" value="${data.nit || ''}" required></div>
+                    <div class="form-group"><label>Nombre del asesor *</label><input type="text" class="inm_asesor" value="${data.asesor || ''}" required></div>
+                </div>
+                <div class="row-2">
+                    <div class="form-group"><label>Teléfono / WhatsApp *</label><input type="tel" class="inm_telefono" value="${data.telefono || ''}" required></div>
+                    <div class="form-group"><label>Correo electrónico (opcional)</label><input type="email" class="inm_email" value="${data.email || ''}"></div>
+                </div>
+            `;
+            div.querySelector('.eliminar-item').addEventListener('click', () => {
+                if (document.querySelectorAll('#vendedoresContainer .vendedor-card').length > 1) {
+                    div.remove();
+                    validarVendedores();
+                } else {
+                    alert("Debe haber al menos un vendedor en la solicitud.");
+                }
+            });
+            return div;
+        }
+
+        function crearCorredorIndependiente(idx, data = {}) {
+            const div = document.createElement('div');
+            div.className = 'vendedor-card';
+            div.setAttribute('data-tipo', 'corredor');
+            div.innerHTML = `
+                <button type="button" class="eliminar-item">✖</button>
+                <span class="badge-tipo">🤝 Corredor Independiente</span>
+                <div class="row-2">
+                    <div class="form-group"><label>Nombres *</label><input type="text" class="corredor_nombres" value="${data.nombres || ''}" required></div>
+                    <div class="form-group"><label>Apellidos *</label><input type="text" class="corredor_apellidos" value="${data.apellidos || ''}" required></div>
+                </div>
+                <div class="row-2">
+                    <div class="form-group"><label>Tipo documento *</label><select class="corredor_tipoDoc" required><option>CC</option><option>CE</option><option>Pasaporte</option></select></div>
+                    <div class="form-group"><label>Número documento *</label><input type="text" class="corredor_numDoc" value="${data.numDoc || ''}" required></div>
+                </div>
+                <div class="form-group"><label>Matrícula o licencia (si aplica)</label><input type="text" class="corredor_matricula" value="${data.matricula || ''}" placeholder="Número de matrícula inmobiliaria"></div>
+                <div class="row-2">
+                    <div class="form-group"><label>Teléfono / WhatsApp *</label><input type="tel" class="corredor_telefono" value="${data.telefono || ''}" required></div>
+                    <div class="form-group"><label>Correo electrónico (opcional)</label><input type="email" class="corredor_email" value="${data.email || ''}"></div>
+                </div>
+            `;
+            div.querySelector('.eliminar-item').addEventListener('click', () => {
+                if (document.querySelectorAll('#vendedoresContainer .vendedor-card').length > 1) {
+                    div.remove();
+                    validarVendedores();
+                } else {
+                    alert("Debe haber al menos un vendedor en la solicitud.");
+                }
+            });
+            return div;
+        }
+
+        function crearFamiliarAmigo(idx, data = {}) {
+            const div = document.createElement('div');
+            div.className = 'vendedor-card';
+            div.setAttribute('data-tipo', 'familiar');
+            div.innerHTML = `
+                <button type="button" class="eliminar-item">✖</button>
+                <span class="badge-tipo">👨‍👩‍👧‍👦 Familiar / Amigo</span>
+                <div class="row-2">
+                    <div class="form-group"><label>Nombres *</label><input type="text" class="familiar_nombres" value="${data.nombres || ''}" required></div>
+                    <div class="form-group"><label>Apellidos *</label><input type="text" class="familiar_apellidos" value="${data.apellidos || ''}" required></div>
+                </div>
+                <div class="row-2">
+                    <div class="form-group"><label>Relación con el dueño *</label><input type="text" class="familiar_relacion" value="${data.relacion || ''}" placeholder="Ej: Hermano, hijo, amigo cercano" required></div>
+                    <div class="form-group"><label>Teléfono / WhatsApp *</label><input type="tel" class="familiar_telefono" value="${data.telefono || ''}" required></div>
+                </div>
+                <div class="form-group"><label>Correo electrónico (opcional)</label><input type="email" class="familiar_email" value="${data.email || ''}"></div>
+            `;
+            div.querySelector('.eliminar-item').addEventListener('click', () => {
+                if (document.querySelectorAll('#vendedoresContainer .vendedor-card').length > 1) {
+                    div.remove();
+                    validarVendedores();
+                } else {
+                    alert("Debe haber al menos un vendedor en la solicitud.");
+                }
+            });
+            return div;
+        }
+
+        function validarVendedores() {
+            const cantidad = document.querySelectorAll('#vendedoresContainer .vendedor-card').length;
+            if (cantidad === 0) {
+                vendedorWarning.style.display = 'block';
+                return false;
+            } else {
+                vendedorWarning.style.display = 'none';
+                return true;
+            }
+        }
+
+        // Agregar un dueño directo por defecto
+        vendedoresContainer.appendChild(crearDueñoDirecto(1));
+
+        document.getElementById('agregarDueñoBtn').addEventListener('click', () => {
+            vendedoresContainer.appendChild(crearDueñoDirecto(++vendedorCount));
+            validarVendedores();
+        });
+        document.getElementById('agregarInmobiliariaBtn').addEventListener('click', () => {
+            vendedoresContainer.appendChild(crearInmobiliaria(++vendedorCount));
+            validarVendedores();
+        });
+        document.getElementById('agregarCorredorBtn').addEventListener('click', () => {
+            vendedoresContainer.appendChild(crearCorredorIndependiente(++vendedorCount));
+            validarVendedores();
+        });
+        document.getElementById('agregarFamiliarBtn').addEventListener('click', () => {
+            vendedoresContainer.appendChild(crearFamiliarAmigo(++vendedorCount));
+            validarVendedores();
+        });
+
+        // ========== REFERIDO ==========
+        const referidoSi = document.getElementById('referidoSi');
+        const referidoNo = document.getElementById('referidoNo');
+        const datosReferido = document.getElementById('datosReferido');
+        
+        function toggleReferido() {
+            datosReferido.style.display = referidoSi.checked ? 'block' : 'none';
+        }
+        referidoSi.addEventListener('change', toggleReferido);
+        referidoNo.addEventListener('change', toggleReferido);
+        toggleReferido();
+
+        // ========== SELECCIÓN DE PROCESO FINAL ==========
+        const optionCards = document.querySelectorAll('.option-card');
+        const tipoProcesoInput = document.getElementById('tipoProceso');
+        optionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                optionCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                tipoProcesoInput.value = card.dataset.option;
+            });
+        });
+
+        // ========== ENVÍO DEL FORMULARIO ==========
+        document.getElementById('deseoVentaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!validarVendedores()) {
+                alert("⚠️ Debes agregar al menos un vendedor para continuar.");
+                return;
+            }
+
+            // Validar que todos los vendedores tengan teléfono
+            let telefonoFaltante = false;
+            document.querySelectorAll('#vendedoresContainer .vendedor-card').forEach((vend, idx) => {
+                let telefono;
+                if (vend.querySelector('.duenio_telefono')) telefono = vend.querySelector('.duenio_telefono')?.value.trim();
+                else if (vend.querySelector('.inm_telefono')) telefono = vend.querySelector('.inm_telefono')?.value.trim();
+                else if (vend.querySelector('.corredor_telefono')) telefono = vend.querySelector('.corredor_telefono')?.value.trim();
+                else if (vend.querySelector('.familiar_telefono')) telefono = vend.querySelector('.familiar_telefono')?.value.trim();
+                
+                if (!telefono) {
+                    telefonoFaltante = true;
+                    alert(`⚠️ El vendedor ${idx + 1} debe tener un teléfono de contacto obligatorio.`);
+                }
+            });
+            if (telefonoFaltante) return;
+
+            const tipoInmueble = document.getElementById('tipoInmueble').value;
+            const direccion = document.getElementById('direccion').value.trim();
+            const ciudad = document.getElementById('ciudad').value.trim();
+            const precioVenta = document.getElementById('precioVenta').value;
+            const formaPago = document.querySelector('input[name="formaPago"]:checked')?.value;
+            const tipoProceso = tipoProcesoInput.value;
+
+            if(!tipoInmueble || !direccion || !ciudad || !precioVenta || !formaPago || !tipoProceso) {
+                alert("Por favor completa los campos obligatorios: tipo de inmueble, dirección, ciudad, precio de venta, forma de pago y cómo quieres continuar.");
+                return;
+            }
+
+            let mensaje = "🏷️ *DESEO DE VENTA - QRP2P*\n";
+            mensaje += "────────────────────────\n\n";
+            
+            mensaje += "*🏠 DATOS DEL INMUEBLE*\n";
+            mensaje += `Tipo: ${tipoInmueble}\n`;
+            mensaje += `Dirección: ${direccion}\n`;
+            mensaje += `Ciudad: ${ciudad}\n`;
+            mensaje += `Matrícula: ${document.getElementById('matricula').value || 'No registra'}\n`;
+            mensaje += `Área construida: ${document.getElementById('areaConstruida').value || '0'} m²\n`;
+            mensaje += `Área privada: ${document.getElementById('areaPrivada').value || '0'} m²\n`;
+            mensaje += `Estrato: ${document.getElementById('estrato').value || 'No especifica'}\n`;
+            mensaje += `Habitaciones: ${document.getElementById('habitaciones').value || 'N/A'}\n`;
+            mensaje += `Baños: ${document.getElementById('banios').value || 'N/A'}\n`;
+            mensaje += `Parqueaderos: ${document.getElementById('parqueaderos').value || 'N/A'}\n`;
+            mensaje += `Antigüedad: ${document.getElementById('antiguedad').value || 'N/A'} años\n`;
+            mensaje += `Características: ${document.getElementById('caracteristicas').value || 'No indicó'}\n\n`;
+            
+            mensaje += "*💰 PRECIO Y CONDICIONES*\n";
+            mensaje += `Precio de venta: ${formatCOP(precioVenta)}\n`;
+            const precioMin = document.getElementById('precioMinimo').value;
+            if(precioMin) mensaje += `Precio mínimo negociable: ${formatCOP(precioMin)}\n`;
+            mensaje += `Forma de pago deseada: ${formaPago}\n`;
+            const tiempoVenta = document.querySelector('input[name="tiempoVenta"]:checked')?.value;
+            if(tiempoVenta) mensaje += `Tiempo estimado: ${tiempoVenta}\n`;
+            
+            let documentos = Array.from(document.querySelectorAll('input[name="documentos"]:checked')).map(cb => cb.value);
+            if(documentos.length) mensaje += `Documentos disponibles: ${documentos.join(', ')}\n\n`;
+            else mensaje += `Documentos: No especificó\n\n`;
+            
+            mensaje += "*👥 VENDEDORES*\n";
+            const vendedores = document.querySelectorAll('#vendedoresContainer .vendedor-card');
+            vendedores.forEach((vend, idx) => {
+                if(vend.querySelector('.duenio_nombres')) {
+                    const nombres = vend.querySelector('.duenio_nombres')?.value || '';
+                    const apellidos = vend.querySelector('.duenio_apellidos')?.value || '';
+                    const tipoDoc = vend.querySelector('.duenio_tipoDoc')?.value || '';
+                    const numDoc = vend.querySelector('.duenio_numDoc')?.value || '';
+                    const telefono = vend.querySelector('.duenio_telefono')?.value || '';
+                    const email = vend.querySelector('.duenio_email')?.value || '';
+                    mensaje += `${idx+1}. 🏠 Dueño: ${nombres} ${apellidos}\n`;
+                    mensaje += `   Documento: ${tipoDoc} ${numDoc}\n`;
+                    mensaje += `   Teléfono: ${telefono}\n`;
+                    if(email) mensaje += `   Email: ${email}\n`;
+                } else if(vend.querySelector('.inm_nombre')) {
+                    const nombre = vend.querySelector('.inm_nombre')?.value || '';
+                    const nit = vend.querySelector('.inm_nit')?.value || '';
+                    const asesor = vend.querySelector('.inm_asesor')?.value || '';
+                    const telefono = vend.querySelector('.inm_telefono')?.value || '';
+                    const email = vend.querySelector('.inm_email')?.value || '';
+                    mensaje += `${idx+1}. 🏢 Inmobiliaria: ${nombre}\n`;
+                    mensaje += `   NIT: ${nit}\n`;
+                    mensaje += `   Asesor: ${asesor}\n`;
+                    mensaje += `   Teléfono: ${telefono}\n`;
+                    if(email) mensaje += `   Email: ${email}\n`;
+                } else if(vend.querySelector('.corredor_nombres')) {
+                    const nombres = vend.querySelector('.corredor_nombres')?.value || '';
+                    const apellidos = vend.querySelector('.corredor_apellidos')?.value || '';
+                    const tipoDoc = vend.querySelector('.corredor_tipoDoc')?.value || '';
+                    const numDoc = vend.querySelector('.corredor_numDoc')?.value || '';
+                    const matricula = vend.querySelector('.corredor_matricula')?.value || '';
+                    const telefono = vend.querySelector('.corredor_telefono')?.value || '';
+                    const email = vend.querySelector('.corredor_email')?.value || '';
+                    mensaje += `${idx+1}. 🤝 Corredor: ${nombres} ${apellidos}\n`;
+                    mensaje += `   Documento: ${tipoDoc} ${numDoc}\n`;
+                    if(matricula) mensaje += `   Matrícula: ${matricula}\n`;
+                    mensaje += `   Teléfono: ${telefono}\n`;
+                    if(email) mensaje += `   Email: ${email}\n`;
+                } else if(vend.querySelector('.familiar_nombres')) {
+                    const nombres = vend.querySelector('.familiar_nombres')?.value || '';
+                    const apellidos = vend.querySelector('.familiar_apellidos')?.value || '';
+                    const relacion = vend.querySelector('.familiar_relacion')?.value || '';
+                    const telefono = vend.querySelector('.familiar_telefono')?.value || '';
+                    const email = vend.querySelector('.familiar_email')?.value || '';
+                    mensaje += `${idx+1}. 👨‍👩‍👧‍👦 ${relacion}: ${nombres} ${apellidos}\n`;
+                    mensaje += `   Teléfono: ${telefono}\n`;
+                    if(email) mensaje += `   Email: ${email}\n`;
+                }
+            });
+            mensaje += "\n";
+            
+            const tieneReferido = document.querySelector('input[name="tieneReferido"]:checked')?.value;
+            if(tieneReferido === 'Si') {
+                mensaje += "*⭐ REFERIDO*\n";
+                const tipoRef = document.getElementById('tipoReferido').value;
+                const nombreRef = document.getElementById('nombreReferido').value.trim();
+                const contactoRef = document.getElementById('contactoReferido').value.trim();
+                if(tipoRef) mensaje += `Tipo: ${tipoRef}\n`;
+                if(nombreRef) mensaje += `Nombre: ${nombreRef}\n`;
+                if(contactoRef) mensaje += `Contacto: ${contactoRef}\n`;
+                mensaje += "\n";
+            }
+            
+            mensaje += "*📌 PROCESO ELEGIDO*\n";
+            if(tipoProceso === 'tasacion') mensaje += "📊 Solicitar tasación profesional\n";
+            else if(tipoProceso === 'marketing') mensaje += "🚀 Iniciar marketing y venta\n";
+            else mensaje += "📋 Asesoría legal y documental\n";
+            
+            const comentarios = document.getElementById('comentariosFinal').value;
+            if(comentarios) mensaje += `\n*Comentarios:* ${comentarios}\n`;
+            
+            mensaje += "\n────────────────────────\n";
+            mensaje += "📲 *Iniciar proceso de venta - QRP2P*";
+
+            const telefonoDestino = "573146824438";
+            const url = `https://wa.me/${telefonoDestino}?text=${encodeURIComponent(mensaje)}`;
+            window.open(url, '_blank');
+        });
+    </script>
+</body>
+</html>
