@@ -1,507 +1,823 @@
 <!DOCTYPE html>
-<html lang="es" dir="ltr">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRContraentrega - Argentina / Argentina</title>
+    <title>QRP2P REAL ESTATE ARGENTINA</title>
+    
+    <!-- PWA Meta Tags for Google -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="QRP2P Real Estate Argentina">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="QRP2P REAL ESTATE ARGENTINA">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="QRP2P Real Estate Argentina - El mercado inmobiliario líder en Argentina. Compra, venta, alquiler y tasaciones de propiedades en todas las provincias y localidades del país: Buenos Aires, CABA, Córdoba, Rosario, Mendoza, La Plata y mucho más.">
+    <meta name="keywords" content="inmobiliaria Argentina, compra venta inmuebles Argentina, alquiler propiedades Argentina, tasaciones, QRP2P Argentina, Buenos Aires, CABA, Córdoba, Rosario, Mendoza">
+    <meta name="author" content="QRP2P">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://qrp2p.com/argentina/">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
+    <link rel="apple-touch-icon" href="img/icon-192.png">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --light-blue: #74ACDF; /* Argentina light blue */
-            --white: #FFFFFF;
-            --dark-blue: #3E67A8; /* Argentina dark blue */
-            --yellow: #F6B40E; /* Argentina yellow (sun) */
-            --background-color: #f9f9f9;
-            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
+            --primary: #ffffff;
+            --secondary: #f5f5f5;
+            --accent: #e0e0e0;
+            --light: #4a4a4a;
+            --text: #000000;
+            --border: #d0d0d0;
+            --real-estate: #2c5f8a;
+            --gold: #c9a03d;
+            --argentina-blue: #75AADB;
+            --argentina-white: #FFFFFF;
+            --argentina-sun: #F5B81B;
         }
-
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Libre Baskerville', 'Source Serif Pro', Georgia, serif;
         }
-
+        
         body {
-            background-color: var(--background-color);
-            color: #333;
+            background-color: var(--primary);
+            color: var(--text);
             line-height: 1.6;
-            background-image: linear-gradient(to bottom, rgba(116, 172, 223, 0.05) 0%, rgba(255, 255, 255, 1) 100%);
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 3rem;
-            background: linear-gradient(135deg, var(--light-blue) 0%, var(--white) 50%, var(--light-blue) 100%);
-            padding: 2rem;
-            border-radius: 10px;
-            color: var(--dark-blue);
-            position: relative;
-            overflow: hidden;
-        }
-
-        header::before {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80px;
-            height: 80px;
-            background: radial-gradient(circle, var(--yellow) 30%, transparent 31%);
-            opacity: 0.2;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--dark-blue);
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
-            position: relative;
-            z-index: 1;
-        }
-
-        .spanish-title {
-            font-size: 2.2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            color: var(--dark-blue);
-            position: relative;
-            z-index: 1;
-        }
-
-        p.subtitle {
-            font-size: 1.2rem;
-            color: var(--dark-blue);
-            max-width: 700px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-            opacity: 0.9;
-        }
-
-        .states-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .state-card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            text-align: center;
+        
+        #install-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--real-estate);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 1rem;
             cursor: pointer;
-            border-top: 4px solid var(--light-blue);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: none;
         }
-
-        .state-card:hover {
+        
+        #install-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            background: var(--gold);
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--argentina-blue) 0%, var(--argentina-white) 50%, var(--argentina-sun) 100%);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            letter-spacing: 4px;
+            color: var(--argentina-blue);
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .tagline {
+            font-size: 1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #1a3e6f;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        
+        .argentina-badge {
+            display: inline-block;
+            background: rgba(26, 62, 111, 0.2);
+            padding: 0.25rem 1rem;
+            border-radius: 50px;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: #1a3e6f;
+            font-weight: 500;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        
+        .search-container {
+            margin: 2rem auto;
+            max-width: 600px;
+            position: relative;
+        }
+        
+        #marketplace-search {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: var(--primary);
+            color: var(--text);
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        #marketplace-search:focus {
+            outline: none;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            border-color: var(--real-estate);
+        }
+        
+        #marketplace-search::placeholder {
+            color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .cities-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+            padding-bottom: 1rem;
+        }
+        
+        .city-card {
+            background: var(--primary);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            border: 1px solid var(--border);
+        }
+        
+        .city-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            border-color: var(--dark-blue);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            border-color: var(--gold);
         }
-
-        .flag-container {
-            height: 120px;
+        
+        .city-image {
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+            background-color: #f0f0f0;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f0f0f0;
+        }
+        
+        .argentina-flag-bg {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
             position: relative;
-            overflow: hidden;
         }
-
-        .flag-container::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--light-blue) 0%, var(--white) 50%, var(--light-blue) 100%);
+        
+        .flag-stripe {
+            flex: 1;
         }
-
-        .flag-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+        
+        .flag-light-blue {
+            background-color: #75AADB;
+            flex: 1;
         }
-
-        .state-info {
-            padding: 1.5rem 1rem;
+        
+        .flag-white {
+            background-color: #FFFFFF;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
         }
-
-        .state-name {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-            color: var(--dark-blue);
+        
+        .sun-icon {
+            font-size: 2rem;
+            color: #F5B81B;
+            text-shadow: 0 0 2px rgba(0,0,0,0.2);
         }
-
-        .spanish-name {
+        
+        .flag-light-blue-bottom {
+            background-color: #75AADB;
+            flex: 1;
+        }
+        
+        .city-info {
+            padding: 1.5rem;
+        }
+        
+        .city-name {
             font-size: 1.3rem;
             margin-bottom: 0.5rem;
-            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            flex-wrap: wrap;
         }
-
-        .state-type {
-            color: #666;
-            font-size: 0.9rem;
+        
+        .province-badge {
+            font-size: 0.7rem;
+            background: var(--real-estate);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-weight: normal;
         }
-
-        .search-container {
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            position: relative;
+        
+        .city-desc {
+            opacity: 0.8;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
         }
-
-        #state-search {
+        
+        .city-link {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background: var(--real-estate);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            margin-top: 0.5rem;
             width: 100%;
-            padding: 12px 20px 12px 45px;
-            border: 1px solid #ddd;
-            border-radius: 50px;
-            font-size: 1rem;
-            outline: none;
-            transition: var(--transition);
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: 15px center;
-            background-size: 20px;
+            text-align: center;
         }
-
-        #state-search:focus {
-            border-color: var(--dark-blue);
-            box-shadow: 0 0 0 3px rgba(62, 103, 168, 0.2);
+        
+        .city-link:hover {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: white;
+            transform: translateY(-2px);
         }
-
+        
+        .offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #ff4444;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 0.9rem;
+            z-index: 2000;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .offline-indicator.show {
+            transform: translateY(0);
+        }
+        
         footer {
+            background: var(--secondary);
+            padding: 2rem 0;
             text-align: center;
             margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid #eee;
-            color: #777;
+            border-top: 1px solid var(--border);
         }
-
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--text);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+        
+        .copyright {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        .city-count {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .seo-content {
+            max-width: 1400px;
+            margin: 3rem auto;
+            padding: 2rem 1.5rem;
+            background: var(--secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        .seo-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--real-estate);
+        }
+        
+        .seo-content h3 {
+            font-size: 1.2rem;
+            margin: 1.5rem 0 0.5rem;
+        }
+        
+        .seo-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .city-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .city-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--primary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        
+        .city-tag:hover {
+            background: var(--real-estate);
+            color: white;
+            border-color: var(--real-estate);
+        }
+        
+        .toast-message {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 1rem;
+            z-index: 3000;
+            transition: transform 0.3s ease;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        
+        .toast-message.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
         @media (max-width: 768px) {
-            .states-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            .spanish-title {
-                font-size: 1.8rem;
-            }
-
-            .flag-container {
-                height: 100px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .states-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            .logo { font-size: 2rem; }
+            .tagline { font-size: 0.85rem; }
+            .cities-grid { 
+                grid-template-columns: repeat(2, 1fr); 
                 gap: 1rem;
             }
-
-            .state-info {
-                padding: 1rem 0.5rem;
+            .city-image { height: 120px; }
+            .city-info { padding: 1rem; }
+            .city-name { font-size: 1rem; }
+            #install-button { bottom: 10px; right: 10px; padding: 8px 16px; font-size: 0.9rem; }
+            .toast-message { font-size: 0.85rem; padding: 8px 16px; white-space: nowrap; }
+        }
+        
+        @media (max-width: 480px) {
+            .logo { font-size: 1.8rem; }
+            .cities-grid { 
+                grid-template-columns: repeat(2, 1fr);
             }
-
-            .state-name {
-                font-size: 1rem;
-            }
-            
-            .spanish-name {
-                font-size: 1.1rem;
-            }
+            .footer-links { flex-direction: column; gap: 1rem; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .city-card {
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>QRContraentrega</h1>
-            <div class="spanish-title">Argentina</div>
-            <div>Argentina</div>
-            <p class="subtitle">Selecciona tu provincia o ciudad / Select your province or city</p>
-        </header>
-
-        <div class="search-container">
-            <input type="text" id="state-search" placeholder="Busca una provincia o ciudad / Search for province or city..." aria-label="Busca una provincia o ciudad">
-        </div>
-
-        <div class="states-grid" id="states-container">
-            <!-- States and cities will appear here -->
-        </div>
-
-        <footer>
-            <p>© QRContraentrega. Todos los derechos reservados / All rights reserved.</p>
-        </footer>
+    <div class="offline-indicator" id="offline-indicator">
+        Sin conexión - Mostrando contenido en caché
     </div>
+    
+    <button id="install-button" style="display: none;">
+        Instalar App
+    </button>
+    
+    <div class="toast-message" id="toast-message"></div>
+    
+    <header>
+        <div class="logo">QRP2P</div>
+        <div class="tagline">REAL ESTATE MARKETPLACE - ARGENTINA</div>
+        <div class="argentina-badge">Compra, venta, alquiler y tasaciones de inmuebles</div>
+    </header>
+    
+    <div class="container">
+        <div class="search-container">
+            <input type="text" id="marketplace-search" placeholder="Buscar localidad... (Buenos Aires, CABA, Córdoba, Rosario, Mendoza, La Plata...)">
+        </div>
+        
+        <div class="city-count" id="city-count"></div>
+        
+        <div class="cities-grid" id="cities-container"></div>
+        
+        <div class="argentina-stats" style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 2rem;">
+            <div style="background: white; padding: 0.75rem 1.5rem; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-weight: bold;">Cobertura Nacional - Todas las provincias de Argentina</div>
+        </div>
+    </div>
+    
+    <div class="seo-content">
+        <h2>QRP2P REAL ESTATE ARGENTINA</h2>
+        <p>QRP2P Real Estate es la plataforma líder en compra, venta, alquiler y tasaciones de inmuebles en Argentina. Conectamos compradores, vendedores e inversores con las mejores oportunidades inmobiliarias en Buenos Aires, CABA, Córdoba, Rosario, Mendoza, La Plata, Mar del Plata, Salta, Tucumán y en todas las localidades del país.</p>
+        
+        <h3>Localidades con cobertura inmobiliaria en Argentina</h3>
+        <div class="city-tags" id="city-tags-container"></div>
+        
+        <h3>Nuestros Servicios</h3>
+        <p>Compra y Venta de Inmuebles: Asesoramiento integral en la adquisición y comercialización de propiedades.<br>
+        Alquileres: Gestión profesional de contratos de alquiler residencial, comercial y temporario.<br>
+        Tasaciones Comerciales: Valoración profesional de inmuebles con métodos reconocidos.<br>
+        Estudios de Mercado: Análisis de valorización y tendencias por provincia y sector.<br>
+        App PWA: Accede a nuestra plataforma desde cualquier dispositivo.</p>
+        
+        <h3>Por qué elegir QRP2P Real Estate Argentina</h3>
+        <p>Cobertura Nacional: Presencia en todas las provincias y principales localidades del país.<br>
+        Transacciones Seguras: Respaldo legal y administrativo en cada operación.<br>
+        Profesionales Certificados: Nuestro equipo cuenta con amplia experiencia en el sector inmobiliario argentino.<br>
+        Tasaciones Precisas: Metodologías actualizadas para determinar el valor real de tu propiedad.<br>
+        Soporte Especializado: Atención personalizada para inversores nacionales e internacionales.</p>
+    </div>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="terms.html">Términos de Servicio</a>
+            <a href="privacy.html">Política de Privacidad</a>
+            <a href="contact.html">Contacto Argentina</a>
+        </div>
+        <div class="copyright">QRP2P REAL ESTATE ARGENTINA - Compra, venta, alquiler y tasaciones de inmuebles. Todos los derechos reservados.</div>
+    </footer>
 
     <script>
-        // List of Argentinian provinces and major cities with both languages
-        const states = [
-            // Provinces
-            { 
-                "name": { "es": "Buenos Aires", "en": "Buenos Aires" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/buenos-aires", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Catamarca", "en": "Catamarca" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/catamarca", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Chaco", "en": "Chaco" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/chaco", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Chubut", "en": "Chubut" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/chubut", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Córdoba", "en": "Córdoba" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/cordoba", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Corrientes", "en": "Corrientes" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/corrientes", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Entre Ríos", "en": "Entre Ríos" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/entre-rios", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Formosa", "en": "Formosa" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/formosa", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Jujuy", "en": "Jujuy" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/jujuy", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "La Pampa", "en": "La Pampa" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/la-pampa", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "La Rioja", "en": "La Rioja" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/la-rioja", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Mendoza", "en": "Mendoza" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/mendoza", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Misiones", "en": "Misiones" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/misiones", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Neuquén", "en": "Neuquén" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/neuquen", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Río Negro", "en": "Río Negro" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/rio-negro", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Salta", "en": "Salta" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/salta", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "San Juan", "en": "San Juan" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/san-juan", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "San Luis", "en": "San Luis" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/san-luis", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Santa Cruz", "en": "Santa Cruz" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/santa-cruz", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Santa Fe", "en": "Santa Fe" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/santa-fe", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Santiago del Estero", "en": "Santiago del Estero" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/santiago-del-estero", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Tierra del Fuego", "en": "Tierra del Fuego" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/tierra-del-fuego", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Tucumán", "en": "Tucumán" }, 
-                "type": { "es": "Provincia", "en": "Province" }, 
-                "url": "https://qrcontraentrega.com/tucuman", 
-                "image": "img/c.jpg" 
-            },
-            // Autonomous City
-            { 
-                "name": { "es": "Ciudad Autónoma de Buenos Aires", "en": "Autonomous City of Buenos Aires" }, 
-                "type": { "es": "Ciudad Autónoma", "en": "Autonomous City" }, 
-                "url": "https://qrcontraentrega.com/caba", 
-                "image": "img/c.jpg" 
-            },
-            // Major cities
-            { 
-                "name": { "es": "Rosario", "en": "Rosario" }, 
-                "type": { "es": "Ciudad", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/rosario", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Mendoza", "en": "Mendoza" }, 
-                "type": { "es": "Ciudad", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/mendoza-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Córdoba", "en": "Córdoba" }, 
-                "type": { "es": "Ciudad", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/cordoba-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "La Plata", "en": "La Plata" }, 
-                "type": { "es": "Ciudad", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/la-plata", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Mar del Plata", "en": "Mar del Plata" }, 
-                "type": { "es": "Ciudad", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/mar-del-plata", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Salta", "en": "Salta" }, 
-                "type": { "es": "Ciudad", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/salta-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "San Miguel de Tucumán", "en": "San Miguel de Tucumán" }, 
-                "type": { "es": "Ciudad", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/tucuman-city", 
-                "image": "img/c.jpg" 
-            },
-            { 
-                "name": { "es": "Santa Fe", "en": "Santa Fe" }, 
-                "type": { "es": "Ciudad", "en": "City" }, 
-                "url": "https://qrcontraentrega.com/santa-fe-city", 
-                "image": "img/c.jpg" 
-            }
+        // TODAS LAS LOCALIDADES DE ARGENTINA - CADA TARJETA ES UNA LOCALIDAD ESPECÍFICA
+        const citiesData = [
+            // CIUDAD AUTÓNOMA DE BUENOS AIRES (CABA)
+            { name: "Buenos Aires (CABA)", province: "CABA", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Buenos Aires", actionText: "Ver servicios en Buenos Aires", url: "/buenos-aires-caba/" },
+            { name: "Palermo", province: "CABA", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Palermo", actionText: "Ver servicios en Palermo", url: "/palermo/" },
+            { name: "Recoleta", province: "CABA", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Recoleta", actionText: "Ver servicios en Recoleta", url: "/recoleta/" },
+            { name: "Belgrano", province: "CABA", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Belgrano", actionText: "Ver servicios en Belgrano", url: "/belgrano/" },
+            { name: "Puerto Madero", province: "CABA", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Puerto Madero", actionText: "Ver servicios en Puerto Madero", url: "/puerto-madero/" },
+            { name: "Caballito", province: "CABA", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Caballito", actionText: "Ver servicios en Caballito", url: "/caballito/" },
+            
+            // PROVINCIA DE BUENOS AIRES
+            { name: "La Plata", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en La Plata", actionText: "Ver servicios en La Plata", url: "/la-plata/" },
+            { name: "Mar del Plata", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Mar del Plata", actionText: "Ver servicios en Mar del Plata", url: "/mar-del-plata/" },
+            { name: "Bahía Blanca", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Bahía Blanca", actionText: "Ver servicios en Bahía Blanca", url: "/bahia-blanca/" },
+            { name: "San Isidro", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en San Isidro", actionText: "Ver servicios en San Isidro", url: "/san-isidro/" },
+            { name: "San Martín", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en San Martín", actionText: "Ver servicios en San Martín", url: "/san-martin/" },
+            { name: "Vicente López", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Vicente López", actionText: "Ver servicios en Vicente López", url: "/vicente-lopez/" },
+            { name: "Olivos", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Olivos", actionText: "Ver servicios en Olivos", url: "/olivos/" },
+            { name: "Martínez", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Martínez", actionText: "Ver servicios en Martínez", url: "/martinez/" },
+            { name: "Acassuso", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Acassuso", actionText: "Ver servicios en Acassuso", url: "/acassuso/" },
+            { name: "Tigre", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Tigre", actionText: "Ver servicios en Tigre", url: "/tigre/" },
+            { name: "Nordelta", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Nordelta", actionText: "Ver servicios en Nordelta", url: "/nordelta/" },
+            { name: "Pilar", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Pilar", actionText: "Ver servicios en Pilar", url: "/pilar/" },
+            { name: "Escobar", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Escobar", actionText: "Ver servicios en Escobar", url: "/escobar/" },
+            { name: "Luján", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Luján", actionText: "Ver servicios en Luján", url: "/lujan/" },
+            { name: "Merlo", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Merlo", actionText: "Ver servicios en Merlo", url: "/merlo/" },
+            { name: "Moreno", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Moreno", actionText: "Ver servicios en Moreno", url: "/moreno/" },
+            { name: "Quilmes", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Quilmes", actionText: "Ver servicios en Quilmes", url: "/quilmes/" },
+            { name: "Avellaneda", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Avellaneda", actionText: "Ver servicios en Avellaneda", url: "/avellaneda/" },
+            { name: "Lanús", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Lanús", actionText: "Ver servicios en Lanús", url: "/lanus/" },
+            { name: "Lomas de Zamora", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Lomas de Zamora", actionText: "Ver servicios en Lomas de Zamora", url: "/lomas-de-zamora/" },
+            { name: "Banfield", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Banfield", actionText: "Ver servicios en Banfield", url: "/banfield/" },
+            { name: "Adrogué", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Adrogué", actionText: "Ver servicios en Adrogué", url: "/adrogue/" },
+            { name: "Tandil", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Tandil", actionText: "Ver servicios en Tandil", url: "/tandil/" },
+            { name: "Necochea", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Necochea", actionText: "Ver servicios en Necochea", url: "/necochea/" },
+            { name: "Junín", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Junín", actionText: "Ver servicios en Junín", url: "/junin/" },
+            { name: "Pergamino", province: "Buenos Aires", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Pergamino", actionText: "Ver servicios en Pergamino", url: "/pergamino/" },
+            
+            // CÓRDOBA
+            { name: "Córdoba", province: "Córdoba", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Córdoba", actionText: "Ver servicios en Córdoba", url: "/cordoba/" },
+            { name: "Villa Carlos Paz", province: "Córdoba", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Villa Carlos Paz", actionText: "Ver servicios en Villa Carlos Paz", url: "/villa-carlos-paz/" },
+            { name: "Río Cuarto", province: "Córdoba", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Río Cuarto", actionText: "Ver servicios en Río Cuarto", url: "/rio-cuarto/" },
+            { name: "San Francisco", province: "Córdoba", desc: "Compra, venta, alquiler y tasaciones de inmuebles en San Francisco", actionText: "Ver servicios en San Francisco", url: "/san-francisco-cordoba/" },
+            { name: "Villa María", province: "Córdoba", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Villa María", actionText: "Ver servicios en Villa María", url: "/villa-maria/" },
+            { name: "Jesús María", province: "Córdoba", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Jesús María", actionText: "Ver servicios en Jesús María", url: "/jesus-maria/" },
+            { name: "Cosquín", province: "Córdoba", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Cosquín", actionText: "Ver servicios en Cosquín", url: "/cosquin/" },
+            { name: "La Falda", province: "Córdoba", desc: "Compra, venta, alquiler y tasaciones de inmuebles en La Falda", actionText: "Ver servicios en La Falda", url: "/la-falda/" },
+            { name: "Mina Clavero", province: "Córdoba", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Mina Clavero", actionText: "Ver servicios en Mina Clavero", url: "/mina-clavero/" },
+            
+            // SANTA FE
+            { name: "Rosario", province: "Santa Fe", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Rosario", actionText: "Ver servicios en Rosario", url: "/rosario/" },
+            { name: "Santa Fe", province: "Santa Fe", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Santa Fe", actionText: "Ver servicios en Santa Fe", url: "/santa-fe/" },
+            { name: "Rafaela", province: "Santa Fe", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Rafaela", actionText: "Ver servicios en Rafaela", url: "/rafaela/" },
+            { name: "Venado Tuerto", province: "Santa Fe", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Venado Tuerto", actionText: "Ver servicios en Venado Tuerto", url: "/venado-tuerto/" },
+            { name: "Casilda", province: "Santa Fe", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Casilda", actionText: "Ver servicios en Casilda", url: "/casilda/" },
+            { name: "Funes", province: "Santa Fe", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Funes", actionText: "Ver servicios en Funes", url: "/funes/" },
+            { name: "Roldán", province: "Santa Fe", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Roldán", actionText: "Ver servicios en Roldán", url: "/roldan/" },
+            
+            // MENDOZA
+            { name: "Mendoza", province: "Mendoza", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Mendoza", actionText: "Ver servicios en Mendoza", url: "/mendoza/" },
+            { name: "San Rafael", province: "Mendoza", desc: "Compra, venta, alquiler y tasaciones de inmuebles en San Rafael", actionText: "Ver servicios en San Rafael", url: "/san-rafael/" },
+            { name: "Godoy Cruz", province: "Mendoza", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Godoy Cruz", actionText: "Ver servicios en Godoy Cruz", url: "/godoy-cruz/" },
+            { name: "Guaymallén", province: "Mendoza", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Guaymallén", actionText: "Ver servicios en Guaymallén", url: "/guaymallen/" },
+            { name: "Las Heras", province: "Mendoza", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Las Heras", actionText: "Ver servicios en Las Heras", url: "/las-heras/" },
+            { name: "Luján de Cuyo", province: "Mendoza", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Luján de Cuyo", actionText: "Ver servicios en Luján de Cuyo", url: "/lujan-de-cuyo/" },
+            { name: "Maipú", province: "Mendoza", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Maipú", actionText: "Ver servicios en Maipú", url: "/maipu/" },
+            
+            // TUCUMÁN
+            { name: "San Miguel de Tucumán", province: "Tucumán", desc: "Compra, venta, alquiler y tasaciones de inmuebles en San Miguel de Tucumán", actionText: "Ver servicios en San Miguel de Tucumán", url: "/san-miguel-de-tucuman/" },
+            { name: "Tafí Viejo", province: "Tucumán", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Tafí Viejo", actionText: "Ver servicios en Tafí Viejo", url: "/tafi-viejo/" },
+            { name: "Yerba Buena", province: "Tucumán", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Yerba Buena", actionText: "Ver servicios en Yerba Buena", url: "/yerba-buena/" },
+            { name: "Concepción", province: "Tucumán", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Concepción", actionText: "Ver servicios en Concepción", url: "/concepcion-tucuman/" },
+            
+            // SALTA
+            { name: "Salta", province: "Salta", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Salta", actionText: "Ver servicios en Salta", url: "/salta/" },
+            { name: "Tartagal", province: "Salta", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Tartagal", actionText: "Ver servicios en Tartagal", url: "/tartagal/" },
+            { name: "Orán", province: "Salta", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Orán", actionText: "Ver servicios en Orán", url: "/oran/" },
+            { name: "Cafayate", province: "Salta", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Cafayate", actionText: "Ver servicios en Cafayate", url: "/cafayate/" },
+            
+            // ENTRE RÍOS
+            { name: "Paraná", province: "Entre Ríos", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Paraná", actionText: "Ver servicios en Paraná", url: "/parana/" },
+            { name: "Concordia", province: "Entre Ríos", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Concordia", actionText: "Ver servicios en Concordia", url: "/concordia/" },
+            { name: "Gualeguaychú", province: "Entre Ríos", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Gualeguaychú", actionText: "Ver servicios en Gualeguaychú", url: "/gualeguaychu/" },
+            { name: "Colón", province: "Entre Ríos", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Colón", actionText: "Ver servicios en Colón", url: "/colon/" },
+            
+            // CHACO
+            { name: "Resistencia", province: "Chaco", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Resistencia", actionText: "Ver servicios en Resistencia", url: "/resistencia/" },
+            { name: "Sáenz Peña", province: "Chaco", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Sáenz Peña", actionText: "Ver servicios en Sáenz Peña", url: "/saenz-pena/" },
+            
+            // MISIONES
+            { name: "Posadas", province: "Misiones", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Posadas", actionText: "Ver servicios en Posadas", url: "/posadas/" },
+            { name: "Puerto Iguazú", province: "Misiones", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Puerto Iguazú", actionText: "Ver servicios en Puerto Iguazú", url: "/puerto-iguazu/" },
+            { name: "Oberá", province: "Misiones", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Oberá", actionText: "Ver servicios en Oberá", url: "/obera/" },
+            
+            // CORRIENTES
+            { name: "Corrientes", province: "Corrientes", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Corrientes", actionText: "Ver servicios en Corrientes", url: "/corrientes/" },
+            { name: "Goya", province: "Corrientes", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Goya", actionText: "Ver servicios en Goya", url: "/goya/" },
+            
+            // NEUQUÉN
+            { name: "Neuquén", province: "Neuquén", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Neuquén", actionText: "Ver servicios en Neuquén", url: "/neuquen/" },
+            { name: "San Martín de los Andes", province: "Neuquén", desc: "Compra, venta, alquiler y tasaciones de inmuebles en San Martín de los Andes", actionText: "Ver servicios en San Martín de los Andes", url: "/san-martin-de-los-andes/" },
+            { name: "Villa La Angostura", province: "Neuquén", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Villa La Angostura", actionText: "Ver servicios en Villa La Angostura", url: "/villa-la-angostura/" },
+            
+            // RÍO NEGRO
+            { name: "Bariloche", province: "Río Negro", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Bariloche", actionText: "Ver servicios en Bariloche", url: "/bariloche/" },
+            { name: "Viedma", province: "Río Negro", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Viedma", actionText: "Ver servicios en Viedma", url: "/viedma/" },
+            { name: "Cipolletti", province: "Río Negro", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Cipolletti", actionText: "Ver servicios en Cipolletti", url: "/cipolletti/" },
+            { name: "El Bolsón", province: "Río Negro", desc: "Compra, venta, alquiler y tasaciones de inmuebles en El Bolsón", actionText: "Ver servicios en El Bolsón", url: "/el-bolson/" },
+            
+            // CHUBUT
+            { name: "Comodoro Rivadavia", province: "Chubut", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Comodoro Rivadavia", actionText: "Ver servicios en Comodoro Rivadavia", url: "/comodoro-rivadavia/" },
+            { name: "Puerto Madryn", province: "Chubut", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Puerto Madryn", actionText: "Ver servicios en Puerto Madryn", url: "/puerto-madryn/" },
+            { name: "Trelew", province: "Chubut", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Trelew", actionText: "Ver servicios en Trelew", url: "/trelew/" },
+            { name: "Esquel", province: "Chubut", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Esquel", actionText: "Ver servicios en Esquel", url: "/esquel/" },
+            
+            // SANTA CRUZ
+            { name: "Río Gallegos", province: "Santa Cruz", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Río Gallegos", actionText: "Ver servicios en Río Gallegos", url: "/rio-gallegos/" },
+            { name: "Caleta Olivia", province: "Santa Cruz", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Caleta Olivia", actionText: "Ver servicios en Caleta Olivia", url: "/caleta-olivia/" },
+            { name: "El Calafate", province: "Santa Cruz", desc: "Compra, venta, alquiler y tasaciones de inmuebles en El Calafate", actionText: "Ver servicios en El Calafate", url: "/el-calafate/" },
+            
+            // TIERRA DEL FUEGO
+            { name: "Ushuaia", province: "Tierra del Fuego", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Ushuaia", actionText: "Ver servicios en Ushuaia", url: "/ushuaia/" },
+            { name: "Río Grande", province: "Tierra del Fuego", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Río Grande", actionText: "Ver servicios en Río Grande", url: "/rio-grande-tdf/" },
+            
+            // LA PAMPA
+            { name: "Santa Rosa", province: "La Pampa", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Santa Rosa", actionText: "Ver servicios en Santa Rosa", url: "/santa-rosa/" },
+            { name: "General Pico", province: "La Pampa", desc: "Compra, venta, alquiler y tasaciones de inmuebles en General Pico", actionText: "Ver servicios en General Pico", url: "/general-pico/" },
+            
+            // SAN JUAN
+            { name: "San Juan", province: "San Juan", desc: "Compra, venta, alquiler y tasaciones de inmuebles en San Juan", actionText: "Ver servicios en San Juan", url: "/san-juan/" },
+            
+            // SAN LUIS
+            { name: "San Luis", province: "San Luis", desc: "Compra, venta, alquiler y tasaciones de inmuebles en San Luis", actionText: "Ver servicios en San Luis", url: "/san-luis/" },
+            { name: "Villa Mercedes", province: "San Luis", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Villa Mercedes", actionText: "Ver servicios en Villa Mercedes", url: "/villa-mercedes/" },
+            
+            // LA RIOJA
+            { name: "La Rioja", province: "La Rioja", desc: "Compra, venta, alquiler y tasaciones de inmuebles en La Rioja", actionText: "Ver servicios en La Rioja", url: "/la-rioja/" },
+            
+            // CATAMARCA
+            { name: "San Fernando del Valle de Catamarca", province: "Catamarca", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Catamarca", actionText: "Ver servicios en Catamarca", url: "/catamarca/" },
+            
+            // JUJUY
+            { name: "San Salvador de Jujuy", province: "Jujuy", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Jujuy", actionText: "Ver servicios en Jujuy", url: "/jujuy/" },
+            { name: "Purmamarca", province: "Jujuy", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Purmamarca", actionText: "Ver servicios en Purmamarca", url: "/purmamarca/" },
+            
+            // SANTIAGO DEL ESTERO
+            { name: "Santiago del Estero", province: "Santiago del Estero", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Santiago del Estero", actionText: "Ver servicios en Santiago del Estero", url: "/santiago-del-estero/" },
+            
+            // FORMOSA
+            { name: "Formosa", province: "Formosa", desc: "Compra, venta, alquiler y tasaciones de inmuebles en Formosa", actionText: "Ver servicios en Formosa", url: "/formosa/" }
         ];
-
-        // Function to display states and cities
-        function renderStates(stateList) {
-            const container = document.getElementById('states-container');
+        
+        // Ordenar alfabéticamente
+        citiesData.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+        
+        // Actualizar contador de localidades
+        document.getElementById('city-count').innerHTML = citiesData.length + " localidades - Compra, venta, alquiler y tasaciones de inmuebles en toda Argentina";
+        
+        // Generar city tags para SEO
+        const tagsContainer = document.getElementById('city-tags-container');
+        if (tagsContainer) {
+            citiesData.forEach(city => {
+                const tag = document.createElement('a');
+                tag.href = city.url;
+                tag.className = 'city-tag';
+                tag.textContent = city.name;
+                tagsContainer.appendChild(tag);
+            });
+        }
+        
+        // Toast notification function
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast-message');
+            toast.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+        
+        // Function to render cities with Argentina flag
+        function renderCities(cityList) {
+            const container = document.getElementById('cities-container');
             container.innerHTML = '';
-
-            stateList.forEach(state => {
-                const stateCard = document.createElement('div');
-                stateCard.className = 'state-card';
-                stateCard.innerHTML = `
-                    <div class="flag-container">
-                        <img src="${state.image}" alt="${state.name.es}" class="flag-image">
+            
+            cityList.forEach((city, index) => {
+                const card = document.createElement('div');
+                card.className = 'city-card';
+                card.style.animationDelay = `${index * 0.02}s`;
+                
+                card.innerHTML = `
+                    <div class="city-image">
+                        <div class="argentina-flag-bg">
+                            <div class="flag-stripe flag-light-blue"></div>
+                            <div class="flag-stripe flag-white">
+                                <span class="sun-icon">☀️</span>
+                            </div>
+                            <div class="flag-stripe flag-light-blue-bottom"></div>
+                        </div>
                     </div>
-                    <div class="state-info">
-                        <div class="spanish-name">${state.name.es}</div>
-                        <div class="state-name">${state.name.en}</div>
-                        <div class="state-type">${state.type.es} • ${state.type.en}</div>
+                    <div class="city-info">
+                        <h3 class="city-name">
+                            ${city.name}
+                            <span class="province-badge">${city.province}</span>
+                        </h3>
+                        <p class="city-desc">${city.desc}</p>
+                        <a href="${city.url}" class="city-link" target="_blank">${city.actionText} →</a>
                     </div>
                 `;
                 
-                stateCard.addEventListener('click', () => {
-                    window.location.href = state.url;
+                // Make entire card clickable
+                card.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'A') {
+                        showToast(`${city.name} (${city.province}) - Compra, venta, alquiler y tasaciones de inmuebles`);
+                        setTimeout(() => {
+                            window.open(city.url, '_blank');
+                        }, 300);
+                    }
                 });
-
-                container.appendChild(stateCard);
+                
+                container.appendChild(card);
             });
         }
-
-        // Function to search states and cities
-        function searchStates() {
-            const searchTerm = document.getElementById('state-search').value.toLowerCase();
-            const filteredStates = states.filter(state => 
-                state.name.es.toLowerCase().includes(searchTerm) || 
-                state.name.en.toLowerCase().includes(searchTerm) ||
-                state.type.es.toLowerCase().includes(searchTerm) ||
-                state.type.en.toLowerCase().includes(searchTerm)
-            );
-            renderStates(filteredStates);
+        
+        // Search functionality
+        function normalizeText(text) {
+            return text
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .trim()
+                .toLowerCase();
         }
-
-        // Event listeners
-        document.getElementById('state-search').addEventListener('input', searchStates);
-
-        // Display all states and cities when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            renderStates(states);
+        
+        function performSearch(searchTerm) {
+            const normalizedSearch = normalizeText(searchTerm);
+            const filteredCities = citiesData.filter(city => 
+                normalizeText(city.name).includes(normalizedSearch) || 
+                normalizeText(city.province).includes(normalizedSearch) ||
+                normalizeText(city.desc).includes(normalizedSearch)
+            );
+            renderCities(filteredCities);
+            document.getElementById('city-count').innerHTML = filteredCities.length + " localidades - Compra, venta, alquiler y tasaciones de inmuebles en toda Argentina";
+            return filteredCities.length > 0 ? filteredCities[0] : null;
+        }
+        
+        // PWA Install Button Logic
+        let deferredPrompt;
+        const installButton = document.getElementById('install-button');
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installButton.style.display = 'block';
+            installButton.addEventListener('click', () => {
+                installButton.style.display = 'none';
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            });
         });
+        
+        // Network status indicator
+        const offlineIndicator = document.getElementById('offline-indicator');
+        function updateOnlineStatus() {
+            if (navigator.onLine) {
+                offlineIndicator.classList.remove('show');
+            } else {
+                offlineIndicator.classList.add('show');
+            }
+        }
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCities(citiesData);
+            const searchInput = document.getElementById('marketplace-search');
+            searchInput.addEventListener('input', (e) => {
+                performSearch(e.target.value);
+            });
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const firstResult = performSearch(e.target.value);
+                    if (firstResult) {
+                        showToast(`${firstResult.name} (${firstResult.province}) - Compra, venta, alquiler y tasaciones de inmuebles`);
+                        setTimeout(() => {
+                            window.open(firstResult.url, '_blank');
+                        }, 300);
+                    }
+                }
+            });
+        });
+        
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registrado con éxito:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('Error al registrar Service Worker:', error);
+                    });
+            });
+        }
     </script>
 </body>
 </html>
