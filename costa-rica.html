@@ -1,371 +1,769 @@
 <!DOCTYPE html>
-<html lang="es" dir="ltr">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contraentrega Costa Rica</title>
+    <title>QRP2P REAL ESTATE COSTA RICA</title>
+    
+    <!-- PWA Meta Tags for Google -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#002B7F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="QRP2P Real Estate Costa Rica">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="QRP2P REAL ESTATE COSTA RICA">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="QRP2P Real Estate Costa Rica - El mercado inmobiliario líder en Costa Rica. Compra, venta, alquiler y avalúos de propiedades en todas las provincias: San José, Alajuela, Cartago, Heredia, Guanacaste, Puntarenas, Limón y todas las ciudades del país.">
+    <meta name="keywords" content="bienes raíces Costa Rica, compra venta inmuebles Costa Rica, alquiler propiedades Costa Rica, avalúos, QRP2P Costa Rica, San José, Alajuela, Cartago, Guanacaste, Tamarindo">
+    <meta name="author" content="QRP2P">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://qrp2p.com/costa-rica/">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
+    <link rel="apple-touch-icon" href="img/icon-192.png">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --blue: #002B7F; /* Azul de Costa Rica */
-            --white: #FFFFFF; /* Blanco de Costa Rica */
-            --red: #CE1126;   /* Rojo de Costa Rica */
-            --background-color: #f9f9f9;
-            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
+            --primary: #ffffff;
+            --secondary: #f5f5f5;
+            --accent: #e0e0e0;
+            --light: #4a4a4a;
+            --text: #000000;
+            --border: #d0d0d0;
+            --real-estate: #2c5f8a;
+            --gold: #c9a03d;
+            --cr-blue: #002B7F;
+            --cr-red: #CE1126;
+            --cr-white: #FFFFFF;
         }
-
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Libre Baskerville', 'Source Serif Pro', Georgia, serif;
         }
-
+        
         body {
-            background-color: var(--background-color);
-            color: #333;
+            background-color: var(--primary);
+            color: var(--text);
             line-height: 1.6;
-            background-image: linear-gradient(to bottom, rgba(0, 43, 127, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 3rem;
-            background: linear-gradient(135deg, var(--blue) 0%, var(--white) 50%, var(--red) 100%);
-            padding: 2rem;
-            border-radius: 10px;
+        
+        #install-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--real-estate);
             color: white;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: white;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-        }
-
-        .spanish-title {
-            font-size: 2.2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        p.subtitle {
-            font-size: 1.2rem;
-            color: rgba(255,255,255,0.9);
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .states-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .state-card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            text-align: center;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 1rem;
             cursor: pointer;
-            border-top: 4px solid var(--blue);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: none;
         }
-
-        .state-card:hover {
+        
+        #install-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            background: var(--gold);
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--cr-blue) 0%, var(--cr-white) 50%, var(--cr-red) 100%);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            letter-spacing: 4px;
+            color: var(--cr-blue);
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .tagline {
+            font-size: 1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            color: var(--cr-blue);
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        
+        .cr-badge {
+            display: inline-block;
+            background: rgba(0, 43, 127, 0.2);
+            padding: 0.25rem 1rem;
+            border-radius: 50px;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--cr-blue);
+            font-weight: 500;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        
+        .search-container {
+            margin: 2rem auto;
+            max-width: 600px;
+            position: relative;
+        }
+        
+        #marketplace-search {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: var(--primary);
+            color: var(--text);
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        #marketplace-search:focus {
+            outline: none;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            border-color: var(--real-estate);
+        }
+        
+        #marketplace-search::placeholder {
+            color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .cities-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+            padding-bottom: 1rem;
+        }
+        
+        .city-card {
+            background: var(--primary);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            border: 1px solid var(--border);
+        }
+        
+        .city-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            border-color: var(--red);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            border-color: var(--gold);
         }
-
-        .flag-container {
-            height: 120px;
+        
+        .city-image {
+            height: 160px;
+            position: relative;
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f0f0f0;
-            position: relative;
             overflow: hidden;
         }
-
-        .flag-container::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--blue) 0%, var(--white) 50%, var(--red) 100%);
+        
+        .cr-flag-bg {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
-
-        .flag-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+        
+        .flag-stripe {
+            flex: 1;
+            width: 100%;
         }
-
-        .state-info {
-            padding: 1.5rem 1rem;
+        
+        .flag-blue {
+            background-color: #002B7F;
         }
-
-        .state-name {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-            color: var(--blue);
+        
+        .flag-white {
+            background-color: #FFFFFF;
         }
-
-        .spanish-name {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
-
-        .state-type {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .search-container {
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+        
+        .flag-red {
+            background-color: #CE1126;
             position: relative;
         }
-
-        #state-search {
+        
+        .coat-of-arms {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            color: #002B7F;
+            text-shadow: 0 0 2px white;
+            background: rgba(255,255,255,0.7);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .city-info {
+            padding: 1.5rem;
+        }
+        
+        .city-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            flex-wrap: wrap;
+        }
+        
+        .province-badge {
+            font-size: 0.7rem;
+            background: var(--real-estate);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-weight: normal;
+        }
+        
+        .city-desc {
+            opacity: 0.8;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .city-link {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background: var(--real-estate);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            margin-top: 0.5rem;
             width: 100%;
-            padding: 12px 20px 12px 45px;
-            border: 1px solid #ddd;
-            border-radius: 50px;
-            font-size: 1rem;
-            outline: none;
-            transition: var(--transition);
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666" width="24px" height="24px"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: 15px center;
-            background-size: 20px;
+            text-align: center;
         }
-
-        #state-search:focus {
-            border-color: var(--red);
-            box-shadow: 0 0 0 3px rgba(206, 17, 38, 0.2);
+        
+        .city-link:hover {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: white;
+            transform: translateY(-2px);
         }
-
+        
+        .offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #ff4444;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 0.9rem;
+            z-index: 2000;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .offline-indicator.show {
+            transform: translateY(0);
+        }
+        
         footer {
+            background: var(--secondary);
+            padding: 2rem 0;
             text-align: center;
             margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid #eee;
-            color: #777;
+            border-top: 1px solid var(--border);
         }
-
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--text);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+        
+        .copyright {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        .city-count {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .seo-content {
+            max-width: 1400px;
+            margin: 3rem auto;
+            padding: 2rem 1.5rem;
+            background: var(--secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        .seo-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--real-estate);
+        }
+        
+        .seo-content h3 {
+            font-size: 1.2rem;
+            margin: 1.5rem 0 0.5rem;
+        }
+        
+        .seo-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .city-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .city-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--primary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        
+        .city-tag:hover {
+            background: var(--real-estate);
+            color: white;
+            border-color: var(--real-estate);
+        }
+        
+        .toast-message {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 1rem;
+            z-index: 3000;
+            transition: transform 0.3s ease;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        
+        .toast-message.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
         @media (max-width: 768px) {
-            .states-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            .spanish-title {
-                font-size: 1.8rem;
-            }
-
-            .flag-container {
-                height: 100px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .states-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            .logo { font-size: 2rem; }
+            .tagline { font-size: 0.85rem; }
+            .cities-grid { 
+                grid-template-columns: repeat(2, 1fr); 
                 gap: 1rem;
             }
-
-            .state-info {
-                padding: 1rem 0.5rem;
+            .city-image { height: 120px; }
+            .city-info { padding: 1rem; }
+            .city-name { font-size: 1rem; }
+            #install-button { bottom: 10px; right: 10px; padding: 8px 16px; font-size: 0.9rem; }
+            .toast-message { font-size: 0.85rem; padding: 8px 16px; white-space: nowrap; }
+        }
+        
+        @media (max-width: 480px) {
+            .logo { font-size: 1.8rem; }
+            .cities-grid { 
+                grid-template-columns: repeat(2, 1fr);
             }
-
-            .state-name {
-                font-size: 1rem;
-            }
-            
-            .spanish-name {
-                font-size: 1.1rem;
-            }
+            .footer-links { flex-direction: column; gap: 1rem; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .city-card {
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Contraentrega</h1>
-            <div class="spanish-title">Costa Rica</div>
-            <div>Sucursales</div>
-            <p class="subtitle">Selecciona tu cantón o ciudad / Select your canton or city</p>
-        </header>
-
-        <div class="search-container">
-            <input type="text" id="state-search" placeholder="Busca un cantón / Search for canton..." aria-label="Busca un cantón">
-        </div>
-
-        <div class="states-grid" id="states-container">
-            <!-- Cantones will appear here -->
-        </div>
-
-        <footer>
-            <p>© Contraentrega. Todos los derechos reservados / All rights reserved.</p>
-        </footer>
+    <div class="offline-indicator" id="offline-indicator">
+        Sin conexión - Mostrando contenido en caché
     </div>
+    
+    <button id="install-button" style="display: none;">
+        Instalar App
+    </button>
+    
+    <div class="toast-message" id="toast-message"></div>
+    
+    <header>
+        <div class="logo">QRP2P</div>
+        <div class="tagline">REAL ESTATE MARKETPLACE - COSTA RICA</div>
+        <div class="cr-badge">Compra, venta, alquiler y avalúos de inmuebles</div>
+    </header>
+    
+    <div class="container">
+        <div class="search-container">
+            <input type="text" id="marketplace-search" placeholder="Buscar ciudad o provincia... (San José, Alajuela, Cartago, Heredia, Liberia, Tamarindo, Pérez Zeledón...)">
+        </div>
+        
+        <div class="city-count" id="city-count"></div>
+        
+        <div class="cities-grid" id="cities-container"></div>
+        
+        <div class="cr-stats" style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 2rem;">
+            <div style="background: white; padding: 0.75rem 1.5rem; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-weight: bold;">Cobertura Nacional - 7 Provincias</div>
+        </div>
+    </div>
+    
+    <div class="seo-content">
+        <h2>QRP2P REAL ESTATE COSTA RICA</h2>
+        <p>QRP2P Real Estate es la plataforma líder en compra, venta, alquiler y avalúos de inmuebles en Costa Rica. Conectamos compradores, vendedores e inversionistas con las mejores oportunidades inmobiliarias en San José, Alajuela, Cartago, Heredia, Liberia, Tamarindo, Puntarenas, Jacó, Quepos, Limón, Puerto Viejo, Pérez Zeledón y todas las ciudades del país.</p>
+        
+        <h3>Ciudades con cobertura inmobiliaria en Costa Rica</h3>
+        <div class="city-tags" id="city-tags-container"></div>
+        
+        <h3>Nuestros Servicios</h3>
+        <p>Compra y Venta de Inmuebles: Asesoramiento integral en la adquisición y comercialización de propiedades.<br>
+        Alquileres: Gestión profesional de contratos de alquiler residencial, comercial y vacacional.<br>
+        Avalúos Comerciales: Valoración profesional de inmuebles con métodos reconocidos.<br>
+        Estudios de Mercado: Análisis de valorización y tendencias por provincia y sector.<br>
+        App PWA: Accede a nuestra plataforma desde cualquier dispositivo.</p>
+        
+        <h3>Por qué elegir QRP2P Real Estate Costa Rica</h3>
+        <p>Cobertura Nacional: Presencia en todas las provincias y principales cantones del país.<br>
+        Transacciones Seguras: Respaldo legal y administrativo en cada operación.<br>
+        Profesionales Certificados: Nuestro equipo cuenta con amplia experiencia en el sector inmobiliario costarricense.<br>
+        Avalúos Precisos: Metodologías actualizadas para determinar el valor real de tu propiedad.<br>
+        Soporte Especializado: Atención personalizada para inversionistas nacionales e internacionales, incluyendo propiedades de playa, montaña y eco-turismo.</p>
+    </div>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="terms.html">Términos de Servicio</a>
+            <a href="privacy.html">Política de Privacidad</a>
+            <a href="contact.html">Contacto Costa Rica</a>
+        </div>
+        <div class="copyright">QRP2P REAL ESTATE COSTA RICA - Compra, venta, alquiler y avalúos de inmuebles. Todos los derechos reservados.</div>
+    </footer>
 
     <script>
-        // List of Costa Rican cantons with both languages
-        const states = [
-            { "name": { "es": "San José", "en": "San Jose" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "sanjose.html", "image": "img/c.jpg" },
-            { "name": { "es": "Escazú", "en": "Escazu" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "escazu.html", "image": "img/c.jpg" },
-            { "name": { "es": "Desamparados", "en": "Desamparados" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "desamparados.html", "image": "img/c.jpg" },
-            { "name": { "es": "Puriscal", "en": "Puriscal" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "puriscal.html", "image": "img/c.jpg" },
-            { "name": { "es": "Tarrazú", "en": "Tarrazu" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "tarrazu.html", "image": "img/c.jpg" },
-            { "name": { "es": "Aserrí", "en": "Aserri" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "aserri.html", "image": "img/c.jpg" },
-            { "name": { "es": "Mora", "en": "Mora" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "mora.html", "image": "img/c.jpg" },
-            { "name": { "es": "Goicoechea", "en": "Goicoechea" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "goicoechea.html", "image": "img/c.jpg" },
-            { "name": { "es": "Santa Ana", "en": "Santa Ana" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "santaana.html", "image": "img/c.jpg" },
-            { "name": { "es": "Alajuelita", "en": "Alajuelita" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "alajuelita.html", "image": "img/c.jpg" },
-            { "name": { "es": "Vázquez de Coronado", "en": "Vazquez de Coronado" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "vazquezcoronado.html", "image": "img/c.jpg" },
-            { "name": { "es": "Acosta", "en": "Acosta" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "acosta.html", "image": "img/c.jpg" },
-            { "name": { "es": "Tibás", "en": "Tibas" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "tibas.html", "image": "img/c.jpg" },
-            { "name": { "es": "Moravia", "en": "Moravia" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "moravia.html", "image": "img/c.jpg" },
-            { "name": { "es": "Montes de Oca", "en": "Montes de Oca" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "montesdeoca.html", "image": "img/c.jpg" },
-            { "name": { "es": "Turrubares", "en": "Turrubares" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "turrubares.html", "image": "img/c.jpg" },
-            { "name": { "es": "Dota", "en": "Dota" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "dota.html", "image": "img/c.jpg" },
-            { "name": { "es": "Curridabat", "en": "Curridabat" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "curridabat.html", "image": "img/c.jpg" },
-            { "name": { "es": "Pérez Zeledón", "en": "Perez Zeledon" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "perezzeledon.html", "image": "img/c.jpg" },
-            { "name": { "es": "León Cortés", "en": "Leon Cortes" }, "type": { "es": "Cantón de San José", "en": "Canton of San Jose" }, "url": "leonCortes.html", "image": "img/c.jpg" },
-            { "name": { "es": "Alajuela", "en": "Alajuela" }, "type": { "es": "Cantón de Alajuela", "en": "Canton of Alajuela" }, "url": "alajuela.html", "image": "img/c.jpg" },
-            { "name": { "es": "San Ramón", "en": "San Ramon" }, "type": { "es": "Cantón de Alajuela", "en": "Canton of Alajuela" }, "url": "sanramon.html", "image": "img/c.jpg" },
-            { "name": { "es": "Grecia", "en": "Grecia" }, "type": { "es": "Cantón de Alajuela", "en": "Canton of Alajuela" }, "url": "grecia.html", "image": "img/c.jpg" },
-            { "name": { "es": "San Mateo", "en": "San Mateo" }, "type": { "es": "Cantón de Alajuela", "en": "Canton of Alajuela" }, "url": "sanmateo.html", "image": "img/c.jpg" },
-            { "name": { "es": "Atenas", "en": "Atenas" }, "type": { "es": "Cantón de Alajuela", "en": "Canton of Alajuela" }, "url": "atenas.html", "image": "img/c.jpg" },
-            { "name": { "es": "Naranjo", "en": "Naranjo" }, "type": { "es": "Cantón de Alajuela", "en": "Canton of Alajuela" }, "url": "naranjo.html", "image": "img/c.jpg" },
-            { "name": { "es": "Palmares", "en": "Palmares" }, "type": { "es": "Cantón de Alajuela", "en": "Canton of Alajuela" }, "url": "palmares.html", "image": "img/c.jpg" },
-            { "name": { "es": "Poás", "en": "Poas" }, "type": { "es": "Cantón de Alajuela", "en": "Canton of Alajuela" }, "url": "poas.html", "image": "img/c.jpg" },
-            { "name": { "es": "Orotina", "en": "Orotina" }, "type": { "es": "Cantón de Alajuela", "en": "Canton of Alajuela" }, "url": "orotina.html", "image": "img/c.jpg" },
-            { "name": { "es": "San Carlos", "en": "San Carlos" }, "type": { "es": "Cantón de Alajuela", "en": "Canton of Alajuela" }, "url": "sancarlos.html", "image": "img/c.jpg" },
-            { "name": { "es": "Zarcero", "en": "Zarcero" }, "type": { "es": "Cantón de Alajuela", "en": "Canton of Alajuela" }, "url": "zarcero.html", "image": "img/c.jpg" },
-            { "name": { "es": "Sarchí", "en": "Sarchi" }, "type": { "es": "Cantón de Alajuela", "en": "Canton of Alajuela" }, "url": "sarchi.html", "image": "img/c.jpg" },
-            { "name": { "es": "Upala", "en": "Upala" }, "type": { "es": "Cantón de Alajuela", "en": "Canton of Alajuela" }, "url": "upala.html", "image": "img/c.jpg" },
-            { "name": { "es": "Los Chiles", "en": "Los Chiles" }, "type": { "es": "Cantón de Alajuela", "en": "Canton of Alajuela" }, "url": "loschiles.html", "image": "img/c.jpg" },
-            { "name": { "es": "Guatuso", "en": "Guatuso" }, "type": { "es": "Cantón de Alajuela", "en": "Canton of Alajuela" }, "url": "guatuso.html", "image": "img/c.jpg" },
-            { "name": { "es": "Río Cuarto", "en": "Rio Cuarto" }, "type": { "es": "Cantón de Alajuela", "en": "Canton of Alajuela" }, "url": "riocuarto.html", "image": "img/c.jpg" },
-            { "name": { "es": "Cartago", "en": "Cartago" }, "type": { "es": "Cantón de Cartago", "en": "Canton of Cartago" }, "url": "cartago.html", "image": "img/c.jpg" },
-            { "name": { "es": "Paraíso", "en": "Paraiso" }, "type": { "es": "Cantón de Cartago", "en": "Canton of Cartago" }, "url": "paraiso.html", "image": "img/c.jpg" },
-            { "name": { "es": "La Unión", "en": "La Union" }, "type": { "es": "Cantón de Cartago", "en": "Canton of Cartago" }, "url": "launion.html", "image": "img/c.jpg" },
-            { "name": { "es": "Jiménez", "en": "Jimenez" }, "type": { "es": "Cantón de Cartago", "en": "Canton of Cartago" }, "url": "jimenez.html", "image": "img/c.jpg" },
-            { "name": { "es": "Turrialba", "en": "Turrialba" }, "type": { "es": "Cantón de Cartago", "en": "Canton of Cartago" }, "url": "turrialba.html", "image": "img/c.jpg" },
-            { "name": { "es": "Alvarado", "en": "Alvarado" }, "type": { "es": "Cantón de Cartago", "en": "Canton of Cartago" }, "url": "alvarado.html", "image": "img/c.jpg" },
-            { "name": { "es": "Oreamuno", "en": "Oreamuno" }, "type": { "es": "Cantón de Cartago", "en": "Canton of Cartago" }, "url": "oreamuno.html", "image": "img/c.jpg" },
-            { "name": { "es": "El Guarco", "en": "El Guarco" }, "type": { "es": "Cantón de Cartago", "en": "Canton of Cartago" }, "url": "elguarco.html", "image": "img/c.jpg" },
-            { "name": { "es": "Heredia", "en": "Heredia" }, "type": { "es": "Cantón de Heredia", "en": "Canton of Heredia" }, "url": "heredia.html", "image": "img/c.jpg" },
-            { "name": { "es": "Barva", "en": "Barva" }, "type": { "es": "Cantón de Heredia", "en": "Canton of Heredia" }, "url": "barva.html", "image": "img/c.jpg" },
-            { "name": { "es": "Santo Domingo", "en": "Santo Domingo" }, "type": { "es": "Cantón de Heredia", "en": "Canton of Heredia" }, "url": "santodomingo.html", "image": "img/c.jpg" },
-            { "name": { "es": "Santa Bárbara", "en": "Santa Barbara" }, "type": { "es": "Cantón de Heredia", "en": "Canton of Heredia" }, "url": "santabarbara.html", "image": "img/c.jpg" },
-            { "name": { "es": "San Rafael", "en": "San Rafael" }, "type": { "es": "Cantón de Heredia", "en": "Canton of Heredia" }, "url": "sanrafael.html", "image": "img/c.jpg" },
-            { "name": { "es": "San Isidro", "en": "San Isidro" }, "type": { "es": "Cantón de Heredia", "en": "Canton of Heredia" }, "url": "sanisidro.html", "image": "img/c.jpg" },
-            { "name": { "es": "Belén", "en": "Belen" }, "type": { "es": "Cantón de Heredia", "en": "Canton of Heredia" }, "url": "belen.html", "image": "img/c.jpg" },
-            { "name": { "es": "Flores", "en": "Flores" }, "type": { "es": "Cantón de Heredia", "en": "Canton of Heredia" }, "url": "flores.html", "image": "img/c.jpg" },
-            { "name": { "es": "San Pablo", "en": "San Pablo" }, "type": { "es": "Cantón de Heredia", "en": "Canton of Heredia" }, "url": "sanpablo.html", "image": "img/c.jpg" },
-            { "name": { "es": "Sarapiquí", "en": "Sarapiqui" }, "type": { "es": "Cantón de Heredia", "en": "Canton of Heredia" }, "url": "sarapiqui.html", "image": "img/c.jpg" },
-            { "name": { "es": "Liberia", "en": "Liberia" }, "type": { "es": "Cantón de Guanacaste", "en": "Canton of Guanacaste" }, "url": "liberia.html", "image": "img/c.jpg" },
-            { "name": { "es": "Nicoya", "en": "Nicoya" }, "type": { "es": "Cantón de Guanacaste", "en": "Canton of Guanacaste" }, "url": "nicoya.html", "image": "img/c.jpg" },
-            { "name": { "es": "Santa Cruz", "en": "Santa Cruz" }, "type": { "es": "Cantón de Guanacaste", "en": "Canton of Guanacaste" }, "url": "santacruz.html", "image": "img/c.jpg" },
-            { "name": { "es": "Bagaces", "en": "Bagaces" }, "type": { "es": "Cantón de Guanacaste", "en": "Canton of Guanacaste" }, "url": "bagaces.html", "image": "img/c.jpg" },
-            { "name": { "es": "Carrillo", "en": "Carrillo" }, "type": { "es": "Cantón de Guanacaste", "en": "Canton of Guanacaste" }, "url": "carrillo.html", "image": "img/c.jpg" },
-            { "name": { "es": "Cañas", "en": "Canas" }, "type": { "es": "Cantón de Guanacaste", "en": "Canton of Guanacaste" }, "url": "canas.html", "image": "img/c.jpg" },
-            { "name": { "es": "Abangares", "en": "Abangares" }, "type": { "es": "Cantón de Guanacaste", "en": "Canton of Guanacaste" }, "url": "abangares.html", "image": "img/c.jpg" },
-            { "name": { "es": "Tilarán", "en": "Tilaran" }, "type": { "es": "Cantón de Guanacaste", "en": "Canton of Guanacaste" }, "url": "tilaran.html", "image": "img/c.jpg" },
-            { "name": { "es": "Nandayure", "en": "Nandayure" }, "type": { "es": "Cantón de Guanacaste", "en": "Canton of Guanacaste" }, "url": "nandayure.html", "image": "img/c.jpg" },
-            { "name": { "es": "La Cruz", "en": "La Cruz" }, "type": { "es": "Cantón de Guanacaste", "en": "Canton of Guanacaste" }, "url": "lacruz.html", "image": "img/c.jpg" },
-            { "name": { "es": "Hojancha", "en": "Hojancha" }, "type": { "es": "Cantón de Guanacaste", "en": "Canton of Guanacaste" }, "url": "hojancha.html", "image": "img/c.jpg" },
-            { "name": { "es": "Puntarenas", "en": "Puntarenas" }, "type": { "es": "Cantón de Puntarenas", "en": "Canton of Puntarenas" }, "url": "puntarenas.html", "image": "img/c.jpg" },
-            { "name": { "es": "Esparza", "en": "Esparza" }, "type": { "es": "Cantón de Puntarenas", "en": "Canton of Puntarenas" }, "url": "esparza.html", "image": "img/c.jpg" },
-            { "name": { "es": "Buenos Aires", "en": "Buenos Aires" }, "type": { "es": "Cantón de Puntarenas", "en": "Canton of Puntarenas" }, "url": "buenosaires.html", "image": "img/c.jpg" },
-            { "name": { "es": "Montes de Oro", "en": "Montes de Oro" }, "type": { "es": "Cantón de Puntarenas", "en": "Canton of Puntarenas" }, "url": "montesdeoro.html", "image": "img/c.jpg" },
-            { "name": { "es": "Osa", "en": "Osa" }, "type": { "es": "Cantón de Puntarenas", "en": "Canton of Puntarenas" }, "url": "osa.html", "image": "img/c.jpg" },
-            { "name": { "es": "Quepos", "en": "Quepos" }, "type": { "es": "Cantón de Puntarenas", "en": "Canton of Puntarenas" }, "url": "quepos.html", "image": "img/c.jpg" },
-            { "name": { "es": "Golfito", "en": "Golfito" }, "type": { "es": "Cantón de Puntarenas", "en": "Canton of Puntarenas" }, "url": "golfito.html", "image": "img/c.jpg" },
-            { "name": { "es": "Coto Brus", "en": "Coto Brus" }, "type": { "es": "Cantón de Puntarenas", "en": "Canton of Puntarenas" }, "url": "cotobrus.html", "image": "img/c.jpg" },
-            { "name": { "es": "Parrita", "en": "Parrita" }, "type": { "es": "Cantón de Puntarenas", "en": "Canton of Puntarenas" }, "url": "parrita.html", "image": "img/c.jpg" },
-            { "name": { "es": "Corredores", "en": "Corredores" }, "type": { "es": "Cantón de Puntarenas", "en": "Canton of Puntarenas" }, "url": "corredores.html", "image": "img/c.jpg" },
-            { "name": { "es": "Garabito", "en": "Garabito" }, "type": { "es": "Cantón de Puntarenas", "en": "Canton of Puntarenas" }, "url": "garabito.html", "image": "img/c.jpg" },
-            { "name": { "es": "Limón", "en": "Limon" }, "type": { "es": "Cantón de Limón", "en": "Canton of Limon" }, "url": "limon.html", "image": "img/c.jpg" },
-            { "name": { "es": "Pococí", "en": "Pococi" }, "type": { "es": "Cantón de Limón", "en": "Canton of Limon" }, "url": "pococi.html", "image": "img/c.jpg" },
-            { "name": { "es": "Siquirres", "en": "Siquirres" }, "type": { "es": "Cantón de Limón", "en": "Canton of Limon" }, "url": "siquirres.html", "image": "img/c.jpg" },
-            { "name": { "es": "Talamanca", "en": "Talamanca" }, "type": { "es": "Cantón de Limón", "en": "Canton of Limon" }, "url": "talamanca.html", "image": "img/c.jpg" },
-            { "name": { "es": "Matina", "en": "Matina" }, "type": { "es": "Cantón de Limón", "en": "Canton of Limon" }, "url": "matina.html", "image": "img/c.jpg" },
-            { "name": { "es": "Guácimo", "en": "Guacimo" }, "type": { "es": "Cantón de Limón", "en": "Canton of Limon" }, "url": "guacimo.html", "image": "img/c.jpg" }
+        // TODAS LAS CIUDADES DE COSTA RICA - CADA TARJETA ES UNA LOCALIDAD ESPECÍFICA
+        const citiesData = [
+            // PROVINCIA DE SAN JOSÉ
+            { name: "San José", province: "San José", desc: "Compra, venta, alquiler y avalúos de inmuebles en San José", actionText: "Ver servicios en San José", url: "/san-jose/" },
+            { name: "Escazú", province: "San José", desc: "Compra, venta, alquiler y avalúos de inmuebles en Escazú", actionText: "Ver servicios en Escazú", url: "/escazu/" },
+            { name: "Santa Ana", province: "San José", desc: "Compra, venta, alquiler y avalúos de inmuebles en Santa Ana", actionText: "Ver servicios en Santa Ana", url: "/santa-ana/" },
+            { name: "Curridabat", province: "San José", desc: "Compra, venta, alquiler y avalúos de inmuebles en Curridabat", actionText: "Ver servicios en Curridabat", url: "/curridabat/" },
+            { name: "Tibás", province: "San José", desc: "Compra, venta, alquiler y avalúos de inmuebles en Tibás", actionText: "Ver servicios en Tibás", url: "/tibas/" },
+            { name: "Moravia", province: "San José", desc: "Compra, venta, alquiler y avalúos de inmuebles en Moravia", actionText: "Ver servicios en Moravia", url: "/moravia/" },
+            { name: "Goicoechea", province: "San José", desc: "Compra, venta, alquiler y avalúos de inmuebles en Goicoechea", actionText: "Ver servicios en Goicoechea", url: "/goicoechea/" },
+            { name: "Desamparados", province: "San José", desc: "Compra, venta, alquiler y avalúos de inmuebles en Desamparados", actionText: "Ver servicios en Desamparados", url: "/desamparados/" },
+            { name: "Alajuelita", province: "San José", desc: "Compra, venta, alquiler y avalúos de inmuebles en Alajuelita", actionText: "Ver servicios en Alajuelita", url: "/alajuelita/" },
+            { name: "Pérez Zeledón", province: "San José", desc: "Compra, venta, alquiler y avalúos de inmuebles en Pérez Zeledón", actionText: "Ver servicios en Pérez Zeledón", url: "/perez-zeledon/" },
+            { name: "Puriscal", province: "San José", desc: "Compra, venta, alquiler y avalúos de inmuebles en Puriscal", actionText: "Ver servicios en Puriscal", url: "/puriscal/" },
+            { name: "Turrubares", province: "San José", desc: "Compra, venta, alquiler y avalúos de inmuebles en Turrubares", actionText: "Ver servicios en Turrubares", url: "/turrubares/" },
+            { name: "Aserrí", province: "San José", desc: "Compra, venta, alquiler y avalúos de inmuebles en Aserrí", actionText: "Ver servicios en Aserrí", url: "/aserrí/" },
+            { name: "Mora", province: "San José", desc: "Compra, venta, alquiler y avalúos de inmuebles en Mora", actionText: "Ver servicios en Mora", url: "/mora/" },
+            
+            // PROVINCIA DE ALAJUELA
+            { name: "Alajuela", province: "Alajuela", desc: "Compra, venta, alquiler y avalúos de inmuebles en Alajuela", actionText: "Ver servicios en Alajuela", url: "/alajuela/" },
+            { name: "Atenas", province: "Alajuela", desc: "Compra, venta, alquiler y avalúos de inmuebles en Atenas", actionText: "Ver servicios en Atenas", url: "/atenas/" },
+            { name: "Grecia", province: "Alajuela", desc: "Compra, venta, alquiler y avalúos de inmuebles en Grecia", actionText: "Ver servicios en Grecia", url: "/grecia/" },
+            { name: "Naranjo", province: "Alajuela", desc: "Compra, venta, alquiler y avalúos de inmuebles en Naranjo", actionText: "Ver servicios en Naranjo", url: "/naranjo/" },
+            { name: "Palmares", province: "Alajuela", desc: "Compra, venta, alquiler y avalúos de inmuebles en Palmares", actionText: "Ver servicios en Palmares", url: "/palmares/" },
+            { name: "San Ramón", province: "Alajuela", desc: "Compra, venta, alquiler y avalúos de inmuebles en San Ramón", actionText: "Ver servicios en San Ramón", url: "/san-ramon/" },
+            { name: "Upala", province: "Alajuela", desc: "Compra, venta, alquiler y avalúos de inmuebles en Upala", actionText: "Ver servicios en Upala", url: "/upala/" },
+            { name: "Los Chiles", province: "Alajuela", desc: "Compra, venta, alquiler y avalúos de inmuebles en Los Chiles", actionText: "Ver servicios en Los Chiles", url: "/los-chiles/" },
+            { name: "Guatuso", province: "Alajuela", desc: "Compra, venta, alquiler y avalúos de inmuebles en Guatuso", actionText: "Ver servicios en Guatuso", url: "/guatuso/" },
+            { name: "San Carlos", province: "Alajuela", desc: "Compra, venta, alquiler y avalúos de inmuebles en San Carlos (Ciudad Quesada)", actionText: "Ver servicios en San Carlos", url: "/san-carlos/" },
+            { name: "Zarcero", province: "Alajuela", desc: "Compra, venta, alquiler y avalúos de inmuebles en Zarcero", actionText: "Ver servicios en Zarcero", url: "/zarcero/" },
+            { name: "Sarchí", province: "Alajuela", desc: "Compra, venta, alquiler y avalúos de inmuebles en Sarchí", actionText: "Ver servicios en Sarchí", url: "/sarchi/" },
+            { name: "Poás", province: "Alajuela", desc: "Compra, venta, alquiler y avalúos de inmuebles en Poás", actionText: "Ver servicios en Poás", url: "/poas/" },
+            
+            // PROVINCIA DE CARTAGO
+            { name: "Cartago", province: "Cartago", desc: "Compra, venta, alquiler y avalúos de inmuebles en Cartago", actionText: "Ver servicios en Cartago", url: "/cartago/" },
+            { name: "Paraíso", province: "Cartago", desc: "Compra, venta, alquiler y avalúos de inmuebles en Paraíso", actionText: "Ver servicios en Paraíso", url: "/paraiso/" },
+            { name: "La Unión", province: "Cartago", desc: "Compra, venta, alquiler y avalúos de inmuebles en La Unión", actionText: "Ver servicios en La Unión", url: "/la-union/" },
+            { name: "Jiménez", province: "Cartago", desc: "Compra, venta, alquiler y avalúos de inmuebles en Jiménez", actionText: "Ver servicios en Jiménez", url: "/jimenez/" },
+            { name: "Turrialba", province: "Cartago", desc: "Compra, venta, alquiler y avalúos de inmuebles en Turrialba", actionText: "Ver servicios en Turrialba", url: "/turrialba/" },
+            { name: "Alvarado", province: "Cartago", desc: "Compra, venta, alquiler y avalúos de inmuebles en Alvarado", actionText: "Ver servicios en Alvarado", url: "/alvarado/" },
+            { name: "Oreamuno", province: "Cartago", desc: "Compra, venta, alquiler y avalúos de inmuebles en Oreamuno", actionText: "Ver servicios en Oreamuno", url: "/oreamuno/" },
+            { name: "El Guarco", province: "Cartago", desc: "Compra, venta, alquiler y avalúos de inmuebles en El Guarco", actionText: "Ver servicios en El Guarco", url: "/el-guarco/" },
+            
+            // PROVINCIA DE HEREDIA
+            { name: "Heredia", province: "Heredia", desc: "Compra, venta, alquiler y avalúos de inmuebles en Heredia", actionText: "Ver servicios en Heredia", url: "/heredia/" },
+            { name: "Barva", province: "Heredia", desc: "Compra, venta, alquiler y avalúos de inmuebles en Barva", actionText: "Ver servicios en Barva", url: "/barva/" },
+            { name: "Santa Bárbara", province: "Heredia", desc: "Compra, venta, alquiler y avalúos de inmuebles en Santa Bárbara", actionText: "Ver servicios en Santa Bárbara", url: "/santa-barbara/" },
+            { name: "San Rafael", province: "Heredia", desc: "Compra, venta, alquiler y avalúos de inmuebles en San Rafael", actionText: "Ver servicios en San Rafael", url: "/san-rafael-heredia/" },
+            { name: "San Isidro", province: "Heredia", desc: "Compra, venta, alquiler y avalúos de inmuebles en San Isidro", actionText: "Ver servicios en San Isidro", url: "/san-isidro-heredia/" },
+            { name: "Belén", province: "Heredia", desc: "Compra, venta, alquiler y avalúos de inmuebles en Belén", actionText: "Ver servicios en Belén", url: "/belen/" },
+            { name: "Flores", province: "Heredia", desc: "Compra, venta, alquiler y avalúos de inmuebles en Flores", actionText: "Ver servicios en Flores", url: "/flores/" },
+            { name: "San Pablo", province: "Heredia", desc: "Compra, venta, alquiler y avalúos de inmuebles en San Pablo", actionText: "Ver servicios en San Pablo", url: "/san-pablo-heredia/" },
+            { name: "Santo Domingo", province: "Heredia", desc: "Compra, venta, alquiler y avalúos de inmuebles en Santo Domingo", actionText: "Ver servicios en Santo Domingo", url: "/santo-domingo/" },
+            
+            // PROVINCIA DE GUANACASTE
+            { name: "Liberia", province: "Guanacaste", desc: "Compra, venta, alquiler y avalúos de inmuebles en Liberia", actionText: "Ver servicios en Liberia", url: "/liberia/" },
+            { name: "Nicoya", province: "Guanacaste", desc: "Compra, venta, alquiler y avalúos de inmuebles en Nicoya", actionText: "Ver servicios en Nicoya", url: "/nicoya/" },
+            { name: "Santa Cruz", province: "Guanacaste", desc: "Compra, venta, alquiler y avalúos de inmuebles en Santa Cruz", actionText: "Ver servicios en Santa Cruz", url: "/santa-cruz-guanacaste/" },
+            { name: "Tamarindo", province: "Guanacaste", desc: "Compra, venta, alquiler y avalúos de inmuebles en Tamarindo", actionText: "Ver servicios en Tamarindo", url: "/tamarindo/" },
+            { name: "Carrillo", province: "Guanacaste", desc: "Compra, venta, alquiler y avalúos de inmuebles en Carrillo", actionText: "Ver servicios en Carrillo", url: "/carrillo/" },
+            { name: "Cañas", province: "Guanacaste", desc: "Compra, venta, alquiler y avalúos de inmuebles en Cañas", actionText: "Ver servicios en Cañas", url: "/canas/" },
+            { name: "Bagaces", province: "Guanacaste", desc: "Compra, venta, alquiler y avalúos de inmuebles en Bagaces", actionText: "Ver servicios en Bagaces", url: "/bagaces/" },
+            { name: "Tilarán", province: "Guanacaste", desc: "Compra, venta, alquiler y avalúos de inmuebles en Tilarán", actionText: "Ver servicios en Tilarán", url: "/tilaran/" },
+            { name: "Nandayure", province: "Guanacaste", desc: "Compra, venta, alquiler y avalúos de inmuebles en Nandayure", actionText: "Ver servicios en Nandayure", url: "/nandayure/" },
+            { name: "Hojancha", province: "Guanacaste", desc: "Compra, venta, alquiler y avalúos de inmuebles en Hojancha", actionText: "Ver servicios en Hojancha", url: "/hojancha/" },
+            { name: "La Cruz", province: "Guanacaste", desc: "Compra, venta, alquiler y avalúos de inmuebles en La Cruz", actionText: "Ver servicios en La Cruz", url: "/la-cruz/" },
+            { name: "Abangares", province: "Guanacaste", desc: "Compra, venta, alquiler y avalúos de inmuebles en Abangares", actionText: "Ver servicios en Abangares", url: "/abangares/" },
+            
+            // PROVINCIA DE PUNTARENAS
+            { name: "Puntarenas", province: "Puntarenas", desc: "Compra, venta, alquiler y avalúos de inmuebles en Puntarenas", actionText: "Ver servicios en Puntarenas", url: "/puntarenas/" },
+            { name: "Jacó", province: "Puntarenas", desc: "Compra, venta, alquiler y avalúos de inmuebles en Jacó", actionText: "Ver servicios en Jacó", url: "/jaco/" },
+            { name: "Quepos", province: "Puntarenas", desc: "Compra, venta, alquiler y avalúos de inmuebles en Quepos", actionText: "Ver servicios en Quepos", url: "/quepos/" },
+            { name: "Manuel Antonio", province: "Puntarenas", desc: "Compra, venta, alquiler y avalúos de inmuebles en Manuel Antonio", actionText: "Ver servicios en Manuel Antonio", url: "/manuel-antonio/" },
+            { name: "Golfito", province: "Puntarenas", desc: "Compra, venta, alquiler y avalúos de inmuebles en Golfito", actionText: "Ver servicios en Golfito", url: "/golfito/" },
+            { name: "Osa", province: "Puntarenas", desc: "Compra, venta, alquiler y avalúos de inmuebles en Osa (Puerto Jiménez)", actionText: "Ver servicios en Osa", url: "/osa/" },
+            { name: "Corredores", province: "Puntarenas", desc: "Compra, venta, alquiler y avalúos de inmuebles en Corredores", actionText: "Ver servicios en Corredores", url: "/corredores/" },
+            { name: "Coto Brus", province: "Puntarenas", desc: "Compra, venta, alquiler y avalúos de inmuebles en Coto Brus", actionText: "Ver servicios en Coto Brus", url: "/coto-brus/" },
+            { name: "Buenos Aires", province: "Puntarenas", desc: "Compra, venta, alquiler y avalúos de inmuebles en Buenos Aires", actionText: "Ver servicios en Buenos Aires", url: "/buenos-aires/" },
+            { name: "Montes de Oro", province: "Puntarenas", desc: "Compra, venta, alquiler y avalúos de inmuebles en Montes de Oro", actionText: "Ver servicios en Montes de Oro", url: "/montes-de-oro/" },
+            { name: "Esparza", province: "Puntarenas", desc: "Compra, venta, alquiler y avalúos de inmuebles en Esparza", actionText: "Ver servicios en Esparza", url: "/esparza/" },
+            { name: "Parrita", province: "Puntarenas", desc: "Compra, venta, alquiler y avalúos de inmuebles en Parrita", actionText: "Ver servicios en Parrita", url: "/parrita/" },
+            { name: "Garabito", province: "Puntarenas", desc: "Compra, venta, alquiler y avalúos de inmuebles en Garabito", actionText: "Ver servicios en Garabito", url: "/garabito/" },
+            
+            // PROVINCIA DE LIMÓN
+            { name: "Limón", province: "Limón", desc: "Compra, venta, alquiler y avalúos de inmuebles en Limón", actionText: "Ver servicios en Limón", url: "/limon/" },
+            { name: "Puerto Viejo", province: "Limón", desc: "Compra, venta, alquiler y avalúos de inmuebles en Puerto Viejo", actionText: "Ver servicios en Puerto Viejo", url: "/puerto-viejo/" },
+            { name: "Cahuita", province: "Limón", desc: "Compra, venta, alquiler y avalúos de inmuebles en Cahuita", actionText: "Ver servicios en Cahuita", url: "/cahuita/" },
+            { name: "Talamanca", province: "Limón", desc: "Compra, venta, alquiler y avalúos de inmuebles en Talamanca", actionText: "Ver servicios en Talamanca", url: "/talamanca/" },
+            { name: "Guápiles", province: "Limón", desc: "Compra, venta, alquiler y avalúos de inmuebles en Guápiles (Pococí)", actionText: "Ver servicios en Guápiles", url: "/guapiles/" },
+            { name: "Siquirres", province: "Limón", desc: "Compra, venta, alquiler y avalúos de inmuebles en Siquirres", actionText: "Ver servicios en Siquirres", url: "/siquirres/" },
+            { name: "Matina", province: "Limón", desc: "Compra, venta, alquiler y avalúos de inmuebles en Matina", actionText: "Ver servicios en Matina", url: "/matina/" }
         ];
-
-        // Function to display states and cities
-        function renderStates(stateList) {
-            const container = document.getElementById('states-container');
+        
+        // Sort alphabetically by name
+        citiesData.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+        
+        // Update city counter
+        document.getElementById('city-count').innerHTML = citiesData.length + " ciudades y cantones - Compra, venta, alquiler y avalúos de inmuebles en Costa Rica";
+        
+        // Generate city tags for SEO
+        const tagsContainer = document.getElementById('city-tags-container');
+        if (tagsContainer) {
+            citiesData.forEach(city => {
+                const tag = document.createElement('a');
+                tag.href = city.url;
+                tag.className = 'city-tag';
+                tag.textContent = city.name;
+                tagsContainer.appendChild(tag);
+            });
+        }
+        
+        // Toast notification function
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast-message');
+            toast.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+        
+        // Function to render cities with Costa Rica flag
+        function renderCities(cityList) {
+            const container = document.getElementById('cities-container');
             container.innerHTML = '';
-
-            stateList.forEach(state => {
-                const stateCard = document.createElement('div');
-                stateCard.className = 'state-card';
-                stateCard.innerHTML = `
-                    <div class="flag-container">
-                        <img src="${state.image}" alt="${state.name.es}" class="flag-image">
+            
+            cityList.forEach((city, index) => {
+                const card = document.createElement('div');
+                card.className = 'city-card';
+                card.style.animationDelay = `${index * 0.02}s`;
+                
+                card.innerHTML = `
+                    <div class="city-image">
+                        <div class="cr-flag-bg">
+                            <div class="flag-stripe flag-blue"></div>
+                            <div class="flag-stripe flag-white"></div>
+                            <div class="flag-stripe flag-red">
+                                <div class="coat-of-arms">🌊</div>
+                            </div>
+                            <div class="flag-stripe flag-white"></div>
+                            <div class="flag-stripe flag-blue"></div>
+                        </div>
                     </div>
-                    <div class="state-info">
-                        <div class="spanish-name">${state.name.es}</div>
-                        <div class="state-name">${state.name.en}</div>
-                        <div class="state-type">${state.type.es} • ${state.type.en}</div>
+                    <div class="city-info">
+                        <h3 class="city-name">
+                            ${city.name}
+                            <span class="province-badge">${city.province}</span>
+                        </h3>
+                        <p class="city-desc">${city.desc}</p>
+                        <a href="${city.url}" class="city-link" target="_blank">${city.actionText} →</a>
                     </div>
                 `;
                 
-                stateCard.addEventListener('click', () => {
-                    window.location.href = state.url;
+                // Make entire card clickable
+                card.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'A') {
+                        showToast(`${city.name} (${city.province}) - Compra, venta, alquiler y avalúos de inmuebles`);
+                        setTimeout(() => {
+                            window.open(city.url, '_blank');
+                        }, 300);
+                    }
                 });
-
-                container.appendChild(stateCard);
+                
+                container.appendChild(card);
             });
         }
-
-        // Function to search states and cities
-        function searchStates() {
-            const searchTerm = document.getElementById('state-search').value.toLowerCase();
-            const filteredStates = states.filter(state => 
-                state.name.es.toLowerCase().includes(searchTerm) || 
-                state.name.en.toLowerCase().includes(searchTerm) ||
-                state.type.es.toLowerCase().includes(searchTerm) ||
-                state.type.en.toLowerCase().includes(searchTerm)
-            );
-            renderStates(filteredStates);
+        
+        // Search functionality
+        function normalizeText(text) {
+            return text
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .trim()
+                .toLowerCase();
         }
-
-        // Event listeners
-        document.getElementById('state-search').addEventListener('input', searchStates);
-
-        // Display all states and cities when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            renderStates(states);
+        
+        function performSearch(searchTerm) {
+            const normalizedSearch = normalizeText(searchTerm);
+            const filteredCities = citiesData.filter(city => 
+                normalizeText(city.name).includes(normalizedSearch) || 
+                normalizeText(city.province).includes(normalizedSearch) ||
+                normalizeText(city.desc).includes(normalizedSearch)
+            );
+            renderCities(filteredCities);
+            document.getElementById('city-count').innerHTML = filteredCities.length + " ciudades y cantones - Compra, venta, alquiler y avalúos de inmuebles en Costa Rica";
+            return filteredCities.length > 0 ? filteredCities[0] : null;
+        }
+        
+        // PWA Install Button Logic
+        let deferredPrompt;
+        const installButton = document.getElementById('install-button');
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installButton.style.display = 'block';
+            installButton.addEventListener('click', () => {
+                installButton.style.display = 'none';
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            });
         });
+        
+        // Network status indicator
+        const offlineIndicator = document.getElementById('offline-indicator');
+        function updateOnlineStatus() {
+            if (navigator.onLine) {
+                offlineIndicator.classList.remove('show');
+            } else {
+                offlineIndicator.classList.add('show');
+            }
+        }
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCities(citiesData);
+            const searchInput = document.getElementById('marketplace-search');
+            searchInput.addEventListener('input', (e) => {
+                performSearch(e.target.value);
+            });
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const firstResult = performSearch(e.target.value);
+                    if (firstResult) {
+                        showToast(`${firstResult.name} (${firstResult.province}) - Compra, venta, alquiler y avalúos de inmuebles`);
+                        setTimeout(() => {
+                            window.open(firstResult.url, '_blank');
+                        }, 300);
+                    }
+                }
+            });
+        });
+        
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registrado con éxito:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('Error al registrar Service Worker:', error);
+                    });
+            });
+        }
     </script>
 </body>
 </html>
