@@ -1,1494 +1,706 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mapa de oficinas - Marketplace Contraentrega Colombia</title>
-  <style>
-    :root {
-      --primary-color: #1a1a1a;
-      --secondary-color: #333;
-      --accent-color: #0066cc;
-      --text-color: #333;
-      --light-text: #fff;
-      --bg-light: #f8f8f8;
-      --border-radius: 8px;
-      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      --transition: all 0.3s ease;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRP2P COLOMBIA - Marketplace P2P Seguro</title>
     
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-    }
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a7f6b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="QRP2P Colombia">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="QRP2P COLOMBIA">
+    <meta name="format-detection" content="telephone=no">
     
-    body { 
-      font-family: 'Roboto', sans-serif; 
-      color: var(--text-color); 
-      line-height: 1.6; 
-      touch-action: manipulation;
-      overflow-x: hidden;
-    }
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="QRP2P Colombia - El marketplace P2P más seguro de Colombia. Compra y vende con confianza entre usuarios verificados. Plataforma de comercio peer-to-peer confiable.">
+    <meta name="keywords" content="marketplace Colombia, P2P Colombia, compra venta segura Colombia, vendedores verificados, QRP2P Colombia, marketplace peer-to-peer">
+    <meta name="author" content="QRP2P">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://qrp2p.com/">
     
-    #contenedor-mapa { 
-      height: 100vh; 
-      display: flex; 
-      flex-direction: column; 
-      position: relative;
-    }
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://qrp2p.com/">
+    <meta property="og:title" content="QRP2P Colombia | Marketplace P2P Seguro">
+    <meta property="og:description" content="Compra y vende con confianza en el marketplace P2P más seguro de Colombia. Usuarios verificados.">
+    <meta property="og:image" content="https://qrp2p.com/img/og-colombia.jpg">
     
-    #barra-superior { 
-      display: flex; 
-      gap: 0.8rem; 
-      padding: 0.8rem; 
-      background: var(--bg-light); 
-      width: 100%;
-      z-index: 1000;
-      justify-content: center;
-    }
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
+    <link rel="apple-touch-icon" href="img/icon-192.png">
     
-    #buscador { 
-      flex: 1; 
-      max-width: 500px;
-      padding: 0.6rem 1.2rem; 
-      border: 1px solid #ddd; 
-      border-radius: 24px; 
-      appearance: none; 
-      font-size: 16px;
-      transition: var(--transition);
-    }
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
     
-    #buscador:focus {
-      outline: none;
-      border-color: var(--accent-color);
-      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
-    }
-    
-    .btn { 
-      background: #000000; /* NEGRO */
-      color: #ffffff; /* BLANCO */
-      padding: 0.6rem 1.2rem; 
-      border-radius: 24px; 
-      text-decoration: none;
-      font-weight: 500;
-      transition: var(--transition);
-      border: none;
-      cursor: pointer;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      border: 1px solid #333;
-    }
-    
-    .btn:hover {
-      background: #333333; /* Gris oscuro al pasar el mouse */
-      transform: translateY(-1px);
-    }
-    
-    .btn-centrar {
-      background-color: #000000;
-      color: #ffffff;
-    }
-    
-    .btn-marketplace {
-      background-color: #000000;
-      color: #ffffff;
-    }
-    
-    #mapa { 
-      flex: 1; 
-      background: #f0f0f0; 
-      width: 100%;
-    }
-    
-    .cluster-marcadores { 
-      background: rgba(40,40,40,0.7); 
-      border-radius: 50%; 
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
-    
-    .whatsapp-icon {
-      width: 16px;
-      height: 16px;
-      filter: invert(1);
-    }
-
-    .popup-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .popup-button-row {
-      display: flex;
-      gap: 8px;
-      justify-content: space-between;
-    }
-
-    .sugerencias-busqueda {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      border-radius: 0 0 8px 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      z-index: 1000;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
-    }
-
-    .sugerencia-item {
-      padding: 10px 15px;
-      cursor: pointer;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .sugerencia-item:hover {
-      background-color: #f5f5f5;
-    }
-
-    .sugerencia-texto {
-      flex: 1;
-    }
-
-    .sugerencia-boton {
-      margin-left: 10px;
-      padding: 5px 10px;
-      background-color: #9b59b6;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    .contenedor-buscador {
-      position: relative;
-      flex: 1;
-      max-width: 500px;
-    }
-
-    .cargando {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-
-    .gm-style .gm-style-iw-c {
-      border-radius: 8px;
-      padding: 10px;
-    }
-
-    .gm-style .gm-style-iw-d {
-      overflow: auto !important;
-    }
-
-    .gm-ui-hover-effect {
-      top: 8px !important;
-      right: 8px !important;
-    }
-
-    .map-type-selector {
-      position: absolute;
-      bottom: 20px;
-      left: 10px;
-      z-index: 1000;
-      background: white;
-      padding: 8px 12px;
-      border-radius: 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      display: flex;
-      gap: 10px;
-    }
-
-    .map-type-btn {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      background: #f1f1f1;
-      transition: background 0.3s;
-    }
-
-    .map-type-btn.active {
-      background: #0066cc;
-      color: white;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    @media (max-width: 768px) { 
-      #barra-superior { 
-        flex-direction: column; 
-        gap: 0.6rem;
-      }
-      
-      .popup-button-row {
-        flex-direction: column;
-      }
-
-      .sugerencia-item {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .sugerencia-boton {
-        margin-left: 0;
-        margin-top: 5px;
-        align-self: flex-end;
-      }
-
-      .map-type-selector {
-        bottom: 10px;
-        left: 5px;
-        flex-direction: column;
-        gap: 5px;
-      }
-    }
-  </style>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <style>
+        :root {
+            --primary: #ffffff;
+            --secondary: #f5f5f5;
+            --accent: #e0e0e0;
+            --light: #4a4a4a;
+            --text: #000000;
+            --border: #d0d0d0;
+            --marketplace: #1a7f6b;
+            --gold: #c9a03d;
+            --verified: #2ecc71;
+            --colombia-yellow: #FCD116;
+            --colombia-blue: #003893;
+            --colombia-red: #CE1126;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Libre Baskerville', 'Source Serif Pro', Georgia, serif;
+        }
+        
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        #install-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--marketplace);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: none;
+        }
+        
+        #install-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            background: var(--gold);
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--colombia-yellow) 0%, var(--colombia-blue) 50%, var(--colombia-red) 100%);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            letter-spacing: 4px;
+            color: white;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .tagline {
+            font-size: 1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            color: white;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        
+        .verified-badge {
+            display: inline-block;
+            background: var(--verified);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        
+        .colombia-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.25rem 1rem;
+            border-radius: 50px;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        
+        .search-container {
+            margin: 2rem auto;
+            max-width: 600px;
+            position: relative;
+        }
+        
+        #marketplace-search {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: var(--primary);
+            color: var(--text);
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        #marketplace-search:focus {
+            outline: none;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            border-color: var(--marketplace);
+        }
+        
+        #marketplace-search::placeholder {
+            color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .cities-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+            padding-bottom: 1rem;
+        }
+        
+        .city-card {
+            background: var(--primary);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            border: 1px solid var(--border);
+        }
+        
+        .city-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            border-color: var(--gold);
+        }
+        
+        .city-image {
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .colombia-flag-bg {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .flag-stripe {
+            flex: 1;
+        }
+        
+        .flag-yellow {
+            background-color: #FCD116;
+            flex: 2;
+        }
+        
+        .flag-blue {
+            background-color: #003893;
+            flex: 1;
+        }
+        
+        .flag-red {
+            background-color: #CE1126;
+            flex: 1;
+        }
+        
+        .city-info {
+            padding: 1.5rem;
+        }
+        
+        .city-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            flex-wrap: wrap;
+        }
+        
+        .city-desc {
+            opacity: 0.8;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .city-link {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background: var(--marketplace);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            margin-top: 0.5rem;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .city-link:hover {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #ff4444;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 0.9rem;
+            z-index: 2000;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .offline-indicator.show {
+            transform: translateY(0);
+        }
+        
+        footer {
+            background: var(--secondary);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--text);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+        
+        .copyright {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        .city-count {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .seo-content {
+            max-width: 1400px;
+            margin: 3rem auto;
+            padding: 2rem 1.5rem;
+            background: var(--secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        .seo-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--marketplace);
+        }
+        
+        .seo-content h3 {
+            font-size: 1.2rem;
+            margin: 1.5rem 0 0.5rem;
+        }
+        
+        .seo-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .city-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .city-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--primary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        
+        .city-tag:hover {
+            background: var(--marketplace);
+            color: white;
+            border-color: var(--marketplace);
+        }
+        
+        .toast-message {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 1rem;
+            z-index: 3000;
+            transition: transform 0.3s ease;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        
+        .toast-message.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        @media (max-width: 768px) {
+            .logo { font-size: 2rem; }
+            .tagline { font-size: 0.85rem; }
+            .cities-grid { 
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 1rem;
+            }
+            .city-image { height: 120px; }
+            .city-info { padding: 1rem; }
+            .city-name { font-size: 1rem; }
+            #install-button { bottom: 10px; right: 10px; padding: 8px 16px; font-size: 0.9rem; }
+            .toast-message { font-size: 0.85rem; padding: 8px 16px; white-space: nowrap; }
+        }
+        
+        @media (max-width: 480px) {
+            .logo { font-size: 1.8rem; }
+            .cities-grid { 
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .footer-links { flex-direction: column; gap: 1rem; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .city-card {
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+    </style>
 </head>
 <body>
-  <div id="contenedor-mapa">
-    <div id="barra-superior">
-      <div class="contenedor-buscador">
-        <input type="search" id="buscador" placeholder="BUSCAR OFICINAS CONTRAENTREGA..." enterkeyhint="search">
-        <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
-      </div>
-      <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
-      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://co.qrcontraentrega.com/', '_blank')">MARKETPLACE</button>
+    <div class="offline-indicator" id="offline-indicator">
+        🔴 Estás offline - Mostrando contenido en caché
     </div>
-    <div id="mapa"></div>
-    <div class="map-type-selector">
-      <button class="map-type-btn active" id="map-btn">Mapa</button>
-      <button class="map-type-btn" id="satellite-btn">Satélite</button>
+    
+    <button id="install-button" style="display: none;">
+        📱 Instalar App
+    </button>
+    
+    <div class="toast-message" id="toast-message"></div>
+    
+    <header>
+        <div class="logo">QRP2P<span class="verified-badge">VERIFICADO</span></div>
+        <div class="tagline">MARKETPLACE P2P SEGURO - COLOMBIA</div>
+        <div class="colombia-badge">Compra y vende con confianza entre usuarios verificados</div>
+    </header>
+    
+    <div class="container">
+        <div class="search-container">
+            <input type="text" id="marketplace-search" placeholder="🔍 Buscar ciudad...">
+        </div>
+        
+        <div class="city-count" id="city-count"></div>
+        
+        <div class="cities-grid" id="cities-container"></div>
+        
+        <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 2rem;">
+            <div style="background: white; padding: 0.75rem 1.5rem; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-weight: bold;">✅ Usuarios Verificados</div>
+            <div style="background: white; padding: 0.75rem 1.5rem; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-weight: bold;">🔒 Transacciones Seguras</div>
+            <div style="background: white; padding: 0.75rem 1.5rem; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-weight: bold;">⚡️ Vendedores Verificados</div>
+        </div>
     </div>
-  </div>
-
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-  <script>
-    // Variables globales
-    let mapa;
-    let userMarker;
-    let marcadoresOriginales = [];
-    let destinoMarker = null;
-    let buscadorTimeout;
-    let googleMapsLayer;
-    let googleSatelliteLayer;
-    let currentLayer;
-
-    // Datos de ubicaciones - PRINCIPALES CIUDADES DE COLOMBIA
-    const UBICACIONES = [
-      // BOGOTÁ
-      { 
-        "id": "bogota-centro",
-        "nombre": "Contraentrega Bogotá - Centro", 
-        "direccion": "Carrera 7 # 12-30, Centro, Bogotá, Colombia", 
-        "latlng": [4.609710, -74.081750], 
-        "url": "https://qrcontraentrega.com/co/afiliado/bogota-centro",
-        "telefono": "+571234567890",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina principal, envíos nacionales",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      { 
-        "id": "bogota-norte",
-        "nombre": "Contraentrega Bogotá - Norte", 
-        "direccion": "Calle 100 # 15-30, Usaquén, Bogotá, Colombia", 
-        "latlng": [4.692280, -74.047290], 
-        "url": "https://qrcontraentrega.com/co/afiliado/bogota-norte",
-        "telefono": "+571234567891",
-        "horario": "Lunes a Viernes: 9am-7pm, Sábados: 9am-3pm",
-        "servicios": "Punto de entrega, envíos exprés",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      { 
-        "id": "bogota-sur",
-        "nombre": "Contraentrega Bogotá - Sur", 
-        "direccion": "Carrera 30 # 20-50, Puente Aranda, Bogotá, Colombia", 
-        "latlng": [4.609450, -74.115780], 
-        "url": "https://qrcontraentrega.com/co/afiliado/bogota-sur",
-        "telefono": "+571234567892",
-        "horario": "Lunes a Viernes: 8am-5pm, Sábados: 8am-12pm",
-        "servicios": "Centro logístico, envíos masivos",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      { 
-        "id": "bogota-occidente",
-        "nombre": "Contraentrega Bogotá - Occidente", 
-        "direccion": "Calle 13 # 68-45, Fontibón, Bogotá, Colombia", 
-        "latlng": [4.674240, -74.144200], 
-        "url": "https://qrcontraentrega.com/co/afiliado/bogota-occidente",
-        "telefono": "+571234567893",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-1pm",
-        "servicios": "Punto de recogida, envíos nacionales",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // MEDELLÍN
-      { 
-        "id": "medellin-centro",
-        "nombre": "Contraentrega Medellín - Centro", 
-        "direccion": "Carrera 50 # 50-20, La Candelaria, Medellín, Colombia", 
-        "latlng": [6.247640, -75.565830], 
-        "url": "https://qrcontraentrega.com/co/afiliado/medellin-centro",
-        "telefono": "+574123456789",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina principal Medellín",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      { 
-        "id": "medellin-poblado",
-        "nombre": "Contraentrega Medellín - El Poblado", 
-        "direccion": "Carrera 43A # 1-50, El Poblado, Medellín, Colombia", 
-        "latlng": [6.207030, -75.568560], 
-        "url": "https://qrcontraentrega.com/co/afiliado/medellin-poblado",
-        "telefono": "+574123456788",
-        "horario": "Lunes a Viernes: 9am-7pm, Sábados: 9am-4pm",
-        "servicios": "Punto de entreza, envíos exprés",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      { 
-        "id": "medellin-bello",
-        "nombre": "Contraentrega Medellín - Bello", 
-        "direccion": "Calle 50 # 40-10, Bello, Antioquia, Colombia", 
-        "latlng": [6.337170, -75.558880], 
-        "url": "https://qrcontraentrega.com/co/afiliado/medellin-bello",
-        "telefono": "+574123456787",
-        "horario": "Lunes a Viernes: 8am-5pm, Sábados: 8am-12pm",
-        "servicios": "Centro logístico norte",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // CALI
-      { 
-        "id": "cali-centro",
-        "nombre": "Contraentrega Cali - Centro", 
-        "direccion": "Carrera 4 # 10-20, Centro, Cali, Colombia", 
-        "latlng": [3.451650, -76.531980], 
-        "url": "https://qrcontraentrega.com/co/afiliado/cali-centro",
-        "telefono": "+572123456789",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina principal Cali",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      { 
-        "id": "cali-sur",
-        "nombre": "Contraentrega Cali - Sur", 
-        "direccion": "Carrera 100 # 15-30, Ciudad Jardín, Cali, Colombia", 
-        "latlng": [3.358020, -76.535870], 
-        "url": "https://qrcontraentrega.com/co/afiliado/cali-sur",
-        "telefono": "+572123456788",
-        "horario": "Lunes a Viernes: 9am-7pm, Sábados: 9am-3pm",
-        "servicios": "Punto de entrega, envíos exprés",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // BARRANQUILLA
-      { 
-        "id": "barranquilla-centro",
-        "nombre": "Contraentrega Barranquilla - Centro", 
-        "direccion": "Calle 34 # 45-20, Centro, Barranquilla, Colombia", 
-        "latlng": [10.981970, -74.788860], 
-        "url": "https://qrcontraentrega.com/co/afiliado/barranquilla-centro",
-        "telefono": "+575123456789",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina principal Costa Caribe",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      { 
-        "id": "barranquilla-norte",
-        "nombre": "Contraentrega Barranquilla - Norte", 
-        "direccion": "Carrera 52 # 85-10, Altos del Prado, Barranquilla, Colombia", 
-        "latlng": [11.003740, -74.809130], 
-        "url": "https://qrcontraentrega.com/co/afiliado/barranquilla-norte",
-        "telefono": "+575123456788",
-        "horario": "Lunes a Viernes: 9am-7pm, Sábados: 9am-3pm",
-        "servicios": "Punto de entrega",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // CARTAGENA
-      { 
-        "id": "cartagena-centro",
-        "nombre": "Contraentrega Cartagena - Centro Histórico", 
-        "direccion": "Calle de la Iglesia # 35-10, Centro, Cartagena, Colombia", 
-        "latlng": [10.423320, -75.549970], 
-        "url": "https://qrcontraentrega.com/co/afiliado/cartagena-centro",
-        "telefono": "+575123456787",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Cartagena",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      { 
-        "id": "cartagena-bocagrande",
-        "nombre": "Contraentrega Cartagena - Bocagrande", 
-        "direccion": "Carrera 2 # 6-80, Bocagrande, Cartagena, Colombia", 
-        "latlng": [10.402540, -75.553870], 
-        "url": "https://qrcontraentrega.com/co/afiliado/cartagena-bocagrande",
-        "telefono": "+575123456786",
-        "horario": "Lunes a Viernes: 9am-7pm, Sábados: 9am-4pm",
-        "servicios": "Punto de entrega",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // BUCARAMANGA
-      { 
-        "id": "bucaramanga-centro",
-        "nombre": "Contraentrega Bucaramanga - Centro", 
-        "direccion": "Calle 35 # 15-20, Centro, Bucaramanga, Colombia", 
-        "latlng": [7.119350, -73.122740], 
-        "url": "https://qrcontraentrega.com/co/afiliado/bucaramanga-centro",
-        "telefono": "+577123456789",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina principal Santander",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      { 
-        "id": "bucaramanga-cabecera",
-        "nombre": "Contraentrega Bucaramanga - Cabecera", 
-        "direccion": "Carrera 33 # 45-60, Cabecera del Llano, Bucaramanga, Colombia", 
-        "latlng": [7.104260, -73.116090], 
-        "url": "https://qrcontraentrega.com/co/afiliado/bucaramanga-cabecera",
-        "telefono": "+577123456788",
-        "horario": "Lunes a Viernes: 9am-7pm, Sábados: 9am-3pm",
-        "servicios": "Punto de entrega",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // PEREIRA
-      { 
-        "id": "pereira-centro",
-        "nombre": "Contraentrega Pereira - Centro", 
-        "direccion": "Calle 19 # 8-30, Centro, Pereira, Colombia", 
-        "latlng": [4.813410, -75.696430], 
-        "url": "https://qrcontraentrega.com/co/afiliado/pereira-centro",
-        "telefono": "+576123456789",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina principal Eje Cafetero",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      { 
-        "id": "pereira-cuba",
-        "nombre": "Contraentrega Pereira - Cuba", 
-        "direccion": "Carrera 15 # 45-20, Cuba, Pereira, Colombia", 
-        "latlng": [4.794920, -75.712340], 
-        "url": "https://qrcontraentrega.com/co/afiliado/pereira-cuba",
-        "telefono": "+576123456788",
-        "horario": "Lunes a Viernes: 9am-7pm, Sábados: 9am-3pm",
-        "servicios": "Punto de entrega",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // MANIZALES
-      { 
-        "id": "manizales-centro",
-        "nombre": "Contraentrega Manizales - Centro", 
-        "direccion": "Calle 23 # 20-10, Centro, Manizales, Colombia", 
-        "latlng": [5.067180, -75.517780], 
-        "url": "https://qrcontraentrega.com/co/afiliado/manizales-centro",
-        "telefono": "+576123456787",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Manizales",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // ARMENIA
-      { 
-        "id": "armenia-centro",
-        "nombre": "Contraentrega Armenia - Centro", 
-        "direccion": "Carrera 14 # 20-30, Centro, Armenia, Colombia", 
-        "latlng": [4.534080, -75.681590], 
-        "url": "https://qrcontraentrega.com/co/afiliado/armenia-centro",
-        "telefono": "+576123456786",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Armenia",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // SANTA MARTA
-      { 
-        "id": "santamarta-centro",
-        "nombre": "Contraentrega Santa Marta - Centro", 
-        "direccion": "Calle 14 # 3-20, Centro, Santa Marta, Colombia", 
-        "latlng": [11.244680, -74.210600], 
-        "url": "https://qrcontraentrega.com/co/afiliado/santamarta-centro",
-        "telefono": "+575123456785",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Santa Marta",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // CÚCUTA
-      { 
-        "id": "cucuta-centro",
-        "nombre": "Contraentrega Cúcuta - Centro", 
-        "direccion": "Avenida 5 # 15-40, Centro, Cúcuta, Colombia", 
-        "latlng": [7.885300, -72.504980], 
-        "url": "https://qrcontraentrega.com/co/afiliado/cucuta-centro",
-        "telefono": "+577123456787",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Cúcuta",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // IBAGUÉ
-      { 
-        "id": "ibague-centro",
-        "nombre": "Contraentrega Ibagué - Centro", 
-        "direccion": "Calle 10 # 3-50, Centro, Ibagué, Colombia", 
-        "latlng": [4.439230, -75.231400], 
-        "url": "https://qrcontraentrega.com/co/afiliado/ibague-centro",
-        "telefono": "+578123456789",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Ibagué",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // VILLAVICENCIO
-      { 
-        "id": "villavicencio-centro",
-        "nombre": "Contraentrega Villavicencio - Centro", 
-        "direccion": "Carrera 30 # 40-20, Centro, Villavicencio, Colombia", 
-        "latlng": [4.141540, -73.633440], 
-        "url": "https://qrcontraentrega.com/co/afiliado/villavicencio-centro",
-        "telefono": "+578123456788",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Villavicencio",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // PASTO
-      { 
-        "id": "pasto-centro",
-        "nombre": "Contraentrega Pasto - Centro", 
-        "direccion": "Calle 18 # 25-40, Centro, Pasto, Colombia", 
-        "latlng": [1.214630, -77.278260], 
-        "url": "https://qrcontraentrega.com/co/afiliado/pasto-centro",
-        "telefono": "+572123456787",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Pasto",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // NEIVA
-      { 
-        "id": "neiva-centro",
-        "nombre": "Contraentrega Neiva - Centro", 
-        "direccion": "Calle 7 # 5-60, Centro, Neiva, Colombia", 
-        "latlng": [2.927840, -75.290380], 
-        "url": "https://qrcontraentrega.com/co/afiliado/neiva-centro",
-        "telefono": "+578123456787",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Neiva",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // POPAYÁN
-      { 
-        "id": "popayan-centro",
-        "nombre": "Contraentrega Popayán - Centro", 
-        "direccion": "Calle 5 # 8-30, Centro, Popayán, Colombia", 
-        "latlng": [2.442400, -76.608940], 
-        "url": "https://qrcontraentrega.com/co/afiliado/popayan-centro",
-        "telefono": "+572123456786",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Popayán",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // TUNJA
-      { 
-        "id": "tunja-centro",
-        "nombre": "Contraentrega Tunja - Centro", 
-        "direccion": "Carrera 10 # 20-30, Centro, Tunja, Colombia", 
-        "latlng": [5.532140, -73.361360], 
-        "url": "https://qrcontraentrega.com/co/afiliado/tunja-centro",
-        "telefono": "+578123456786",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Tunja",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // VALLEDUPAR
-      { 
-        "id": "valledupar-centro",
-        "nombre": "Contraentrega Valledupar - Centro", 
-        "direccion": "Calle 16 # 9-40, Centro, Valledupar, Colombia", 
-        "latlng": [10.464470, -73.253340], 
-        "url": "https://qrcontraentrega.com/co/afiliado/valledupar-centro",
-        "telefono": "+575123456784",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Valledupar",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // MONTERÍA
-      { 
-        "id": "monteria-centro",
-        "nombre": "Contraentrega Montería - Centro", 
-        "direccion": "Calle 27 # 4-50, Centro, Montería, Colombia", 
-        "latlng": [8.754330, -75.884200], 
-        "url": "https://qrcontraentrega.com/co/afiliado/monteria-centro",
-        "telefono": "+574123456786",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Montería",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // SINCELEJO
-      { 
-        "id": "sincelejo-centro",
-        "nombre": "Contraentrega Sincelejo - Centro", 
-        "direccion": "Calle 20 # 8-30, Centro, Sincelejo, Colombia", 
-        "latlng": [9.304570, -75.396530], 
-        "url": "https://qrcontraentrega.com/co/afiliado/sincelejo-centro",
-        "telefono": "+575123456783",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Sincelejo",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // RIOHACHA
-      { 
-        "id": "riohacha-centro",
-        "nombre": "Contraentrega Riohacha - Centro", 
-        "direccion": "Calle 11 # 7-40, Centro, Riohacha, Colombia", 
-        "latlng": [11.544440, -72.906990], 
-        "url": "https://qrcontraentrega.com/co/afiliado/riohacha-centro",
-        "telefono": "+575123456782",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Riohacha",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // QUIBDÓ
-      { 
-        "id": "quibdo-centro",
-        "nombre": "Contraentrega Quibdó - Centro", 
-        "direccion": "Calle 25 # 4-20, Centro, Quibdó, Colombia", 
-        "latlng": [5.691570, -76.658330], 
-        "url": "https://qrcontraentrega.com/co/afiliado/quibdo-centro",
-        "telefono": "+574123456785",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Quibdó",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // FLORENCIA
-      { 
-        "id": "florencia-centro",
-        "nombre": "Contraentrega Florencia - Centro", 
-        "direccion": "Calle 12 # 9-30, Centro, Florencia, Colombia", 
-        "latlng": [1.612720, -75.613470], 
-        "url": "https://qrcontraentrega.com/co/afiliado/florencia-centro",
-        "telefono": "+578123456785",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Florencia",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // YOPAL
-      { 
-        "id": "yopal-centro",
-        "nombre": "Contraentrega Yopal - Centro", 
-        "direccion": "Calle 20 # 15-40, Centro, Yopal, Colombia", 
-        "latlng": [5.339450, -72.392650], 
-        "url": "https://qrcontraentrega.com/co/afiliado/yopal-centro",
-        "telefono": "+578123456784",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Yopal",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // MOCOA
-      { 
-        "id": "mocoa-centro",
-        "nombre": "Contraentrega Mocoa - Centro", 
-        "direccion": "Calle 8 # 6-20, Centro, Mocoa, Colombia", 
-        "latlng": [1.149660, -76.649760], 
-        "url": "https://qrcontraentrega.com/co/afiliado/mocoa-centro",
-        "telefono": "+578123456783",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Mocoa",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // LETICIA
-      { 
-        "id": "leticia-centro",
-        "nombre": "Contraentrega Leticia - Centro", 
-        "direccion": "Calle 10 # 5-30, Centro, Leticia, Colombia", 
-        "latlng": [-4.214510, -69.940420], 
-        "url": "https://qrcontraentrega.com/co/afiliado/leticia-centro",
-        "telefono": "+578123456782",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Leticia",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // SAN ANDRÉS
-      { 
-        "id": "sanandres-centro",
-        "nombre": "Contraentrega San Andrés - Centro", 
-        "direccion": "Avenida Colombia # 3-20, Centro, San Andrés, Colombia", 
-        "latlng": [12.584730, -81.700560], 
-        "url": "https://qrcontraentrega.com/co/afiliado/sanandres-centro",
-        "telefono": "+578123456781",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina San Andrés",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // PROVIDENCIA
-      { 
-        "id": "providencia-centro",
-        "nombre": "Contraentrega Providencia - Centro", 
-        "direccion": "Calle Real # 4-20, Providencia, Colombia", 
-        "latlng": [13.350580, -81.374830], 
-        "url": "https://qrcontraentrega.com/co/afiliado/providencia-centro",
-        "telefono": "+578123456780",
-        "horario": "Lunes a Viernes: 8am-6pm, Sábados: 9am-2pm",
-        "servicios": "Oficina Providencia",
-        "pais": "Colombia",
-        "tipo": "oficina"
-      },
-      
-      // SALENTO (manteniendo los originales)
-      { 
-        "id": "salento-centro",
-        "nombre": "QRContraentrega Salento Centro", 
-        "direccion": "Carrera 6 # 5-20, Plaza Principal, Salento, Quindío, Colombia", 
-        "latlng": [4.637740, -75.569091], 
-        "url": "https://salento.qrcontraentrega.com/afiliado/",
-        "telefono": "+573128765432",
-        "horario": "Lunes a Domingo: 7am-7pm",
-        "servicios": "Local",
-        "pais": "Colombia",
-        "tipo": "socio"
-      },
-      { 
-        "id": "contraentrega-salento",
-        "nombre": "Oficina Contraentrega Salento", 
-        "direccion": "Carrera 6 #3-46 frente al hotel, Salento, Quindío, Colombia", 
-        "latlng": [4.638141, -75.568914], 
-        "url": "https://salento.qrcontraentrega.com/shop",
-        "telefono": "+573146824438",
-        "horario": "Lunes a Domingo: 8am-8pm",
-        "servicios": "Oficina logistica de Contraentrega",
-        "pais": "Colombia",
-        "tipo": "socio"
-      }
-    ];
-
-    // Inicializar el mapa cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', function() {
-      initializeMap();
-      
-      // Evento para el botón centrar
-      document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
-      
-      // Eventos para cambiar tipo de mapa
-      document.getElementById('map-btn').addEventListener('click', function() {
-        switchToMapView();
-      });
-      
-      document.getElementById('satellite-btn').addEventListener('click', function() {
-        switchToSatelliteView();
-      });
-      
-      // Eventos para el buscador
-      const searchInput = document.getElementById('buscador');
-      searchInput.addEventListener('input', handleSearchInput);
-      searchInput.addEventListener('keydown', handleSearchKeydown);
-      
-      // Cerrar sugerencias al hacer clic fuera
-      document.addEventListener('click', function(e) {
-        if (!e.target.closest('.contenedor-buscador')) {
-          document.getElementById('sugerencias-busqueda').style.display = 'none';
-        }
-      });
-    });
-
-    function initializeMap() {
-      // Inicializar mapa con vista centrada en Colombia
-      mapa = L.map('mapa', {
-        center: [4.570868, -74.297333], // Centro aproximado de Colombia
-        zoom: 6,
-        zoomControl: false
-      });
-
-      // Añadir control de zoom
-      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
-
-      // Crear capas de Google Maps
-      googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-        maxZoom: 20,
-        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
-      });
-
-      googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-        maxZoom: 20,
-        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
-      });
-
-      // Inicialmente usar la vista de mapa
-      currentLayer = googleMapsLayer;
-      currentLayer.addTo(mapa);
-
-      // Asegurar que el mapa ocupe todo el espacio disponible
-      setTimeout(() => {
-        mapa.invalidateSize();
-      }, 0);
-
-      // Sistema de marcadores
-      const clusters = L.markerClusterGroup({
-        iconCreateFunction: cluster => L.divIcon({
-          html: `<div>${cluster.getChildCount()}</div>`,
-          className: 'cluster-marcadores',
-          iconSize: [40, 40]
-        }),
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        zoomToBoundsOnClick: true
-      });
-
-      // Crear marcadores para todas las ubicaciones de Colombia
-      UBICACIONES.forEach(loc => {
-        const marcador = L.marker(loc.latlng, {
-          icon: L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
-            iconSize: [32, 32],
-            className: 'marker-icon-orange'
-          })
-        }).bindPopup(`
-          <div style="min-width:220px">
-            <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
-            <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
-            <p style="margin:0 0 5px 0;font-size:0.9em"><strong>País:</strong> ${loc.pais}</p>
-            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Teléfono:</strong> ${loc.telefono}</p>` : ''}
-            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Horario:</strong> ${loc.horario}</p>` : ''}
-            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><strong>Servicios:</strong> ${loc.servicios}</p>` : ''}
-            <div class="popup-buttons">
-              <div class="popup-button-row">
-                <button class="btn btn-whatsapp" onclick="abrirWhatsApp('${loc.telefono}', '${loc.nombre}')">
-                  <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
-                  WhatsApp
-                </button>
-              </div>
-              <div class="popup-button-row">
-                <button class="btn btn-ruta" onclick="abrirGoogleMapsConDireccion('${loc.latlng[0]}', '${loc.latlng[1]}', '${loc.nombre}')">Google Maps</button>
-                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">Ver tienda</button>
-              </div>
-            </div>
-          </div>
-        `);
+    
+    <div class="seo-content">
+        <h2>QRP2P COLOMBIA - Marketplace P2P Seguro</h2>
+        <p><strong>QRP2P Colombia</strong> es el marketplace peer-to-peer más seguro de Colombia. Conectamos <strong>compradores y vendedores verificados</strong> en todas las ciudades del país para que realices tus transacciones con total confianza y seguridad.</p>
         
-        // Guardar todos los datos de la ubicación en el marcador
-        marcador.datosUbicacion = loc;
-        marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.pais} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
-        marcadoresOriginales.push(marcador);
-      });
-
-      // Añadir marcadores al mapa
-      clusters.addLayers(marcadoresOriginales);
-      mapa.addLayer(clusters);
-
-      // Ajustar vista a los marcadores
-      if(marcadoresOriginales.length > 0) {
-        mapa.fitBounds(clusters.getBounds().pad(0.3));
-      }
-
-      // Solicitar ubicación al cargar la página
-      obtenerUbicacionUsuario();
-    }
-
-    // Función para cambiar a vista de mapa
-    function switchToMapView() {
-      mapa.removeLayer(currentLayer);
-      currentLayer = googleMapsLayer;
-      currentLayer.addTo(mapa);
-      
-      document.getElementById('map-btn').classList.add('active');
-      document.getElementById('satellite-btn').classList.remove('active');
-    }
-
-    // Función para cambiar a vista de satélite
-    function switchToSatelliteView() {
-      mapa.removeLayer(currentLayer);
-      currentLayer = googleSatelliteLayer;
-      currentLayer.addTo(mapa);
-      
-      document.getElementById('satellite-btn').classList.add('active');
-      document.getElementById('map-btn').classList.remove('active');
-    }
-
-    // Función para abrir Google Maps con una dirección específica
-    function abrirGoogleMapsConDireccion(lat, lng, nombre) {
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`;
-      window.open(url, '_blank');
-    }
-
-    // Función para manejar la búsqueda
-    function handleSearchInput(e) {
-      clearTimeout(buscadorTimeout);
-      const termino = e.target.value.trim();
-      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
-      
-      if (termino.length < 2) {
-        sugerenciasContainer.style.display = 'none';
-        return;
-      }
-      
-      // Mostrar indicador de carga
-      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Buscando... <span class="cargando"></span></div>';
-      sugerenciasContainer.style.display = 'block';
-      
-      buscadorTimeout = setTimeout(() => {
-        buscarConGoogle(termino);
-      }, 300);
-    }
-
-    // Función para buscar usando Google Places API (simulación)
-    function buscarConGoogle(consulta) {
-      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
-      
-      // Primero buscar en puntos locales
-      const resultadosLocales = buscarEnPuntosLocales(consulta);
-      if (resultadosLocales) {
-        return;
-      }
-      
-      // Simular búsqueda en Google Places para Colombia
-      setTimeout(() => {
-        sugerenciasContainer.innerHTML = '';
+        <h3>¿Por qué elegir QRP2P Colombia?</h3>
+        <p>✅ <strong>Usuarios Verificados</strong> - Todos los compradores y vendedores pasan por un riguroso proceso de verificación<br>
+        ✅ <strong>Cobertura Nacional</strong> - Presentes en Bogotá, Medellín, Cali, Barranquilla, Cartagena y más de 20 ciudades<br>
+        ✅ <strong>Transacciones Seguras</strong> - Sistema de protección para compradores y vendedores<br>
+        ✅ <strong>Soporte 24/7</strong> - Atención al cliente dedicada para resolver cualquier inquietud<br>
+        ✅ <strong>App PWA</strong> - Instala nuestra aplicación para una experiencia más rápida<br>
+        ✅ <strong>Sin Comisiones Ocultas</strong> - Tarifas claras y transparentes</p>
         
-        // Resultados simulados para ciudades principales de Colombia
-        const resultadosSimulados = [
-          {
-            name: "Bogotá",
-            lat: 4.609710,
-            lng: -74.081750,
-            formatted_address: "Bogotá, Colombia"
-          },
-          {
-            name: "Medellín",
-            lat: 6.247640,
-            lng: -75.565830,
-            formatted_address: "Medellín, Antioquia, Colombia"
-          },
-          {
-            name: "Cali",
-            lat: 3.451650,
-            lng: -76.531980,
-            formatted_address: "Cali, Valle del Cauca, Colombia"
-          },
-          {
-            name: "Barranquilla",
-            lat: 10.981970,
-            lng: -74.788860,
-            formatted_address: "Barranquilla, Atlántico, Colombia"
-          },
-          {
-            name: "Cartagena",
-            lat: 10.423320,
-            lng: -75.549970,
-            formatted_address: "Cartagena, Bolívar, Colombia"
-          },
-          {
-            name: "Bucaramanga",
-            lat: 7.119350,
-            lng: -73.122740,
-            formatted_address: "Bucaramanga, Santander, Colombia"
-          },
-          {
-            name: "Pereira",
-            lat: 4.813410,
-            lng: -75.696430,
-            formatted_address: "Pereira, Risaralda, Colombia"
-          },
-          {
-            name: "Manizales",
-            lat: 5.067180,
-            lng: -75.517780,
-            formatted_address: "Manizales, Caldas, Colombia"
-          },
-          {
-            name: "Armenia",
-            lat: 4.534080,
-            lng: -75.681590,
-            formatted_address: "Armenia, Quindío, Colombia"
-          },
-          {
-            name: "Santa Marta",
-            lat: 11.244680,
-            lng: -74.210600,
-            formatted_address: "Santa Marta, Magdalena, Colombia"
-          },
-          {
-            name: "Cúcuta",
-            lat: 7.885300,
-            lng: -72.504980,
-            formatted_address: "Cúcuta, Norte de Santander, Colombia"
-          },
-          {
-            name: "Ibagué",
-            lat: 4.439230,
-            lng: -75.231400,
-            formatted_address: "Ibagué, Tolima, Colombia"
-          },
-          {
-            name: "Villavicencio",
-            lat: 4.141540,
-            lng: -73.633440,
-            formatted_address: "Villavicencio, Meta, Colombia"
-          },
-          {
-            name: "Pasto",
-            lat: 1.214630,
-            lng: -77.278260,
-            formatted_address: "Pasto, Nariño, Colombia"
-          },
-          {
-            name: "Neiva",
-            lat: 2.927840,
-            lng: -75.290380,
-            formatted_address: "Neiva, Huila, Colombia"
-          },
-          {
-            name: "Popayán",
-            lat: 2.442400,
-            lng: -76.608940,
-            formatted_address: "Popayán, Cauca, Colombia"
-          },
-          {
-            name: "Tunja",
-            lat: 5.532140,
-            lng: -73.361360,
-            formatted_address: "Tunja, Boyacá, Colombia"
-          },
-          {
-            name: "Valledupar",
-            lat: 10.464470,
-            lng: -73.253340,
-            formatted_address: "Valledupar, Cesar, Colombia"
-          },
-          {
-            name: "Montería",
-            lat: 8.754330,
-            lng: -75.884200,
-            formatted_address: "Montería, Córdoba, Colombia"
-          },
-          {
-            name: "Sincelejo",
-            lat: 9.304570,
-            lng: -75.396530,
-            formatted_address: "Sincelejo, Sucre, Colombia"
-          },
-          {
-            name: "Riohacha",
-            lat: 11.544440,
-            lng: -72.906990,
-            formatted_address: "Riohacha, La Guajira, Colombia"
-          },
-          {
-            name: "Quibdó",
-            lat: 5.691570,
-            lng: -76.658330,
-            formatted_address: "Quibdó, Chocó, Colombia"
-          },
-          {
-            name: "Florencia",
-            lat: 1.612720,
-            lng: -75.613470,
-            formatted_address: "Florencia, Caquetá, Colombia"
-          },
-          {
-            name: "Yopal",
-            lat: 5.339450,
-            lng: -72.392650,
-            formatted_address: "Yopal, Casanare, Colombia"
-          },
-          {
-            name: "Mocoa",
-            lat: 1.149660,
-            lng: -76.649760,
-            formatted_address: "Mocoa, Putumayo, Colombia"
-          },
-          {
-            name: "Leticia",
-            lat: -4.214510,
-            lng: -69.940420,
-            formatted_address: "Leticia, Amazonas, Colombia"
-          },
-          {
-            name: "San Andrés",
-            lat: 12.584730,
-            lng: -81.700560,
-            formatted_address: "San Andrés, Colombia"
-          },
-          {
-            name: "Salento",
-            lat: 4.637740,
-            lng: -75.569091,
-            formatted_address: "Salento, Quindío, Colombia"
-          }
+        <h3>Cómo funciona QRP2P Colombia</h3>
+        <p>1. Regístrate y verifica tu identidad<br>
+        2. Publica lo que quieres vender o busca productos que necesites<br>
+        3. Conecta con otros usuarios verificados<br>
+        4. Realiza transacciones seguras a través de nuestra plataforma<br>
+        5. Califica a los compradores y vendedores para construir confianza en la comunidad</p>
+        
+        <h3>Categorías Populares</h3>
+        <div class="city-tags" id="city-tags-container"></div>
+        
+        <h3>Seguridad y Confianza</h3>
+        <p>En QRP2P Colombia, la seguridad de nuestros usuarios es nuestra prioridad. Implementamos sistemas avanzados de verificación, protección de transacciones y resolución de disputas para garantizar que cada operación en nuestro marketplace sea segura y confiable.</p>
+        
+        <h3>Únete a la comunidad P2P más grande de Colombia</h3>
+        <p>Miles de colombianos ya confían en QRP2P para comprar y vender de forma segura. Regístrate hoy y comienza a disfrutar de un marketplace diseñado para proteger tus transacciones.</p>
+    </div>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="/terms.html">Términos de Servicio</a>
+            <a href="/privacy.html">Política de Privacidad</a>
+            <a href="/contact.html">Contacto Colombia</a>
+            <a href="/verification.html">Verifícate</a>
+            <a href="/help.html">Centro de Ayuda</a>
+        </div>
+        <div class="copyright">© 2024 QRP2P COLOMBIA - Marketplace P2P Seguro. Compra y vende con confianza.</div>
+    </footer>
+
+    <script>
+        // CIUDADES DE COLOMBIA - MARKETPLACE P2P SEGURO
+        // URLs: qrp2p.com/cali, qrp2p.com/medellin, etc.
+        const citiesData = [
+            { name: "Bogotá D.C.", desc: "Compra y venta segura entre usuarios verificados en Bogotá", actionText: "Ver marketplace Bogotá", url: "/bogota" },
+            { name: "Medellín", desc: "Compra y venta segura entre usuarios verificados en Medellín", actionText: "Ver marketplace Medellín", url: "/medellin" },
+            { name: "Cali", desc: "Compra y venta segura entre usuarios verificados en Cali", actionText: "Ver marketplace Cali", url: "/cali" },
+            { name: "Barranquilla", desc: "Compra y venta segura entre usuarios verificados en Barranquilla", actionText: "Ver marketplace Barranquilla", url: "/barranquilla" },
+            { name: "Cartagena", desc: "Compra y venta segura entre usuarios verificados en Cartagena", actionText: "Ver marketplace Cartagena", url: "/cartagena" },
+            { name: "Bucaramanga", desc: "Compra y venta segura entre usuarios verificados en Bucaramanga", actionText: "Ver marketplace Bucaramanga", url: "/bucaramanga" },
+            { name: "Pereira", desc: "Compra y venta segura entre usuarios verificados en Pereira", actionText: "Ver marketplace Pereira", url: "/pereira" },
+            { name: "Manizales", desc: "Compra y venta segura entre usuarios verificados en Manizales", actionText: "Ver marketplace Manizales", url: "/manizales" },
+            { name: "Cúcuta", desc: "Compra y venta segura entre usuarios verificados en Cúcuta", actionText: "Ver marketplace Cúcuta", url: "/cucuta" },
+            { name: "Santa Marta", desc: "Compra y venta segura entre usuarios verificados en Santa Marta", actionText: "Ver marketplace Santa Marta", url: "/santa-marta" },
+            { name: "Ibagué", desc: "Compra y venta segura entre usuarios verificados en Ibagué", actionText: "Ver marketplace Ibagué", url: "/ibague" },
+            { name: "Villavicencio", desc: "Compra y venta segura entre usuarios verificados en Villavicencio", actionText: "Ver marketplace Villavicencio", url: "/villavicencio" },
+            { name: "Pasto", desc: "Compra y venta segura entre usuarios verificados en Pasto", actionText: "Ver marketplace Pasto", url: "/pasto" },
+            { name: "Montería", desc: "Compra y venta segura entre usuarios verificados en Montería", actionText: "Ver marketplace Montería", url: "/monteria" },
+            { name: "Neiva", desc: "Compra y venta segura entre usuarios verificados en Neiva", actionText: "Ver marketplace Neiva", url: "/neiva" },
+            { name: "Armenia", desc: "Compra y venta segura entre usuarios verificados en Armenia", actionText: "Ver marketplace Armenia", url: "/armenia" },
+            { name: "Popayán", desc: "Compra y venta segura entre usuarios verificados en Popayán", actionText: "Ver marketplace Popayán", url: "/popayan" },
+            { name: "Valledupar", desc: "Compra y venta segura entre usuarios verificados en Valledupar", actionText: "Ver marketplace Valledupar", url: "/valledupar" },
+            { name: "Sincelejo", desc: "Compra y venta segura entre usuarios verificados en Sincelejo", actionText: "Ver marketplace Sincelejo", url: "/sincelejo" },
+            { name: "Riohacha", desc: "Compra y venta segura entre usuarios verificados en Riohacha", actionText: "Ver marketplace Riohacha", url: "/riohacha" },
+            { name: "Tunja", desc: "Compra y venta segura entre usuarios verificados en Tunja", actionText: "Ver marketplace Tunja", url: "/tunja" },
+            { name: "Florencia", desc: "Compra y venta segura entre usuarios verificados en Florencia", actionText: "Ver marketplace Florencia", url: "/florencia" },
+            { name: "Quibdó", desc: "Compra y venta segura entre usuarios verificados en Quibdó", actionText: "Ver marketplace Quibdó", url: "/quibdo" },
+            { name: "Mocoa", desc: "Compra y venta segura entre usuarios verificados en Mocoa", actionText: "Ver marketplace Mocoa", url: "/mocoa" },
+            { name: "Leticia", desc: "Compra y venta segura entre usuarios verificados en Leticia", actionText: "Ver marketplace Leticia", url: "/leticia" }
         ];
         
-        // Filtrar resultados según la consulta
-        const resultadosFiltrados = resultadosSimulados.filter(lugar => 
-          lugar.name.toLowerCase().includes(consulta.toLowerCase()) ||
-          lugar.formatted_address.toLowerCase().includes(consulta.toLowerCase())
-        );
+        // Ordenar alfabéticamente
+        citiesData.sort((a, b) => a.name.localeCompare(b.name));
         
-        if (resultadosFiltrados.length > 0) {
-          resultadosFiltrados.slice(0, 10).forEach(lugar => {
-            const item = document.createElement('div');
-            item.className = 'sugerencia-item';
-            
-            const lat = lugar.lat;
-            const lng = lugar.lng;
-            const nombre = lugar.name;
-            
-            item.innerHTML = `
-              <div class="sugerencia-texto">
-                <strong>📍 ${nombre}</strong><br>
-                <small>${lugar.formatted_address}</small>
-              </div>
-              <button class="sugerencia-boton" data-lat="${lat}" data-lng="${lng}" data-nombre="${nombre}">
-                Ver
-              </button>
-            `;
-            
-            // Agregar evento al botón
-            const boton = item.querySelector('.sugerencia-boton');
-            boton.addEventListener('click', function(e) {
-              e.stopPropagation();
-              const nombre = this.getAttribute('data-nombre');
-              
-              // Redirigir según la ciudad seleccionada
-              const ciudadUrl = nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-              
-              // Mapa de ciudades a URLs
-              const urlsCiudades = {
-                "bogota": "https://qrcontraentrega.com/co/ciudades/bogota",
-                "medellin": "https://qrcontraentrega.com/co/ciudades/medellin",
-                "cali": "https://qrcontraentrega.com/co/ciudades/cali",
-                "barranquilla": "https://qrcontraentrega.com/co/ciudades/barranquilla",
-                "cartagena": "https://qrcontraentrega.com/co/ciudades/cartagena",
-                "bucaramanga": "https://qrcontraentrega.com/co/ciudades/bucaramanga",
-                "pereira": "https://qrcontraentrega.com/co/ciudades/pereira",
-                "manizales": "https://qrcontraentrega.com/co/ciudades/manizales",
-                "armenia": "https://qrcontraentrega.com/co/ciudades/armenia",
-                "santa marta": "https://qrcontraentrega.com/co/ciudades/santa-marta",
-                "cucuta": "https://qrcontraentrega.com/co/ciudades/cucuta",
-                "ibague": "https://qrcontraentrega.com/co/ciudades/ibague",
-                "villavicencio": "https://qrcontraentrega.com/co/ciudades/villavicencio",
-                "pasto": "https://qrcontraentrega.com/co/ciudades/pasto",
-                "neiva": "https://qrcontraentrega.com/co/ciudades/neiva",
-                "popayan": "https://qrcontraentrega.com/co/ciudades/popayan",
-                "tunja": "https://qrcontraentrega.com/co/ciudades/tunja",
-                "valledupar": "https://qrcontraentrega.com/co/ciudades/valledupar",
-                "monteria": "https://qrcontraentrega.com/co/ciudades/monteria",
-                "sincelejo": "https://qrcontraentrega.com/co/ciudades/sincelejo",
-                "riohacha": "https://qrcontraentrega.com/co/ciudades/riohacha",
-                "quibdo": "https://qrcontraentrega.com/co/ciudades/quibdo",
-                "florencia": "https://qrcontraentrega.com/co/ciudades/florencia",
-                "yopal": "https://qrcontraentrega.com/co/ciudades/yopal",
-                "mocoa": "https://qrcontraentrega.com/co/ciudades/mocoa",
-                "leticia": "https://qrcontraentrega.com/co/ciudades/leticia",
-                "san andres": "https://qrcontraentrega.com/co/ciudades/san-andres",
-                "salento": "https://salento.qrcontraentrega.com"
-              };
-              
-              // Buscar la URL correspondiente
-              let urlEncontrada = "https://qrcontraentrega.com/co";
-              for (let [key, value] of Object.entries(urlsCiudades)) {
-                if (nombre.toLowerCase().includes(key)) {
-                  urlEncontrada = value;
-                  break;
-                }
-              }
-              
-              window.open(urlEncontrada, "_blank");
-              sugerenciasContainer.style.display = "none";
-            });
-            
-            // Agregar evento al item completo
-            item.addEventListener('click', function() {
-              const lat = parseFloat(boton.getAttribute('data-lat'));
-              const lng = parseFloat(boton.getAttribute('data-lng'));
-              const nombre = boton.getAttribute('data-nombre');
-              
-              const latlng = [lat, lng];
-              mapa.setView(latlng, 12);
-              
-              if (destinoMarker) {
-                mapa.removeLayer(destinoMarker);
-              }
-              destinoMarker = L.marker(latlng, {
-                icon: L.icon({
-                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-                  iconSize: [32, 32],
-                  className: 'marker-icon-red'
-                })
-              }).addTo(mapa)
-                .bindPopup(`<strong>${nombre}</strong><br><button onclick="redirigirSitioWeb('${nombre}')" style="background:#9b59b6;color:white;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;margin-top:5px;">Ver más</button>`);
-              
-              destinoMarker.openPopup();
-              document.getElementById('buscador').value = nombre;
-              sugerenciasContainer.style.display = 'none';
-            });
-            
-            sugerenciasContainer.appendChild(item);
-          });
-          sugerenciasContainer.style.display = 'block';
-        } else {
-          sugerenciasContainer.innerHTML = '<div class="sugerencia-item">No se encontraron resultados para: ' + consulta + '</div>';
-          sugerenciasContainer.style.display = 'block';
-        }
-      }, 500);
-    }
-
-    // Función para redirigir al sitio web basado en el nombre
-    function redirigirSitioWeb(nombre) {
-      const nombreLower = nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      
-      const urlsCiudades = {
-        "bogota": "https://qrcontraentrega.com/co/ciudades/bogota",
-        "medellin": "https://qrcontraentrega.com/co/ciudades/medellin",
-        "cali": "https://qrcontraentrega.com/co/ciudades/cali",
-        "barranquilla": "https://qrcontraentrega.com/co/ciudades/barranquilla",
-        "cartagena": "https://qrcontraentrega.com/co/ciudades/cartagena",
-        "bucaramanga": "https://qrcontraentrega.com/co/ciudades/bucaramanga",
-        "pereira": "https://qrcontraentrega.com/co/ciudades/pereira",
-        "manizales": "https://qrcontraentrega.com/co/ciudades/manizales",
-        "armenia": "https://qrcontraentrega.com/co/ciudades/armenia",
-        "santa marta": "https://qrcontraentrega.com/co/ciudades/santa-marta",
-        "cucuta": "https://qrcontraentrega.com/co/ciudades/cucuta",
-        "ibague": "https://qrcontraentrega.com/co/ciudades/ibague",
-        "villavicencio": "https://qrcontraentrega.com/co/ciudades/villavicencio",
-        "pasto": "https://qrcontraentrega.com/co/ciudades/pasto",
-        "neiva": "https://qrcontraentrega.com/co/ciudades/neiva",
-        "popayan": "https://qrcontraentrega.com/co/ciudades/popayan",
-        "tunja": "https://qrcontraentrega.com/co/ciudades/tunja",
-        "valledupar": "https://qrcontraentrega.com/co/ciudades/valledupar",
-        "monteria": "https://qrcontraentrega.com/co/ciudades/monteria",
-        "sincelejo": "https://qrcontraentrega.com/co/ciudades/sincelejo",
-        "riohacha": "https://qrcontraentrega.com/co/ciudades/riohacha",
-        "quibdo": "https://qrcontraentrega.com/co/ciudades/quibdo",
-        "florencia": "https://qrcontraentrega.com/co/ciudades/florencia",
-        "yopal": "https://qrcontraentrega.com/co/ciudades/yopal",
-        "mocoa": "https://qrcontraentrega.com/co/ciudades/mocoa",
-        "leticia": "https://qrcontraentrega.com/co/ciudades/leticia",
-        "san andres": "https://qrcontraentrega.com/co/ciudades/san-andres",
-        "salento": "https://salento.qrcontraentrega.com"
-      };
-      
-      let urlEncontrada = "https://qrcontraentrega.com/co";
-      for (let [key, value] of Object.entries(urlsCiudades)) {
-        if (nombreLower.includes(key)) {
-          urlEncontrada = value;
-          break;
-        }
-      }
-      
-      window.open(urlEncontrada, "_blank");
-    }
-
-    // Función para buscar en los puntos locales
-    function buscarEnPuntosLocales(consulta) {
-      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
-      const termino = consulta.toLowerCase();
-      const resultados = marcadoresOriginales.filter(m => 
-        m.datosBusqueda.includes(termino)
-      );
-      
-      if (resultados.length > 0) {
-        sugerenciasContainer.innerHTML = '';
+        // Actualizar contador de ciudades
+        document.getElementById('city-count').innerHTML = `🌍 ${citiesData.length} ciudades | 🔒 Marketplace P2P Seguro Colombia`;
         
-        resultados.forEach(marcador => {
-          const loc = marcador.datosUbicacion;
-          const item = document.createElement('div');
-          item.className = 'sugerencia-item';
-          item.innerHTML = `
-            <div class="sugerencia-texto">
-              <strong>📍 ${loc.nombre}</strong><br>
-              <small>${loc.direccion}, ${loc.pais}</small>
-            </div>
-            <button class="sugerencia-boton" data-id="${loc.id}">
-              Marketplace
-            </button>
-          `;
-          
-          // Agregar evento al botón "Marketplace"
-          const boton = item.querySelector('.sugerencia-boton');
-          boton.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const id = this.getAttribute('data-id');
-            const punto = UBICACIONES.find(p => p.id === id);
-            if (punto && punto.url) {
-              window.open(punto.url, '_blank');
-            }
-            sugerenciasContainer.style.display = 'none';
-          });
-          
-          // Agregar evento al item completo
-          item.addEventListener('click', function() {
-            mapa.setView(marcador.getLatLng(), 15);
-            marcador.openPopup();
-            document.getElementById('buscador').value = loc.nombre;
-            sugerenciasContainer.style.display = 'none';
-          });
-          
-          sugerenciasContainer.appendChild(item);
-        });
-        sugerenciasContainer.style.display = 'block';
-        return true;
-      }
-      return false;
-    }
-
-    // Función para abrir Google Maps con una ubicación específica
-    function abrirGoogleMapsConDireccionUbicacion(idPunto) {
-      const punto = UBICACIONES.find(p => p.id === idPunto);
-      if (!punto) return;
-      
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${punto.latlng[0]},${punto.latlng[1]}&travelmode=driving&dir_action=navigate`;
-      window.open(url, '_blank');
-    }
-
-    // Función para manejar teclas en el buscador
-    function handleSearchKeydown(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const termino = document.getElementById('buscador').value.trim();
-        if (termino) {
-          buscarConGoogle(termino);
+        // Generar city tags para SEO
+        const tagsContainer = document.getElementById('city-tags-container');
+        if (tagsContainer) {
+            citiesData.forEach(city => {
+                const tag = document.createElement('a');
+                tag.href = city.url;
+                tag.className = 'city-tag';
+                tag.textContent = city.name;
+                tagsContainer.appendChild(tag);
+            });
         }
-      }
-    }
-
-    // Función para abrir WhatsApp
-    function abrirWhatsApp(telefono, nombre) {
-      const numeroLimpio = telefono.replace(/\D/g, '');
-      const mensaje = `Hola ${nombre}, me interesa conocer más sobre sus servicios de contraentrega.`;
-      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
-    }
-
-    // Función para centrar el mapa en la ubicación actual
-    function centrarMapa() {
-      if (userMarker) {
-        mapa.setView(userMarker.getLatLng(), 12);
-      } else {
-        obtenerUbicacionUsuario();
-      }
-    }
-
-    // Función para obtener ubicación del usuario
-    function obtenerUbicacionUsuario() {
-      return new Promise((resolve, reject) => {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const { latitude, longitude } = position.coords;
-              
-              // Eliminar marcador anterior si existe
-              if (userMarker) {
-                mapa.removeLayer(userMarker);
-              }
-              
-              // Crear nuevo marcador de usuario (azul)
-              userMarker = L.marker([latitude, longitude], {
-                icon: L.icon({
-                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
-                  iconSize: [32, 32],
-                  className: 'marker-icon-blue'
-                })
-              }).addTo(mapa)
-                .bindPopup('¡Tu ubicación actual!');
+        
+        // Toast notification function
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast-message');
+            toast.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+        
+        // Function to render cities with Colombia flag
+        function renderCities(cityList) {
+            const container = document.getElementById('cities-container');
+            container.innerHTML = '';
+            
+            cityList.forEach((city, index) => {
+                const card = document.createElement('div');
+                card.className = 'city-card';
+                card.style.animationDelay = `${index * 0.02}s`;
                 
-              // Centrar mapa en la ubicación del usuario
-              mapa.setView([latitude, longitude], 12);
-              resolve();
-            },
-            (error) => {
-              console.log(`Error al obtener ubicación: ${error.message}`);
-              // Centrar en Colombia si no se puede obtener ubicación
-              mapa.setView([4.570868, -74.297333], 6);
-              reject();
-            },
-            { enableHighAccuracy: true }
-          );
-        } else {
-          console.log("Tu navegador no soporta geolocalización.");
-          mapa.setView([4.570868, -74.297333], 6);
-          reject();
+                card.innerHTML = `
+                    <div class="city-image">
+                        <div class="colombia-flag-bg">
+                            <div class="flag-stripe flag-yellow"></div>
+                            <div class="flag-stripe flag-blue"></div>
+                            <div class="flag-stripe flag-red"></div>
+                        </div>
+                    </div>
+                    <div class="city-info">
+                        <h3 class="city-name">
+                            ${city.name}
+                        </h3>
+                        <p class="city-desc">${city.desc}</p>
+                        <a href="${city.url}" class="city-link" target="_blank">${city.actionText} →</a>
+                    </div>
+                `;
+                
+                // Make entire card clickable
+                card.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'A') {
+                        showToast(`${city.name} - Compra y venta segura P2P`);
+                        setTimeout(() => {
+                            window.open(city.url, '_blank');
+                        }, 300);
+                    }
+                });
+                
+                container.appendChild(card);
+            });
         }
-      });
-    }
-  </script>
+        
+        // Search functionality
+        function normalizeText(text) {
+            return text
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .trim()
+                .toLowerCase();
+        }
+        
+        function performSearch(searchTerm) {
+            const normalizedSearch = normalizeText(searchTerm);
+            const filteredCities = citiesData.filter(city => 
+                normalizeText(city.name).includes(normalizedSearch) || 
+                normalizeText(city.desc).includes(normalizedSearch)
+            );
+            renderCities(filteredCities);
+            document.getElementById('city-count').innerHTML = `🌍 ${filteredCities.length} ciudades | 🔒 Marketplace P2P Seguro Colombia`;
+            return filteredCities.length > 0 ? filteredCities[0] : null;
+        }
+        
+        // PWA Install Button Logic
+        let deferredPrompt;
+        const installButton = document.getElementById('install-button');
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installButton.style.display = 'block';
+            installButton.addEventListener('click', () => {
+                installButton.style.display = 'none';
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            });
+        });
+        
+        // Network status indicator
+        const offlineIndicator = document.getElementById('offline-indicator');
+        function updateOnlineStatus() {
+            if (navigator.onLine) {
+                offlineIndicator.classList.remove('show');
+            } else {
+                offlineIndicator.classList.add('show');
+            }
+        }
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCities(citiesData);
+            const searchInput = document.getElementById('marketplace-search');
+            searchInput.addEventListener('input', (e) => {
+                performSearch(e.target.value);
+            });
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const firstResult = performSearch(e.target.value);
+                    if (firstResult) {
+                        showToast(`${firstResult.name} - Compra y venta segura P2P`);
+                        setTimeout(() => {
+                            window.open(firstResult.url, '_blank');
+                        }, 300);
+                    }
+                }
+            });
+        });
+        
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw.js')
+                    .then(function(registration) {
+                        console.log('✅ Service Worker registrado con éxito:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('❌ Error al registrar Service Worker:', error);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
