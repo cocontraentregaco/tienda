@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QRContraentrega - Cartagena, Bolívar, Colombia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>QRP2P - Vendedores Verificados en Cartagena</title>
   <style>
     :root {
       --primary-color: #1a1a1a;
@@ -35,6 +35,7 @@
       height: 100vh; 
       display: flex; 
       flex-direction: column; 
+      position: relative;
     }
     
     #barra-superior { 
@@ -43,10 +44,19 @@
       padding: 0.8rem; 
       background: var(--bg-light); 
       width: 100%;
+      z-index: 1000;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .contenedor-buscador {
+      position: relative;
+      flex: 1;
+      max-width: 500px;
     }
     
     #buscador { 
-      flex: 1; 
+      width: 100%;
       padding: 0.6rem 1.2rem; 
       border: 1px solid #ddd; 
       border-radius: 24px; 
@@ -62,8 +72,8 @@
     }
     
     .btn { 
-      background: var(--primary-color); 
-      color: var(--light-text); 
+      background: #000000;
+      color: #ffffff;
       padding: 0.6rem 1.2rem; 
       border-radius: 24px; 
       text-decoration: none;
@@ -72,16 +82,80 @@
       border: none;
       cursor: pointer;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      border: 1px solid #333;
+      font-family: inherit;
     }
     
     .btn:hover {
-      background: var(--secondary-color);
+      background: #333333;
       transform: translateY(-1px);
+    }
+    
+    .btn-centrar {
+      background-color: #000000;
+      color: #ffffff;
+    }
+    
+    .btn-registro {
+      background-color: #000000;
+      color: #ffffff;
+    }
+    
+    .botones-secundarios {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: center;
     }
     
     #mapa { 
       flex: 1; 
       background: #f0f0f0; 
+      width: 100%;
+    }
+    
+    .notificacion-alerta {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background: #ff6b6b;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      z-index: 2000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideInRight 0.3s ease;
+      max-width: 280px;
+    }
+    
+    .notificacion-alerta button {
+      background: white;
+      color: #ff6b6b;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.75rem;
+    }
+    
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
     
     .cluster-marcadores { 
@@ -94,17 +168,187 @@
       font-weight: bold;
     }
     
-    .leaflet-control-layers { 
-      background: #fff; 
-      padding: 5px; 
-      border-radius: var(--border-radius); 
-      box-shadow: var(--box-shadow);
+    .popup-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    
+    .popup-button-row {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+    }
+    
+    .vendedor-imagen {
+      width: 100%;
+      height: 150px;
+      background-size: cover;
+      background-position: center;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    
+    .vendedor-detalle {
+      font-size: 0.85rem;
+      margin: 5px 0;
+    }
+    
+    .vendedor-detalle strong {
+      color: #0066cc;
+    }
+    
+    .sugerencias-busqueda {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+    
+    .sugerencia-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .sugerencia-item:hover {
+      background-color: #f5f5f5;
+    }
+    
+    .sugerencia-texto {
+      flex: 1;
+    }
+    
+    .sugerencia-boton {
+      margin-left: 10px;
+      padding: 5px 10px;
+      background-color: #000000;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    
+    .cargando {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(0,0,0,.3);
+      border-radius: 50%;
+      border-top-color: #000;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    .gm-style .gm-style-iw-c {
+      border-radius: 8px;
+      padding: 10px;
+      max-width: 320px !important;
+    }
+    
+    .gm-style .gm-style-iw-d {
+      overflow: auto !important;
+      max-height: 400px !important;
+    }
+    
+    .map-type-selector {
+      position: absolute;
+      bottom: 20px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      display: flex;
+      gap: 10px;
+    }
+    
+    .map-type-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #f1f1f1;
+      transition: background 0.3s;
+    }
+    
+    .map-type-btn.active {
+      background: #0066cc;
+      color: white;
+    }
+    
+    /* Estilo personalizado para el marcador con emoji */
+    .verified-marker {
+      background: transparent;
+      border: none;
+      font-size: 28px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
     
     @media (max-width: 768px) { 
       #barra-superior { 
         flex-direction: column; 
         gap: 0.6rem;
+      }
+      
+      .botones-secundarios {
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      
+      .popup-button-row {
+        flex-direction: column;
+      }
+      
+      .sugerencia-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .sugerencia-boton {
+        margin-left: 0;
+        margin-top: 5px;
+        align-self: flex-end;
+      }
+      
+      .map-type-selector {
+        bottom: 10px;
+        left: 5px;
+        flex-direction: column;
+        gap: 5px;
+      }
+      
+      .notificacion-alerta {
+        bottom: 70px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        font-size: 0.75rem;
+      }
+      
+      .verified-marker {
+        font-size: 24px;
       }
     }
   </style>
@@ -115,46 +359,209 @@
 <body>
   <div id="contenedor-mapa">
     <div id="barra-superior">
-      <input type="search" id="buscador" placeholder="Buscar Productos y Servicios en Cartagena..." enterkeyhint="search">
-      <button class="btn" id="b2b-btn">VER TODO</button>
+      <div class="contenedor-buscador">
+        <input type="search" id="buscador" placeholder="Buscar vendedor verificado en Cartagena..." enterkeyhint="search">
+        <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+      </div>
+      <div class="botones-secundarios">
+        <button class="btn btn-centrar" id="centrar-btn">Centrar mi ubicación</button>
+        <button class="btn btn-registro" id="registro-btn">📝 Registrarse como vendedor</button>
+      </div>
     </div>
     <div id="mapa"></div>
+    <div class="map-type-selector">
+      <button class="map-type-btn active" id="map-btn">Mapa</button>
+      <button class="map-type-btn" id="satellite-btn">Satélite</button>
+    </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
   <script>
-    function initializeMap() {
-      // Configuración de capas
-      const capas = {
-        "Maxar": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-          attribution: 'Satellite: Maxar WorldView Legion',
-          maxZoom: 18,
-          maxNativeZoom: 18,
-          detectRetina: true
-        }),
-        "OSM": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors',
-          maxZoom: 19
-        })
-      };
+    // Variables globales
+    let mapa;
+    let userMarker;
+    let marcadoresOriginales = [];
+    let buscadorTimeout;
+    let googleMapsLayer;
+    let googleSatelliteLayer;
+    let currentLayer;
+    let notificacionActual = null;
 
-      // Inicializar mapa
-      const mapa = L.map('mapa', {
-        center: [10.3910, -75.4794], // Coordenadas de Cartagena
-        zoom: 13,
-        layers: [capas["Maxar"]],
-        zoomControl: false
+    // DATOS DE VENDEDORES VERIFICADOS QRP2P EN CARTAGENA
+    const VENDEDORES = [
+      { 
+        "id": "vendedor-bocagrande",
+        "nombre": "Carlos López", 
+        "direccion": "Avenida San Martín # 8-45, Bocagrande, Cartagena", 
+        "latlng": [10.4050, -75.5600], 
+        "telefono": "+573102345678",
+        "url": "https://qrp2p.com/colombia/vendedor/carlos-lopez",
+        "imagen": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "2 años",
+        "calificacion": "4.8"
+      },
+      { 
+        "id": "vendedor-ciudad-amurallada",
+        "nombre": "María Fernández", 
+        "direccion": "Calle del Colegio # 34-12, Centro Histórico, Cartagena", 
+        "latlng": [10.4225, -75.5500], 
+        "telefono": "+573104567890",
+        "url": "https://qrp2p.com/colombia/vendedor/maria-fernandez",
+        "imagen": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "1.5 años",
+        "calificacion": "4.9"
+      },
+      { 
+        "id": "vendedor-castillogrande",
+        "nombre": "Andrés Martínez", 
+        "direccion": "Carrera 1 # 10-25, Castillo Grande, Cartagena", 
+        "latlng": [10.3980, -75.5550], 
+        "telefono": "+573108765432",
+        "url": "https://qrp2p.com/colombia/vendedor/andres-martinez",
+        "imagen": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "3 años",
+        "calificacion": "5.0"
+      },
+      { 
+        "id": "vendedor-manga",
+        "nombre": "Laura Gómez", 
+        "direccion": "Calle 24 # 10-30, Manga, Cartagena", 
+        "latlng": [10.4150, -75.5350], 
+        "telefono": "+573102345679",
+        "url": "https://qrp2p.com/colombia/vendedor/laura-gomez",
+        "imagen": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "2.5 años",
+        "calificacion": "4.7"
+      },
+      { 
+        "id": "vendedor-el-laguito",
+        "nombre": "Javier Rodríguez", 
+        "direccion": "Calle 5 # 2-18, El Laguito, Cartagena", 
+        "latlng": [10.3950, -75.5650], 
+        "telefono": "+573104567891",
+        "url": "https://qrp2p.com/colombia/vendedor/javier-rodriguez",
+        "imagen": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "4 años",
+        "calificacion": "4.9"
+      },
+      { 
+        "id": "vendedor-crespo",
+        "nombre": "Sofía Herrera", 
+        "direccion": "Carrera 2 # 70-15, Crespo, Cartagena", 
+        "latlng": [10.4350, -75.5250], 
+        "telefono": "+573108765433",
+        "url": "https://qrp2p.com/colombia/vendedor/sofia-herrera",
+        "imagen": "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "1 año",
+        "calificacion": "4.6"
+      },
+      { 
+        "id": "vendedor-pie-de-la-popa",
+        "nombre": "Diego Castillo", 
+        "direccion": "Calle 30 # 15-40, Pie de la Popa, Cartagena", 
+        "latlng": [10.4280, -75.5400], 
+        "telefono": "+573102345680",
+        "url": "https://qrp2p.com/colombia/vendedor/diego-castillo",
+        "imagen": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "2 años",
+        "calificacion": "4.8"
+      },
+      { 
+        "id": "vendedor-torre-del-reloj",
+        "nombre": "Valentina Ríos", 
+        "direccion": "Plaza de los Coches # 5-20, Centro, Cartagena", 
+        "latlng": [10.4200, -75.5450], 
+        "telefono": "+573104567892",
+        "url": "https://qrp2p.com/colombia/vendedor/valentina-rios",
+        "imagen": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "3.5 años",
+        "calificacion": "5.0"
+      }
+    ];
+
+    // Límites de Cartagena
+    const LIMITES_CARTAGENA = {
+      minLat: 10.3600,
+      maxLat: 10.4700,
+      minLng: -75.5900,
+      maxLng: -75.5100
+    };
+
+    function estaEnCartagena(lat, lng) {
+      return (lat >= LIMITES_CARTAGENA.minLat && lat <= LIMITES_CARTAGENA.maxLat &&
+              lng >= LIMITES_CARTAGENA.minLng && lng <= LIMITES_CARTAGENA.maxLng);
+    }
+
+    function mostrarNotificacion(mensaje, tipo = 'warning') {
+      if (notificacionActual) {
+        notificacionActual.remove();
+      }
+      const notificacion = document.createElement('div');
+      notificacion.className = 'notificacion-alerta';
+      notificacion.style.background = tipo === 'warning' ? '#ff6b6b' : '#4caf50';
+      notificacion.innerHTML = `
+        <span>${mensaje}</span>
+        <button onclick="this.parentElement.remove()">✕</button>
+      `;
+      document.body.appendChild(notificacion);
+      notificacionActual = notificacion;
+      setTimeout(() => {
+        if (notificacionActual === notificacion) {
+          notificacion.remove();
+          notificacionActual = null;
+        }
+      }, 5000);
+    }
+
+    function abrirWhatsApp(telefono, nombre, direccion, tiempo_operando, calificacion) {
+      const numeroLimpio = telefono.replace(/\D/g, '');
+      const mensaje = `Hola, me interesa contactar al vendedor verificado:\n\n⚡️ Nombre: ${nombre}\n📍 Dirección: ${direccion}\n⏱️ Tiempo operando: ${tiempo_operando}\n⭐️ Calificación: ${calificacion}\n\n¿Podría darme más información sobre sus servicios? ¡Gracias!`;
+      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeMap();
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
+      document.getElementById('registro-btn').addEventListener('click', function() {
+        window.open('https://qrp2p.com/registro-vendedor', '_blank');
       });
+      document.getElementById('map-btn').addEventListener('click', switchToMapView);
+      document.getElementById('satellite-btn').addEventListener('click', switchToSatelliteView);
+      
+      const searchInput = document.getElementById('buscador');
+      searchInput.addEventListener('input', handleSearchInput);
+      searchInput.addEventListener('keydown', handleSearchKeydown);
+      
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.contenedor-buscador')) {
+          document.getElementById('sugerencias-busqueda').style.display = 'none';
+        }
+      });
+    });
 
-      // Controles del mapa
+    function initializeMap() {
+      mapa = L.map('mapa', { center: [10.4100, -75.5500], zoom: 13, zoomControl: false });
       L.control.zoom({ position: 'bottomright' }).addTo(mapa);
-      L.control.layers(capas, null, { 
-        position: 'topright',
-        collapsed: false
-      }).addTo(mapa);
 
-      // Sistema de marcadores
+      googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+      });
+      googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+      });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      setTimeout(() => mapa.invalidateSize(), 100);
+
       const clusters = L.markerClusterGroup({
         iconCreateFunction: cluster => L.divIcon({
           html: `<div>${cluster.getChildCount()}</div>`,
@@ -166,103 +573,187 @@
         zoomToBoundsOnClick: true
       });
 
-      // Datos de ubicaciones en Cartagena
-      const ubicaciones = [
-        { 
-          "nombre": "@nanostore", 
-          "direccion": "Calle 30 #9B-50, Cartagena, Bolívar", 
-          "latlng": [10.3960, -75.4724], 
-          "url": "https://nanostore.contraentregaco.com/",
-          "telefono": "+57 3041146297",
-          "horario": "L - V 09:00 a 17:00",
-          "servicios": "Tienda para mascotas"
-        }, 
-        { 
-          "nombre": "@isolinatienda", 
-          "direccion": "Av. Pedro de Heredia #36-50, Cartagena", 
-          "latlng": [10.4010, -75.4764], 
-          "url": "https://isolinatienda.contraentregaco.com/",
-          "telefono": "+57 3041146297",
-          "horario": "L - V 09:00 a 17:00",
-          "servicios": "Tienda para el hogar"
-        },
-        { 
-          "nombre": "@hermanosdreams", 
-          "direccion": "Cra 21 #34-56, Cartagena, Bolívar", 
-          "latlng": [10.3910, -75.4794], 
-          "url": "https://hermanosdreams.qrcontraentrega.com/",
-          "telefono": "+57 3041146297",
-          "horario": "L - V 09:00 a 17:00",
-          "servicios": "Tienda de productos nutricionales"
-        },
-      ];
-
-      // Crear marcadores
-      const todosMarcadores = [];
-      ubicaciones.forEach(loc => {
-        const marcador = L.marker(loc.latlng).bindPopup(`
-          <div style="min-width:220px">
-            <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
-            <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
-            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><i class="fas fa-phone" style="margin-right:5px"></i> ${loc.telefono}</p>` : ''}
-            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><i class="fas fa-clock" style="margin-right:5px"></i> ${loc.horario}</p>` : ''}
-            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><i class="fas fa-boxes" style="margin-right:5px"></i> ${loc.servicios}</p>` : ''}
-            <a href="${loc.url}" style="display:inline-block;background:var(--accent-color);color:white;padding:6px 12px;border-radius:4px;text-decoration:none;margin-top:5px;font-size:0.9em">Más información</a>
-          </div>
-        `);
-        
-        marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
-        todosMarcadores.push(marcador);
+      // Crear un ícono personalizado con el emoji ⚡️
+      const verifiedIcon = L.divIcon({
+        className: 'verified-marker',
+        html: '⚡️',
+        iconSize: [32, 32],
+        popupAnchor: [0, -16]
       });
 
-      // Añadir marcadores al mapa
-      clusters.addLayers(todosMarcadores);
+      VENDEDORES.forEach(vendedor => {
+        const marcador = L.marker(vendedor.latlng, {
+          icon: verifiedIcon
+        }).bindPopup(`
+          <div style="min-width:280px; max-width:320px;">
+            <div class="vendedor-imagen" style="background-image: url('${vendedor.imagen}'); background-size: cover; background-position: center;"></div>
+            <h3 style="margin:5px 0;color:#0066cc">⚡️ ${vendedor.nombre}</h3>
+            <p style="margin:5px 0;font-size:0.85rem">📍 ${vendedor.direccion}</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin:8px 0;">
+              <div class="vendedor-detalle"><strong>⭐️ Calificación:</strong> ${vendedor.calificacion}/5.0</div>
+              <div class="vendedor-detalle"><strong>⏱️ Operando:</strong> ${vendedor.tiempo_operando}</div>
+              <div class="vendedor-detalle"><strong>✅ Estado:</strong> Verificado</div>
+              <div class="vendedor-detalle"><strong>📞 Teléfono:</strong> ${vendedor.telefono}</div>
+            </div>
+            <div class="popup-buttons">
+              <div class="popup-button-row">
+                <button onclick="abrirWhatsApp('${vendedor.telefono}', '${vendedor.nombre}', '${vendedor.direccion}', '${vendedor.tiempo_operando}', '${vendedor.calificacion}')" style="background:#25D366;color:white;border:none;padding:10px;border-radius:8px;cursor:pointer;width:100%;font-weight:bold;">
+                  💬 WhatsApp - Contactar vendedor
+                </button>
+              </div>
+              <div class="popup-button-row" style="gap:8px;margin-top:5px;">
+                <button onclick="window.open('${vendedor.url}', '_blank')" style="background:#000000;color:white;border:none;padding:8px;border-radius:8px;cursor:pointer;flex:1;">🔍 Ver página del vendedor</button>
+                <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${vendedor.latlng[0]},${vendedor.latlng[1]}', '_blank')" style="background:#0066cc;color:white;border:none;padding:8px;border-radius:8px;cursor:pointer;flex:1;">🗺️ Cómo llegar</button>
+              </div>
+            </div>
+          </div>
+        `);
+        marcador.datosVendedor = vendedor;
+        marcador.datosBusqueda = `${vendedor.nombre} ${vendedor.direccion}`.toLowerCase();
+        marcadoresOriginales.push(marcador);
+      });
+
+      clusters.addLayers(marcadoresOriginales);
       mapa.addLayer(clusters);
-
-      // Búsqueda
-      const searchInput = document.getElementById('buscador');
-      let searchTimeout;
-
-      const handleSearch = () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-          const termino = searchInput.value.toLowerCase().trim();
-          clusters.clearLayers();
-          
-          if(termino === '') {
-            clusters.addLayers(todosMarcadores);
-            return;
-          }
-          
-          const filtrados = todosMarcadores.filter(m => 
-            m.datosBusqueda.includes(termino)
-          );
-          
-          clusters.addLayers(filtrados);
-          
-          if(filtrados.length > 0) {
-            mapa.fitBounds(clusters.getBounds().pad(0.3));
-          }
-        }, 300);
-      };
-
-      searchInput.addEventListener('input', handleSearch);
-      searchInput.addEventListener('search', handleSearch);
-
-      // Ajustar vista a los marcadores
-      if(todosMarcadores.length > 0) {
+      
+      if(marcadoresOriginales.length > 0) {
         mapa.fitBounds(clusters.getBounds().pad(0.3));
+      }
+      
+      obtenerUbicacionUsuario();
+    }
+
+    function switchToMapView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      document.getElementById('map-btn').classList.add('active');
+      document.getElementById('satellite-btn').classList.remove('active');
+    }
+
+    function switchToSatelliteView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleSatelliteLayer;
+      currentLayer.addTo(mapa);
+      document.getElementById('satellite-btn').classList.add('active');
+      document.getElementById('map-btn').classList.remove('active');
+    }
+
+    function handleSearchInput(e) {
+      clearTimeout(buscadorTimeout);
+      const termino = e.target.value.trim();
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      if (termino.length < 2) {
+        sugerenciasContainer.style.display = 'none';
+        return;
+      }
+      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">🔍 Buscando vendedores verificados en Cartagena... <span class="cargando"></span></div>';
+      sugerenciasContainer.style.display = 'block';
+      buscadorTimeout = setTimeout(() => buscarVendedores(termino), 300);
+    }
+
+    function buscarVendedores(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      const termino = consulta.toLowerCase();
+      const resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(termino));
+      
+      if (resultados.length > 0) {
+        sugerenciasContainer.innerHTML = '';
+        resultados.forEach(marcador => {
+          const vendedor = marcador.datosVendedor;
+          const item = document.createElement('div');
+          item.className = 'sugerencia-item';
+          item.innerHTML = `
+            <div class="sugerencia-texto">
+              <strong>⚡️ ${vendedor.nombre}</strong><br>
+              <small>📍 ${vendedor.direccion}</small><br>
+              <small>⭐️ ${vendedor.calificacion} | ⏱️ ${vendedor.tiempo_operando}</small>
+            </div>
+            <button class="sugerencia-boton" data-id="${vendedor.id}">Ver vendedor</button>
+          `;
+          const boton = item.querySelector('.sugerencia-boton');
+          boton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            mapa.setView(marcador.getLatLng(), 16);
+            marcador.openPopup();
+            document.getElementById('buscador').value = vendedor.nombre;
+            sugerenciasContainer.style.display = 'none';
+          });
+          item.addEventListener('click', () => {
+            mapa.setView(marcador.getLatLng(), 16);
+            marcador.openPopup();
+            document.getElementById('buscador').value = vendedor.nombre;
+            sugerenciasContainer.style.display = 'none';
+          });
+          sugerenciasContainer.appendChild(item);
+        });
+      } else {
+        sugerenciasContainer.innerHTML = '<div class="sugerencia-item">❌ No se encontraron vendedores verificados para: ' + consulta + '<br><small>📍 Prueba con: Bocagrande, Ciudad Amurallada, Castillo Grande, Manga, El Laguito, Crespo, Pie de la Popa</small></div>';
       }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-      initializeMap();
-      
-      // Redirección al hacer clic en el botón B2B
-      document.getElementById('b2b-btn').addEventListener('click', function() {
-        window.location.href = "https://co.qrcontraentrega.com/sucursal/cartagenabolivar/";
-      });
-    });
+    function handleSearchKeydown(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const termino = document.getElementById('buscador').value.trim();
+        if (termino) buscarVendedores(termino);
+      }
+    }
+
+    function centrarMapa() {
+      if (userMarker) {
+        const lat = userMarker.getLatLng().lat;
+        const lng = userMarker.getLatLng().lng;
+        if (estaEnCartagena(lat, lng)) {
+          mapa.setView(userMarker.getLatLng(), 15);
+          userMarker.openPopup();
+        } else {
+          mostrarNotificacion("Estás fuera del área de Cartagena. Mostrando centro de la ciudad.");
+          mapa.setView([10.4100, -75.5500], 13);
+        }
+      } else {
+        obtenerUbicacionUsuario();
+      }
+    }
+
+    function obtenerUbicacionUsuario() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            if (userMarker) mapa.removeLayer(userMarker);
+            if (estaEnCartagena(latitude, longitude)) {
+              userMarker = L.marker([latitude, longitude], {
+                icon: L.divIcon({
+                  className: 'verified-marker',
+                  html: '📍',
+                  iconSize: [24, 24]
+                })
+              }).addTo(mapa).bindPopup('📍 Tu ubicación en Cartagena');
+              mapa.setView([latitude, longitude], 14);
+              userMarker.openPopup();
+            } else {
+              mostrarNotificacion("Servicio exclusivo para Cartagena. Estás fuera del área de cobertura.");
+              mapa.setView([10.4100, -75.5500], 13);
+              userMarker = L.marker([latitude, longitude], {
+                icon: L.divIcon({
+                  className: 'verified-marker',
+                  html: '⚠️',
+                  iconSize: [24, 24]
+                })
+              }).addTo(mapa).bindPopup('⚠️ Fuera de Cartagena');
+            }
+          },
+          (error) => {
+            console.log(`Error: ${error.message}`);
+            mapa.setView([10.4100, -75.5500], 13);
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        mapa.setView([10.4100, -75.5500], 13);
+      }
+    }
   </script>
 </body>
 </html>
