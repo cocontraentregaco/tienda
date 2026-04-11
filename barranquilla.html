@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contraentrega Barranquilla - Mapa</title>
+  <title>QRP2P Barranquilla - Marketplace P2P Seguro</title>
   <style>
     :root {
       --primary-color: #1a1a1a;
       --secondary-color: #333;
-      --accent-color: #0066cc;
+      --accent-color: #1a7f6b;
       --text-color: #333;
       --light-text: #fff;
       --bg-light: #f8f8f8;
       --border-radius: 8px;
       --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       --transition: all 0.3s ease;
+      --verified: #2ecc71;
     }
     
     * { 
@@ -62,12 +63,12 @@
     #buscador:focus {
       outline: none;
       border-color: var(--accent-color);
-      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+      box-shadow: 0 0 0 2px rgba(26,127,107,0.2);
     }
     
     .btn { 
-      background: #000000; /* NEGRO */
-      color: #ffffff; /* BLANCO */
+      background: #000000;
+      color: #ffffff;
       padding: 0.6rem 1.2rem; 
       border-radius: 24px; 
       text-decoration: none;
@@ -81,10 +82,11 @@
       justify-content: center;
       gap: 5px;
       border: 1px solid #333;
+      font-family: inherit;
     }
     
     .btn:hover {
-      background: #333333; /* Gris oscuro al pasar el mouse */
+      background: #1a7f6b;
       transform: translateY(-1px);
     }
     
@@ -94,8 +96,12 @@
     }
     
     .btn-marketplace {
-      background-color: #000000;
+      background-color: #1a7f6b;
       color: #ffffff;
+    }
+    
+    .btn-marketplace:hover {
+      background-color: #0e5a4b;
     }
     
     #mapa { 
@@ -105,7 +111,7 @@
     }
     
     .cluster-marcadores { 
-      background: rgba(40,40,40,0.7); 
+      background: rgba(26,127,107,0.8); 
       border-radius: 50%; 
       color: white;
       display: flex;
@@ -167,7 +173,7 @@
     .sugerencia-boton {
       margin-left: 10px;
       padding: 5px 10px;
-      background-color: #9b59b6;
+      background-color: #1a7f6b;
       color: white;
       border: none;
       border-radius: 4px;
@@ -229,8 +235,19 @@
     }
 
     .map-type-btn.active {
-      background: #0066cc;
+      background: #1a7f6b;
       color: white;
+    }
+    
+    .verified-badge-small {
+      display: inline-block;
+      background: var(--verified);
+      color: white;
+      font-size: 0.6rem;
+      padding: 2px 6px;
+      border-radius: 20px;
+      margin-left: 6px;
+      vertical-align: middle;
     }
 
     @keyframes spin {
@@ -274,11 +291,11 @@
   <div id="contenedor-mapa">
     <div id="barra-superior">
       <div class="contenedor-buscador">
-        <input type="search" id="buscador" placeholder="BUSCAR EN BARRANQUILLA..." enterkeyhint="search">
+        <input type="search" id="buscador" placeholder="🔍 Buscar vendedor verificado en Barranquilla..." enterkeyhint="search">
         <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
       </div>
-      <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
-      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://barranquilla.qrcontraentrega.com', '_blank')">MARKETPLACE</button>
+      <button class="btn btn-centrar" id="centrar-btn">📍 CENTRAR</button>
+      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://qrp2p.com/barranquilla', '_blank')">⚡️ MARKETPLACE P2P</button>
     </div>
     <div id="mapa"></div>
     <div class="map-type-selector">
@@ -300,55 +317,98 @@
     let googleSatelliteLayer;
     let currentLayer;
 
-    // Datos de ubicaciones - Barranquilla
-    const UBICACIONES = [
+    // VENDEDORES VERIFICADOS QRP2P - Barranquilla
+    const VENDEDORES = [
       { 
-        "id": "barranquilla-norte",
-        "nombre": "QRContraentrega Barranquilla Norte", 
+        "id": "vendedor-norte-1",
+        "nombre": "Carlos Mendoza", 
         "direccion": "Carrera 51B # 84-210, Norte, Barranquilla, Colombia", 
         "latlng": [10.9980, -74.8074], 
-        "url": "https://barranquilla.qrcontraentrega.com/",
+        "url": "https://qrp2p.com/vendedor/carlos-mendoza",
         "telefono": "+573128765432",
         "horario": "Lunes a Viernes: 8am-7pm, Sábados: 9am-5pm",
-        "servicios": "Almacenes QRContraentrega, Logística",
-        "pais": "Colombia",
-        "tipo": "socio"
+        "categoria": "Electrónica, Tecnología",
+        "verificado": true,
+        "calificacion": "4.8",
+        "tiempo_operando": "2 años"
       },
       { 
-        "id": "barranquilla-centro",
-        "nombre": "QRContraentrega Centro Barranquilla", 
+        "id": "vendedor-centro-1",
+        "nombre": "María Fernández", 
         "direccion": "Calle 72 # 43-55, Centro, Barranquilla, Colombia", 
         "latlng": [10.9866, -74.7825], 
-        "url": "https://barranquilla.qrcontraentrega.com/",
+        "url": "https://qrp2p.com/vendedor/maria-fernandez",
         "telefono": "+573105432198",
         "horario": "Lunes a Domingo: 7am-9pm",
-        "servicios": "Punto de recogida, Entrega inmediata",
-        "pais": "Colombia",
-        "tipo": "socio"
+        "categoria": "Moda, Calzado, Accesorios",
+        "verificado": true,
+        "calificacion": "4.9",
+        "tiempo_operando": "3 años"
       },
       { 
-        "id": "barranquilla-sur",
-        "nombre": "QRContraentrega Barranquilla Sur", 
+        "id": "vendedor-sur-1",
+        "nombre": "Andrés Martínez", 
         "direccion": "Carrera 38 # 25-40, Sur, Barranquilla, Colombia", 
         "latlng": [10.9547, -74.7964], 
-        "url": "https://barranquilla.qrcontraentrega.com/",
+        "url": "https://qrp2p.com/vendedor/andres-martinez",
         "telefono": "+573209876543",
-        "horario": "24/7 para recogidas urgentes",
-        "servicios": "Centro logístico principal",
-        "pais": "Colombia",
-        "tipo": "socio"
+        "horario": "Lunes a Sábado: 8am-8pm",
+        "categoria": "Hogar, Muebles, Decoración",
+        "verificado": true,
+        "calificacion": "4.7",
+        "tiempo_operando": "1.5 años"
       },
       { 
-        "id": "barranquilla-riomar",
-        "nombre": "QRContraentrega Riomar", 
+        "id": "vendedor-riomar-1",
+        "nombre": "Laura Gómez", 
         "direccion": "Calle 84 # 51-100, Riomar, Barranquilla, Colombia", 
         "latlng": [11.0133, -74.8269], 
-        "url": "https://barranquilla.qrcontraentrega.com/",
+        "url": "https://qrp2p.com/vendedor/laura-gomez",
         "telefono": "+573215432109",
         "horario": "Lunes a Sábado: 8am-8pm, Domingos: 9am-3pm",
-        "servicios": "Punto de entrega express",
-        "pais": "Colombia",
-        "tipo": "socio"
+        "categoria": "Belleza, Salud, Cosmética",
+        "verificado": true,
+        "calificacion": "5.0",
+        "tiempo_operando": "4 años"
+      },
+      { 
+        "id": "vendedor-villa-1",
+        "nombre": "Javier Rodríguez", 
+        "direccion": "Carrera 46 # 15-210, Villa Santos, Barranquilla, Colombia", 
+        "latlng": [10.9342, -74.7972], 
+        "url": "https://qrp2p.com/vendedor/javier-rodriguez",
+        "telefono": "+573224567890",
+        "horario": "Lunes a Viernes: 9am-6pm",
+        "categoria": "Deportes, Fitness, Outdoor",
+        "verificado": true,
+        "calificacion": "4.6",
+        "tiempo_operando": "2 años"
+      },
+      { 
+        "id": "vendedor-buenavista-1",
+        "nombre": "Sofía Herrera", 
+        "direccion": "Calle 85 # 51-295, Buenavista, Barranquilla, Colombia", 
+        "latlng": [11.0139, -74.8306], 
+        "url": "https://qrp2p.com/vendedor/sofia-herrera",
+        "telefono": "+573187654321",
+        "horario": "Lunes a Domingo: 10am-8pm",
+        "categoria": "Libros, Papelería, Regalos",
+        "verificado": true,
+        "calificacion": "4.9",
+        "tiempo_operando": "3 años"
+      },
+      { 
+        "id": "vendedor-altos-1",
+        "nombre": "Diego Castillo", 
+        "direccion": "Calle 33 # 30-170, Los Altos, Barranquilla, Colombia", 
+        "latlng": [10.9492, -74.8061], 
+        "url": "https://qrp2p.com/vendedor/diego-castillo",
+        "telefono": "+573156789012",
+        "horario": "Lunes a Sábado: 7am-7pm",
+        "categoria": "Alimentos, Bebidas, Gourmet",
+        "verificado": true,
+        "calificacion": "4.8",
+        "tiempo_operando": "2.5 años"
       }
     ];
 
@@ -356,10 +416,8 @@
     document.addEventListener('DOMContentLoaded', function() {
       initializeMap();
       
-      // Evento para el botón centrar
       document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
       
-      // Eventos para cambiar tipo de mapa
       document.getElementById('map-btn').addEventListener('click', function() {
         switchToMapView();
       });
@@ -368,12 +426,10 @@
         switchToSatelliteView();
       });
       
-      // Eventos para el buscador
       const searchInput = document.getElementById('buscador');
       searchInput.addEventListener('input', handleSearchInput);
       searchInput.addEventListener('keydown', handleSearchKeydown);
       
-      // Cerrar sugerencias al hacer clic fuera
       document.addEventListener('click', function(e) {
         if (!e.target.closest('.contenedor-buscador')) {
           document.getElementById('sugerencias-busqueda').style.display = 'none';
@@ -382,39 +438,31 @@
     });
 
     function initializeMap() {
-      // Inicializar mapa con vista centrada en Barranquilla
       mapa = L.map('mapa', {
-        center: [10.9833, -74.8019], // Centro de Barranquilla (Plaza de la Paz)
+        center: [10.9833, -74.8019],
         zoom: 13,
         zoomControl: false
       });
 
-      // Añadir control de zoom
       L.control.zoom({ position: 'bottomright' }).addTo(mapa);
 
-      // Crear capas de Google Maps
       googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
         maxZoom: 20,
-        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
       });
 
       googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
         maxZoom: 20,
-        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
       });
 
-      // Inicialmente usar la vista de mapa
       currentLayer = googleMapsLayer;
       currentLayer.addTo(mapa);
 
-      // Asegurar que el mapa ocupe todo el espacio disponible
       setTimeout(() => {
         mapa.invalidateSize();
       }, 0);
 
-      // Sistema de marcadores
       const clusters = L.markerClusterGroup({
         iconCreateFunction: cluster => L.divIcon({
           html: `<div>${cluster.getChildCount()}</div>`,
@@ -426,57 +474,54 @@
         zoomToBoundsOnClick: true
       });
 
-      // Crear marcadores para Barranquilla
-      UBICACIONES.forEach(loc => {
-        const marcador = L.marker(loc.latlng, {
+      // Crear marcadores para vendedores verificados
+      VENDEDORES.forEach(vendedor => {
+        const marcador = L.marker(vendedor.latlng, {
           icon: L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/190/190411.png',
             iconSize: [32, 32],
-            className: 'marker-icon-orange'
+            className: 'marker-icon-verified'
           })
         }).bindPopup(`
-          <div style="min-width:220px">
-            <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
-            <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
-            <p style="margin:0 0 5px 0;font-size:0.9em"><strong>País:</strong> ${loc.pais}</p>
-            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Teléfono:</strong> ${loc.telefono}</p>` : ''}
-            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Horario:</strong> ${loc.horario}</p>` : ''}
-            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><strong>Servicios:</strong> ${loc.servicios}</p>` : ''}
+          <div style="min-width:260px">
+            <h3 style="margin:0 0 5px 0;color:#1a7f6b">⚡️ ${vendedor.nombre}<span style="background:#2ecc71;color:white;font-size:10px;padding:2px 6px;border-radius:20px;margin-left:8px;">VERIFICADO</span></h3>
+            <p style="margin:0 0 8px 0;font-size:0.85em">📍 ${vendedor.direccion}</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:8px 0;">
+              <p style="margin:0;font-size:0.85em"><strong>⭐ Calificación:</strong> ${vendedor.calificacion}/5.0</p>
+              <p style="margin:0;font-size:0.85em"><strong>⏱ Operando:</strong> ${vendedor.tiempo_operando}</p>
+              <p style="margin:0;font-size:0.85em"><strong>📞 Teléfono:</strong> ${vendedor.telefono}</p>
+              <p style="margin:0;font-size:0.85em"><strong>📂 Categoría:</strong> ${vendedor.categoria}</p>
+            </div>
+            <p style="margin:0 0 8px 0;font-size:0.85em"><strong>🕒 Horario:</strong> ${vendedor.horario}</p>
             <div class="popup-buttons">
               <div class="popup-button-row">
-                <button class="btn btn-whatsapp" onclick="abrirWhatsApp('${loc.telefono}', '${loc.nombre}')">
-                  <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
-                  WhatsApp
+                <button class="btn btn-whatsapp" onclick="abrirWhatsApp('${vendedor.telefono}', '${vendedor.nombre}')" style="background:#25D366;color:white;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;width:100%;font-weight:bold;">
+                  💬 WhatsApp
                 </button>
               </div>
-              <div class="popup-button-row">
-                <button class="btn btn-ruta" onclick="abrirGoogleMapsConDireccion('${loc.latlng[0]}', '${loc.latlng[1]}', '${loc.nombre}')">Google Maps</button>
-                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">Marketplace</button>
+              <div class="popup-button-row" style="gap:8px;">
+                <button onclick="window.open('${vendedor.url}', '_blank')" style="background:#1a7f6b;color:white;border:none;padding:8px;border-radius:8px;cursor:pointer;flex:1;">🔍 Ver perfil</button>
+                <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${vendedor.latlng[0]},${vendedor.latlng[1]}', '_blank')" style="background:#0066cc;color:white;border:none;padding:8px;border-radius:8px;cursor:pointer;flex:1;">🗺️ Cómo llegar</button>
               </div>
             </div>
           </div>
         `);
         
-        // Guardar todos los datos de la ubicación en el marcador
-        marcador.datosUbicacion = loc;
-        marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.pais} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
+        marcador.datosVendedor = vendedor;
+        marcador.datosBusqueda = `${vendedor.nombre} ${vendedor.direccion} ${vendedor.categoria} ${vendedor.telefono}`.toLowerCase();
         marcadoresOriginales.push(marcador);
       });
 
-      // Añadir marcadores al mapa
       clusters.addLayers(marcadoresOriginales);
       mapa.addLayer(clusters);
 
-      // Ajustar vista a los marcadores
       if(marcadoresOriginales.length > 0) {
         mapa.fitBounds(clusters.getBounds().pad(0.3));
       }
 
-      // Solicitar ubicación al cargar la página
       obtenerUbicacionUsuario();
     }
 
-    // Función para cambiar a vista de mapa
     function switchToMapView() {
       mapa.removeLayer(currentLayer);
       currentLayer = googleMapsLayer;
@@ -486,7 +531,6 @@
       document.getElementById('satellite-btn').classList.remove('active');
     }
 
-    // Función para cambiar a vista de satélite
     function switchToSatelliteView() {
       mapa.removeLayer(currentLayer);
       currentLayer = googleSatelliteLayer;
@@ -496,13 +540,12 @@
       document.getElementById('map-btn').classList.remove('active');
     }
 
-    // Función para abrir Google Maps con una dirección específica
-    function abrirGoogleMapsConDireccion(lat, lng, nombre) {
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`;
-      window.open(url, '_blank');
+    function abrirWhatsApp(telefono, nombre) {
+      const numeroLimpio = telefono.replace(/\D/g, '');
+      const mensaje = `Hola ${nombre}, vi tu perfil como vendedor verificado en QRP2P Barranquilla. Me interesa conocer más sobre tus productos.`;
+      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
     }
 
-    // Función para manejar la búsqueda
     function handleSearchInput(e) {
       clearTimeout(buscadorTimeout);
       const termino = e.target.value.trim();
@@ -513,212 +556,15 @@
         return;
       }
       
-      // Mostrar indicador de carga
-      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Buscando... <span class="cargando"></span></div>';
+      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">🔍 Buscando vendedores verificados... <span class="cargando"></span></div>';
       sugerenciasContainer.style.display = 'block';
       
       buscadorTimeout = setTimeout(() => {
-        buscarConGoogle(termino);
+        buscarVendedores(termino);
       }, 300);
     }
 
-    // Función para buscar usando Google Places API (simulación)
-    function buscarConGoogle(consulta) {
-      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
-      
-      // Primero buscar en puntos locales (Barranquilla)
-      const resultadosLocales = buscarEnPuntosLocales(consulta);
-      if (resultadosLocales) {
-        return;
-      }
-      
-      // Simular búsqueda en Google Places para Barranquilla y alrededores
-      setTimeout(() => {
-        sugerenciasContainer.innerHTML = '';
-        
-        // Resultados específicos para Barranquilla
-        const resultadosSimulados = [
-          {
-            name: "Plaza de la Paz",
-            lat: 10.9833,
-            lng: -74.8019,
-            formatted_address: "Carrera 54 con Calle 53, Centro, Barranquilla, Colombia"
-          },
-          {
-            name: "Estadio Metropolitano",
-            lat: 10.9342,
-            lng: -74.7972,
-            formatted_address: "Carrera 46 # 15-210, Barranquilla, Colombia"
-          },
-          {
-            name: "Centro Comercial Buenavista",
-            lat: 11.0139,
-            lng: -74.8306,
-            formatted_address: "Calle 85 # 51-295, Barranquilla, Colombia"
-          },
-          {
-            name: "Aeropuerto Ernesto Cortissoz",
-            lat: 10.8894,
-            lng: -74.7808,
-            formatted_address: "Vía a Puerto Colombia, Barranquilla, Colombia"
-          },
-          {
-            name: "Museo del Caribe",
-            lat: 10.9878,
-            lng: -74.7831,
-            formatted_address: "Calle 36 # 46-66, Centro, Barranquilla, Colombia"
-          },
-          {
-            name: "Terminal de Transportes",
-            lat: 10.9492,
-            lng: -74.8061,
-            formatted_address: "Calle 33 # 30-170, Barranquilla, Colombia"
-          },
-          {
-            name: "Centro Comercial Viva Barranquilla",
-            lat: 11.0117,
-            lng: -74.8783,
-            formatted_address: "Vía al Mar Kilómetro 7, Barranquilla, Colombia"
-          },
-          {
-            name: "Malecón del Río",
-            lat: 10.9903,
-            lng: -74.7806,
-            formatted_address: "Carrera 54, Barranquilla, Colombia"
-          },
-          {
-            name: "Universidad del Norte",
-            lat: 11.0194,
-            lng: -74.8522,
-            formatted_address: "Kilómetro 5 Vía a Puerto Colombia, Barranquilla, Colombia"
-          },
-          {
-            name: "Parque Cultural del Caribe",
-            lat: 10.9872,
-            lng: -74.7828,
-            formatted_address: "Calle 36 # 46-66, Centro, Barranquilla, Colombia"
-          }
-        ];
-        
-        if (resultadosSimulados.length > 0) {
-          resultadosSimulados.forEach(lugar => {
-            const item = document.createElement('div');
-            item.className = 'sugerencia-item';
-            
-            const lat = lugar.lat;
-            const lng = lugar.lng;
-            const nombre = lugar.name;
-            
-            item.innerHTML = `
-              <div class="sugerencia-texto">
-                <strong>📍 ${nombre}</strong><br>
-                <small>${lugar.formatted_address}</small>
-              </div>
-              <button class="sugerencia-boton" data-lat="${lat}" data-lng="${lng}" data-nombre="${nombre}">
-                Ver
-              </button>
-            `;
-            
-            // Agregar evento al botón
-            const boton = item.querySelector('.sugerencia-boton');
-            boton.addEventListener('click', function(e) {
-              e.stopPropagation();
-              const nombre = this.getAttribute('data-nombre');
-              
-              // Redirigir según el lugar seleccionado
-              if (nombre.toLowerCase().includes("plaza") && nombre.toLowerCase().includes("paz")) {
-                window.open("https://barranquilla.gov.co/plaza-de-la-paz", "_blank");
-              } else if (nombre.toLowerCase().includes("estadio") || nombre.toLowerCase().includes("metropolitano")) {
-                window.open("https://www.estadiometropolitano.com.co", "_blank");
-              } else if (nombre.toLowerCase().includes("buenavista")) {
-                window.open("https://www.ccbuenavista.com.co", "_blank");
-              } else if (nombre.toLowerCase().includes("aeropuerto") || nombre.toLowerCase().includes("cortissoz")) {
-                window.open("https://www.aeropuertobarranquilla.com", "_blank");
-              } else if (nombre.toLowerCase().includes("museo del caribe")) {
-                window.open("https://www.museodelcaribe.com", "_blank");
-              } else if (nombre.toLowerCase().includes("terminal")) {
-                window.open("https://www.terminalbarranquilla.com.co", "_blank");
-              } else if (nombre.toLowerCase().includes("viva barranquilla")) {
-                window.open("https://www.vivabarranquilla.com", "_blank");
-              } else if (nombre.toLowerCase().includes("malecón")) {
-                window.open("https://barranquilla.travel/malecon-del-rio", "_blank");
-              } else if (nombre.toLowerCase().includes("universidad") && nombre.toLowerCase().includes("norte")) {
-                window.open("https://www.uninorte.edu.co", "_blank");
-              } else if (nombre.toLowerCase().includes("parque cultural")) {
-                window.open("https://www.parqueculturalcaribe.com", "_blank");
-              } else {
-                // Por defecto, abrir el marketplace de Barranquilla
-                window.open("https://barranquilla.qrcontraentrega.com", "_blank");
-              }
-              
-              sugerenciasContainer.style.display = "none";
-            });
-            
-            // Agregar evento al item completo
-            item.addEventListener('click', function() {
-              const lat = parseFloat(boton.getAttribute('data-lat'));
-              const lng = parseFloat(boton.getAttribute('data-lng'));
-              const nombre = boton.getAttribute('data-nombre');
-              
-              const latlng = [lat, lng];
-              mapa.setView(latlng, 15);
-              
-              if (destinoMarker) {
-                mapa.removeLayer(destinoMarker);
-              }
-              destinoMarker = L.marker(latlng, {
-                icon: L.icon({
-                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-                  iconSize: [32, 32],
-                  className: 'marker-icon-red'
-                })
-              }).addTo(mapa)
-                .bindPopup(`<strong>${nombre}</strong><br><button onclick="redirigirSitioWeb('${nombre}')" style="background:#9b59b6;color:white;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;margin-top:5px;">Ver más</button>`);
-              
-              destinoMarker.openPopup();
-              document.getElementById('buscador').value = nombre;
-              sugerenciasContainer.style.display = 'none';
-            });
-            
-            sugerenciasContainer.appendChild(item);
-          });
-          sugerenciasContainer.style.display = 'block';
-        } else {
-          sugerenciasContainer.innerHTML = '<div class="sugerencia-item">No se encontraron resultados para: ' + consulta + '</div>';
-          sugerenciasContainer.style.display = 'block';
-        }
-      }, 500);
-    }
-
-    // Función para redirigir al sitio web basado en el nombre
-    function redirigirSitioWeb(nombre) {
-      if (nombre.toLowerCase().includes("plaza") && nombre.toLowerCase().includes("paz")) {
-        window.open("https://barranquilla.gov.co/plaza-de-la-paz", "_blank");
-      } else if (nombre.toLowerCase().includes("estadio") || nombre.toLowerCase().includes("metropolitano")) {
-        window.open("https://www.estadiometropolitano.com.co", "_blank");
-      } else if (nombre.toLowerCase().includes("buenavista")) {
-        window.open("https://www.ccbuenavista.com.co", "_blank");
-      } else if (nombre.toLowerCase().includes("aeropuerto") || nombre.toLowerCase().includes("cortissoz")) {
-        window.open("https://www.aeropuertobarranquilla.com", "_blank");
-      } else if (nombre.toLowerCase().includes("museo del caribe")) {
-        window.open("https://www.museodelcaribe.com", "_blank");
-      } else if (nombre.toLowerCase().includes("terminal")) {
-        window.open("https://www.terminalbarranquilla.com.co", "_blank");
-      } else if (nombre.toLowerCase().includes("viva barranquilla")) {
-        window.open("https://www.vivabarranquilla.com", "_blank");
-      } else if (nombre.toLowerCase().includes("malecón")) {
-        window.open("https://barranquilla.travel/malecon-del-rio", "_blank");
-      } else if (nombre.toLowerCase().includes("universidad") && nombre.toLowerCase().includes("norte")) {
-        window.open("https://www.uninorte.edu.co", "_blank");
-      } else if (nombre.toLowerCase().includes("parque cultural")) {
-        window.open("https://www.parqueculturalcaribe.com", "_blank");
-      } else {
-        window.open("https://barranquilla.qrcontraentrega.com", "_blank");
-      }
-    }
-
-    // Función para buscar en los puntos locales (Barranquilla)
-    function buscarEnPuntosLocales(consulta) {
+    function buscarVendedores(consulta) {
       const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
       const termino = consulta.toLowerCase();
       const resultados = marcadoresOriginales.filter(m => 
@@ -729,75 +575,57 @@
         sugerenciasContainer.innerHTML = '';
         
         resultados.forEach(marcador => {
-          const loc = marcador.datosUbicacion;
+          const vendedor = marcador.datosVendedor;
           const item = document.createElement('div');
           item.className = 'sugerencia-item';
           item.innerHTML = `
             <div class="sugerencia-texto">
-              <strong>📍 ${loc.nombre}</strong><br>
-              <small>${loc.direccion}, ${loc.pais}</small>
+              <strong>⚡️ ${vendedor.nombre} <span style="background:#2ecc71;color:white;font-size:10px;padding:2px 6px;border-radius:20px;">VERIFICADO</span></strong><br>
+              <small>📍 ${vendedor.direccion}</small><br>
+              <small>⭐ ${vendedor.calificacion} | 📂 ${vendedor.categoria}</small>
             </div>
-            <button class="sugerencia-boton" data-id="${loc.id}">
-              Marketplace
+            <button class="sugerencia-boton" data-id="${vendedor.id}">
+              Ver perfil
             </button>
           `;
           
-          // Agregar evento al botón "Marketplace"
           const boton = item.querySelector('.sugerencia-boton');
           boton.addEventListener('click', function(e) {
             e.stopPropagation();
             const id = this.getAttribute('data-id');
-            const punto = UBICACIONES.find(p => p.id === id);
-            if (punto && punto.url) {
-              window.open(punto.url, '_blank');
+            const vendedorEncontrado = VENDEDORES.find(v => v.id === id);
+            if (vendedorEncontrado && vendedorEncontrado.url) {
+              window.open(vendedorEncontrado.url, '_blank');
             }
             sugerenciasContainer.style.display = 'none';
           });
           
-          // Agregar evento al item completo
           item.addEventListener('click', function() {
             mapa.setView(marcador.getLatLng(), 15);
             marcador.openPopup();
-            document.getElementById('buscador').value = loc.nombre;
+            document.getElementById('buscador').value = vendedor.nombre;
             sugerenciasContainer.style.display = 'none';
           });
           
           sugerenciasContainer.appendChild(item);
         });
         sugerenciasContainer.style.display = 'block';
-        return true;
+      } else {
+        sugerenciasContainer.innerHTML = '<div class="sugerencia-item">❌ No se encontraron vendedores verificados para: ' + consulta + '<br><small>📍 Prueba con: Norte, Centro, Riomar, Buenavista, Villa Santos</small></div>';
+        sugerenciasContainer.style.display = 'block';
       }
-      return false;
     }
 
-    // Función para abrir Google Maps con una ubicación específica
-    function abrirGoogleMapsConDireccionUbicacion(idPunto) {
-      const punto = UBICACIONES.find(p => p.id === idPunto);
-      if (!punto) return;
-      
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${punto.latlng[0]},${punto.latlng[1]}&travelmode=driving&dir_action=navigate`;
-      window.open(url, '_blank');
-    }
-
-    // Función para manejar teclas en el buscador
     function handleSearchKeydown(e) {
       if (e.key === 'Enter') {
         e.preventDefault();
         const termino = document.getElementById('buscador').value.trim();
         if (termino) {
-          buscarConGoogle(termino);
+          buscarVendedores(termino);
         }
       }
     }
 
-    // Función para abrir WhatsApp
-    function abrirWhatsApp(telefono, nombre) {
-      const numeroLimpio = telefono.replace(/\D/g, '');
-      const mensaje = `Hola ${nombre}, me interesa conocer más sobre sus servicios de contraentrega en Barranquilla.`;
-      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
-    }
-
-    // Función para centrar el mapa en la ubicación actual
     function centrarMapa() {
       if (userMarker) {
         mapa.setView(userMarker.getLatLng(), 15);
@@ -806,47 +634,34 @@
       }
     }
 
-    // Función para obtener ubicación del usuario
     function obtenerUbicacionUsuario() {
-      return new Promise((resolve, reject) => {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const { latitude, longitude } = position.coords;
-              
-              // Eliminar marcador anterior si existe
-              if (userMarker) {
-                mapa.removeLayer(userMarker);
-              }
-              
-              // Crear nuevo marcador de usuario (azul)
-              userMarker = L.marker([latitude, longitude], {
-                icon: L.icon({
-                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
-                  iconSize: [32, 32],
-                  className: 'marker-icon-blue'
-                })
-              }).addTo(mapa)
-                .bindPopup('¡Tu ubicación actual!');
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            
+            if (userMarker) {
+              mapa.removeLayer(userMarker);
+            }
+            
+            userMarker = L.marker([latitude, longitude], {
+              icon: L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+                iconSize: [32, 32]
+              })
+            }).addTo(mapa).bindPopup('📍 Tu ubicación actual');
                 
-              // Centrar mapa en la ubicación del usuario
-              mapa.setView([latitude, longitude], 15);
-              resolve();
-            },
-            (error) => {
-              console.log(`Error al obtener ubicación: ${error.message}`);
-              // Centrar en Barranquilla si no se puede obtener ubicación
-              mapa.setView([10.9833, -74.8019], 13);
-              reject();
-            },
-            { enableHighAccuracy: true }
-          );
-        } else {
-          console.log("Tu navegador no soporta geolocalización.");
-          mapa.setView([10.9833, -74.8019], 13);
-          reject();
-        }
-      });
+            mapa.setView([latitude, longitude], 15);
+          },
+          (error) => {
+            console.log(`Error al obtener ubicación: ${error.message}`);
+            mapa.setView([10.9833, -74.8019], 13);
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        mapa.setView([10.9833, -74.8019], 13);
+      }
     }
   </script>
 </body>
