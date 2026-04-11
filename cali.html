@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>QRP2P Real Estate - Inmuebles en Cali</title>
+  <title>QRP2P - Vendedores Verificados en Cali</title>
   <style>
     :root {
       --primary-color: #1a1a1a;
@@ -181,7 +181,7 @@
       justify-content: space-between;
     }
     
-    .propiedad-imagen {
+    .vendedor-imagen {
       width: 100%;
       height: 150px;
       background-size: cover;
@@ -190,12 +190,12 @@
       margin-bottom: 10px;
     }
     
-    .propiedad-detalle {
+    .vendedor-detalle {
       font-size: 0.85rem;
       margin: 5px 0;
     }
     
-    .propiedad-detalle strong {
+    .vendedor-detalle strong {
       color: #0066cc;
     }
     
@@ -291,7 +291,7 @@
     }
     
     /* Estilo personalizado para el marcador con emoji */
-    .money-marker {
+    .verified-marker {
       background: transparent;
       border: none;
       font-size: 28px;
@@ -347,7 +347,7 @@
         font-size: 0.75rem;
       }
       
-      .money-marker {
+      .verified-marker {
         font-size: 24px;
       }
     }
@@ -360,12 +360,12 @@
   <div id="contenedor-mapa">
     <div id="barra-superior">
       <div class="contenedor-buscador">
-        <input type="search" id="buscador" placeholder="Buscar inmueble en Cali..." enterkeyhint="search">
+        <input type="search" id="buscador" placeholder="Buscar vendedor verificado en Cali..." enterkeyhint="search">
         <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
       </div>
       <div class="botones-secundarios">
         <button class="btn btn-centrar" id="centrar-btn">Centrar mi ubicación</button>
-        <button class="btn btn-registro" id="registro-btn">VENDER INMUEBLE</button>
+        <button class="btn btn-registro" id="registro-btn">📝 Registrarse como vendedor</button>
       </div>
     </div>
     <div id="mapa"></div>
@@ -388,120 +388,103 @@
     let currentLayer;
     let notificacionActual = null;
 
-    // DATOS DE INMUEBLES EN CALI
-    // mostrarArriendo: false = solo muestra venta, true = muestra ambas opciones
-    const INMUEBLES = [
+    // DATOS DE VENDEDORES VERIFICADOS QRP2P EN CALI
+    const VENDEDORES = [
       { 
-        "id": "aparta-estadio-1",
-        "nombre": "Apartamento en El Estadio", 
+        "id": "vendedor-estadio-1",
+        "nombre": "Carlos López", 
         "direccion": "Calle 44 # 28-50, Barrio El Estadio, Cali", 
         "latlng": [3.4285, -76.5489], 
         "telefono": "+573102345678",
-        "url": "https://qrp2p.com/colombia/inmueble/aparta-estadio-1",
-        "imagen": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop",
-        "habitaciones": 3,
-        "banos": 2,
-        "metros": 85,
-        "precio": "$280,000,000 COP",
-        "mostrarArriendo": false
+        "url": "https://qrp2p.com/colombia/vendedor/carlos-lopez",
+        "imagen": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "2 años",
+        "calificacion": "4.8"
       },
       { 
-        "id": "casa-granada",
-        "nombre": "Casa en Granada", 
+        "id": "vendedor-granada",
+        "nombre": "María Fernández", 
         "direccion": "Carrera 38 # 5-89, Barrio Granada, Cali", 
         "latlng": [3.4545, -76.5350], 
         "telefono": "+573104567890",
-        "url": "https://qrp2p.com/colombia/inmueble/casa-granada",
-        "imagen": "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=300&fit=crop",
-        "habitaciones": 4,
-        "banos": 3,
-        "metros": 220,
-        "precio": "$650,000,000 COP",
-        "mostrarArriendo": false
+        "url": "https://qrp2p.com/colombia/vendedor/maria-fernandez",
+        "imagen": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "1.5 años",
+        "calificacion": "4.9"
       },
       { 
-        "id": "apto-ciudad-jardin",
-        "nombre": "Apartamento en Ciudad Jardín", 
+        "id": "vendedor-ciudad-jardin",
+        "nombre": "Andrés Martínez", 
         "direccion": "Carrera 86 # 18-32, Ciudad Jardín, Cali", 
         "latlng": [3.3765, -76.5618], 
         "telefono": "+573108765432",
-        "url": "https://qrp2p.com/colombia/inmueble/apto-ciudad-jardin",
-        "imagen": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&h=300&fit=crop",
-        "habitaciones": 3,
-        "banos": 2,
-        "metros": 95,
-        "precio": "$320,000,000 COP",
-        "mostrarArriendo": false
+        "url": "https://qrp2p.com/colombia/vendedor/andres-martinez",
+        "imagen": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "3 años",
+        "calificacion": "5.0"
       },
       { 
-        "id": "casa-sur",
-        "nombre": "Casa en El Ingenio", 
+        "id": "vendedor-ingenio",
+        "nombre": "Laura Gómez", 
         "direccion": "Calle 16 # 100-45, Barrio El Ingenio, Cali", 
         "latlng": [3.3589, -76.5543], 
         "telefono": "+573102345679",
-        "url": "https://qrp2p.com/colombia/inmueble/casa-sur",
-        "imagen": "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400&h=300&fit=crop",
-        "habitaciones": 5,
-        "banos": 4,
-        "metros": 280,
-        "precio": "$780,000,000 COP",
-        "mostrarArriendo": false
+        "url": "https://qrp2p.com/colombia/vendedor/laura-gomez",
+        "imagen": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "2.5 años",
+        "calificacion": "4.7"
       },
       { 
-        "id": "apto-norte",
-        "nombre": "Apartamento en Santa Mónica", 
+        "id": "vendedor-santa-monica",
+        "nombre": "Javier Rodríguez", 
         "direccion": "Avenida 4N # 22-15, Santa Mónica, Cali", 
         "latlng": [3.4820, -76.5285], 
         "telefono": "+573104567891",
-        "url": "https://qrp2p.com/colombia/inmueble/apto-norte",
-        "imagen": "https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=400&h=300&fit=crop",
-        "habitaciones": 2,
-        "banos": 2,
-        "metros": 68,
-        "precio": "$195,000,000 COP",
-        "mostrarArriendo": false
+        "url": "https://qrp2p.com/colombia/vendedor/javier-rodriguez",
+        "imagen": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "4 años",
+        "calificacion": "4.9"
       },
       { 
-        "id": "casa-pance",
-        "nombre": "Casa Campestre en Pance", 
+        "id": "vendedor-pance",
+        "nombre": "Sofía Herrera", 
         "direccion": "Vía Pance Km 5, Cali", 
         "latlng": [3.3502, -76.5985], 
         "telefono": "+573108765433",
-        "url": "https://qrp2p.com/colombia/inmueble/casa-pance",
-        "imagen": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop",
-        "habitaciones": 4,
-        "banos": 3,
-        "metros": 350,
-        "precio": "$950,000,000 COP",
-        "mostrarArriendo": false
+        "url": "https://qrp2p.com/colombia/vendedor/sofia-herrera",
+        "imagen": "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "1 año",
+        "calificacion": "4.6"
       },
       { 
-        "id": "apto-chimney",
-        "nombre": "Apartamento en Chiminangos", 
+        "id": "vendedor-chiminangos",
+        "nombre": "Diego Castillo", 
         "direccion": "Carrera 45 # 8-12, Chiminangos, Cali", 
         "latlng": [3.4452, -76.5412], 
         "telefono": "+573102345680",
-        "url": "https://qrp2p.com/colombia/inmueble/apto-chimney",
-        "imagen": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop",
-        "habitaciones": 2,
-        "banos": 1,
-        "metros": 55,
-        "precio": "$165,000,000 COP",
-        "mostrarArriendo": false
+        "url": "https://qrp2p.com/colombia/vendedor/diego-castillo",
+        "imagen": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "2 años",
+        "calificacion": "4.8"
       },
       { 
-        "id": "casa-penon",
-        "nombre": "Casa en El Peñón", 
+        "id": "vendedor-penon",
+        "nombre": "Valentina Ríos", 
         "direccion": "Carrera 5 # 12-45, El Peñón, Cali", 
         "latlng": [3.4512, -76.5338], 
         "telefono": "+573104567892",
-        "url": "https://qrp2p.com/colombia/inmueble/casa-penon",
-        "imagen": "https://images.unsplash.com/photo-1574362848149-32796bb40cd2?w=400&h=300&fit=crop",
-        "habitaciones": 3,
-        "banos": 3,
-        "metros": 180,
-        "precio": "$520,000,000 COP",
-        "mostrarArriendo": false
+        "url": "https://qrp2p.com/colombia/vendedor/valentina-rios",
+        "imagen": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "3.5 años",
+        "calificacion": "5.0"
       }
     ];
 
@@ -539,9 +522,9 @@
       }, 5000);
     }
 
-    function abrirWhatsApp(telefono, nombre, direccion, habitaciones, banos, metros, precio) {
+    function abrirWhatsApp(telefono, nombre, direccion, tiempo_operando, calificacion) {
       const numeroLimpio = telefono.replace(/\D/g, '');
-      const mensaje = `Hola, me interesa obtener más información sobre el inmueble:\n\n💰 Nombre: ${nombre}\n📍 Dirección: ${direccion}\n🛏️ Habitaciones: ${habitaciones}\n🚽 Baños: ${banos}\n📐 Metros cuadrados: ${metros}\n💰 Precio: ${precio}\n\n¿Podría darme más detalles? ¡Gracias!`;
+      const mensaje = `Hola, me interesa contactar al vendedor verificado:\n\n⚡️ Nombre: ${nombre}\n📍 Dirección: ${direccion}\n⏱️ Tiempo operando: ${tiempo_operando}\n⭐️ Calificación: ${calificacion}\n\n¿Podría darme más información sobre sus servicios? ¡Gracias!`;
       window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
     }
 
@@ -549,7 +532,7 @@
       initializeMap();
       document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
       document.getElementById('registro-btn').addEventListener('click', function() {
-        window.open('https://qrp2p.com/vender-inmueble', '_blank');
+        window.open('https://qrp2p.com/registro-vendedor', '_blank');
       });
       document.getElementById('map-btn').addEventListener('click', switchToMapView);
       document.getElementById('satellite-btn').addEventListener('click', switchToSatelliteView);
@@ -590,47 +573,43 @@
         zoomToBoundsOnClick: true
       });
 
-      // Crear un ícono personalizado con el emoji 💰
-      const moneyIcon = L.divIcon({
-        className: 'money-marker',
-        html: '💰',
+      // Crear un ícono personalizado con el emoji ⚡️
+      const verifiedIcon = L.divIcon({
+        className: 'verified-marker',
+        html: '⚡️',
         iconSize: [32, 32],
         popupAnchor: [0, -16]
       });
 
-      INMUEBLES.forEach(inmueble => {
-        const marcador = L.marker(inmueble.latlng, {
-          icon: moneyIcon
+      VENDEDORES.forEach(vendedor => {
+        const marcador = L.marker(vendedor.latlng, {
+          icon: verifiedIcon
         }).bindPopup(`
           <div style="min-width:280px; max-width:320px;">
-            <div class="propiedad-imagen" style="background-image: url('${inmueble.imagen}'); background-size: cover; background-position: center;"></div>
-            <h3 style="margin:5px 0;color:#0066cc">💰 ${inmueble.nombre}</h3>
-            <p style="margin:5px 0;font-size:0.85rem">📍 ${inmueble.direccion}</p>
+            <div class="vendedor-imagen" style="background-image: url('${vendedor.imagen}'); background-size: cover; background-position: center;"></div>
+            <h3 style="margin:5px 0;color:#0066cc">⚡️ ${vendedor.nombre}</h3>
+            <p style="margin:5px 0;font-size:0.85rem">📍 ${vendedor.direccion}</p>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin:8px 0;">
-              <div class="propiedad-detalle"><strong>🛏️ Habitaciones:</strong> ${inmueble.habitaciones}</div>
-              <div class="propiedad-detalle"><strong>🚽 Baños:</strong> ${inmueble.banos}</div>
-              <div class="propiedad-detalle"><strong>📐 Metros²:</strong> ${inmueble.metros} m²</div>
-              <div class="propiedad-detalle"><strong>📞 Teléfono:</strong> ${inmueble.telefono}</div>
-            </div>
-            <div style="margin:5px 0;">
-              <div class="propiedad-detalle"><strong>💰 Venta:</strong> ${inmueble.precio}</div>
-              ${inmueble.mostrarArriendo && inmueble.precioArriendo ? `<div class="propiedad-detalle"><strong>🔑 Arriendo:</strong> ${inmueble.precioArriendo}</div>` : ''}
+              <div class="vendedor-detalle"><strong>⭐️ Calificación:</strong> ${vendedor.calificacion}/5.0</div>
+              <div class="vendedor-detalle"><strong>⏱️ Operando:</strong> ${vendedor.tiempo_operando}</div>
+              <div class="vendedor-detalle"><strong>✅ Estado:</strong> Verificado</div>
+              <div class="vendedor-detalle"><strong>📞 Teléfono:</strong> ${vendedor.telefono}</div>
             </div>
             <div class="popup-buttons">
               <div class="popup-button-row">
-                <button onclick="abrirWhatsApp('${inmueble.telefono}', '${inmueble.nombre}', '${inmueble.direccion}', ${inmueble.habitaciones}, ${inmueble.banos}, ${inmueble.metros}, '${inmueble.precio}')" style="background:#25D366;color:white;border:none;padding:10px;border-radius:8px;cursor:pointer;width:100%;font-weight:bold;">
-                  💬 WhatsApp - Más información
+                <button onclick="abrirWhatsApp('${vendedor.telefono}', '${vendedor.nombre}', '${vendedor.direccion}', '${vendedor.tiempo_operando}', '${vendedor.calificacion}')" style="background:#25D366;color:white;border:none;padding:10px;border-radius:8px;cursor:pointer;width:100%;font-weight:bold;">
+                  💬 WhatsApp - Contactar vendedor
                 </button>
               </div>
               <div class="popup-button-row" style="gap:8px;margin-top:5px;">
-                <button onclick="window.open('${inmueble.url}', '_blank')" style="background:#000000;color:white;border:none;padding:8px;border-radius:8px;cursor:pointer;flex:1;">🔍 Ver detalles del inmueble</button>
-                <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${inmueble.latlng[0]},${inmueble.latlng[1]}', '_blank')" style="background:#0066cc;color:white;border:none;padding:8px;border-radius:8px;cursor:pointer;flex:1;">🗺️ Cómo llegar</button>
+                <button onclick="window.open('${vendedor.url}', '_blank')" style="background:#000000;color:white;border:none;padding:8px;border-radius:8px;cursor:pointer;flex:1;">🔍 Ver página del vendedor</button>
+                <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${vendedor.latlng[0]},${vendedor.latlng[1]}', '_blank')" style="background:#0066cc;color:white;border:none;padding:8px;border-radius:8px;cursor:pointer;flex:1;">🗺️ Cómo llegar</button>
               </div>
             </div>
           </div>
         `);
-        marcador.datosInmueble = inmueble;
-        marcador.datosBusqueda = `${inmueble.nombre} ${inmueble.direccion}`.toLowerCase();
+        marcador.datosVendedor = vendedor;
+        marcador.datosBusqueda = `${vendedor.nombre} ${vendedor.direccion}`.toLowerCase();
         marcadoresOriginales.push(marcador);
       });
 
@@ -668,12 +647,12 @@
         sugerenciasContainer.style.display = 'none';
         return;
       }
-      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">🔍 Buscando inmuebles en Cali... <span class="cargando"></span></div>';
+      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">🔍 Buscando vendedores verificados en Cali... <span class="cargando"></span></div>';
       sugerenciasContainer.style.display = 'block';
-      buscadorTimeout = setTimeout(() => buscarInmuebles(termino), 300);
+      buscadorTimeout = setTimeout(() => buscarVendedores(termino), 300);
     }
 
-    function buscarInmuebles(consulta) {
+    function buscarVendedores(consulta) {
       const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
       const termino = consulta.toLowerCase();
       const resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(termino));
@@ -681,35 +660,35 @@
       if (resultados.length > 0) {
         sugerenciasContainer.innerHTML = '';
         resultados.forEach(marcador => {
-          const inm = marcador.datosInmueble;
+          const vendedor = marcador.datosVendedor;
           const item = document.createElement('div');
           item.className = 'sugerencia-item';
           item.innerHTML = `
             <div class="sugerencia-texto">
-              <strong>💰 ${inm.nombre}</strong><br>
-              <small>📍 ${inm.direccion}</small><br>
-              <small>🛏️ ${inm.habitaciones} hab | 🚽 ${inm.banos} baños | 📐 ${inm.metros} m²</small>
+              <strong>⚡️ ${vendedor.nombre}</strong><br>
+              <small>📍 ${vendedor.direccion}</small><br>
+              <small>⭐️ ${vendedor.calificacion} | ⏱️ ${vendedor.tiempo_operando}</small>
             </div>
-            <button class="sugerencia-boton" data-id="${inm.id}">Ver inmueble</button>
+            <button class="sugerencia-boton" data-id="${vendedor.id}">Ver vendedor</button>
           `;
           const boton = item.querySelector('.sugerencia-boton');
           boton.addEventListener('click', (e) => {
             e.stopPropagation();
             mapa.setView(marcador.getLatLng(), 16);
             marcador.openPopup();
-            document.getElementById('buscador').value = inm.nombre;
+            document.getElementById('buscador').value = vendedor.nombre;
             sugerenciasContainer.style.display = 'none';
           });
           item.addEventListener('click', () => {
             mapa.setView(marcador.getLatLng(), 16);
             marcador.openPopup();
-            document.getElementById('buscador').value = inm.nombre;
+            document.getElementById('buscador').value = vendedor.nombre;
             sugerenciasContainer.style.display = 'none';
           });
           sugerenciasContainer.appendChild(item);
         });
       } else {
-        sugerenciasContainer.innerHTML = '<div class="sugerencia-item">❌ No se encontraron inmuebles para: ' + consulta + '<br><small>📍 Prueba con: Estadio, Granada, Ciudad Jardín, Pance, Norte</small></div>';
+        sugerenciasContainer.innerHTML = '<div class="sugerencia-item">❌ No se encontraron vendedores verificados para: ' + consulta + '<br><small>📍 Prueba con: Estadio, Granada, Ciudad Jardín, Pance, Norte</small></div>';
       }
     }
 
@@ -717,7 +696,7 @@
       if (e.key === 'Enter') {
         e.preventDefault();
         const termino = document.getElementById('buscador').value.trim();
-        if (termino) buscarInmuebles(termino);
+        if (termino) buscarVendedores(termino);
       }
     }
 
@@ -746,7 +725,7 @@
             if (estaEnCali(latitude, longitude)) {
               userMarker = L.marker([latitude, longitude], {
                 icon: L.divIcon({
-                  className: 'money-marker',
+                  className: 'verified-marker',
                   html: '📍',
                   iconSize: [24, 24]
                 })
@@ -758,7 +737,7 @@
               mapa.setView([3.4516, -76.5320], 13);
               userMarker = L.marker([latitude, longitude], {
                 icon: L.divIcon({
-                  className: 'money-marker',
+                  className: 'verified-marker',
                   html: '⚠️',
                   iconSize: [24, 24]
                 })
