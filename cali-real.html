@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>QRP2P Real Estate - Inmuebles en Cali</title>
+  <style>
+    :root {
+      --primary-color: #1a1a1a;
+      --secondary-color: #333;
+      --accent-color: #0066cc;
+      --text-color: #333;
+      --light-text: #fff;
+      --bg-light: #f8f8f8;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    body { 
+      font-family: 'Roboto', sans-serif; 
+      color: var(--text-color); 
+      line-height: 1.6; 
+      touch-action: manipulation;
+      overflow-x: hidden;
+    }
+    
+    #contenedor-mapa { 
+      height: 100vh; 
+      display: flex; 
+      flex-direction: column; 
+      position: relative;
+    }
+    
+    #barra-superior { 
+      display: flex; 
+      gap: 0.8rem; 
+      padding: 0.8rem; 
+      background: var(--bg-light); 
+      width: 100%;
+      z-index: 1000;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .contenedor-buscador {
+      position: relative;
+      flex: 1;
+      max-width: 500px;
+    }
+    
+    #buscador { 
+      width: 100%;
+      padding: 0.6rem 1.2rem; 
+      border: 1px solid #ddd; 
+      border-radius: 24px; 
+      appearance: none; 
+      font-size: 16px;
+      transition: var(--transition);
+    }
+    
+    #buscador:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+    }
+    
+    .btn { 
+      background: #000000;
+      color: #ffffff;
+      padding: 0.6rem 1.2rem; 
+      border-radius: 24px; 
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      border: 1px solid #333;
+      font-family: inherit;
+    }
+    
+    .btn:hover {
+      background: #333333;
+      transform: translateY(-1px);
+    }
+    
+    .btn-centrar {
+      background-color: #000000;
+      color: #ffffff;
+    }
+    
+    .btn-registro {
+      background-color: #000000;
+      color: #ffffff;
+    }
+    
+    .botones-secundarios {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: center;
+    }
+    
+    #mapa { 
+      flex: 1; 
+      background: #f0f0f0; 
+      width: 100%;
+    }
+    
+    .notificacion-alerta {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background: #ff6b6b;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      z-index: 2000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideInRight 0.3s ease;
+      max-width: 280px;
+    }
+    
+    .notificacion-alerta button {
+      background: white;
+      color: #ff6b6b;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.75rem;
+    }
+    
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    .cluster-marcadores { 
+      background: rgba(40,40,40,0.7); 
+      border-radius: 50%; 
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    .popup-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    
+    .popup-button-row {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+    }
+    
+    .propiedad-imagen {
+      width: 100%;
+      height: 150px;
+      background-size: cover;
+      background-position: center;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    
+    .propiedad-detalle {
+      font-size: 0.85rem;
+      margin: 5px 0;
+    }
+    
+    .propiedad-detalle strong {
+      color: #0066cc;
+    }
+    
+    .sugerencias-busqueda {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+    
+    .sugerencia-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .sugerencia-item:hover {
+      background-color: #f5f5f5;
+    }
+    
+    .sugerencia-texto {
+      flex: 1;
+    }
+    
+    .sugerencia-boton {
+      margin-left: 10px;
+      padding: 5px 10px;
+      background-color: #000000;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    
+    .cargando {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(0,0,0,.3);
+      border-radius: 50%;
+      border-top-color: #000;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    .gm-style .gm-style-iw-c {
+      border-radius: 8px;
+      padding: 10px;
+      max-width: 320px !important;
+    }
+    
+    .gm-style .gm-style-iw-d {
+      overflow: auto !important;
+      max-height: 400px !important;
+    }
+    
+    .map-type-selector {
+      position: absolute;
+      bottom: 20px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      display: flex;
+      gap: 10px;
+    }
+    
+    .map-type-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #f1f1f1;
+      transition: background 0.3s;
+    }
+    
+    .map-type-btn.active {
+      background: #0066cc;
+      color: white;
+    }
+    
+    /* Estilo personalizado para el marcador con emoji */
+    .money-marker {
+      background: transparent;
+      border: none;
+      font-size: 28px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 768px) { 
+      #barra-superior { 
+        flex-direction: column; 
+        gap: 0.6rem;
+      }
+      
+      .botones-secundarios {
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      
+      .popup-button-row {
+        flex-direction: column;
+      }
+      
+      .sugerencia-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .sugerencia-boton {
+        margin-left: 0;
+        margin-top: 5px;
+        align-self: flex-end;
+      }
+      
+      .map-type-selector {
+        bottom: 10px;
+        left: 5px;
+        flex-direction: column;
+        gap: 5px;
+      }
+      
+      .notificacion-alerta {
+        bottom: 70px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        font-size: 0.75rem;
+      }
+      
+      .money-marker {
+        font-size: 24px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+</head>
+<body>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="contenedor-buscador">
+        <input type="search" id="buscador" placeholder="Buscar inmueble en Cali..." enterkeyhint="search">
+        <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+      </div>
+      <div class="botones-secundarios">
+        <button class="btn btn-centrar" id="centrar-btn">Centrar mi ubicación</button>
+        <button class="btn btn-registro" id="registro-btn">VENDER INMUEBLE</button>
+      </div>
+    </div>
+    <div id="mapa"></div>
+    <div class="map-type-selector">
+      <button class="map-type-btn active" id="map-btn">Mapa</button>
+      <button class="map-type-btn" id="satellite-btn">Satélite</button>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    // Variables globales
+    let mapa;
+    let userMarker;
+    let marcadoresOriginales = [];
+    let buscadorTimeout;
+    let googleMapsLayer;
+    let googleSatelliteLayer;
+    let currentLayer;
+    let notificacionActual = null;
+
+    // DATOS DE INMUEBLES EN CALI
+    // mostrarArriendo: false = solo muestra venta, true = muestra ambas opciones
+    const INMUEBLES = [
+      { 
+        "id": "aparta-estadio-1",
+        "nombre": "Apartamento en El Estadio", 
+        "direccion": "Calle 44 # 28-50, Barrio El Estadio, Cali", 
+        "latlng": [3.4285, -76.5489], 
+        "telefono": "+573102345678",
+        "url": "https://qrp2p.com/colombia/inmueble/aparta-estadio-1",
+        "imagen": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop",
+        "habitaciones": 3,
+        "banos": 2,
+        "metros": 85,
+        "precio": "$280,000,000 COP",
+        "mostrarArriendo": false
+      },
+      { 
+        "id": "casa-granada",
+        "nombre": "Casa en Granada", 
+        "direccion": "Carrera 38 # 5-89, Barrio Granada, Cali", 
+        "latlng": [3.4545, -76.5350], 
+        "telefono": "+573104567890",
+        "url": "https://qrp2p.com/colombia/inmueble/casa-granada",
+        "imagen": "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=300&fit=crop",
+        "habitaciones": 4,
+        "banos": 3,
+        "metros": 220,
+        "precio": "$650,000,000 COP",
+        "mostrarArriendo": false
+      },
+      { 
+        "id": "apto-ciudad-jardin",
+        "nombre": "Apartamento en Ciudad Jardín", 
+        "direccion": "Carrera 86 # 18-32, Ciudad Jardín, Cali", 
+        "latlng": [3.3765, -76.5618], 
+        "telefono": "+573108765432",
+        "url": "https://qrp2p.com/colombia/inmueble/apto-ciudad-jardin",
+        "imagen": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&h=300&fit=crop",
+        "habitaciones": 3,
+        "banos": 2,
+        "metros": 95,
+        "precio": "$320,000,000 COP",
+        "mostrarArriendo": false
+      },
+      { 
+        "id": "casa-sur",
+        "nombre": "Casa en El Ingenio", 
+        "direccion": "Calle 16 # 100-45, Barrio El Ingenio, Cali", 
+        "latlng": [3.3589, -76.5543], 
+        "telefono": "+573102345679",
+        "url": "https://qrp2p.com/colombia/inmueble/casa-sur",
+        "imagen": "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400&h=300&fit=crop",
+        "habitaciones": 5,
+        "banos": 4,
+        "metros": 280,
+        "precio": "$780,000,000 COP",
+        "mostrarArriendo": false
+      },
+      { 
+        "id": "apto-norte",
+        "nombre": "Apartamento en Santa Mónica", 
+        "direccion": "Avenida 4N # 22-15, Santa Mónica, Cali", 
+        "latlng": [3.4820, -76.5285], 
+        "telefono": "+573104567891",
+        "url": "https://qrp2p.com/colombia/inmueble/apto-norte",
+        "imagen": "https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=400&h=300&fit=crop",
+        "habitaciones": 2,
+        "banos": 2,
+        "metros": 68,
+        "precio": "$195,000,000 COP",
+        "mostrarArriendo": false
+      },
+      { 
+        "id": "casa-pance",
+        "nombre": "Casa Campestre en Pance", 
+        "direccion": "Vía Pance Km 5, Cali", 
+        "latlng": [3.3502, -76.5985], 
+        "telefono": "+573108765433",
+        "url": "https://qrp2p.com/colombia/inmueble/casa-pance",
+        "imagen": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop",
+        "habitaciones": 4,
+        "banos": 3,
+        "metros": 350,
+        "precio": "$950,000,000 COP",
+        "mostrarArriendo": false
+      },
+      { 
+        "id": "apto-chimney",
+        "nombre": "Apartamento en Chiminangos", 
+        "direccion": "Carrera 45 # 8-12, Chiminangos, Cali", 
+        "latlng": [3.4452, -76.5412], 
+        "telefono": "+573102345680",
+        "url": "https://qrp2p.com/colombia/inmueble/apto-chimney",
+        "imagen": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop",
+        "habitaciones": 2,
+        "banos": 1,
+        "metros": 55,
+        "precio": "$165,000,000 COP",
+        "mostrarArriendo": false
+      },
+      { 
+        "id": "casa-penon",
+        "nombre": "Casa en El Peñón", 
+        "direccion": "Carrera 5 # 12-45, El Peñón, Cali", 
+        "latlng": [3.4512, -76.5338], 
+        "telefono": "+573104567892",
+        "url": "https://qrp2p.com/colombia/inmueble/casa-penon",
+        "imagen": "https://images.unsplash.com/photo-1574362848149-32796bb40cd2?w=400&h=300&fit=crop",
+        "habitaciones": 3,
+        "banos": 3,
+        "metros": 180,
+        "precio": "$520,000,000 COP",
+        "mostrarArriendo": false
+      }
+    ];
+
+    // Límites de Cali
+    const LIMITES_CALI = {
+      minLat: 3.3000,
+      maxLat: 3.5500,
+      minLng: -76.6500,
+      maxLng: -76.4800
+    };
+
+    function estaEnCali(lat, lng) {
+      return (lat >= LIMITES_CALI.minLat && lat <= LIMITES_CALI.maxLat &&
+              lng >= LIMITES_CALI.minLng && lng <= LIMITES_CALI.maxLng);
+    }
+
+    function mostrarNotificacion(mensaje, tipo = 'warning') {
+      if (notificacionActual) {
+        notificacionActual.remove();
+      }
+      const notificacion = document.createElement('div');
+      notificacion.className = 'notificacion-alerta';
+      notificacion.style.background = tipo === 'warning' ? '#ff6b6b' : '#4caf50';
+      notificacion.innerHTML = `
+        <span>${mensaje}</span>
+        <button onclick="this.parentElement.remove()">✕</button>
+      `;
+      document.body.appendChild(notificacion);
+      notificacionActual = notificacion;
+      setTimeout(() => {
+        if (notificacionActual === notificacion) {
+          notificacion.remove();
+          notificacionActual = null;
+        }
+      }, 5000);
+    }
+
+    function abrirWhatsApp(telefono, nombre, direccion, habitaciones, banos, metros, precio) {
+      const numeroLimpio = telefono.replace(/\D/g, '');
+      const mensaje = `Hola, me interesa obtener más información sobre el inmueble:\n\n💰 Nombre: ${nombre}\n📍 Dirección: ${direccion}\n🛏️ Habitaciones: ${habitaciones}\n🚽 Baños: ${banos}\n📐 Metros cuadrados: ${metros}\n💰 Precio: ${precio}\n\n¿Podría darme más detalles? ¡Gracias!`;
+      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeMap();
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
+      document.getElementById('registro-btn').addEventListener('click', function() {
+        window.open('https://qrp2p.com/vender-inmueble', '_blank');
+      });
+      document.getElementById('map-btn').addEventListener('click', switchToMapView);
+      document.getElementById('satellite-btn').addEventListener('click', switchToSatelliteView);
+      
+      const searchInput = document.getElementById('buscador');
+      searchInput.addEventListener('input', handleSearchInput);
+      searchInput.addEventListener('keydown', handleSearchKeydown);
+      
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.contenedor-buscador')) {
+          document.getElementById('sugerencias-busqueda').style.display = 'none';
+        }
+      });
+    });
+
+    function initializeMap() {
+      mapa = L.map('mapa', { center: [3.4516, -76.5320], zoom: 13, zoomControl: false });
+      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+
+      googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+      });
+      googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+      });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      setTimeout(() => mapa.invalidateSize(), 100);
+
+      const clusters = L.markerClusterGroup({
+        iconCreateFunction: cluster => L.divIcon({
+          html: `<div>${cluster.getChildCount()}</div>`,
+          className: 'cluster-marcadores',
+          iconSize: [40, 40]
+        }),
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true
+      });
+
+      // Crear un ícono personalizado con el emoji 💰
+      const moneyIcon = L.divIcon({
+        className: 'money-marker',
+        html: '💰',
+        iconSize: [32, 32],
+        popupAnchor: [0, -16]
+      });
+
+      INMUEBLES.forEach(inmueble => {
+        const marcador = L.marker(inmueble.latlng, {
+          icon: moneyIcon
+        }).bindPopup(`
+          <div style="min-width:280px; max-width:320px;">
+            <div class="propiedad-imagen" style="background-image: url('${inmueble.imagen}'); background-size: cover; background-position: center;"></div>
+            <h3 style="margin:5px 0;color:#0066cc">💰 ${inmueble.nombre}</h3>
+            <p style="margin:5px 0;font-size:0.85rem">📍 ${inmueble.direccion}</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin:8px 0;">
+              <div class="propiedad-detalle"><strong>🛏️ Habitaciones:</strong> ${inmueble.habitaciones}</div>
+              <div class="propiedad-detalle"><strong>🚽 Baños:</strong> ${inmueble.banos}</div>
+              <div class="propiedad-detalle"><strong>📐 Metros²:</strong> ${inmueble.metros} m²</div>
+              <div class="propiedad-detalle"><strong>📞 Teléfono:</strong> ${inmueble.telefono}</div>
+            </div>
+            <div style="margin:5px 0;">
+              <div class="propiedad-detalle"><strong>💰 Venta:</strong> ${inmueble.precio}</div>
+              ${inmueble.mostrarArriendo && inmueble.precioArriendo ? `<div class="propiedad-detalle"><strong>🔑 Arriendo:</strong> ${inmueble.precioArriendo}</div>` : ''}
+            </div>
+            <div class="popup-buttons">
+              <div class="popup-button-row">
+                <button onclick="abrirWhatsApp('${inmueble.telefono}', '${inmueble.nombre}', '${inmueble.direccion}', ${inmueble.habitaciones}, ${inmueble.banos}, ${inmueble.metros}, '${inmueble.precio}')" style="background:#25D366;color:white;border:none;padding:10px;border-radius:8px;cursor:pointer;width:100%;font-weight:bold;">
+                  💬 WhatsApp - Más información
+                </button>
+              </div>
+              <div class="popup-button-row" style="gap:8px;margin-top:5px;">
+                <button onclick="window.open('${inmueble.url}', '_blank')" style="background:#000000;color:white;border:none;padding:8px;border-radius:8px;cursor:pointer;flex:1;">🔍 Ver detalles del inmueble</button>
+                <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${inmueble.latlng[0]},${inmueble.latlng[1]}', '_blank')" style="background:#0066cc;color:white;border:none;padding:8px;border-radius:8px;cursor:pointer;flex:1;">🗺️ Cómo llegar</button>
+              </div>
+            </div>
+          </div>
+        `);
+        marcador.datosInmueble = inmueble;
+        marcador.datosBusqueda = `${inmueble.nombre} ${inmueble.direccion}`.toLowerCase();
+        marcadoresOriginales.push(marcador);
+      });
+
+      clusters.addLayers(marcadoresOriginales);
+      mapa.addLayer(clusters);
+      
+      if(marcadoresOriginales.length > 0) {
+        mapa.fitBounds(clusters.getBounds().pad(0.3));
+      }
+      
+      obtenerUbicacionUsuario();
+    }
+
+    function switchToMapView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      document.getElementById('map-btn').classList.add('active');
+      document.getElementById('satellite-btn').classList.remove('active');
+    }
+
+    function switchToSatelliteView() {
+      mapa.removeLayer(currentLayer);
+      currentLayer = googleSatelliteLayer;
+      currentLayer.addTo(mapa);
+      document.getElementById('satellite-btn').classList.add('active');
+      document.getElementById('map-btn').classList.remove('active');
+    }
+
+    function handleSearchInput(e) {
+      clearTimeout(buscadorTimeout);
+      const termino = e.target.value.trim();
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      if (termino.length < 2) {
+        sugerenciasContainer.style.display = 'none';
+        return;
+      }
+      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">🔍 Buscando inmuebles en Cali... <span class="cargando"></span></div>';
+      sugerenciasContainer.style.display = 'block';
+      buscadorTimeout = setTimeout(() => buscarInmuebles(termino), 300);
+    }
+
+    function buscarInmuebles(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      const termino = consulta.toLowerCase();
+      const resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(termino));
+      
+      if (resultados.length > 0) {
+        sugerenciasContainer.innerHTML = '';
+        resultados.forEach(marcador => {
+          const inm = marcador.datosInmueble;
+          const item = document.createElement('div');
+          item.className = 'sugerencia-item';
+          item.innerHTML = `
+            <div class="sugerencia-texto">
+              <strong>💰 ${inm.nombre}</strong><br>
+              <small>📍 ${inm.direccion}</small><br>
+              <small>🛏️ ${inm.habitaciones} hab | 🚽 ${inm.banos} baños | 📐 ${inm.metros} m²</small>
+            </div>
+            <button class="sugerencia-boton" data-id="${inm.id}">Ver inmueble</button>
+          `;
+          const boton = item.querySelector('.sugerencia-boton');
+          boton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            mapa.setView(marcador.getLatLng(), 16);
+            marcador.openPopup();
+            document.getElementById('buscador').value = inm.nombre;
+            sugerenciasContainer.style.display = 'none';
+          });
+          item.addEventListener('click', () => {
+            mapa.setView(marcador.getLatLng(), 16);
+            marcador.openPopup();
+            document.getElementById('buscador').value = inm.nombre;
+            sugerenciasContainer.style.display = 'none';
+          });
+          sugerenciasContainer.appendChild(item);
+        });
+      } else {
+        sugerenciasContainer.innerHTML = '<div class="sugerencia-item">❌ No se encontraron inmuebles para: ' + consulta + '<br><small>📍 Prueba con: Estadio, Granada, Ciudad Jardín, Pance, Norte</small></div>';
+      }
+    }
+
+    function handleSearchKeydown(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const termino = document.getElementById('buscador').value.trim();
+        if (termino) buscarInmuebles(termino);
+      }
+    }
+
+    function centrarMapa() {
+      if (userMarker) {
+        const lat = userMarker.getLatLng().lat;
+        const lng = userMarker.getLatLng().lng;
+        if (estaEnCali(lat, lng)) {
+          mapa.setView(userMarker.getLatLng(), 15);
+          userMarker.openPopup();
+        } else {
+          mostrarNotificacion("Estás fuera del área de Cali. Mostrando centro de la ciudad.");
+          mapa.setView([3.4516, -76.5320], 13);
+        }
+      } else {
+        obtenerUbicacionUsuario();
+      }
+    }
+
+    function obtenerUbicacionUsuario() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            if (userMarker) mapa.removeLayer(userMarker);
+            if (estaEnCali(latitude, longitude)) {
+              userMarker = L.marker([latitude, longitude], {
+                icon: L.divIcon({
+                  className: 'money-marker',
+                  html: '📍',
+                  iconSize: [24, 24]
+                })
+              }).addTo(mapa).bindPopup('📍 Tu ubicación en Cali');
+              mapa.setView([latitude, longitude], 14);
+              userMarker.openPopup();
+            } else {
+              mostrarNotificacion("Servicio exclusivo para Cali. Estás fuera del área de cobertura.");
+              mapa.setView([3.4516, -76.5320], 13);
+              userMarker = L.marker([latitude, longitude], {
+                icon: L.divIcon({
+                  className: 'money-marker',
+                  html: '⚠️',
+                  iconSize: [24, 24]
+                })
+              }).addTo(mapa).bindPopup('⚠️ Fuera de Cali');
+            }
+          },
+          (error) => {
+            console.log(`Error: ${error.message}`);
+            mapa.setView([3.4516, -76.5320], 13);
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        mapa.setView([3.4516, -76.5320], 13);
+      }
+    }
+  </script>
+</body>
+</html>
