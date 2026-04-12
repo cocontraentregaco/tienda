@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contraentrega Tunja, Colombia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>QRP2P - Vendedores Verificados en Tunja (Boyacá)</title>
   <style>
     :root {
       --primary-color: #1a1a1a;
@@ -45,10 +45,18 @@
       background: var(--bg-light); 
       width: 100%;
       z-index: 1000;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .contenedor-buscador {
+      position: relative;
+      flex: 1;
+      max-width: 500px;
     }
     
     #buscador { 
-      flex: 1; 
+      width: 100%;
       padding: 0.6rem 1.2rem; 
       border: 1px solid #ddd; 
       border-radius: 24px; 
@@ -64,8 +72,8 @@
     }
     
     .btn { 
-      background: var(--primary-color); 
-      color: var(--light-text); 
+      background: #000000;
+      color: #ffffff;
       padding: 0.6rem 1.2rem; 
       border-radius: 24px; 
       text-decoration: none;
@@ -78,37 +86,76 @@
       align-items: center;
       justify-content: center;
       gap: 5px;
+      border: 1px solid #333;
+      font-family: inherit;
     }
     
     .btn:hover {
-      background: var(--secondary-color);
+      background: #333333;
       transform: translateY(-1px);
     }
     
     .btn-centrar {
-      background-color: #0066cc;
+      background-color: #000000;
+      color: #ffffff;
     }
     
-    .btn-ruta {
-      background-color: #9b59b6;
+    .btn-registro {
+      background-color: #000000;
+      color: #ffffff;
     }
     
-    .btn-info {
-      background-color: #3498db;
-    }
-    
-    .btn-whatsapp {
-      background-color: #25D366;
-    }
-    
-    .btn-solicitar {
-      background-color: #e74c3c;
+    .botones-secundarios {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: center;
     }
     
     #mapa { 
       flex: 1; 
       background: #f0f0f0; 
       width: 100%;
+    }
+    
+    .notificacion-alerta {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background: #ff6b6b;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      z-index: 2000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideInRight 0.3s ease;
+      max-width: 280px;
+    }
+    
+    .notificacion-alerta button {
+      background: white;
+      color: #ff6b6b;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.75rem;
+    }
+    
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
     
     .cluster-marcadores { 
@@ -121,25 +168,37 @@
       font-weight: bold;
     }
     
-    .whatsapp-icon {
-      width: 16px;
-      height: 16px;
-      filter: invert(1);
-    }
-
     .popup-buttons {
       display: flex;
       flex-direction: column;
       gap: 8px;
       margin-top: 10px;
     }
-
+    
     .popup-button-row {
       display: flex;
       gap: 8px;
       justify-content: space-between;
     }
-
+    
+    .vendedor-imagen {
+      width: 100%;
+      height: 150px;
+      background-size: cover;
+      background-position: center;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    
+    .vendedor-detalle {
+      font-size: 0.85rem;
+      margin: 5px 0;
+    }
+    
+    .vendedor-detalle strong {
+      color: #0066cc;
+    }
+    
     .sugerencias-busqueda {
       position: absolute;
       top: 100%;
@@ -153,7 +212,7 @@
       overflow-y: auto;
       display: none;
     }
-
+    
     .sugerencia-item {
       padding: 10px 15px;
       cursor: pointer;
@@ -162,55 +221,47 @@
       justify-content: space-between;
       align-items: center;
     }
-
+    
     .sugerencia-item:hover {
       background-color: #f5f5f5;
     }
-
+    
     .sugerencia-texto {
       flex: 1;
     }
-
+    
     .sugerencia-boton {
       margin-left: 10px;
       padding: 5px 10px;
-      background-color: #9b59b6;
+      background-color: #000000;
       color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
       font-size: 12px;
     }
-
-    .contenedor-buscador {
-      position: relative;
-      flex: 1;
-    }
-
+    
     .cargando {
       display: inline-block;
       width: 20px;
       height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
+      border: 3px solid rgba(0,0,0,.3);
       border-radius: 50%;
-      border-top-color: #fff;
+      border-top-color: #000;
       animation: spin 1s ease-in-out infinite;
     }
-
+    
     .gm-style .gm-style-iw-c {
       border-radius: 8px;
       padding: 10px;
+      max-width: 320px !important;
     }
-
+    
     .gm-style .gm-style-iw-d {
       overflow: auto !important;
+      max-height: 400px !important;
     }
-
-    .gm-ui-hover-effect {
-      top: 8px !important;
-      right: 8px !important;
-    }
-
+    
     .map-type-selector {
       position: absolute;
       bottom: 20px;
@@ -223,7 +274,7 @@
       display: flex;
       gap: 10px;
     }
-
+    
     .map-type-btn {
       padding: 6px 12px;
       border: none;
@@ -233,42 +284,71 @@
       background: #f1f1f1;
       transition: background 0.3s;
     }
-
+    
     .map-type-btn.active {
       background: #0066cc;
       color: white;
     }
-
+    
+    /* Estilo personalizado para el marcador con emoji */
+    .verified-marker {
+      background: transparent;
+      border: none;
+      font-size: 28px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
-
+    
     @media (max-width: 768px) { 
       #barra-superior { 
         flex-direction: column; 
         gap: 0.6rem;
       }
       
+      .botones-secundarios {
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      
       .popup-button-row {
         flex-direction: column;
       }
-
+      
       .sugerencia-item {
         flex-direction: column;
         align-items: flex-start;
       }
-
+      
       .sugerencia-boton {
         margin-left: 0;
         margin-top: 5px;
         align-self: flex-end;
       }
-
+      
       .map-type-selector {
         bottom: 10px;
         left: 5px;
         flex-direction: column;
         gap: 5px;
+      }
+      
+      .notificacion-alerta {
+        bottom: 70px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        font-size: 0.75rem;
+      }
+      
+      .verified-marker {
+        font-size: 24px;
       }
     }
   </style>
@@ -280,13 +360,13 @@
   <div id="contenedor-mapa">
     <div id="barra-superior">
       <div class="contenedor-buscador">
-        <input type="search" id="buscador" placeholder="Buscar Afiliados en Tunja…" enterkeyhint="search">
+        <input type="search" id="buscador" placeholder="Buscar vendedor verificado en Tunja (Boyacá)..." enterkeyhint="search">
         <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
       </div>
-      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://tunja.qrcontraentrega.com/afiliacion', '_blank')">AFILIARSE</button>
-      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://tunja.qrcontraentrega.com/solicitar-envio', '_blank')">SOLICITAR ENVÍO</button>
-      <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
-      <button class="btn btn-marketplace" id="marketplace-btn" onclick="window.open('https://tunja.qrcontraentrega.com', '_blank')">MARKETPLACE</button>
+      <div class="botones-secundarios">
+        <button class="btn btn-centrar" id="centrar-btn">Centrar mi ubicación</button>
+        <button class="btn btn-registro" id="registro-btn">📝 Registrarse como vendedor</button>
+      </div>
     </div>
     <div id="mapa"></div>
     <div class="map-type-selector">
@@ -302,71 +382,165 @@
     let mapa;
     let userMarker;
     let marcadoresOriginales = [];
-    let destinoMarker = null;
     let buscadorTimeout;
     let googleMapsLayer;
     let googleSatelliteLayer;
     let currentLayer;
+    let notificacionActual = null;
 
-    // Datos de ubicaciones en Tunja (solo socios)
-    const UBICACIONES = [
+    // DATOS DE VENDEDORES VERIFICADOS QRP2P EN TUNJA (BOYACÁ)
+    const VENDEDORES = [
       { 
-        "id": "nutriciontunja",
-        "nombre": "Nutrición Tunja", 
-        "direccion": "Cl. 19 #10-45, Tunja", 
-        "latlng": [5.5353, -73.3677], 
-        "url": "https://nutriciontunja.qrcontraentrega.com/",
-        "telefono": "+573001234567",
-        "horario": "L - V 08:00 a 18:00",
-        "servicios": "Productos nutricionales y suplementos",
-        "tipo": "socio"
+        "id": "vendedor-centro",
+        "nombre": "Carlos López", 
+        "direccion": "Carrera 9 # 15-30, Centro, Tunja", 
+        "latlng": [5.5323, -73.3614], 
+        "telefono": "+573102345678",
+        "url": "https://qrp2p.com/colombia/vendedor/carlos-lopez",
+        "imagen": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "2 años",
+        "calificacion": "4.8"
       },
       { 
-        "id": "bienestartunja",
-        "nombre": "Centro de Bienestar", 
-        "direccion": "Cra. 11 #18-32, Tunja", 
-        "latlng": [5.5330, -73.3655], 
-        "url": "https://bienestartunja.qrcontraentrega.com/",
-        "telefono": "+573012345678",
-        "horario": "L - S 07:00 a 20:00",
-        "servicios": "Productos orgánicos y naturales",
-        "tipo": "socio"
+        "id": "vendedor-la-ituana",
+        "nombre": "María Fernández", 
+        "direccion": "Calle 22 # 10-25, La Iguana, Tunja", 
+        "latlng": [5.5380, -73.3580], 
+        "telefono": "+573104567890",
+        "url": "https://qrp2p.com/colombia/vendedor/maria-fernandez",
+        "imagen": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "1.5 años",
+        "calificacion": "4.9"
       },
       { 
-        "id": "vidasanatunja",
-        "nombre": "Vida Sana Tunja", 
-        "direccion": "Cl. 23 #9-58, Tunja", 
-        "latlng": [5.5375, -73.3632], 
-        "url": "https://vidasanatunja.qrcontraentrega.com/",
-        "telefono": "+573023456789",
-        "horario": "L - D 06:00 a 22:00",
-        "servicios": "Alimentos saludables y suplementos",
-        "tipo": "socio"
+        "id": "vendedor-norte",
+        "nombre": "Andrés Martínez", 
+        "direccion": "Carrera 11 # 18-40, Norte, Tunja", 
+        "latlng": [5.5460, -73.3650], 
+        "telefono": "+573108765432",
+        "url": "https://qrp2p.com/colombia/vendedor/andres-martinez",
+        "imagen": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "3 años",
+        "calificacion": "5.0"
+      },
+      { 
+        "id": "vendedor-san-lazaro",
+        "nombre": "Laura Gómez", 
+        "direccion": "Calle 25 # 12-18, San Lázaro, Tunja", 
+        "latlng": [5.5250, -73.3550], 
+        "telefono": "+573102345679",
+        "url": "https://qrp2p.com/colombia/vendedor/laura-gomez",
+        "imagen": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "2.5 años",
+        "calificacion": "4.7"
+      },
+      { 
+        "id": "vendedor-los-cedes",
+        "nombre": "Javier Rodríguez", 
+        "direccion": "Carrera 15 # 28-20, Los Cedros, Tunja", 
+        "latlng": [5.5540, -73.3700], 
+        "telefono": "+573104567891",
+        "url": "https://qrp2p.com/colombia/vendedor/javier-rodriguez",
+        "imagen": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "4 años",
+        "calificacion": "4.9"
+      },
+      { 
+        "id": "vendedor-cooservicios",
+        "nombre": "Sofía Herrera", 
+        "direccion": "Calle 30 # 15-22, Cooservicios, Tunja", 
+        "latlng": [5.5280, -73.3720], 
+        "telefono": "+573108765433",
+        "url": "https://qrp2p.com/colombia/vendedor/sofia-herrera",
+        "imagen": "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "1 año",
+        "calificacion": "4.6"
+      },
+      { 
+        "id": "vendedor-antaño",
+        "nombre": "Diego Castillo", 
+        "direccion": "Carrera 12 # 20-15, Antaño, Tunja", 
+        "latlng": [5.5400, -73.3620], 
+        "telefono": "+573102345680",
+        "url": "https://qrp2p.com/colombia/vendedor/diego-castillo",
+        "imagen": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "2 años",
+        "calificacion": "4.8"
+      },
+      { 
+        "id": "vendedor-el-recuerdo",
+        "nombre": "Valentina Ríos", 
+        "direccion": "Calle 18 # 25-30, El Recuerdo, Tunja", 
+        "latlng": [5.5360, -73.3680], 
+        "telefono": "+573104567892",
+        "url": "https://qrp2p.com/colombia/vendedor/valentina-rios",
+        "imagen": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=300&fit=crop",
+        "verificado": true,
+        "tiempo_operando": "3.5 años",
+        "calificacion": "5.0"
       }
     ];
 
-    // Inicializar el mapa cuando el DOM esté listo
+    // Límites de Tunja (Boyacá)
+    const LIMITES_TUNJA = {
+      minLat: 5.5100,
+      maxLat: 5.5700,
+      minLng: -73.3900,
+      maxLng: -73.3400
+    };
+
+    function estaEnTunja(lat, lng) {
+      return (lat >= LIMITES_TUNJA.minLat && lat <= LIMITES_TUNJA.maxLat &&
+              lng >= LIMITES_TUNJA.minLng && lng <= LIMITES_TUNJA.maxLng);
+    }
+
+    function mostrarNotificacion(mensaje, tipo = 'warning') {
+      if (notificacionActual) {
+        notificacionActual.remove();
+      }
+      const notificacion = document.createElement('div');
+      notificacion.className = 'notificacion-alerta';
+      notificacion.style.background = tipo === 'warning' ? '#ff6b6b' : '#4caf50';
+      notificacion.innerHTML = `
+        <span>${mensaje}</span>
+        <button onclick="this.parentElement.remove()">✕</button>
+      `;
+      document.body.appendChild(notificacion);
+      notificacionActual = notificacion;
+      setTimeout(() => {
+        if (notificacionActual === notificacion) {
+          notificacion.remove();
+          notificacionActual = null;
+        }
+      }, 5000);
+    }
+
+    function abrirWhatsApp(telefono, nombre, direccion, tiempo_operando, calificacion) {
+      const numeroLimpio = telefono.replace(/\D/g, '');
+      const mensaje = `Hola, me interesa contactar al vendedor verificado:\n\n⚡️ Nombre: ${nombre}\n📍 Dirección: ${direccion}\n⏱️ Tiempo operando: ${tiempo_operando}\n⭐️ Calificación: ${calificacion}\n\n¿Podría darme más información sobre sus servicios? ¡Gracias!`;
+      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       initializeMap();
-      
-      // Evento para el botón centrar
       document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
-      
-      // Eventos para cambiar tipo de mapa
-      document.getElementById('map-btn').addEventListener('click', function() {
-        switchToMapView();
+      document.getElementById('registro-btn').addEventListener('click', function() {
+        window.open('https://qrp2p.com/registro-vendedor', '_blank');
       });
+      document.getElementById('map-btn').addEventListener('click', switchToMapView);
+      document.getElementById('satellite-btn').addEventListener('click', switchToSatelliteView);
       
-      document.getElementById('satellite-btn').addEventListener('click', function() {
-        switchToSatelliteView();
-      });
-      
-      // Eventos para el buscador
       const searchInput = document.getElementById('buscador');
       searchInput.addEventListener('input', handleSearchInput);
       searchInput.addEventListener('keydown', handleSearchKeydown);
       
-      // Cerrar sugerencias al hacer clic fuera
       document.addEventListener('click', function(e) {
         if (!e.target.closest('.contenedor-buscador')) {
           document.getElementById('sugerencias-busqueda').style.display = 'none';
@@ -375,39 +549,19 @@
     });
 
     function initializeMap() {
-      // Inicializar mapa
-      mapa = L.map('mapa', {
-        center: [5.5353, -73.3677], // Coordenadas de Tunja
-        zoom: 15,
-        zoomControl: false
-      });
-
-      // Añadir control de zoom
+      mapa = L.map('mapa', { center: [5.5323, -73.3614], zoom: 13, zoomControl: false });
       L.control.zoom({ position: 'bottomright' }).addTo(mapa);
 
-      // Crear capas de Google Maps
       googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-        maxZoom: 20,
-        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+        maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
       });
-
       googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-        maxZoom: 20,
-        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-        attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>'
+        maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
       });
-
-      // Inicialmente usar la vista de mapa
       currentLayer = googleMapsLayer;
       currentLayer.addTo(mapa);
+      setTimeout(() => mapa.invalidateSize(), 100);
 
-      // Asegurar que el mapa ocupe todo el espacio disponible
-      setTimeout(() => {
-        mapa.invalidateSize();
-      }, 0);
-
-      // Sistema de marcadores
       const clusters = L.markerClusterGroup({
         iconCreateFunction: cluster => L.divIcon({
           html: `<div>${cluster.getChildCount()}</div>`,
@@ -419,372 +573,186 @@
         zoomToBoundsOnClick: true
       });
 
-      // Crear marcadores (solo socios)
-      UBICACIONES.forEach(loc => {
-        const marcador = L.marker(loc.latlng, {
-          icon: L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
-            iconSize: [32, 32],
-            className: 'marker-icon-orange'
-          })
+      // Crear un ícono personalizado con el emoji ⚡️
+      const verifiedIcon = L.divIcon({
+        className: 'verified-marker',
+        html: '⚡️',
+        iconSize: [32, 32],
+        popupAnchor: [0, -16]
+      });
+
+      VENDEDORES.forEach(vendedor => {
+        const marcador = L.marker(vendedor.latlng, {
+          icon: verifiedIcon
         }).bindPopup(`
-          <div style="min-width:220px">
-            <h3 style="margin:0 0 5px 0;color:var(--accent-color)">${loc.nombre}</h3>
-            <p style="margin:0 0 8px 0;font-size:0.9em">${loc.direccion}</p>
-            ${loc.telefono ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Teléfono:</strong> ${loc.telefono}</p>` : ''}
-            ${loc.horario ? `<p style="margin:0 0 5px 0;font-size:0.9em"><strong>Horario:</strong> ${loc.horario}</p>` : ''}
-            ${loc.servicios ? `<p style="margin:0 0 8px 0;font-size:0.9em"><strong>Servicios:</strong> ${loc.servicios}</p>` : ''}
+          <div style="min-width:280px; max-width:320px;">
+            <div class="vendedor-imagen" style="background-image: url('${vendedor.imagen}'); background-size: cover; background-position: center;"></div>
+            <h3 style="margin:5px 0;color:#0066cc">⚡️ ${vendedor.nombre}</h3>
+            <p style="margin:5px 0;font-size:0.85rem">📍 ${vendedor.direccion}</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin:8px 0;">
+              <div class="vendedor-detalle"><strong>⭐️ Calificación:</strong> ${vendedor.calificacion}/5.0</div>
+              <div class="vendedor-detalle"><strong>⏱️ Operando:</strong> ${vendedor.tiempo_operando}</div>
+              <div class="vendedor-detalle"><strong>✅ Estado:</strong> Verificado</div>
+              <div class="vendedor-detalle"><strong>📞 Teléfono:</strong> ${vendedor.telefono}</div>
+            </div>
             <div class="popup-buttons">
               <div class="popup-button-row">
-                <button class="btn btn-whatsapp" onclick="abrirWhatsApp('${loc.telefono}', '${loc.nombre}')">
-                  <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
-                  Chatear por WhatsApp
+                <button onclick="abrirWhatsApp('${vendedor.telefono}', '${vendedor.nombre}', '${vendedor.direccion}', '${vendedor.tiempo_operando}', '${vendedor.calificacion}')" style="background:#25D366;color:white;border:none;padding:10px;border-radius:8px;cursor:pointer;width:100%;font-weight:bold;">
+                  💬 WhatsApp - Contactar vendedor
                 </button>
               </div>
-              <div class="popup-button-row">
-                <button class="btn btn-ruta" onclick="abrirGoogleMapsConDireccion('${loc.latlng[0]}', '${loc.latlng[1]}', '${loc.nombre}')">Cómo llegar</button>
-                <button class="btn btn-info" onclick="window.open('${loc.url}', '_blank')">Más información</button>
+              <div class="popup-button-row" style="gap:8px;margin-top:5px;">
+                <button onclick="window.open('${vendedor.url}', '_blank')" style="background:#000000;color:white;border:none;padding:8px;border-radius:8px;cursor:pointer;flex:1;">🔍 Ver página del vendedor</button>
+                <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${vendedor.latlng[0]},${vendedor.latlng[1]}', '_blank')" style="background:#0066cc;color:white;border:none;padding:8px;border-radius:8px;cursor:pointer;flex:1;">🗺️ Cómo llegar</button>
               </div>
             </div>
           </div>
         `);
-        
-        // Guardar todos los datos de la ubicación en el marcador
-        marcador.datosUbicacion = loc;
-        marcador.datosBusqueda = `${loc.nombre} ${loc.direccion} ${loc.telefono || ''} ${loc.servicios || ''}`.toLowerCase();
+        marcador.datosVendedor = vendedor;
+        marcador.datosBusqueda = `${vendedor.nombre} ${vendedor.direccion}`.toLowerCase();
         marcadoresOriginales.push(marcador);
       });
 
-      // Añadir marcadores al mapa
       clusters.addLayers(marcadoresOriginales);
       mapa.addLayer(clusters);
-
-      // Ajustar vista a los marcadores
+      
       if(marcadoresOriginales.length > 0) {
         mapa.fitBounds(clusters.getBounds().pad(0.3));
       }
-
-      // Solicitar ubicación al cargar la página
+      
       obtenerUbicacionUsuario();
     }
 
-    // Función para cambiar a vista de mapa
     function switchToMapView() {
       mapa.removeLayer(currentLayer);
       currentLayer = googleMapsLayer;
       currentLayer.addTo(mapa);
-      
       document.getElementById('map-btn').classList.add('active');
       document.getElementById('satellite-btn').classList.remove('active');
     }
 
-    // Función para cambiar a vista de satélite
     function switchToSatelliteView() {
       mapa.removeLayer(currentLayer);
       currentLayer = googleSatelliteLayer;
       currentLayer.addTo(mapa);
-      
       document.getElementById('satellite-btn').classList.add('active');
       document.getElementById('map-btn').classList.remove('active');
     }
 
-    // Función para abrir Google Maps con una dirección específica
-    function abrirGoogleMapsConDireccion(lat, lng, nombre) {
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`;
-      window.open(url, '_blank');
-    }
-
-    // Función para manejar la búsqueda
     function handleSearchInput(e) {
       clearTimeout(buscadorTimeout);
       const termino = e.target.value.trim();
       const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
-      
-      if (termino.length < 3) {
+      if (termino.length < 2) {
         sugerenciasContainer.style.display = 'none';
         return;
       }
-      
-      // Mostrar indicador de carga
-      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">Buscando... <span class="cargando"></span></div>';
+      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">🔍 Buscando vendedores verificados en Tunja (Boyacá)... <span class="cargando"></span></div>';
       sugerenciasContainer.style.display = 'block';
-      
-      buscadorTimeout = setTimeout(() => {
-        buscarConGoogle(termino);
-      }, 500);
+      buscadorTimeout = setTimeout(() => buscarVendedores(termino), 300);
     }
 
-    // Función para buscar usando Google Places API (simulación)
-    function buscarConGoogle(consulta) {
-      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
-      
-      // Primero buscar en puntos locales
-      const resultadosLocales = buscarEnPuntosLocales(consulta);
-      if (resultadosLocales) {
-        return;
-      }
-      
-      // Simular búsqueda en Google Places
-      setTimeout(() => {
-        // En una implementación real, aquí se conectaría con la API de Google Places
-        sugerenciasContainer.innerHTML = '';
-        
-        // Simular algunos resultados de búsqueda en Tunja
-        const resultadosSimulados = [
-          {
-            name: "Plaza de Bolívar",
-            lat: 5.5353,
-            lng: -73.3677,
-            formatted_address: "Cl. 19 #10-45, Tunja"
-          },
-          {
-            name: "Centro Comercial Unicentro Tunja",
-            lat: 5.5309,
-            lng: -73.3702,
-            formatted_address: "Cra. 11 #22-80, Tunja"
-          },
-          {
-            name: "Terminal de Transportes de Tunja",
-            lat: 5.5402,
-            lng: -73.3574,
-            formatted_address: "Cra. 17 #24-45, Tunja"
-          }
-        ];
-        
-        if (resultadosSimulados.length > 0) {
-          resultadosSimulados.forEach(lugar => {
-            const item = document.createElement('div');
-            item.className = 'sugerencia-item';
-            
-            const lat = lugar.lat;
-            const lng = lugar.lng;
-            const nombre = lugar.name;
-            
-            item.innerHTML = `
-              <div class="sugerencia-texto">
-                <strong>📍 ${nombre}</strong><br>
-                <small>${lugar.formatted_address}</small>
-              </div>
-              <button class="sugerencia-boton" data-lat="${lat}" data-lng="${lng}" data-nombre="${nombre}">
-                Cómo llegar
-              </button>
-            `;
-            
-            // Agregar evento al botón "Cómo llegar"
-            const boton = item.querySelector('.sugerencia-boton');
-            boton.addEventListener('click', function(e) {
-              e.stopPropagation();
-              const lat = parseFloat(this.getAttribute('data-lat'));
-              const lng = parseFloat(this.getAttribute('data-lng'));
-              const nombre = this.getAttribute('data-nombre');
-              
-              // Mover el mapa a la ubicación seleccionada
-              const latlng = [lat, lng];
-              mapa.setView(latlng, 17);
-              
-              // Crear o actualizar marcador de destino
-              if (destinoMarker) {
-                mapa.removeLayer(destinoMarker);
-              }
-              destinoMarker = L.marker(latlng, {
-                icon: L.icon({
-                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-                  iconSize: [32, 32],
-                  className: 'marker-icon-red'
-                })
-              }).addTo(mapa)
-                .bindPopup(`<strong>${nombre}</strong>`);
-              
-              destinoMarker.openPopup();
-              document.getElementById('buscador').value = nombre;
-              sugerenciasContainer.style.display = 'none';
-            });
-            
-            // Agregar evento al item completo
-            item.addEventListener('click', function() {
-              const lat = parseFloat(boton.getAttribute('data-lat'));
-              const lng = parseFloat(boton.getAttribute('data-lng'));
-              const nombre = boton.getAttribute('data-nombre');
-              
-              const latlng = [lat, lng];
-              mapa.setView(latlng, 17);
-              
-              if (destinoMarker) {
-                mapa.removeLayer(destinoMarker);
-              }
-              destinoMarker = L.marker(latlng, {
-                icon: L.icon({
-                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-                  iconSize: [32, 32],
-                  className: 'marker-icon-red'
-                })
-              }).addTo(mapa)
-                .bindPopup(`<strong>${nombre}</strong>`);
-              
-              destinoMarker.openPopup();
-              document.getElementById('buscador').value = nombre;
-              sugerenciasContainer.style.display = 'none';
-            });
-            
-            sugerenciasContainer.appendChild(item);
-          });
-          sugerenciasContainer.style.display = 'block';
-        } else {
-          sugerenciasContainer.innerHTML = '<div class="sugerencia-item">No se encontraron resultados para: ' + consulta + '</div>';
-          sugerenciasContainer.style.display = 'block';
-        }
-      }, 800);
-    }
-
-    // Función para buscar en los puntos locales
-    function buscarEnPuntosLocales(consulta) {
+    function buscarVendedores(consulta) {
       const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
       const termino = consulta.toLowerCase();
-      const resultados = marcadoresOriginales.filter(m => 
-        m.datosBusqueda.includes(termino)
-      );
+      const resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(termino));
       
       if (resultados.length > 0) {
         sugerenciasContainer.innerHTML = '';
-        
         resultados.forEach(marcador => {
-          const loc = marcador.datosUbicacion;
+          const vendedor = marcador.datosVendedor;
           const item = document.createElement('div');
           item.className = 'sugerencia-item';
           item.innerHTML = `
             <div class="sugerencia-texto">
-              <strong>📍 ${loc.nombre}</strong><br>
-              <small>${loc.direccion}</small>
+              <strong>⚡️ ${vendedor.nombre}</strong><br>
+              <small>📍 ${vendedor.direccion}</small><br>
+              <small>⭐️ ${vendedor.calificacion} | ⏱️ ${vendedor.tiempo_operando}</small>
             </div>
-            <button class="sugerencia-boton" data-id="${loc.id}">
-              Cómo llegar
-            </button>
+            <button class="sugerencia-boton" data-id="${vendedor.id}">Ver vendedor</button>
           `;
-          
-          // Agregar evento al botón "Cómo llegar"
           const boton = item.querySelector('.sugerencia-boton');
-          boton.addEventListener('click', function(e) {
+          boton.addEventListener('click', (e) => {
             e.stopPropagation();
-            const id = this.getAttribute('data-id');
-            abrirGoogleMapsConDireccionUbicacion(id);
-            sugerenciasContainer.style.display = 'none';
-          });
-          
-          // Agregar evento al item completo
-          item.addEventListener('click', function() {
-            mapa.setView(marcador.getLatLng(), 17);
+            mapa.setView(marcador.getLatLng(), 16);
             marcador.openPopup();
-            document.getElementById('buscador').value = loc.nombre;
+            document.getElementById('buscador').value = vendedor.nombre;
             sugerenciasContainer.style.display = 'none';
           });
-          
+          item.addEventListener('click', () => {
+            mapa.setView(marcador.getLatLng(), 16);
+            marcador.openPopup();
+            document.getElementById('buscador').value = vendedor.nombre;
+            sugerenciasContainer.style.display = 'none';
+          });
           sugerenciasContainer.appendChild(item);
         });
-        sugerenciasContainer.style.display = 'block';
-        return true;
+      } else {
+        sugerenciasContainer.innerHTML = '<div class="sugerencia-item">❌ No se encontraron vendedores verificados para: ' + consulta + '<br><small>📍 Prueba con: Centro, La Iguana, Norte, San Lázaro, Los Cedros, Cooservicios, Antaño, El Recuerdo</small></div>';
       }
-      return false;
     }
 
-    // Función para abrir Google Maps con una ubicación específica
-    function abrirGoogleMapsConDireccionUbicacion(idPunto) {
-      const punto = UBICACIONES.find(p => p.id === idPunto);
-      if (!punto) return;
-      
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${punto.latlng[0]},${punto.latlng[1]}&travelmode=driving&dir_action=navigate`;
-      window.open(url, '_blank');
-    }
-
-    // Función para manejar teclas en el buscador
     function handleSearchKeydown(e) {
       if (e.key === 'Enter') {
         e.preventDefault();
         const termino = document.getElementById('buscador').value.trim();
-        if (termino) {
-          buscarConGoogle(termino);
-        }
+        if (termino) buscarVendedores(termino);
       }
     }
 
-    // Función para abrir WhatsApp
-    function abrirWhatsApp(telefono, nombre) {
-      const numeroLimpio = telefono.replace(/\D/g, '');
-      const mensaje = `Hola ${nombre}, me interesa conocer más sobre sus servicios de contraentrega.`;
-      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
-    }
-
-    // Función para centrar el mapa en la ubicación actual
     function centrarMapa() {
       if (userMarker) {
-        mapa.setView(userMarker.getLatLng(), 17);
+        const lat = userMarker.getLatLng().lat;
+        const lng = userMarker.getLatLng().lng;
+        if (estaEnTunja(lat, lng)) {
+          mapa.setView(userMarker.getLatLng(), 15);
+          userMarker.openPopup();
+        } else {
+          mostrarNotificacion("Estás fuera del área de Tunja (Boyacá). Mostrando centro de la ciudad.");
+          mapa.setView([5.5323, -73.3614], 13);
+        }
       } else {
         obtenerUbicacionUsuario();
       }
     }
 
-    // Función para obtener ubicación del usuario
     function obtenerUbicacionUsuario() {
-      return new Promise((resolve, reject) => {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const { latitude, longitude } = position.coords;
-              
-              // Verificar si está en Tunja (aproximadamente)
-              const distanciaATunja = calcularDistancia(
-                latitude, longitude,
-                5.5353, -73.3677
-              );
-              
-              if (distanciaATunja > 30) {
-                alert('El servicio solo está disponible en Tunja y sus alrededores');
-                reject();
-                return;
-              }
-              
-              // Eliminar marcador anterior si existe
-              if (userMarker) {
-                mapa.removeLayer(userMarker);
-              }
-              
-              // Crear nuevo marcador de usuario (azul)
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            if (userMarker) mapa.removeLayer(userMarker);
+            if (estaEnTunja(latitude, longitude)) {
               userMarker = L.marker([latitude, longitude], {
-                icon: L.icon({
-                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
-                  iconSize: [32, 32],
-                  className: 'marker-icon-blue'
+                icon: L.divIcon({
+                  className: 'verified-marker',
+                  html: '📍',
+                  iconSize: [24, 24]
                 })
-              }).addTo(mapa)
-                .bindPopup('¡Tu ubicación actual!');
-                
-              // Centrar mapa en la ubicación del usuario avec zoom cercano
-              mapa.setView([latitude, longitude], 17);
-              resolve();
-            },
-            (error) => {
-              console.log(`Error al obtener ubicación: ${error.message}`);
-              reject();
-            },
-            { enableHighAccuracy: true }
-          );
-        } else {
-          console.log("Tu navegador no soporta geolocalización.");
-          reject();
-        }
-      });
-    }
-
-    // Función para calcular distancia en km (fórmula Haversine)
-    function calcularDistancia(lat1, lon1, lat2, lon2) {
-      const R = 6371;
-      const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLon = (lon2 - lon1) * Math.PI / 180;
-      const a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      return R * c;
+              }).addTo(mapa).bindPopup('📍 Tu ubicación en Tunja');
+              mapa.setView([latitude, longitude], 14);
+              userMarker.openPopup();
+            } else {
+              mostrarNotificacion("Servicio exclusivo para Tunja (Boyacá). Estás fuera del área de cobertura.");
+              mapa.setView([5.5323, -73.3614], 13);
+              userMarker = L.marker([latitude, longitude], {
+                icon: L.divIcon({
+                  className: 'verified-marker',
+                  html: '⚠️',
+                  iconSize: [24, 24]
+                })
+              }).addTo(mapa).bindPopup('⚠️ Fuera de Tunja (Boyacá)');
+            }
+          },
+          (error) => {
+            console.log(`Error: ${error.message}`);
+            mapa.setView([5.5323, -73.3614], 13);
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        mapa.setView([5.5323, -73.3614], 13);
+      }
     }
   </script>
 </body>
