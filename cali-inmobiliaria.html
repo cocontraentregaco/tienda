@@ -2,40 +2,41 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="description" content="QRP2P INMOBILIARIA - Compra y venta de inmuebles en Cali, Valle del Cauca, Colombia">
     <title>QRP2P INMOBILIARIA - Cali, Valle Del Cauca, Colombia</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --color-blanco: #ffffff;
-            --color-negro: #000000;
-            --color-gris-claro: #f5f5f5;
-            --color-gris-medio: #e0e0e0;
-            --color-gris-oscuro: #333333;
-            --color-verde: #25D366;
-            --color-azul: #007bff;
-            --color-rojo: #dc3545;
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
         
         body {
             font-family: 'Libre Baskerville', serif;
-            background-color: var(--color-blanco);
-            color: var(--color-negro);
-            line-height: 1.6;
+            background-color: #ffffff;
+            color: #111111;
+            line-height: 1.5;
             font-size: 16px;
+            overflow-x: hidden;
+            position: relative;
+            width: 100%;
+        }
+        
+        /* Prevenir scroll no deseado */
+        html {
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
         }
         
         /* Header */
         header {
-            background-color: var(--color-negro);
-            color: var(--color-blanco);
+            background-color: #000000;
+            color: #ffffff;
             padding: 1rem;
             position: sticky;
             top: 0;
@@ -56,15 +57,20 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
             text-decoration: none;
             cursor: default;
         }
         
         .logo-img {
-            height: 40px;
+            height: 45px;
             width: auto;
-            max-width: 100%;
+        }
+        
+        .logo-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
         
         .action-buttons {
@@ -75,12 +81,12 @@
         .sell-btn, .rent-btn {
             padding: 0.6rem 1.2rem;
             border: none;
-            border-radius: 30px;
+            border-radius: 40px;
             cursor: pointer;
             font-family: 'Libre Baskerville', serif;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
@@ -88,48 +94,52 @@
         }
         
         .sell-btn {
-            background-color: var(--color-verde);
-            color: var(--color-negro);
+            background-color: #25D366;
+            color: #000000;
         }
         
         .sell-btn:hover {
             background-color: #128C7E;
             color: white;
+            transform: translateY(-2px);
         }
         
         .rent-btn {
-            background-color: var(--color-azul);
+            background-color: #007bff;
             color: white;
         }
         
         .rent-btn:hover {
             background-color: #0056b3;
+            transform: translateY(-2px);
         }
         
         /* Hero Section */
         .hero {
-            background-color: var(--color-gris-claro);
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
             text-align: center;
-            padding: 2rem 1rem;
+            padding: 2.5rem 1rem;
             margin-bottom: 2rem;
         }
         
         .hero h1 {
             font-size: 2rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.5px;
         }
         
         .hero p {
-            font-size: 1.1rem;
+            font-size: 1rem;
             max-width: 800px;
             margin: 0 auto;
+            color: #555;
         }
         
         /* Main Content */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 1rem;
+            padding: 0 1.5rem;
         }
         
         /* Filtros */
@@ -143,66 +153,74 @@
         
         .search-box {
             flex-grow: 1;
-            max-width: 500px;
+            max-width: 400px;
         }
         
         .search-box input {
             width: 100%;
-            padding: 0.8rem;
-            border: 1px solid var(--color-gris-medio);
-            border-radius: 4px;
+            padding: 0.8rem 1rem;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 50px;
             font-family: 'Libre Baskerville', serif;
             font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #000000;
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
         }
         
         .category-filter {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.8rem;
             flex-wrap: wrap;
         }
         
         .category-btn {
-            background: none;
-            border: 1px solid var(--color-negro);
+            background: transparent;
+            border: 1.5px solid #000000;
             padding: 0.5rem 1.5rem;
             cursor: pointer;
             font-family: 'Libre Baskerville', serif;
             transition: all 0.3s;
-            border-radius: 30px;
+            border-radius: 50px;
             font-size: 0.9rem;
+            font-weight: 500;
         }
         
         .category-btn:hover, .category-btn.active {
-            background-color: var(--color-negro);
-            color: var(--color-blanco);
+            background-color: #000000;
+            color: #ffffff;
         }
         
-        /* Product Grid */
+        /* Property Grid */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.8rem;
             margin-bottom: 3rem;
         }
         
         .product-card {
-            border: 1px solid var(--color-gris-medio);
-            border-radius: 12px;
+            background: #ffffff;
+            border: 1px solid #eaeaea;
+            border-radius: 20px;
             overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
-            background: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
         
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
         }
         
         .product-image-container {
             position: relative;
             width: 100%;
-            height: 220px;
+            height: 240px;
             overflow: hidden;
             background-color: #f0f0f0;
         }
@@ -211,7 +229,11 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: opacity 0.3s;
+            transition: transform 0.5s ease;
+        }
+        
+        .product-card:hover .product-image {
+            transform: scale(1.05);
         }
         
         .image-nav {
@@ -220,13 +242,19 @@
             width: 100%;
             display: flex;
             justify-content: space-between;
-            padding: 0 10px;
+            padding: 0 12px;
             transform: translateY(-50%);
             z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .product-image-container:hover .image-nav {
+            opacity: 1;
         }
         
         .nav-btn {
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.7);
             color: white;
             border: none;
             width: 36px;
@@ -237,101 +265,113 @@
             justify-content: center;
             align-items: center;
             font-size: 1rem;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
         }
         
         .nav-btn:hover {
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
         }
         
         .image-counter {
             position: absolute;
-            bottom: 8px;
-            right: 8px;
-            background-color: rgba(0, 0, 0, 0.6);
+            bottom: 12px;
+            right: 12px;
+            background-color: rgba(0, 0, 0, 0.65);
             color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
             font-size: 0.7rem;
+            font-weight: 500;
             z-index: 10;
         }
         
         .product-info {
-            padding: 1rem;
+            padding: 1.2rem;
         }
         
         .product-title {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             margin-bottom: 0.5rem;
             font-weight: 700;
+            color: #1a1a1a;
         }
         
         .product-price {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--color-negro);
+            font-size: 1.35rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            color: #000000;
         }
         
         .product-details {
             margin-bottom: 1rem;
-            font-size: 0.85rem;
-            color: var(--color-gris-oscuro);
             display: flex;
             flex-wrap: wrap;
-            gap: 0.8rem;
+            gap: 0.75rem;
         }
         
         .product-details span {
-            background-color: var(--color-gris-claro);
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
+            background-color: #f5f5f5;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .product-details i {
+            margin-right: 5px;
         }
         
         .product-description {
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
             font-size: 0.85rem;
-            color: var(--color-gris-oscuro);
+            color: #666;
+            line-height: 1.4;
         }
         
         .product-actions {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
         
         .add-to-cart, .buy-now {
             padding: 0.7rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             font-family: 'Libre Baskerville', serif;
             font-size: 0.85rem;
-            transition: background-color 0.3s;
+            font-weight: 600;
+            transition: all 0.3s;
             flex: 1;
             text-align: center;
-            text-decoration: none;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.5rem;
         }
         
         .add-to-cart {
-            background-color: var(--color-negro);
-            color: var(--color-blanco);
+            background-color: #000000;
+            color: #ffffff;
         }
         
         .add-to-cart:hover {
-            background-color: var(--color-gris-oscuro);
+            background-color: #333333;
+            transform: translateY(-2px);
         }
         
         .buy-now {
-            background-color: var(--color-gris-oscuro);
-            color: var(--color-blanco);
+            background-color: #f0f0f0;
+            color: #000000;
+            border: 1px solid #ddd;
         }
         
         .buy-now:hover {
-            background-color: var(--color-negro);
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
         }
         
         /* Modal Overlay */
@@ -342,21 +382,36 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.85);
             z-index: 1000;
             justify-content: center;
             align-items: center;
             overflow-y: auto;
-            padding: 1rem;
+            padding: 1.5rem;
         }
         
         .modal-container {
-            max-width: 800px;
+            max-width: 750px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            border-radius: 24px;
+            border-radius: 28px;
             background: white;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .modal-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .modal-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
         }
         
         .close-modal {
@@ -365,59 +420,72 @@
             right: 0;
             display: flex;
             justify-content: flex-end;
-            padding: 1rem;
+            padding: 1rem 1.2rem;
             background: white;
             border-bottom: 1px solid #eee;
+            z-index: 5;
         }
         
         .close-modal button {
-            background: none;
+            background: #f0f0f0;
             border: none;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             cursor: pointer;
-            padding: 0 0.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .close-modal button:hover {
+            background: #e0e0e0;
+            transform: scale(1.05);
         }
         
         /* Formulario de Agendar Visita */
         .form-panel {
-            padding: 1.5rem;
+            padding: 1.8rem;
         }
         
         .step-title {
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-size: 1.6rem;
+            font-weight: 700;
             margin-bottom: 1.5rem;
+            color: #000;
         }
         
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.2rem;
         }
         
         label {
             display: block;
-            font-size: 0.8rem;
-            font-weight: 500;
+            font-size: 0.75rem;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.4rem;
-            color: #2c2c2c;
+            letter-spacing: 0.8px;
+            margin-bottom: 0.5rem;
+            color: #333;
         }
         
-        input, select {
+        input, select, textarea {
             width: 100%;
-            padding: 0.85rem 1rem;
+            padding: 0.9rem 1rem;
             font-size: 1rem;
-            border: 1px solid #cccccc;
-            border-radius: 14px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 16px;
             background: #ffffff;
-            transition: 0.2s;
+            transition: all 0.2s;
             font-family: inherit;
         }
         
-        input:focus, select:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #000000;
-            box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
         }
         
         .inline-checkbox {
@@ -437,17 +505,18 @@
             margin: 0;
             text-transform: none;
             font-size: 0.85rem;
+            font-weight: normal;
         }
         
         .terms-link {
             color: #000;
             text-decoration: underline;
             cursor: pointer;
-            font-weight: 500;
+            font-weight: 600;
         }
         
         .calendar-card {
-            border: 1px solid #ebebeb;
+            border: 1.5px solid #eaeaea;
             border-radius: 24px;
             padding: 1rem;
             margin: 1rem 0;
@@ -462,7 +531,7 @@
         }
         
         .month-year {
-            font-weight: 600;
+            font-weight: 700;
             font-size: 1.1rem;
         }
         
@@ -470,10 +539,10 @@
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             text-align: center;
-            font-weight: 500;
-            font-size: 0.75rem;
-            margin-bottom: 0.5rem;
-            color: #555;
+            font-weight: 600;
+            font-size: 0.7rem;
+            margin-bottom: 0.75rem;
+            color: #888;
         }
         
         .days-grid {
@@ -484,25 +553,23 @@
         }
         
         .day-cell {
-            padding: 0.6rem 0;
+            padding: 0.7rem 0;
             font-size: 0.85rem;
-            border-radius: 40px;
+            border-radius: 50px;
             cursor: pointer;
             background: #fff;
-            transition: all 0.1s;
-            border: 1px solid transparent;
+            transition: all 0.2s;
+            font-weight: 500;
         }
         
         .day-cell.selected {
             background: #000000;
             color: white;
-            font-weight: 500;
-            border-color: #000;
         }
         
         .day-cell.available:hover {
-            border-color: #aaa;
-            background: #f2f2f2;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
         }
         
         .day-cell.other-month {
@@ -513,22 +580,23 @@
         .horarios-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 0.6rem;
             margin-top: 0.75rem;
-            max-height: 200px;
+            max-height: 180px;
             overflow-y: auto;
             padding: 0.25rem;
         }
         
         .horario-badge {
             display: inline-block;
-            padding: 0.5rem 1rem;
-            border: 1px solid #ccc;
-            border-radius: 40px;
-            font-size: 0.8rem;
+            padding: 0.6rem 1.2rem;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 50px;
+            font-size: 0.85rem;
             cursor: pointer;
             background: white;
-            transition: 0.1s;
+            transition: all 0.2s;
+            font-weight: 500;
         }
         
         .horario-badge.selected {
@@ -537,92 +605,122 @@
             border-color: #000;
         }
         
+        .horario-badge:hover {
+            border-color: #000;
+            background: #f5f5f5;
+        }
+        
         .btn-next, .btn-submit {
             width: 100%;
             padding: 1rem;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
             background: #000000;
             color: white;
             border: none;
-            border-radius: 40px;
+            border-radius: 50px;
             cursor: pointer;
-            transition: 0.2s;
-            margin-top: 1rem;
+            transition: all 0.2s;
+            margin-top: 1.2rem;
+        }
+        
+        .btn-next:hover, .btn-submit:hover {
+            background: #333;
+            transform: translateY(-2px);
         }
         
         .btn-back {
             background: transparent;
-            border: 1px solid #aaa;
+            border: 1.5px solid #ccc;
             color: #111;
             margin-top: 1rem;
             width: 100%;
             padding: 0.9rem;
-            border-radius: 40px;
-            font-weight: 500;
+            border-radius: 50px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s;
         }
         
-        /* Sección de compra (ofertar) */
+        .btn-back:hover {
+            background: #f5f5f5;
+            border-color: #000;
+        }
+        
+        /* Sección de oferta mejorada */
         .section {
             background: #ffffff;
-            border: 1px solid #e0e0e0;
             border-radius: 20px;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
+            border: 1px solid #eaeaea;
         }
         
         .section-title {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 700;
             border-left: 4px solid #000000;
             padding-left: 1rem;
             margin-bottom: 1.2rem;
+            color: #000;
         }
         
         .section-subtitle {
-            font-size: 1rem;
-            font-weight: 600;
-            margin: 1rem 0 0.8rem 0;
-            border-bottom: 1px solid #dddddd;
-            padding-bottom: 0.4rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin: 1.2rem 0 0.8rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f0f0f0;
+            color: #333;
         }
         
         .radio-group {
             display: flex;
-            gap: 1.5rem;
+            gap: 2rem;
             align-items: center;
-            margin-top: 0.3rem;
+            margin-top: 0.5rem;
             flex-wrap: wrap;
         }
         
         .radio-group label {
             display: flex;
             align-items: center;
-            gap: 0.4rem;
-            font-weight: normal;
+            gap: 0.5rem;
+            font-weight: 500;
             margin-bottom: 0;
             text-transform: none;
+            font-size: 0.9rem;
+            cursor: pointer;
         }
         
         .radio-group input {
-            width: auto;
+            width: 1.1rem;
+            height: 1.1rem;
+            cursor: pointer;
         }
         
         .checkbox-group {
             display: flex;
             gap: 1.5rem;
             align-items: center;
-            margin-top: 0.3rem;
+            margin-top: 0.5rem;
             flex-wrap: wrap;
         }
         
         .checkbox-group label {
             display: flex;
             align-items: center;
-            gap: 0.4rem;
-            font-weight: normal;
+            gap: 0.5rem;
+            font-weight: 500;
             text-transform: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        
+        .checkbox-group input {
+            width: 1.1rem;
+            height: 1.1rem;
+            cursor: pointer;
         }
         
         .row-2 {
@@ -632,47 +730,62 @@
         }
         
         .comprador-card {
-            border: 1px solid #e0e0e0;
-            border-radius: 16px;
-            padding: 1.2rem;
-            margin-bottom: 1.5rem;
-            position: relative;
+            border: 1.5px solid #eaeaea;
+            border-radius: 20px;
+            padding: 1.3rem;
+            margin-bottom: 1.2rem;
+            background: #fafafa;
         }
         
         .tipo-comprador-selector {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: 1.5rem;
+            margin-bottom: 1.2rem;
             align-items: center;
             flex-wrap: wrap;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid #eaeaea;
         }
         
-        .info-box {
-            background: #f5f5f5;
-            border-left: 3px solid #000000;
-            padding: 0.8rem 1rem;
-            margin: 0.8rem 0;
+        .tipo-comprador-selector span {
+            font-weight: 700;
             font-size: 0.85rem;
             color: #333;
         }
         
-        .property-info {
-            background: #f0f7ff;
-            border: 1px solid #cce5ff;
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #000000;
+            padding: 0.9rem 1rem;
+            margin: 1rem 0;
+            font-size: 0.85rem;
             border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1rem;
+            color: #444;
+        }
+        
+        .property-info {
+            background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%);
+            border-radius: 20px;
+            padding: 1.2rem;
+            margin-bottom: 1.2rem;
         }
         
         .property-info h4 {
+            font-size: 1.1rem;
             margin-bottom: 0.5rem;
-            color: #0056b3;
+            color: #000;
         }
         
+        .property-info p {
+            font-size: 0.85rem;
+            color: #555;
+        }
+        
+        /* Footer */
         footer {
-            background-color: var(--color-negro);
-            color: var(--color-blanco);
-            padding: 2rem 1rem;
+            background-color: #000000;
+            color: #ffffff;
+            padding: 2.5rem 1rem;
             margin-top: 3rem;
         }
         
@@ -687,23 +800,24 @@
         
         .footer-section {
             flex: 1;
-            min-width: 250px;
+            min-width: 220px;
         }
         
         .footer-section h3 {
             margin-bottom: 1rem;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
         
         .footer-section p, .footer-section a {
             margin-bottom: 0.5rem;
-            color: var(--color-gris-medio);
+            color: #cccccc;
             text-decoration: none;
             display: block;
+            font-size: 0.85rem;
         }
         
         .footer-section a:hover {
-            color: var(--color-blanco);
+            color: #ffffff;
         }
         
         .social-icons {
@@ -713,26 +827,81 @@
         }
         
         .social-icons a {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
         
         .copyright {
             text-align: center;
             margin-top: 2rem;
             padding-top: 1rem;
-            border-top: 1px solid var(--color-gris-oscuro);
-            color: var(--color-gris-medio);
+            border-top: 1px solid #333;
+            color: #999;
+            font-size: 0.75rem;
         }
         
+        /* Responsive */
         @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
             .products-grid {
                 grid-template-columns: 1fr;
+                gap: 1.2rem;
             }
+            
             .header-container {
                 flex-direction: column;
+                text-align: center;
             }
+            
             .row-2 {
                 grid-template-columns: 1fr;
+                gap: 0.8rem;
+            }
+            
+            .form-panel {
+                padding: 1.2rem;
+            }
+            
+            .step-title {
+                font-size: 1.3rem;
+            }
+            
+            .category-btn {
+                padding: 0.4rem 1rem;
+                font-size: 0.8rem;
+            }
+            
+            .hero h1 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .action-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .sell-btn, .rent-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.75rem;
+            }
+            
+            .product-title {
+                font-size: 1rem;
+            }
+            
+            .product-price {
+                font-size: 1.15rem;
+            }
+        }
+        
+        /* Prevenir zoom en inputs iOS */
+        @media screen and (max-width: 767px) {
+            input, select, textarea {
+                font-size: 16px !important;
             }
         }
         
@@ -740,12 +909,13 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background-color: var(--color-negro);
-            color: var(--color-blanco);
-            padding: 10px 20px;
-            border-radius: 4px;
+            background-color: #000;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 50px;
             z-index: 1100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 0.85rem;
         }
     </style>
 </head>
@@ -753,8 +923,8 @@
     <header>
         <div class="header-container">
             <div class="logo">
-                <img src="https://qrcontraentrega.com/img/c.jpg" alt="Logo QRP2P" class="logo-img">
-                <span style="font-weight: bold;">QRP2P INMOBILIARIA</span>
+                <img src="https://qrcontraentrega.com/img/c.jpg" alt="QRP2P" class="logo-img">
+                <span class="logo-text">QRP2P INMOBILIARIA</span>
             </div>
             <div class="action-buttons">
                 <a href="#" id="sellPropertyBtn" class="sell-btn"><i class="fas fa-home"></i> Vender inmueble</a>
@@ -765,18 +935,18 @@
 
     <section class="hero">
         <h1>QRP2P INMOBILIARIA</h1>
-        <p>CALI, VALLE DEL CAUCA, COLOMBIA</p>
+        <p>Encuentra el inmueble perfecto en Cali, Valle del Cauca, Colombia</p>
     </section>
         
     <div class="container">
         <div class="filters">
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Buscar inmuebles...">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar inmuebles...">
             </div>
             <div class="category-filter">
-                <button class="category-btn active" data-category="todo">Todo</button>
-                <button class="category-btn" data-category="arriendo">En arriendo</button>
-                <button class="category-btn" data-category="venta">En venta</button>
+                <button class="category-btn active" data-category="todo">Todos</button>
+                <button class="category-btn" data-category="arriendo">📋 En arriendo</button>
+                <button class="category-btn" data-category="venta">💰 En venta</button>
             </div>
         </div>
 
@@ -806,8 +976,8 @@
     <footer>
         <div class="footer-content">
             <div class="footer-section">
-                <h3>Acerca de Nosotros</h3>
-                <p>QRP2P Inmobiliaria. La revolución en compra y venta de inmuebles en Colombia.</p>
+                <h3>QRP2P INMOBILIARIA</h3>
+                <p>La revolución en compra y venta de inmuebles en Colombia.</p>
             </div>
             <div class="footer-section">
                 <h3>Contacto</h3>
@@ -820,7 +990,7 @@
                 </div>
             </div>
             <div class="footer-section">
-                <h3>Enlaces Rápidos</h3>
+                <h3>Enlaces</h3>
                 <a href="#">Vender inmueble</a>
                 <a href="#">Arrendar inmueble</a>
                 <a href="#">Términos y Condiciones</a>
@@ -839,7 +1009,7 @@
                 title: "Apartamento en el Norte de Cali",
                 price: 450000000,
                 priceRent: 2800000,
-                description: "Hermoso apartamento en exclusiva zona residencial",
+                description: "Hermoso apartamento en exclusiva zona residencial, cerca a centros comerciales y universidades",
                 category: "venta",
                 m2: 120,
                 cuartos: 3,
@@ -851,7 +1021,7 @@
                 title: "Casa en Ciudad Jardín",
                 price: 680000000,
                 priceRent: 3500000,
-                description: "Casa con jardín, piscina y excelente ubicación",
+                description: "Casa con jardín, piscina privada y excelente ubicación, cerca a parques",
                 category: "venta",
                 m2: 200,
                 cuartos: 4,
@@ -863,7 +1033,7 @@
                 title: "Oficina en el Centro Empresarial",
                 price: 0,
                 priceRent: 1800000,
-                description: "Oficina completamente amoblada, ideal para empresas",
+                description: "Oficina completamente amoblada, ideal para empresas, con parqueadero",
                 category: "arriendo",
                 m2: 80,
                 cuartos: 2,
@@ -875,7 +1045,7 @@
                 title: "Apartamento en el Sur",
                 price: 320000000,
                 priceRent: 1900000,
-                description: "Apartamento familiar, cerca a centros comerciales",
+                description: "Apartamento familiar, cerca a centros comerciales y transporte público",
                 category: "venta",
                 m2: 95,
                 cuartos: 3,
@@ -887,7 +1057,7 @@
                 title: "Local Comercial",
                 price: 0,
                 priceRent: 2500000,
-                description: "Local en zona comercial de alta afluencia",
+                description: "Local en zona comercial de alta afluencia, ideal para negocio",
                 category: "arriendo",
                 m2: 60,
                 cuartos: 1,
@@ -897,6 +1067,10 @@
         ];
 
         let currentProperty = null;
+        let selectedDate = null;
+        let selectedHorario = null;
+        let currentYear = 2026;
+        let currentMonth = 2;
 
         function formatPrice(price) {
             if (price === 0) return "Consultar";
@@ -925,7 +1099,7 @@
                         <p class="product-price">${displayPrice}</p>
                         <div class="product-details">
                             <span><i class="fas fa-arrows-alt"></i> ${property.m2} m²</span>
-                            <span><i class="fas fa-bed"></i> ${property.cuartos} cuartos</span>
+                            <span><i class="fas fa-bed"></i> ${property.cuartos} hab</span>
                             <span><i class="fas fa-bath"></i> ${property.baños} baños</span>
                         </div>
                         <p class="product-description">${property.description}</p>
@@ -968,7 +1142,6 @@
                 }
             });
             
-            // Event listeners para botones
             document.querySelectorAll('.add-to-cart').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const id = parseInt(btn.getAttribute('data-id'));
@@ -998,12 +1171,7 @@
             loadProperties(filtered);
         }
         
-        // Calendario para visita
-        let selectedDate = null;
-        let selectedHorario = null;
-        let currentYear = 2026;
-        let currentMonth = 2;
-        
+        // Calendario
         const allHorarios = ['08:00', '09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'];
         
         function getDaysForMonth(year, month) {
@@ -1063,7 +1231,7 @@
         function renderHorarios(container) {
             const horariosContainer = container.querySelector('.horarios-list');
             if (!selectedDate) {
-                horariosContainer.innerHTML = '<div style="padding:0.5rem; color:#666;">📅 Primero selecciona una fecha</div>';
+                horariosContainer.innerHTML = '<div style="padding:0.8rem; text-align:center; color:#888;">📅 Selecciona una fecha primero</div>';
                 return;
             }
             horariosContainer.innerHTML = '';
@@ -1085,26 +1253,29 @@
             currentProperty = properties.find(p => p.id === propertyId);
             selectedDate = null;
             selectedHorario = null;
+            currentYear = 2026;
+            currentMonth = 2;
             
             const modal = document.getElementById('visitaModal');
             const container = document.getElementById('visitaFormContainer');
             
             container.innerHTML = `
                 <div class="property-info">
-                    <h4>${currentProperty.title}</h4>
-                    <p>${currentProperty.m2} m² · ${currentProperty.cuartos} cuartos · ${currentProperty.baños} baños</p>
+                    <h4>🏠 ${currentProperty.title}</h4>
+                    <p>📐 ${currentProperty.m2} m² · 🛏️ ${currentProperty.cuartos} habitaciones · 🚿 ${currentProperty.baños} baños</p>
+                    <p>💰 ${currentProperty.category === 'venta' ? formatPrice(currentProperty.price) : formatPrice(currentProperty.priceRent)}</p>
                 </div>
-                <div class="step-title">Agendar visita</div>
+                <div class="step-title">📅 Agendar visita</div>
                 <div class="form-group">
-                    <label>Nombre completo *</label>
+                    <label>NOMBRE COMPLETO *</label>
                     <input type="text" id="visitaNombre" placeholder="Ej: Juan Pérez">
                 </div>
                 <div class="form-group">
-                    <label>Teléfono *</label>
+                    <label>TELÉFONO *</label>
                     <input type="tel" id="visitaTelefono" placeholder="Ej: 3001234567">
                 </div>
                 <div class="form-group">
-                    <label>Correo electrónico</label>
+                    <label>CORREO ELECTRÓNICO</label>
                     <input type="email" id="visitaEmail" placeholder="ejemplo@correo.com">
                 </div>
                 <div class="inline-checkbox">
@@ -1120,11 +1291,11 @@
                     <div class="weekdays"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
                     <div class="days-grid"></div>
                 </div>
-                <div class="horarios-section">
-                    <label>Selecciona un horario</label>
+                <div class="form-group">
+                    <label>SELECCIONA UN HORARIO</label>
                     <div class="horarios-list"></div>
                 </div>
-                <button class="btn-submit" id="submitVisita">Agendar visita</button>
+                <button class="btn-submit" id="submitVisita">📩 Agendar visita por WhatsApp</button>
             `;
             
             const calendarCard = container.querySelector('.calendar-card');
@@ -1142,19 +1313,20 @@
                 const email = document.getElementById('visitaEmail').value.trim();
                 const terms = document.getElementById('visitaTerms').checked;
                 
-                if (!nombre || !telefono) { alert('Por favor completa nombre y teléfono'); return; }
-                if (!terms) { alert('Debes aceptar los términos y condiciones'); return; }
-                if (!selectedDate) { alert('Selecciona una fecha'); return; }
-                if (!selectedHorario) { alert('Selecciona un horario'); return; }
+                if (!nombre || !telefono) { alert('⚠️ Por favor completa nombre y teléfono'); return; }
+                if (!terms) { alert('⚠️ Debes aceptar los términos y condiciones'); return; }
+                if (!selectedDate) { alert('⚠️ Selecciona una fecha'); return; }
+                if (!selectedHorario) { alert('⚠️ Selecciona un horario'); return; }
                 
-                const fecha = new Date(selectedDate).toLocaleDateString('es-ES');
+                const fecha = new Date(selectedDate).toLocaleDateString('es-ES', { year:'numeric', month:'long', day:'numeric' });
                 const mensaje = `*AGENDA DE VISITA - QRP2P INMOBILIARIA*%0A%0A` +
-                    `*Inmueble:* ${currentProperty.title}%0A` +
-                    `*Cliente:* ${nombre}%0A` +
-                    `*Teléfono:* ${telefono}%0A` +
-                    `*Correo:* ${email || 'No especificado'}%0A` +
-                    `*Fecha:* ${fecha}%0A` +
-                    `*Horario:* ${selectedHorario}%0A%0A` +
+                    `🏠 *Inmueble:* ${currentProperty.title}%0A` +
+                    `📐 ${currentProperty.m2} m² · ${currentProperty.cuartos} hab · ${currentProperty.baños} baños%0A` +
+                    `👤 *Cliente:* ${nombre}%0A` +
+                    `📱 *Teléfono:* ${telefono}%0A` +
+                    `✉️ *Correo:* ${email || 'No especificado'}%0A` +
+                    `📅 *Fecha:* ${fecha}%0A` +
+                    `⏰ *Horario:* ${selectedHorario}%0A%0A` +
                     `--- Visita agendada desde web ---`;
                 
                 window.open(`https://wa.me/573215343562?text=${encodeURIComponent(mensaje)}`, '_blank');
@@ -1171,141 +1343,142 @@
             
             container.innerHTML = `
                 <div class="property-info">
-                    <h4>${currentProperty.title}</h4>
-                    <p>${currentProperty.m2} m² · ${currentProperty.cuartos} cuartos · ${currentProperty.baños} baños</p>
-                    <p><strong>Precio referencia:</strong> ${formatPrice(currentProperty.price)}</p>
-                </div>
-                <div class="section-title">📋 Proceso de Oferta / Compra</div>
-                
-                <div class="form-group">
-                    <label>¿Es un negocio convencionado?</label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="negocioConvencionado" value="Sí"> Sí</label>
-                        <label><input type="radio" name="negocioConvencionado" value="No" checked> No</label>
-                    </div>
+                    <h4>🏠 ${currentProperty.title}</h4>
+                    <p>📐 ${currentProperty.m2} m² · 🛏️ ${currentProperty.cuartos} habitaciones · 🚿 ${currentProperty.baños} baños</p>
+                    <p><strong>💰 Precio referencia:</strong> ${currentProperty.category === 'venta' ? formatPrice(currentProperty.price) : formatPrice(currentProperty.priceRent)}</p>
                 </div>
                 
-                <div class="form-group">
-                    <label>¿Voy a hacer pago de arras?</label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="pagoArras" value="Sí" id="arrasSi"> Sí</label>
-                        <label><input type="radio" name="pagoArras" value="No" id="arrasNo" checked> No</label>
-                    </div>
-                </div>
-                
-                <div id="arrasSection" style="display: none;">
+                <div class="section">
+                    <div class="section-title">📋 Información de la oferta</div>
+                    
                     <div class="form-group">
-                        <label>¿Con qué recursos voy a pagar las arras?</label>
+                        <label>¿CÓMO VOY A PAGAR?</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="tipoPago" value="contado" id="pagoContado" checked> Pago de contado</label>
+                            <label><input type="radio" name="tipoPago" value="cuotaInicial" id="pagoCuotaInicial"> Cuota inicial + crédito</label>
+                        </div>
+                    </div>
+                    
+                    <div id="cuotaInicialSection" style="display: none;">
+                        <div class="form-group">
+                            <label>VALOR DE CUOTA INICIAL (COP$)</label>
+                            <input type="number" id="cuotaInicial" placeholder="Ej: 50000000">
+                        </div>
+                    </div>
+                    
+                    <div id="financiamientoSection" style="display: none;">
+                        <div class="section-subtitle">💰 ¿Cómo voy a financiar el saldo restante?</div>
                         <div class="checkbox-group">
-                            <label><input type="checkbox" name="arrasFinancia" value="Recursos propios"> Recursos propios</label>
-                            <label><input type="checkbox" name="arrasFinancia" value="Cesantías"> Cesantías</label>
+                            <label><input type="checkbox" name="saldoFinancia" value="Recursos propios"> Recursos propios</label>
+                            <label><input type="checkbox" name="saldoFinancia" value="Crédito hipotecario"> Crédito hipotecario</label>
+                            <label><input type="checkbox" name="saldoFinancia" value="Cesantías"> Cesantías</label>
                         </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>¿Cómo voy a financiar el saldo?</label>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="saldoFinancia" value="Recursos propios"> Recursos propios</label>
-                        <label><input type="checkbox" name="saldoFinancia" value="Crédito hipotecario"> Crédito hipotecario</label>
-                        <label><input type="checkbox" name="saldoFinancia" value="Cesantías"> Cesantías</label>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Valor ofertado (COP$) *</label>
-                    <input type="number" id="valorOfertado" placeholder="Ej: 215000000" value="${currentProperty.price || 0}">
-                </div>
-                
-                <div class="section-title" style="margin-top: 1rem;">👥 Datos del comprador</div>
-                
-                <div class="comprador-card">
-                    <div class="tipo-comprador-selector">
-                        <span style="font-weight: 600;">Tipo de comprador:</span>
-                        <label><input type="radio" name="tipoComprador" value="natural" checked> Persona Natural</label>
-                        <label><input type="radio" name="tipoComprador" value="juridica"> Persona Jurídica</label>
                     </div>
                     
-                    <div id="camposNatural">
-                        <div class="row-2">
-                            <div class="form-group"><label>Primer nombre *</label><input type="text" id="nombre1"></div>
-                            <div class="form-group"><label>Primer apellido *</label><input type="text" id="apellido1"></div>
+                    <div class="form-group">
+                        <label>VALOR OFERTADO (COP$) *</label>
+                        <input type="number" id="valorOfertado" placeholder="Ej: ${currentProperty.price || 300000000}" value="${currentProperty.price || 300000000}">
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">👤 Datos del comprador</div>
+                    
+                    <div class="comprador-card">
+                        <div class="tipo-comprador-selector">
+                            <span>TIPO DE COMPRADOR:</span>
+                            <label><input type="radio" name="tipoComprador" value="natural" checked> Persona Natural</label>
+                            <label><input type="radio" name="tipoComprador" value="juridica"> Persona Jurídica</label>
                         </div>
-                        <div class="row-2">
-                            <div class="form-group"><label>Segundo nombre</label><input type="text" id="nombre2"></div>
-                            <div class="form-group"><label>Segundo apellido *</label><input type="text" id="apellido2"></div>
+                        
+                        <div id="camposNatural">
+                            <div class="row-2">
+                                <div class="form-group"><label>PRIMER NOMBRE *</label><input type="text" id="nombre1" placeholder="Juan"></div>
+                                <div class="form-group"><label>PRIMER APELLIDO *</label><input type="text" id="apellido1" placeholder="Pérez"></div>
+                            </div>
+                            <div class="row-2">
+                                <div class="form-group"><label>SEGUNDO NOMBRE</label><input type="text" id="nombre2" placeholder="(Opcional)"></div>
+                                <div class="form-group"><label>SEGUNDO APELLIDO *</label><input type="text" id="apellido2" placeholder="García"></div>
+                            </div>
+                            <div class="row-2">
+                                <div class="form-group"><label>TIPO DOCUMENTO *</label>
+                                    <select id="tipoDoc"><option value="">Selecciona</option><option value="Cédula de ciudadanía">Cédula</option><option value="Pasaporte">Pasaporte</option></select>
+                                </div>
+                                <div class="form-group"><label>NÚMERO DOCUMENTO *</label><input type="text" id="numDoc" placeholder="Ej: 12345678"></div>
+                            </div>
+                            <div class="row-2">
+                                <div class="form-group"><label>TELÉFONO *</label><input type="tel" id="telefonoComprador" placeholder="3001234567"></div>
+                                <div class="form-group"><label>CORREO ELECTRÓNICO *</label><input type="email" id="emailComprador" placeholder="ejemplo@correo.com"></div>
+                            </div>
                         </div>
-                        <div class="row-2">
-                            <div class="form-group"><label>Tipo documento *</label><select id="tipoDoc"><option value="">Selecciona</option><option value="Cédula">Cédula</option><option value="Pasaporte">Pasaporte</option></select></div>
-                            <div class="form-group"><label>Número documento *</label><input type="text" id="numDoc"></div>
+                        
+                        <div id="camposJuridica" style="display: none;">
+                            <div class="form-group"><label>RAZÓN SOCIAL *</label><input type="text" id="razonSocial" placeholder="Nombre de la empresa"></div>
+                            <div class="row-2">
+                                <div class="form-group"><label>NIT *</label><input type="text" id="nit" placeholder="900.123.456-7"></div>
+                                <div class="form-group"><label>REPRESENTANTE LEGAL *</label><input type="text" id="representante" placeholder="Nombre completo"></div>
+                            </div>
+                            <div class="row-2">
+                                <div class="form-group"><label>TELÉFONO *</label><input type="tel" id="telefonoJuridico" placeholder="3001234567"></div>
+                                <div class="form-group"><label>CORREO *</label><input type="email" id="emailJuridico" placeholder="empresa@correo.com"></div>
+                            </div>
                         </div>
-                        <div class="form-group"><label>Teléfono *</label><input type="tel" id="telefonoComprador"></div>
-                        <div class="form-group"><label>Correo electrónico *</label><input type="email" id="emailComprador"></div>
                     </div>
                     
-                    <div id="camposJuridica" style="display: none;">
-                        <div class="form-group"><label>Razón social *</label><input type="text" id="razonSocial"></div>
-                        <div class="row-2">
-                            <div class="form-group"><label>NIT *</label><input type="text" id="nit"></div>
-                            <div class="form-group"><label>Representante legal *</label><input type="text" id="representante"></div>
-                        </div>
-                        <div class="row-2">
-                            <div class="form-group"><label>Teléfono *</label><input type="tel" id="telefonoJuridico"></div>
-                            <div class="form-group"><label>Correo *</label><input type="email" id="emailJuridico"></div>
-                        </div>
+                    <div class="form-group">
+                        <label>COMENTARIOS ADICIONALES</label>
+                        <textarea rows="3" id="comentariosOferta" placeholder="Ej: Necesito crédito hipotecario, disponibilidad inmediata..."></textarea>
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <label>Comentarios adicionales</label>
-                    <textarea rows="3" id="comentariosOferta" style="width:100%; padding:0.8rem; border-radius:12px; border:1px solid #ccc;"></textarea>
-                </div>
-                
-                <button class="btn-submit" id="submitOferta">Enviar oferta por WhatsApp</button>
+                <button class="btn-submit" id="submitOferta">📩 Enviar oferta por WhatsApp</button>
             `;
             
-            const arrasSi = container.querySelector('#arrasSi');
-            const arrasNo = container.querySelector('#arrasNo');
-            const arrasSection = container.querySelector('#arrasSection');
+            // Lógica para mostrar/ocultar según tipo de pago
+            const pagoContado = container.querySelector('#pagoContado');
+            const pagoCuotaInicial = container.querySelector('#pagoCuotaInicial');
+            const cuotaInicialSection = container.querySelector('#cuotaInicialSection');
+            const financiamientoSection = container.querySelector('#financiamientoSection');
+            
+            pagoContado.addEventListener('change', () => {
+                cuotaInicialSection.style.display = 'none';
+                financiamientoSection.style.display = 'none';
+            });
+            
+            pagoCuotaInicial.addEventListener('change', () => {
+                cuotaInicialSection.style.display = 'block';
+                financiamientoSection.style.display = 'block';
+            });
+            
+            // Lógica para tipo de comprador
             const radioNatural = container.querySelector('input[name="tipoComprador"][value="natural"]');
             const radioJuridica = container.querySelector('input[name="tipoComprador"][value="juridica"]');
             const camposNatural = container.querySelector('#camposNatural');
             const camposJuridica = container.querySelector('#camposJuridica');
             
-            if (arrasSi && arrasNo) {
-                arrasSi.addEventListener('change', () => arrasSection.style.display = 'block');
-                arrasNo.addEventListener('change', () => arrasSection.style.display = 'none');
-            }
-            
-            if (radioNatural && radioJuridica) {
-                radioNatural.addEventListener('change', () => { camposNatural.style.display = 'block'; camposJuridica.style.display = 'none'; });
-                radioJuridica.addEventListener('change', () => { camposNatural.style.display = 'none'; camposJuridica.style.display = 'block'; });
-            }
+            radioNatural.addEventListener('change', () => { camposNatural.style.display = 'block'; camposJuridica.style.display = 'none'; });
+            radioJuridica.addEventListener('change', () => { camposNatural.style.display = 'none'; camposJuridica.style.display = 'block'; });
             
             container.querySelector('#submitOferta').addEventListener('click', () => {
-                const isJuridica = radioJuridica && radioJuridica.checked;
+                const isJuridica = radioJuridica.checked;
+                const tipoPago = container.querySelector('input[name="tipoPago"]:checked').value;
                 let mensaje = `🏠 *OFERTA INMUEBLE - QRP2P INMOBILIARIA*%0A%0A` +
                     `*Inmueble:* ${currentProperty.title}%0A` +
-                    `*Dirección:* ${currentProperty.m2} m², ${currentProperty.cuartos} cuartos, ${currentProperty.baños} baños%0A`;
+                    `*Características:* ${currentProperty.m2} m², ${currentProperty.cuartos} habitaciones, ${currentProperty.baños} baños%0A`;
                 
-                const negocioConv = container.querySelector('input[name="negocioConvencionado"]:checked')?.value || '';
-                mensaje += `*Negocio convencionado:* ${negocioConv}%0A`;
+                mensaje += `*Tipo de pago:* ${tipoPago === 'contado' ? 'Pago de contado' : 'Cuota inicial + crédito'}%0A`;
                 
-                const pagoArras = container.querySelector('input[name="pagoArras"]:checked')?.value || '';
-                mensaje += `*Pago de arras:* ${pagoArras}%0A`;
-                
-                if (pagoArras === 'Sí') {
-                    let arrasRecursos = [];
-                    container.querySelectorAll('input[name="arrasFinancia"]:checked').forEach(cb => arrasRecursos.push(cb.value));
-                    if (arrasRecursos.length) mensaje += `*Financiación arras:* ${arrasRecursos.join(', ')}%0A`;
+                if (tipoPago === 'cuotaInicial') {
+                    const cuotaInicial = container.querySelector('#cuotaInicial')?.value || '0';
+                    mensaje += `*Valor cuota inicial:* $${parseInt(cuotaInicial).toLocaleString('es-CO')}%0A`;
+                    
+                    let saldoRecursos = [];
+                    container.querySelectorAll('input[name="saldoFinancia"]:checked').forEach(cb => saldoRecursos.push(cb.value));
+                    if (saldoRecursos.length) mensaje += `*Financiación saldo:* ${saldoRecursos.join(', ')}%0A`;
                 }
                 
-                let saldoRecursos = [];
-                container.querySelectorAll('input[name="saldoFinancia"]:checked').forEach(cb => saldoRecursos.push(cb.value));
-                mensaje += `*Financiación saldo:* ${saldoRecursos.join(', ') || 'No especificada'}%0A`;
-                
-                const valorOfertado = container.querySelector('#valorOfertado').value;
-                mensaje += `*Valor ofertado:* $${parseFloat(valorOfertado).toLocaleString('es-CO')}%0A%0A`;
+                const valorOfertado = container.querySelector('#valorOfertado')?.value || '0';
+                mensaje += `*Valor ofertado:* $${parseInt(valorOfertado).toLocaleString('es-CO')}%0A%0A`;
                 
                 mensaje += `*DATOS DEL COMPRADOR*%0A`;
                 if (isJuridica) {
@@ -1314,7 +1487,7 @@
                     const representante = container.querySelector('#representante')?.value.trim() || '';
                     const telefono = container.querySelector('#telefonoJuridico')?.value.trim() || '';
                     const email = container.querySelector('#emailJuridico')?.value.trim() || '';
-                    if (!razon || !nit || !representante || !telefono || !email) { alert('Completa todos los campos de la persona jurídica'); return; }
+                    if (!razon || !nit || !representante || !telefono || !email) { alert('⚠️ Completa todos los campos de la persona jurídica'); return; }
                     mensaje += `Tipo: Persona Jurídica%0ARazón social: ${razon}%0ANIT: ${nit}%0ARepresentante: ${representante}%0ATeléfono: ${telefono}%0ACorreo: ${email}%0A`;
                 } else {
                     const nombre1 = container.querySelector('#nombre1')?.value.trim() || '';
@@ -1324,7 +1497,7 @@
                     const numDoc = container.querySelector('#numDoc')?.value.trim() || '';
                     const telefono = container.querySelector('#telefonoComprador')?.value.trim() || '';
                     const email = container.querySelector('#emailComprador')?.value.trim() || '';
-                    if (!nombre1 || !apellido1 || !apellido2 || !tipoDoc || !numDoc || !telefono || !email) { alert('Completa todos los campos del comprador'); return; }
+                    if (!nombre1 || !apellido1 || !apellido2 || !tipoDoc || !numDoc || !telefono || !email) { alert('⚠️ Completa todos los campos del comprador'); return; }
                     mensaje += `Tipo: Persona Natural%0ANombre: ${nombre1} ${container.querySelector('#nombre2')?.value || ''} ${apellido1} ${apellido2}%0ADocumento: ${tipoDoc} ${numDoc}%0ATeléfono: ${telefono}%0ACorreo: ${email}%0A`;
                 }
                 
@@ -1338,7 +1511,6 @@
             modal.style.display = 'flex';
         }
         
-        // Botones de header
         document.getElementById('sellPropertyBtn').addEventListener('click', (e) => {
             e.preventDefault();
             window.open('https://qrp2p.com/vender-inmueble', '_blank');
@@ -1349,7 +1521,6 @@
             window.open('https://qrp2p.com/arrendar-inmueble', '_blank');
         });
         
-        // Cerrar modales
         document.querySelectorAll('.close-visita-modal, .close-oferta-modal').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.getElementById('visitaModal').style.display = 'none';
@@ -1370,14 +1541,6 @@
                 filterProperties();
             });
         });
-        
-        function showNotification(message) {
-            const notif = document.createElement('div');
-            notif.className = 'notification';
-            notif.textContent = message;
-            document.body.appendChild(notif);
-            setTimeout(() => { notif.style.opacity = '0'; setTimeout(() => notif.remove(), 500); }, 3000);
-        }
         
         loadProperties(properties);
     </script>
