@@ -21,6 +21,8 @@
       margin: 0; 
       padding: 0; 
       box-sizing: border-box; 
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
     
     body { 
@@ -63,6 +65,7 @@
       appearance: none; 
       font-size: 16px;
       transition: var(--transition);
+      user-select: text;
     }
     
     #buscador:focus {
@@ -88,6 +91,7 @@
       gap: 5px;
       border: 1px solid #333;
       font-family: inherit;
+      user-select: none;
     }
     
     .btn:hover {
@@ -115,6 +119,7 @@
       flex: 1; 
       background: #f0f0f0; 
       width: 100%;
+      user-select: none;
     }
     
     .notificacion-alerta {
@@ -134,6 +139,7 @@
       gap: 12px;
       animation: slideInRight 0.3s ease;
       max-width: 280px;
+      user-select: none;
     }
     
     .notificacion-alerta button {
@@ -175,21 +181,6 @@
       margin-top: 10px;
     }
     
-    .popup-button-row {
-      display: flex;
-      gap: 8px;
-      justify-content: space-between;
-    }
-    
-    .vendedor-imagen {
-      width: 100%;
-      height: 150px;
-      background-size: cover;
-      background-position: center;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-    
     .vendedor-detalle {
       font-size: 0.85rem;
       margin: 5px 0;
@@ -220,6 +211,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      user-select: none;
     }
     
     .sugerencia-item:hover {
@@ -239,6 +231,7 @@
       border-radius: 4px;
       cursor: pointer;
       font-size: 12px;
+      user-select: none;
     }
     
     .cargando {
@@ -273,6 +266,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
       display: flex;
       gap: 10px;
+      user-select: none;
     }
     
     .map-type-btn {
@@ -283,6 +277,7 @@
       font-size: 14px;
       background: #f1f1f1;
       transition: background 0.3s;
+      user-select: none;
     }
     
     .map-type-btn.active {
@@ -302,6 +297,21 @@
       justify-content: center;
     }
     
+    /* Evitar selección en el mapa de Leaflet */
+    .leaflet-container {
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    
+    .leaflet-container:active {
+      cursor: grabbing;
+    }
+    
+    .leaflet-control-zoom a {
+      user-select: none;
+    }
+    
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
@@ -315,10 +325,6 @@
       .botones-secundarios {
         flex-direction: column;
         gap: 0.6rem;
-      }
-      
-      .popup-button-row {
-        flex-direction: column;
       }
       
       .sugerencia-item {
@@ -397,7 +403,7 @@
         "latlng": [3.4545, -76.5350], 
         "telefono": "+573146824438",
         "url": "https://qrp2p.com/cali-inmobiliaria",
-        "imagen": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=300&fit=crop",
+        "imagen": "",
         "verificado": true,
         "tiempo_operando": "2 años",
         "calificacion": "5"
@@ -436,12 +442,6 @@
           notificacionActual = null;
         }
       }, 5000);
-    }
-
-    function abrirWhatsApp(telefono, nombre, direccion, tiempo_operando, calificacion) {
-      const numeroLimpio = telefono.replace(/\D/g, '');
-      const mensaje = `Hola, me interesa contactar al vendedor verificado:\n\n⚡️ Nombre: ${nombre}\n📍 Dirección: ${direccion}\n⏱️ Tiempo operando: ${tiempo_operando}\n⭐️ Calificación: ${calificacion}\n\n¿Podría darme más información sobre sus servicios? ¡Gracias!`;
-      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -502,7 +502,6 @@
           icon: verifiedIcon
         }).bindPopup(`
           <div style="min-width:280px; max-width:320px;">
-            <div class="vendedor-imagen" style="background-image: url('${vendedor.imagen}'); background-size: cover; background-position: center;"></div>
             <h3 style="margin:5px 0;color:#0066cc">⚡️ ${vendedor.nombre}</h3>
             <p style="margin:5px 0;font-size:0.85rem">📍 ${vendedor.direccion}</p>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin:8px 0;">
@@ -512,15 +511,9 @@
               <div class="vendedor-detalle"><strong>📞 Teléfono:</strong> ${vendedor.telefono}</div>
             </div>
             <div class="popup-buttons">
-              <div class="popup-button-row">
-                <button onclick="abrirWhatsApp('${vendedor.telefono}', '${vendedor.nombre}', '${vendedor.direccion}', '${vendedor.tiempo_operando}', '${vendedor.calificacion}')" style="background:#25D366;color:white;border:none;padding:10px;border-radius:8px;cursor:pointer;width:100%;font-weight:bold;">
-                  💬 WhatsApp - Contactar vendedor
-                </button>
-              </div>
-              <div class="popup-button-row" style="gap:8px;margin-top:5px;">
-                <button onclick="window.open('${vendedor.url}', '_blank')" style="background:#000000;color:white;border:none;padding:8px;border-radius:8px;cursor:pointer;flex:1;">🔍 Ver página del vendedor</button>
-                <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${vendedor.latlng[0]},${vendedor.latlng[1]}', '_blank')" style="background:#0066cc;color:white;border:none;padding:8px;border-radius:8px;cursor:pointer;flex:1;">🗺️ Cómo llegar</button>
-              </div>
+              <button onclick="window.open('${vendedor.url}', '_blank')" style="background:#000000;color:white;border:none;padding:10px;border-radius:8px;cursor:pointer;width:100%;font-weight:bold;">
+                🔍 Ver página del vendedor
+              </button>
             </div>
           </div>
         `);
