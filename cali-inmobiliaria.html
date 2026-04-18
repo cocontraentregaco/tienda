@@ -2,17 +2,30 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, user-scalable=no, initial-scale=1.0">
     <meta name="description" content="QRP2P INMOBILIARIA - Compra y venta de inmuebles en Cali, Valle del Cauca, Colombia">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>QRP2P INMOBILIARIA - Cali, Valle Del Cauca, Colombia</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Prevenir zoom y selección de texto */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        /* Permitir selección solo en inputs */
+        input, textarea, select {
+            -webkit-user-select: text;
+            user-select: text;
+            -webkit-touch-callout: text;
         }
         
         body {
@@ -24,6 +37,7 @@
             overflow-x: hidden;
             position: relative;
             width: 100%;
+            touch-action: pan-y pan-x; /* Permitir solo scroll, no zoom */
         }
         
         /* Prevenir scroll no deseado */
@@ -31,6 +45,7 @@
             overflow-x: hidden;
             width: 100%;
             position: relative;
+            touch-action: pan-y; /* Previene zoom pinch */
         }
         
         /* Header */
@@ -474,7 +489,7 @@
         input, select, textarea {
             width: 100%;
             padding: 0.9rem 1rem;
-            font-size: 1rem;
+            font-size: 16px !important;
             border: 1.5px solid #e0e0e0;
             border-radius: 16px;
             background: #ffffff;
@@ -898,11 +913,9 @@
             }
         }
         
-        /* Prevenir zoom en inputs iOS */
-        @media screen and (max-width: 767px) {
-            input, select, textarea {
-                font-size: 16px !important;
-            }
+        /* Fijar tamaño de fuente en inputs para iOS */
+        input, select, textarea {
+            font-size: 16px !important;
         }
         
         .notification {
@@ -918,6 +931,36 @@
             font-size: 0.85rem;
         }
     </style>
+    <script>
+        // Script para prevenir zoom por double-tap y gestos
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+        
+        // Prevenir zoom con Ctrl + +
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=')) || 
+                (e.metaKey && (e.key === '+' || e.key === '-'))) {
+                e.preventDefault();
+            }
+        });
+        
+        // Prevenir doble clic que causa zoom en algunos navegadores
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
 </head>
 <body>
     <header>
