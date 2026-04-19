@@ -3,48 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>QRP2P - Vendedores Verificados en Cali, Valle Del Cauca, Colombia</title>
+  <title>QRP2P INMOBILIARIA CALI - Inmuebles Verificados en Venta y Arriendo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
   <style>
-    :root {
-      --primary-color: #1a1a1a;
-      --secondary-color: #333;
-      --accent-color: #0066cc;
-      --text-color: #333;
-      --light-text: #fff;
-      --bg-light: #f8f8f8;
-      --border-radius: 8px;
-      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      --transition: all 0.3s ease;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
     
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
+    body {
+      font-family: 'Libre Baskerville', serif;
+      background-color: #ffffff;
+      color: #111111;
+      line-height: 1.5;
+      font-size: 16px;
     }
     
-    body { 
-      font-family: 'Roboto', sans-serif; 
-      color: var(--text-color); 
-      line-height: 1.6; 
-      touch-action: manipulation;
-      overflow-x: hidden;
+    header {
+      background-color: #000000;
+      color: #ffffff;
+      padding: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
     
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .logo-img {
+      height: 45px;
+      width: auto;
+    }
+    
+    .logo-text {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .sell-btn, .rent-btn {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+      font-family: 'Libre Baskerville', serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .sell-btn {
+      background-color: #25D366;
+      color: #000000;
+    }
+    
+    .rent-btn {
+      background-color: #007bff;
+      color: white;
+    }
+    
+    /* Estilos del mapa */
     #contenedor-mapa { 
-      height: 100vh; 
+      height: 70vh; 
       display: flex; 
       flex-direction: column; 
       position: relative;
+      margin-bottom: 2rem;
     }
     
     #barra-superior { 
       display: flex; 
       gap: 0.8rem; 
       padding: 0.8rem; 
-      background: var(--bg-light); 
+      background: #f8f8f8; 
       width: 100%;
       z-index: 1000;
       justify-content: center;
@@ -60,28 +117,28 @@
     #buscador { 
       width: 100%;
       padding: 0.6rem 1.2rem; 
-      border: 1px solid #ddd; 
-      border-radius: 24px; 
+      border: 1.5px solid #e0e0e0; 
+      border-radius: 50px; 
       appearance: none; 
       font-size: 16px;
-      transition: var(--transition);
-      user-select: text;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.3s ease;
     }
     
     #buscador:focus {
       outline: none;
-      border-color: var(--accent-color);
-      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+      border-color: #000000;
+      box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
     }
     
-    .btn { 
+    .btn-mapa { 
       background: #000000;
       color: #ffffff;
       padding: 0.6rem 1.2rem; 
-      border-radius: 24px; 
+      border-radius: 40px; 
       text-decoration: none;
-      font-weight: 500;
-      transition: var(--transition);
+      font-weight: 600;
+      transition: all 0.3s ease;
       border: none;
       cursor: pointer;
       white-space: nowrap;
@@ -89,14 +146,12 @@
       align-items: center;
       justify-content: center;
       gap: 5px;
-      border: 1px solid #333;
-      font-family: inherit;
-      user-select: none;
+      font-family: 'Libre Baskerville', serif;
     }
     
-    .btn:hover {
+    .btn-mapa:hover {
       background: #333333;
-      transform: translateY(-1px);
+      transform: translateY(-2px);
     }
     
     .btn-centrar {
@@ -105,8 +160,8 @@
     }
     
     .btn-registro {
-      background-color: #000000;
-      color: #ffffff;
+      background-color: #25D366;
+      color: #000000;
     }
     
     .botones-secundarios {
@@ -119,53 +174,68 @@
       flex: 1; 
       background: #f0f0f0; 
       width: 100%;
-      user-select: none;
+      min-height: 400px;
     }
     
-    .notificacion-alerta {
-      position: fixed;
-      bottom: 80px;
-      right: 20px;
-      background: #ff6b6b;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 12px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      z-index: 2000;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      animation: slideInRight 0.3s ease;
-      max-width: 280px;
-      user-select: none;
-    }
-    
-    .notificacion-alerta button {
+    .sugerencias-busqueda {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
       background: white;
-      color: #ff6b6b;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+    
+    .sugerencia-item {
+      padding: 12px 15px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .sugerencia-item:hover {
+      background-color: #f5f5f5;
+    }
+    
+    .sugerencia-texto {
+      flex: 1;
+    }
+    
+    .sugerencia-boton {
+      margin-left: 10px;
+      padding: 6px 12px;
+      background-color: #000000;
+      color: white;
       border: none;
-      padding: 4px 12px;
       border-radius: 20px;
       cursor: pointer;
-      font-weight: bold;
-      font-size: 0.75rem;
+      font-size: 12px;
+      font-family: 'Libre Baskerville', serif;
     }
     
-    @keyframes slideInRight {
-      from {
-        opacity: 0;
-        transform: translateX(50px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+    .cargando {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(0,0,0,.3);
+      border-radius: 50%;
+      border-top-color: #000;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
     
     .cluster-marcadores { 
-      background: rgba(40,40,40,0.7); 
+      background: rgba(0,0,0,0.7); 
       border-radius: 50%; 
       color: white;
       display: flex;
@@ -181,80 +251,6 @@
       margin-top: 10px;
     }
     
-    .vendedor-detalle {
-      font-size: 0.85rem;
-      margin: 5px 0;
-    }
-    
-    .vendedor-detalle strong {
-      color: #0066cc;
-    }
-    
-    .sugerencias-busqueda {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      border-radius: 0 0 8px 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      z-index: 1000;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
-    }
-    
-    .sugerencia-item {
-      padding: 10px 15px;
-      cursor: pointer;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      user-select: none;
-    }
-    
-    .sugerencia-item:hover {
-      background-color: #f5f5f5;
-    }
-    
-    .sugerencia-texto {
-      flex: 1;
-    }
-    
-    .sugerencia-boton {
-      margin-left: 10px;
-      padding: 5px 10px;
-      background-color: #000000;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-      user-select: none;
-    }
-    
-    .cargando {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(0,0,0,.3);
-      border-radius: 50%;
-      border-top-color: #000;
-      animation: spin 1s ease-in-out infinite;
-    }
-    
-    .gm-style .gm-style-iw-c {
-      border-radius: 8px;
-      padding: 10px;
-      max-width: 320px !important;
-    }
-    
-    .gm-style .gm-style-iw-d {
-      overflow: auto !important;
-      max-height: 400px !important;
-    }
-    
     .map-type-selector {
       position: absolute;
       bottom: 20px;
@@ -262,31 +258,29 @@
       z-index: 1000;
       background: white;
       padding: 8px 12px;
-      border-radius: 4px;
+      border-radius: 40px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
       display: flex;
       gap: 10px;
-      user-select: none;
     }
     
     .map-type-btn {
       padding: 6px 12px;
       border: none;
-      border-radius: 4px;
+      border-radius: 40px;
       cursor: pointer;
       font-size: 14px;
       background: #f1f1f1;
+      font-family: 'Libre Baskerville', serif;
       transition: background 0.3s;
-      user-select: none;
     }
     
     .map-type-btn.active {
-      background: #0066cc;
+      background: #000000;
       color: white;
     }
     
-    /* Estilo personalizado para el marcador con emoji */
-    .verified-marker {
+    .inmueble-marker {
       background: transparent;
       border: none;
       font-size: 28px;
@@ -297,81 +291,295 @@
       justify-content: center;
     }
     
-    /* Evitar selección en el mapa de Leaflet */
-    .leaflet-container {
-      cursor: grab;
-      user-select: none;
-      -webkit-user-select: none;
+    /* Estilos de propiedades - igual que el primer código */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
     }
     
-    .leaflet-container:active {
-      cursor: grabbing;
+    .filters {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
     
-    .leaflet-control-zoom a {
-      user-select: none;
+    .search-box {
+      flex-grow: 1;
+      max-width: 400px;
     }
     
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .search-box input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 50px;
+      font-size: 16px;
+      font-family: 'Libre Baskerville', serif;
     }
     
-    @media (max-width: 768px) { 
+    .category-filter {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+    
+    .category-btn {
+      background: transparent;
+      border: 1.5px solid #000000;
+      padding: 0.5rem 1.5rem;
+      cursor: pointer;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.3s ease;
+    }
+    
+    .category-btn:hover, .category-btn.active {
+      background-color: #000000;
+      color: #ffffff;
+    }
+    
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.8rem;
+      margin-bottom: 3rem;
+    }
+    
+    .product-card {
+      background: #ffffff;
+      border: 1px solid #eaeaea;
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .product-card:hover {
+      transform: translateY(-6px);
+    }
+    
+    .product-image-container {
+      position: relative;
+      width: 100%;
+      height: 240px;
+      overflow: hidden;
+      background-color: #f0f0f0;
+    }
+    
+    .product-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .image-nav {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 12px;
+      transform: translateY(-50%);
+      z-index: 10;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .product-image-container:hover .image-nav {
+      opacity: 1;
+    }
+    
+    .nav-btn {
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    
+    .image-counter {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background-color: rgba(0, 0, 0, 0.65);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+    }
+    
+    .product-info {
+      padding: 1.2rem;
+    }
+    
+    .product-title {
+      font-size: 1.15rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+    
+    .product-price {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      color: #000000;
+    }
+    
+    .product-details {
+      margin-bottom: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    
+    .product-details span {
+      background-color: #f5f5f5;
+      padding: 0.3rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+    }
+    
+    .product-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+    
+    .add-to-cart, .buy-now {
+      padding: 0.7rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: 'Libre Baskerville', serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .add-to-cart {
+      background-color: #000000;
+      color: #ffffff;
+    }
+    
+    .buy-now {
+      background-color: #f0f0f0;
+      color: #000000;
+      border: 1px solid #ddd;
+    }
+    
+    footer {
+      background-color: #000000;
+      color: #ffffff;
+      padding: 2.5rem 1rem;
+      margin-top: 3rem;
+    }
+    
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+    
+    .footer-section {
+      flex: 1;
+      min-width: 220px;
+    }
+    
+    .footer-section h3 {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+    
+    .footer-section p, .footer-section a {
+      margin-bottom: 0.5rem;
+      color: #cccccc;
+      text-decoration: none;
+      display: block;
+      font-size: 0.85rem;
+    }
+    
+    .social-icons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .copyright {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid #333;
+      color: #999;
+      font-size: 0.75rem;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 1rem;
+      }
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+      .header-container {
+        flex-direction: column;
+        text-align: center;
+      }
       #barra-superior { 
         flex-direction: column; 
         gap: 0.6rem;
       }
-      
       .botones-secundarios {
         flex-direction: column;
         gap: 0.6rem;
       }
-      
-      .sugerencia-item {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      
-      .sugerencia-boton {
-        margin-left: 0;
-        margin-top: 5px;
-        align-self: flex-end;
-      }
-      
       .map-type-selector {
         bottom: 10px;
         left: 5px;
         flex-direction: column;
         gap: 5px;
       }
-      
-      .notificacion-alerta {
-        bottom: 70px;
-        right: 10px;
-        left: 10px;
-        max-width: none;
-        font-size: 0.75rem;
-      }
-      
-      .verified-marker {
+      .inmueble-marker {
         font-size: 24px;
       }
     }
   </style>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
 </head>
 <body>
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <span class="logo-text">QRP2P INMOBILIARIA</span>
+      </div>
+      <div class="action-buttons">
+        <a href="#" id="sellPropertyBtn" class="sell-btn"><i class="fas fa-home"></i> Vender inmueble</a>
+        <a href="#" id="rentPropertyBtn" class="rent-btn"><i class="fas fa-key"></i> Arrendar inmueble</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAPA DE INMUEBLES VERIFICADOS -->
   <div id="contenedor-mapa">
     <div id="barra-superior">
       <div class="contenedor-buscador">
-        <input type="search" id="buscador" placeholder="Buscar vendedor verificado en Cali..." enterkeyhint="search">
+        <input type="search" id="buscador" placeholder="🔍 Buscar inmueble verificado en Cali..." enterkeyhint="search">
         <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
       </div>
       <div class="botones-secundarios">
-        <button class="btn btn-centrar" id="centrar-btn">CENTRAR</button>
-        <button class="btn btn-registro" id="registro-btn">⚡️ REGISTRO VENDEDORES ⚡️</button>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i> CENTRAR</button>
+        <button class="btn-mapa btn-registro" id="registro-btn"><i class="fas fa-key"></i> 🗝️ REGISTRO INMOBILIARIO 🗝️</button>
       </div>
     </div>
     <div id="mapa"></div>
@@ -381,86 +589,70 @@
     </div>
   </div>
 
+  <!-- SECCIÓN DE INMUEBLES -->
+  <div class="container">
+    <div class="filters">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Buscar inmuebles...">
+      </div>
+      <div class="category-filter">
+        <button class="category-btn active" data-category="todo">Todos</button>
+        <button class="category-btn" data-category="arriendo">En arriendo</button>
+        <button class="category-btn" data-category="venta">En venta</button>
+      </div>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>QRP2P INMOBILIARIA</h3>
+        <p>La revolución en compra y venta de inmuebles en Colombia.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Contacto</h3>
+        <p><i class="fas fa-phone"></i> +57 3146824438</p>
+        <p><i class="fas fa-envelope"></i> info@qrp2p.com</p>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="https://wa.me/573146824438"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-section">
+        <h3>Enlaces</h3>
+        <a href="#" id="footerTermsLink">Términos y Condiciones</a>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>&copy; 2025 QRP2P INMOBILIARIA. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
   <script>
-    // Variables globales
+    const WHATSAPP_NUMBER = "573146824438";
+    
+    // INMUEBLES VERIFICADOS EN CALI
+    const properties = [
+      { id: 1, title: "Apartamento en el Norte de Cali", price: 450000000, priceRent: 2800000, description: "Hermoso apartamento en exclusiva zona residencial", category: "venta", m2: 120, cuartos: 3, baños: 2, latlng: [3.4545, -76.5350], images: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500", "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=500"] },
+      { id: 2, title: "Casa en Ciudad Jardín", price: 680000000, priceRent: 3500000, description: "Casa con jardín y piscina privada", category: "venta", m2: 200, cuartos: 4, baños: 3, latlng: [3.3750, -76.5450], images: ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500", "https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=500"] },
+      { id: 3, title: "Oficina en el Centro Empresarial", price: 0, priceRent: 1800000, description: "Oficina completamente amoblada", category: "arriendo", m2: 80, cuartos: 2, baños: 1, latlng: [3.4516, -76.5320], images: ["https://images.unsplash.com/photo-1497366216548-37526070297c?w=500", "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=500"] },
+      { id: 4, title: "Apartamento en el Sur", price: 320000000, priceRent: 1900000, description: "Apartamento familiar", category: "venta", m2: 95, cuartos: 3, baños: 2, latlng: [3.4000, -76.5200], images: ["https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=500", "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=500"] },
+      { id: 5, title: "Local Comercial", price: 0, priceRent: 2500000, description: "Local en zona comercial", category: "arriendo", m2: 60, cuartos: 1, baños: 1, latlng: [3.4300, -76.5500], images: ["https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500", "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=500"] },
+      { id: 6, title: "Casa en Pance", price: 850000000, priceRent: 4200000, description: "Espectacular casa con piscina y zona verde", category: "venta", m2: 280, cuartos: 5, baños: 4, latlng: [3.3500, -76.5800], images: ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500", "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=500"] }
+    ];
+
     let mapa;
-    let userMarker;
     let marcadoresOriginales = [];
     let buscadorTimeout;
     let googleMapsLayer;
     let googleSatelliteLayer;
     let currentLayer;
-    let notificacionActual = null;
 
-    // DATOS DE VENDEDORES VERIFICADOS QRP2P EN CALI
-    const VENDEDORES = [
-      { 
-        "id": "co",
-        "nombre": "QRP2P INMOBILIARIA", 
-        "direccion": "Carrera 38 # 5-89, Barrio Granada, Cali", 
-        "latlng": [3.4545, -76.5350], 
-        "url": "https://qrp2p.com/cali-inmobiliaria",
-        "imagen": "",
-        "verificado": true
-      }
-    ];
-
-    // Límites de Cali
-    const LIMITES_CALI = {
-      minLat: 3.3000,
-      maxLat: 3.5500,
-      minLng: -76.6500,
-      maxLng: -76.4800
-    };
-
-    function estaEnCali(lat, lng) {
-      return (lat >= LIMITES_CALI.minLat && lat <= LIMITES_CALI.maxLat &&
-              lng >= LIMITES_CALI.minLng && lng <= LIMITES_CALI.maxLng);
-    }
-
-    function mostrarNotificacion(mensaje, tipo = 'warning') {
-      if (notificacionActual) {
-        notificacionActual.remove();
-      }
-      const notificacion = document.createElement('div');
-      notificacion.className = 'notificacion-alerta';
-      notificacion.style.background = tipo === 'warning' ? '#ff6b6b' : '#4caf50';
-      notificacion.innerHTML = `
-        <span>${mensaje}</span>
-        <button onclick="this.parentElement.remove()">✕</button>
-      `;
-      document.body.appendChild(notificacion);
-      notificacionActual = notificacion;
-      setTimeout(() => {
-        if (notificacionActual === notificacion) {
-          notificacion.remove();
-          notificacionActual = null;
-        }
-      }, 5000);
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      initializeMap();
-      document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
-      document.getElementById('registro-btn').addEventListener('click', function() {
-        window.open('https://qrp2p.com/afiliacion-colombia', '_blank');
-      });
-      document.getElementById('map-btn').addEventListener('click', switchToMapView);
-      document.getElementById('satellite-btn').addEventListener('click', switchToSatelliteView);
-      
-      const searchInput = document.getElementById('buscador');
-      searchInput.addEventListener('input', handleSearchInput);
-      searchInput.addEventListener('keydown', handleSearchKeydown);
-      
-      document.addEventListener('click', function(e) {
-        if (!e.target.closest('.contenedor-buscador')) {
-          document.getElementById('sugerencias-busqueda').style.display = 'none';
-        }
-      });
-    });
-
+    // FUNCIONES DEL MAPA
     function initializeMap() {
       mapa = L.map('mapa', { center: [3.4516, -76.5320], zoom: 13, zoomControl: false });
       L.control.zoom({ position: 'bottomright' }).addTo(mapa);
@@ -486,30 +678,32 @@
         zoomToBoundsOnClick: true
       });
 
-      // Crear un ícono personalizado con el emoji ⚡️
-      const verifiedIcon = L.divIcon({
-        className: 'verified-marker',
-        html: '⚡️',
+      // Ícono personalizado con emoji 🗝️
+      const inmuebleIcon = L.divIcon({
+        className: 'inmueble-marker',
+        html: '🗝️',
         iconSize: [32, 32],
         popupAnchor: [0, -16]
       });
 
-      VENDEDORES.forEach(vendedor => {
-        const marcador = L.marker(vendedor.latlng, {
-          icon: verifiedIcon
+      properties.forEach(prop => {
+        const displayPrice = prop.category === 'venta' ? formatPrice(prop.price) : formatPrice(prop.priceRent);
+        const marcador = L.marker(prop.latlng, {
+          icon: inmuebleIcon
         }).bindPopup(`
           <div style="min-width:280px; max-width:320px;">
-            <h3 style="margin:5px 0;color:#0066cc">⚡️ ${vendedor.nombre}</h3>
-            <p style="margin:5px 0;font-size:0.85rem">📍 ${vendedor.direccion}</p>
+            <h3 style="margin:5px 0;color:#000">🗝️ ${prop.title}</h3>
+            <p style="margin:5px 0;font-size:0.85rem">📍 ${prop.description}</p>
+            <p style="margin:5px 0;font-size:1.1rem;font-weight:bold;color:#000">💰 ${displayPrice}</p>
             <div class="popup-buttons">
-              <button onclick="window.open('${vendedor.url}', '_blank')" style="background:#000000;color:white;border:none;padding:10px;border-radius:8px;cursor:pointer;width:100%;font-weight:bold;">
-                VER
+              <button onclick="window.open('https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola, quiero información sobre: ' + prop.title)}', '_blank')" style="background:#25D366;color:#000;border:none;padding:10px;border-radius:8px;cursor:pointer;width:100%;font-weight:bold;margin-bottom:5px;">
+                <i class="fab fa-whatsapp"></i> Contactar
               </button>
             </div>
           </div>
         `);
-        marcador.datosVendedor = vendedor;
-        marcador.datosBusqueda = `${vendedor.nombre} ${vendedor.direccion}`.toLowerCase();
+        marcador.datosInmueble = prop;
+        marcador.datosBusqueda = `${prop.title} ${prop.description}`.toLowerCase();
         marcadoresOriginales.push(marcador);
       });
 
@@ -519,8 +713,75 @@
       if(marcadoresOriginales.length > 0) {
         mapa.fitBounds(clusters.getBounds().pad(0.3));
       }
+    }
+
+    function formatPrice(price) {
+      if (price === 0) return "Consultar";
+      return '$' + price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function buscarInmuebles(consulta) {
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      const termino = consulta.toLowerCase();
+      const resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(termino));
       
-      obtenerUbicacionUsuario();
+      if (resultados.length > 0) {
+        sugerenciasContainer.innerHTML = '';
+        resultados.forEach(marcador => {
+          const inmueble = marcador.datosInmueble;
+          const item = document.createElement('div');
+          item.className = 'sugerencia-item';
+          item.innerHTML = `
+            <div class="sugerencia-texto">
+              <strong>🗝️ ${inmueble.title}</strong><br>
+              <small>📍 ${inmueble.description}</small>
+            </div>
+            <button class="sugerencia-boton" data-id="${inmueble.id}">Ver inmueble</button>
+          `;
+          const boton = item.querySelector('.sugerencia-boton');
+          boton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            mapa.setView(marcador.getLatLng(), 16);
+            marcador.openPopup();
+            document.getElementById('buscador').value = inmueble.title;
+            sugerenciasContainer.style.display = 'none';
+          });
+          item.addEventListener('click', () => {
+            mapa.setView(marcador.getLatLng(), 16);
+            marcador.openPopup();
+            document.getElementById('buscador').value = inmueble.title;
+            sugerenciasContainer.style.display = 'none';
+          });
+          sugerenciasContainer.appendChild(item);
+        });
+      } else {
+        sugerenciasContainer.innerHTML = '<div class="sugerencia-item">❌ No se encontraron inmuebles verificados para: ' + consulta + '<br><small>🗝️ Prueba con: Norte, Ciudad Jardín, Pance, Sur, Centro</small></div>';
+      }
+    }
+
+    function handleSearchInput(e) {
+      clearTimeout(buscadorTimeout);
+      const termino = e.target.value.trim();
+      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
+      if (termino.length < 2) {
+        sugerenciasContainer.style.display = 'none';
+        return;
+      }
+      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">🔍 Buscando inmuebles verificados en Cali... <span class="cargando"></span></div>';
+      sugerenciasContainer.style.display = 'block';
+      buscadorTimeout = setTimeout(() => buscarInmuebles(termino), 300);
+    }
+
+    function handleSearchKeydown(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const termino = document.getElementById('buscador').value.trim();
+        if (termino) buscarInmuebles(termino);
+      }
+    }
+
+    function centrarMapa() {
+      mapa.setView([3.4516, -76.5320], 13);
     }
 
     function switchToMapView() {
@@ -539,120 +800,145 @@
       document.getElementById('map-btn').classList.remove('active');
     }
 
-    function handleSearchInput(e) {
-      clearTimeout(buscadorTimeout);
-      const termino = e.target.value.trim();
-      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
-      if (termino.length < 2) {
-        sugerenciasContainer.style.display = 'none';
-        return;
-      }
-      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">🔍 Buscando vendedores verificados en Cali... <span class="cargando"></span></div>';
-      sugerenciasContainer.style.display = 'block';
-      buscadorTimeout = setTimeout(() => buscarVendedores(termino), 300);
-    }
+    // FUNCIONES DE LA TIENDA DE INMUEBLES (igual que el primer código)
+    let currentProperty = null;
 
-    function buscarVendedores(consulta) {
-      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
-      const termino = consulta.toLowerCase();
-      const resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(termino));
+    function loadProperties(propertiesToLoad) {
+      const grid = document.getElementById('productsGrid');
+      grid.innerHTML = '';
       
-      if (resultados.length > 0) {
-        sugerenciasContainer.innerHTML = '';
-        resultados.forEach(marcador => {
-          const vendedor = marcador.datosVendedor;
-          const item = document.createElement('div');
-          item.className = 'sugerencia-item';
-          item.innerHTML = `
-            <div class="sugerencia-texto">
-              <strong>⚡️ ${vendedor.nombre}</strong><br>
-              <small>📍 ${vendedor.direccion}</small>
+      propertiesToLoad.forEach(property => {
+        const displayPrice = property.category === 'venta' ? formatPrice(property.price) : formatPrice(property.priceRent);
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <div class="product-image-container" data-id="${property.id}">
+            <img src="${property.images[0]}" alt="${property.title}" class="product-image">
+            <div class="image-nav">
+              <button class="nav-btn prev-btn" data-id="${property.id}"><i class="fas fa-chevron-left"></i></button>
+              <button class="nav-btn next-btn" data-id="${property.id}"><i class="fas fa-chevron-right"></i></button>
             </div>
-            <button class="sugerencia-boton" data-id="${vendedor.id}">Ver vendedor</button>
-          `;
-          const boton = item.querySelector('.sugerencia-boton');
-          boton.addEventListener('click', (e) => {
+            <div class="image-counter">1/${property.images.length}</div>
+          </div>
+          <div class="product-info">
+            <h3 class="product-title">${property.title}</h3>
+            <p class="product-price">${displayPrice}</p>
+            <div class="product-details">
+              <span><i class="fas fa-arrows-alt"></i> ${property.m2} m²</span>
+              <span><i class="fas fa-bed"></i> ${property.cuartos} hab</span>
+              <span><i class="fas fa-bath"></i> ${property.baños} baños</span>
+            </div>
+            <p class="product-description">${property.description}</p>
+            <div class="product-actions">
+              <button class="add-to-cart" data-id="${property.id}"><i class="fas fa-calendar-check"></i> Agendar visita</button>
+              <button class="buy-now" data-id="${property.id}"><i class="fas fa-hand-holding-usd"></i> ${property.category === 'venta' ? 'Ofertar inmueble' : 'Iniciar arriendo'}</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      
+      document.querySelectorAll('.product-image-container').forEach(container => {
+        const propertyId = parseInt(container.getAttribute('data-id'));
+        const property = properties.find(p => p.id === propertyId);
+        const imgElement = container.querySelector('.product-image');
+        const counter = container.querySelector('.image-counter');
+        let currentIndex = 0;
+        
+        const prevBtn = container.querySelector('.prev-btn');
+        const nextBtn = container.querySelector('.next-btn');
+        
+        if (prevBtn) {
+          prevBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            mapa.setView(marcador.getLatLng(), 16);
-            marcador.openPopup();
-            document.getElementById('buscador').value = vendedor.nombre;
-            sugerenciasContainer.style.display = 'none';
+            currentIndex = (currentIndex - 1 + property.images.length) % property.images.length;
+            imgElement.src = property.images[currentIndex];
+            counter.textContent = `${currentIndex + 1}/${property.images.length}`;
           });
-          item.addEventListener('click', () => {
-            mapa.setView(marcador.getLatLng(), 16);
-            marcador.openPopup();
-            document.getElementById('buscador').value = vendedor.nombre;
-            sugerenciasContainer.style.display = 'none';
-          });
-          sugerenciasContainer.appendChild(item);
-        });
-      } else {
-        sugerenciasContainer.innerHTML = '<div class="sugerencia-item">❌ No se encontraron vendedores verificados para: ' + consulta + '<br><small>📍 Prueba con: Estadio, Granada, Ciudad Jardín, Pance, Norte</small></div>';
-      }
-    }
-
-    function handleSearchKeydown(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const termino = document.getElementById('buscador').value.trim();
-        if (termino) buscarVendedores(termino);
-      }
-    }
-
-    function centrarMapa() {
-      if (userMarker) {
-        const lat = userMarker.getLatLng().lat;
-        const lng = userMarker.getLatLng().lng;
-        if (estaEnCali(lat, lng)) {
-          mapa.setView(userMarker.getLatLng(), 15);
-          userMarker.openPopup();
-        } else {
-          mostrarNotificacion("Estás fuera del área de Cali. Mostrando centro de la ciudad.");
-          mapa.setView([3.4516, -76.5320], 13);
         }
-      } else {
-        obtenerUbicacionUsuario();
-      }
+        if (nextBtn) {
+          nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentIndex = (currentIndex + 1) % property.images.length;
+            imgElement.src = property.images[currentIndex];
+            counter.textContent = `${currentIndex + 1}/${property.images.length}`;
+          });
+        }
+      });
+      
+      document.querySelectorAll('.add-to-cart').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentProperty = properties.find(p => p.id === parseInt(btn.getAttribute('data-id')));
+          const mensaje = `🏠 *AGENDA DE VISITA - QRP2P INMOBILIARIA*\n\n🏠 *Inmueble:* ${currentProperty.title}\n📐 ${currentProperty.m2} m² · ${currentProperty.cuartos} hab · ${currentProperty.baños} baños\n\n--- Visita agendada desde web ---`;
+          window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`, '_blank');
+        });
+      });
+      document.querySelectorAll('.buy-now').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentProperty = properties.find(p => p.id === parseInt(btn.getAttribute('data-id')));
+          const tipo = currentProperty.category === 'venta' ? 'OFERTA' : 'SOLICITUD DE ARRIENDO';
+          const mensaje = `🏠 *${tipo} - QRP2P INMOBILIARIA*\n\n🏠 *Inmueble:* ${currentProperty.title}\n📐 ${currentProperty.m2} m² · ${currentProperty.cuartos} hab · ${currentProperty.baños} baños\n\n--- Información solicitada desde web ---`;
+          window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`, '_blank');
+        });
+      });
+    }
+    
+    function filterProperties() {
+      const searchText = document.getElementById('searchInput').value.toLowerCase();
+      const activeCategory = document.querySelector('.category-btn.active').getAttribute('data-category');
+      const filtered = properties.filter(property => {
+        const matchesSearch = property.title.toLowerCase().includes(searchText);
+        const matchesCategory = activeCategory === 'todo' || property.category === activeCategory;
+        return matchesSearch && matchesCategory;
+      });
+      loadProperties(filtered);
     }
 
-    function obtenerUbicacionUsuario() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            if (userMarker) mapa.removeLayer(userMarker);
-            if (estaEnCali(latitude, longitude)) {
-              userMarker = L.marker([latitude, longitude], {
-                icon: L.divIcon({
-                  className: 'verified-marker',
-                  html: '📍',
-                  iconSize: [24, 24]
-                })
-              }).addTo(mapa).bindPopup('📍 Tu ubicación en Cali');
-              mapa.setView([latitude, longitude], 14);
-              userMarker.openPopup();
-            } else {
-              mostrarNotificacion("Servicio exclusivo para Cali. Estás fuera del área de cobertura.");
-              mapa.setView([3.4516, -76.5320], 13);
-              userMarker = L.marker([latitude, longitude], {
-                icon: L.divIcon({
-                  className: 'verified-marker',
-                  html: '⚠️',
-                  iconSize: [24, 24]
-                })
-              }).addTo(mapa).bindPopup('⚠️ Fuera de Cali');
-            }
-          },
-          (error) => {
-            console.log(`Error: ${error.message}`);
-            mapa.setView([3.4516, -76.5320], 13);
-          },
-          { enableHighAccuracy: true }
-        );
-      } else {
-        mapa.setView([3.4516, -76.5320], 13);
-      }
-    }
+    // EVENTOS Y INICIALIZACIÓN
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeMap();
+      loadProperties(properties);
+      
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
+      document.getElementById('registro-btn').addEventListener('click', function() {
+        window.open('https://qrp2p.com/afiliacion-colombia', '_blank');
+      });
+      document.getElementById('map-btn').addEventListener('click', switchToMapView);
+      document.getElementById('satellite-btn').addEventListener('click', switchToSatelliteView);
+      
+      const searchInputMapa = document.getElementById('buscador');
+      searchInputMapa.addEventListener('input', handleSearchInput);
+      searchInputMapa.addEventListener('keydown', handleSearchKeydown);
+      
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.contenedor-buscador')) {
+          document.getElementById('sugerencias-busqueda').style.display = 'none';
+        }
+      });
+      
+      document.getElementById('sellPropertyBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        window.open('https://qrp2p.com/vender-inmueble', '_blank');
+      });
+      document.getElementById('rentPropertyBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        window.open('https://qrp2p.com/arrendar-inmueble', '_blank');
+      });
+      
+      document.getElementById('searchInput').addEventListener('input', filterProperties);
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          filterProperties();
+        });
+      });
+      
+      document.getElementById('footerTermsLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        alert("Términos y Condiciones - QRP2P INMOBILIARIA\n\n1. Las visitas están sujetas a disponibilidad.\n2. Los datos serán tratados conforme a la política de privacidad.\n3. Al contactar aceptas recibir información del inmueble.");
+      });
+    });
   </script>
 </body>
 </html>
