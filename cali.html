@@ -46,7 +46,8 @@
       background: #ffffff;
       width: 100%;
       z-index: 1000;
-      justify-content: center;
+      justify-content: space-between;
+      align-items: center;
       flex-wrap: wrap;
       border-bottom: 1px solid #eaeaea;
       position: relative;
@@ -56,7 +57,7 @@
     .contenedor-buscador {
       position: relative;
       flex: 1;
-      max-width: 500px;
+      max-width: 400px;
     }
     
     #buscador { 
@@ -112,10 +113,36 @@
       color: #000000;
     }
     
-    .botones-secundarios {
+    .botones-izquierda {
       display: flex;
       gap: 0.8rem;
       justify-content: center;
+      align-items: center;
+    }
+    
+    .botones-derecha {
+      display: flex;
+      gap: 0.5rem;
+      background: #f0f0f0;
+      padding: 0.3rem;
+      border-radius: 50px;
+    }
+    
+    .map-type-btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      background: transparent;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+    
+    .map-type-btn.active {
+      background: #000000;
+      color: white;
     }
     
     #mapa { 
@@ -123,6 +150,11 @@
       background: #f0f0f0; 
       width: 100%;
       min-height: 0;
+    }
+    
+    /* Ocultar botones de zoom de Leaflet */
+    .leaflet-control-zoom {
+      display: none !important;
     }
     
     .sugerencias-busqueda {
@@ -192,35 +224,6 @@
       font-weight: bold;
     }
     
-    .map-type-selector {
-      position: absolute;
-      bottom: 20px;
-      left: 10px;
-      z-index: 1000;
-      background: white;
-      padding: 8px 12px;
-      border-radius: 40px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      display: flex;
-      gap: 10px;
-    }
-    
-    .map-type-btn {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 40px;
-      cursor: pointer;
-      font-size: 14px;
-      background: #f1f1f1;
-      font-family: 'Libre Baskerville', serif;
-      transition: background 0.3s;
-    }
-    
-    .map-type-btn.active {
-      background: #000000;
-      color: white;
-    }
-    
     .inmueble-marker {
       background: transparent;
       border: none;
@@ -280,11 +283,18 @@
       background-color: rgba(0, 0, 0, 0.6);
       color: white;
       border: none;
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .popup-nav-btn:hover {
+      background-color: rgba(0, 0, 0, 0.8);
     }
     
     .popup-image-counter {
@@ -780,15 +790,17 @@
         flex-direction: column; 
         gap: 0.6rem;
       }
-      .botones-secundarios {
+      .botones-izquierda {
+        width: 100%;
         flex-direction: column;
-        gap: 0.6rem;
       }
-      .map-type-selector {
-        bottom: 10px;
-        left: 5px;
-        flex-direction: column;
-        gap: 5px;
+      .botones-derecha {
+        width: 100%;
+        justify-content: center;
+      }
+      .contenedor-buscador {
+        max-width: 100%;
+        width: 100%;
       }
       .inmueble-marker {
         font-size: 24px;
@@ -814,20 +826,20 @@
 <body>
   <div id="contenedor-mapa">
     <div id="barra-superior">
-      <div class="contenedor-buscador">
-        <input type="search" id="buscador" placeholder="🔍 Buscar inmueble verificado en Cali..." enterkeyhint="search">
-        <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
-      </div>
-      <div class="botones-secundarios">
+      <div class="botones-izquierda">
+        <div class="contenedor-buscador">
+          <input type="search" id="buscador" placeholder="🔍 Buscar inmueble verificado en Cali..." enterkeyhint="search">
+          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+        </div>
         <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i> CENTRAR</button>
         <button class="btn-mapa btn-registro" id="registro-btn"><i class="fas fa-key"></i> 🗝️ REGISTRO INMOBILIARIO 🗝️</button>
       </div>
+      <div class="botones-derecha">
+        <button class="map-type-btn active" id="map-btn">Mapa</button>
+        <button class="map-type-btn" id="satellite-btn">Satélite</button>
+      </div>
     </div>
     <div id="mapa"></div>
-    <div class="map-type-selector">
-      <button class="map-type-btn active" id="map-btn">Mapa</button>
-      <button class="map-type-btn" id="satellite-btn">Satélite</button>
-    </div>
   </div>
 
   <!-- MODALES -->
@@ -1066,9 +1078,9 @@
         </div>
         <div class="calendar-card">
           <div class="calendar-nav">
-            <button class="nav-btn" id="prevMonthBtn"><i class="fas fa-chevron-left"></i></button>
+            <button class="popup-nav-btn" id="prevMonthBtn" style="position:relative; background:#000;"><i class="fas fa-chevron-left"></i></button>
             <div class="month-year"></div>
-            <button class="nav-btn" id="nextMonthBtn"><i class="fas fa-chevron-right"></i></button>
+            <button class="popup-nav-btn" id="nextMonthBtn" style="position:relative; background:#000;"><i class="fas fa-chevron-right"></i></button>
           </div>
           <div class="weekdays"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
           <div class="days-grid"></div>
@@ -1503,8 +1515,15 @@
     }
 
     function initializeMap() {
-      mapa = L.map('mapa', { center: [3.4516, -76.5320], zoom: 13, zoomControl: true });
-      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+      mapa = L.map('mapa', { 
+        center: [3.4516, -76.5320], 
+        zoom: 13, 
+        zoomControl: false,
+        zoomSnap: 0.5,
+        wheelPxPerZoomLevel: 120
+      });
+      
+      // No agregamos zoom control
 
       googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
         maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
@@ -1558,20 +1577,26 @@
               const counter = popupNode.querySelector(`#popup-counter-${prop.id}`);
               let currentIndex = 0;
               
+              const updateImage = (index) => {
+                currentIndex = (index + prop.images.length) % prop.images.length;
+                imgElement.src = prop.images[currentIndex];
+                if (counter) counter.textContent = `${currentIndex + 1}/${prop.images.length}`;
+              };
+              
               if (prevBtn) {
+                prevBtn.removeEventListener('click', () => {});
                 prevBtn.addEventListener('click', (e) => {
                   e.stopPropagation();
-                  currentIndex = (currentIndex - 1 + prop.images.length) % prop.images.length;
-                  imgElement.src = prop.images[currentIndex];
-                  counter.textContent = `${currentIndex + 1}/${prop.images.length}`;
+                  e.preventDefault();
+                  updateImage(currentIndex - 1);
                 });
               }
               if (nextBtn) {
+                nextBtn.removeEventListener('click', () => {});
                 nextBtn.addEventListener('click', (e) => {
                   e.stopPropagation();
-                  currentIndex = (currentIndex + 1) % prop.images.length;
-                  imgElement.src = prop.images[currentIndex];
-                  counter.textContent = `${currentIndex + 1}/${prop.images.length}`;
+                  e.preventDefault();
+                  updateImage(currentIndex + 1);
                 });
               }
               
@@ -1579,16 +1604,20 @@
               const offerBtn = popupNode.querySelector(`.popup-buy-now[data-id="${prop.id}"]`);
               
               if (visitBtn) {
+                visitBtn.removeEventListener('click', () => {});
                 visitBtn.addEventListener('click', (e) => {
                   e.stopPropagation();
+                  e.preventDefault();
                   openVisitaModal(prop);
                   mapa.closePopup();
                 });
               }
               
               if (offerBtn) {
+                offerBtn.removeEventListener('click', () => {});
                 offerBtn.addEventListener('click', (e) => {
                   e.stopPropagation();
+                  e.preventDefault();
                   openOfertaModal(prop);
                   mapa.closePopup();
                 });
