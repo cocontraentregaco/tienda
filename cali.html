@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>QRP2P INMOBILIARIA CALI - Inmuebles Verificados en Venta y Arriendo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>QRP2P INMOBILIARIA CALI - Inmuebles Verificados</title>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -14,6 +14,8 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
     
     body {
@@ -22,26 +24,33 @@
       color: #111111;
       line-height: 1.5;
       font-size: 16px;
-      overflow-x: hidden;
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
     }
     
     #contenedor-mapa { 
-      height: 100vh; 
+      width: 100%;
+      height: 100vh;
       display: flex; 
       flex-direction: column; 
       position: relative;
+      overflow: hidden;
     }
     
     #barra-superior { 
       display: flex; 
       gap: 0.8rem; 
       padding: 0.8rem; 
-      background: #f8f8f8; 
+      background: #ffffff;
       width: 100%;
       z-index: 1000;
       justify-content: center;
       flex-wrap: wrap;
       border-bottom: 1px solid #eaeaea;
+      position: relative;
+      flex-shrink: 0;
     }
     
     .contenedor-buscador {
@@ -59,6 +68,9 @@
       font-size: 16px;
       font-family: 'Libre Baskerville', serif;
       transition: all 0.3s ease;
+      background: #ffffff;
+      user-select: text;
+      -webkit-user-select: text;
     }
     
     #buscador:focus {
@@ -110,7 +122,7 @@
       flex: 1; 
       background: #f0f0f0; 
       width: 100%;
-      min-height: calc(100vh - 70px);
+      min-height: 0;
     }
     
     .sugerencias-busqueda {
@@ -215,6 +227,16 @@
       font-size: 28px;
       text-shadow: 0 2px 4px rgba(0,0,0,0.3);
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .user-location-marker {
+      background: transparent;
+      border: none;
+      font-size: 28px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -354,6 +376,405 @@
       display: none;
     }
     
+    /* MODALES */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    
+    .modal-container {
+      max-width: 750px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 28px;
+      background: white;
+    }
+    
+    .close-modal {
+      position: sticky;
+      top: 0;
+      right: 0;
+      display: flex;
+      justify-content: flex-end;
+      padding: 1rem 1.2rem;
+      background: white;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .close-modal button {
+      background: #f0f0f0;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+    
+    .form-panel {
+      padding: 1.8rem;
+    }
+    
+    .step-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+    
+    label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      font-size: 16px !important;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 16px;
+      font-family: inherit;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #000000;
+    }
+    
+    .inline-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    
+    .inline-checkbox input {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+    
+    .inline-checkbox label {
+      margin: 0;
+      text-transform: none;
+      font-size: 0.85rem;
+    }
+    
+    .terms-link {
+      color: #000;
+      text-decoration: underline;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .calendar-card {
+      border: 1.5px solid #eaeaea;
+      border-radius: 24px;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+    
+    .calendar-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .month-year {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    
+    .weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.7rem;
+      margin-bottom: 0.75rem;
+      color: #888;
+    }
+    
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      text-align: center;
+    }
+    
+    .day-cell {
+      padding: 0.7rem 0;
+      font-size: 0.85rem;
+      border-radius: 50px;
+      cursor: pointer;
+      background: #fff;
+      font-weight: 500;
+    }
+    
+    .day-cell.selected {
+      background: #000000;
+      color: white;
+    }
+    
+    .day-cell.available:hover {
+      background: #f0f0f0;
+    }
+    
+    .day-cell.other-month {
+      opacity: 0.3;
+      cursor: default;
+    }
+    
+    .day-cell.disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      background: #f5f5f5;
+    }
+    
+    .horarios-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.75rem;
+      max-height: 200px;
+      overflow-y: auto;
+      padding: 0.5rem;
+      background: #f9f9f9;
+      border-radius: 16px;
+      min-height: 80px;
+    }
+    
+    .horario-badge {
+      display: inline-block;
+      padding: 0.6rem 1.2rem;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: white;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    
+    .horario-badge.selected {
+      background: #000;
+      color: white;
+      border-color: #000;
+    }
+    
+    .horario-badge:hover {
+      border-color: #000;
+      background: #f5f5f5;
+    }
+    
+    .btn-submit {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1rem;
+      font-weight: 700;
+      background: #000000;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      margin-top: 1.2rem;
+    }
+    
+    .btn-submit:hover {
+      background: #333;
+    }
+    
+    .section {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #eaeaea;
+    }
+    
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      border-left: 4px solid #000000;
+      padding-left: 1rem;
+      margin-bottom: 1.2rem;
+    }
+    
+    .radio-group {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+      margin-bottom: 0;
+      text-transform: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    
+    .radio-group input {
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+      text-transform: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    
+    .comprador-card {
+      border: 1.5px solid #eaeaea;
+      border-radius: 20px;
+      padding: 1.3rem;
+      margin-bottom: 1.2rem;
+      background: #fafafa;
+    }
+    
+    .tipo-comprador-selector {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1.2rem;
+      align-items: center;
+      flex-wrap: wrap;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid #eaeaea;
+    }
+    
+    .property-info {
+      background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%);
+      border-radius: 20px;
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    
+    .property-info h4 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .terms-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 3000;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+    
+    .terms-modal-content {
+      background: white;
+      max-width: 500px;
+      width: 100%;
+      border-radius: 28px;
+      padding: 1.8rem;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .close-terms {
+      background: #000;
+      color: white;
+      border: none;
+      padding: 0.8rem;
+      border-radius: 40px;
+      width: 100%;
+      margin-top: 1rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .notificacion-alerta {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background: #ff6b6b;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      z-index: 2000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideInRight 0.3s ease;
+      max-width: 280px;
+    }
+    
+    .notificacion-alerta button {
+      background: white;
+      color: #ff6b6b;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.75rem;
+    }
+    
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
     @media (max-width: 768px) {
       #barra-superior { 
         flex-direction: column; 
@@ -374,6 +795,18 @@
       }
       .popup-product-card {
         width: 280px;
+      }
+      .row-2 {
+        grid-template-columns: 1fr;
+      }
+      .form-panel {
+        padding: 1.2rem;
+      }
+      .notificacion-alerta {
+        bottom: 70px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
       }
     }
   </style>
@@ -397,10 +830,43 @@
     </div>
   </div>
 
+  <!-- MODALES -->
+  <div id="visitaModal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="close-modal"><button class="close-visita-modal">&times;</button></div>
+      <div id="visitaFormContainer" class="form-panel"></div>
+    </div>
+  </div>
+
+  <div id="ofertaModal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="close-modal"><button class="close-oferta-modal">&times;</button></div>
+      <div id="ofertaFormContainer" class="form-panel"></div>
+    </div>
+  </div>
+
+  <div id="termsModal" class="terms-modal">
+    <div class="terms-modal-content">
+      <h3>Términos y Condiciones</h3>
+      <p><strong>1. Visitas:</strong> La visita al inmueble está sujeta a disponibilidad de horarios.</p>
+      <p><strong>2. Datos personales:</strong> Serán tratados conforme a la política de privacidad.</p>
+      <p><strong>3. Aceptación:</strong> Al agendar, aceptas recibir información del inmueble.</p>
+      <button class="close-terms" id="closeTermsBtn">Aceptar y cerrar</button>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
   <script>
     const WHATSAPP_NUMBER = "573146824438";
+    
+    // Límites de Cali
+    const LIMITES_CALI = {
+      minLat: 3.3000,
+      maxLat: 3.5500,
+      minLng: -76.6500,
+      maxLng: -76.4800
+    };
     
     // INMUEBLES VERIFICADOS EN CALI
     const properties = [
@@ -413,15 +879,552 @@
     ];
 
     let mapa;
+    let userMarker;
     let marcadoresOriginales = [];
     let buscadorTimeout;
     let googleMapsLayer;
     let googleSatelliteLayer;
     let currentLayer;
+    let currentProperty = null;
+    let selectedDate = null;
+    let selectedHorario = null;
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const allHorarios = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
+    let notificacionActual = null;
 
     function formatPrice(price) {
       if (price === 0) return "Consultar";
       return '$' + price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function estaEnCali(lat, lng) {
+      return (lat >= LIMITES_CALI.minLat && lat <= LIMITES_CALI.maxLat &&
+              lng >= LIMITES_CALI.minLng && lng <= LIMITES_CALI.maxLng);
+    }
+
+    function mostrarNotificacion(mensaje, tipo = 'warning') {
+      if (notificacionActual) {
+        notificacionActual.remove();
+      }
+      const notificacion = document.createElement('div');
+      notificacion.className = 'notificacion-alerta';
+      notificacion.style.background = tipo === 'warning' ? '#ff6b6b' : '#4caf50';
+      notificacion.innerHTML = `
+        <span>${mensaje}</span>
+        <button onclick="this.parentElement.remove()">✕</button>
+      `;
+      document.body.appendChild(notificacion);
+      notificacionActual = notificacion;
+      setTimeout(() => {
+        if (notificacionActual === notificacion) {
+          notificacion.remove();
+          notificacionActual = null;
+        }
+      }, 5000);
+    }
+
+    function isDateInPast(dateStr) {
+      const date = new Date(dateStr);
+      date.setHours(0, 0, 0, 0);
+      return date < today;
+    }
+
+    function getDaysForMonth(year, month) {
+      const firstDayOfMonth = new Date(year, month, 1);
+      let startWeekday = firstDayOfMonth.getDay();
+      let offsetMonday = (startWeekday === 0 ? 6 : startWeekday - 1);
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const prevMonthDays = new Date(year, month, 0).getDate();
+      const daysArray = [];
+      
+      for (let i = 0; i < offsetMonday; i++) {
+        let dayNum = prevMonthDays - offsetMonday + i + 1;
+        let prevMonth = month - 1;
+        let prevYear = year;
+        if (prevMonth < 0) { prevMonth = 11; prevYear = year - 1; }
+        const dateStr = `${prevYear}-${String(prevMonth+1).padStart(2,'0')}-${String(dayNum).padStart(2,'0')}`;
+        daysArray.push({ day: dayNum, isSelectable: !isDateInPast(dateStr), dateStr: dateStr, currentMonth: false });
+      }
+      
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        daysArray.push({ day: d, isSelectable: !isDateInPast(dateStr), dateStr: dateStr, currentMonth: true });
+      }
+      
+      const remaining = 42 - daysArray.length;
+      for (let i = 1; i <= remaining; i++) {
+        let nextMonth = month + 1;
+        let nextYear = year;
+        if (nextMonth > 11) { nextMonth = 0; nextYear = year + 1; }
+        const dateStr = `${nextYear}-${String(nextMonth+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+        daysArray.push({ day: i, isSelectable: !isDateInPast(dateStr), dateStr: dateStr, currentMonth: false });
+      }
+      return daysArray;
+    }
+    
+    function renderCalendar(container) {
+      const days = getDaysForMonth(currentYear, currentMonth);
+      const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+      const monthYearSpan = container.querySelector('.month-year');
+      if (monthYearSpan) monthYearSpan.innerText = `${monthNames[currentMonth]} ${currentYear}`;
+      
+      const daysGrid = container.querySelector('.days-grid');
+      if (!daysGrid) return;
+      daysGrid.innerHTML = '';
+      
+      days.forEach(cell => {
+        const div = document.createElement('div');
+        let className = 'day-cell';
+        if (!cell.currentMonth) className += ' other-month';
+        if (!cell.isSelectable) className += ' disabled';
+        else className += ' available';
+        div.className = className;
+        div.innerText = cell.day;
+        if (cell.isSelectable) {
+          div.addEventListener('click', (function(dateStr) {
+            return function() {
+              document.querySelectorAll('#visitaFormContainer .day-cell').forEach(el => el.classList.remove('selected'));
+              div.classList.add('selected');
+              selectedDate = dateStr;
+              const horariosContainer = document.querySelector('#visitaFormContainer .horarios-list');
+              if (horariosContainer) {
+                renderHorarios(horariosContainer);
+              }
+            };
+          })(cell.dateStr));
+          if (selectedDate === cell.dateStr) div.classList.add('selected');
+        }
+        daysGrid.appendChild(div);
+      });
+    }
+    
+    function renderHorarios(horariosContainer) {
+      if (!horariosContainer) return;
+      
+      if (!selectedDate) {
+        horariosContainer.innerHTML = '<div style="padding:1rem; text-align:center; color:#888; width:100%;">📅 Selecciona una fecha primero</div>';
+        return;
+      }
+      
+      horariosContainer.innerHTML = '';
+      allHorarios.forEach(slot => {
+        const badge = document.createElement('span');
+        badge.className = 'horario-badge';
+        badge.innerText = slot;
+        if (selectedHorario === slot) badge.classList.add('selected');
+        badge.addEventListener('click', () => {
+          document.querySelectorAll('#visitaFormContainer .horario-badge').forEach(b => b.classList.remove('selected'));
+          badge.classList.add('selected');
+          selectedHorario = slot;
+        });
+        horariosContainer.appendChild(badge);
+      });
+    }
+    
+    function showTermsModal() {
+      document.getElementById('termsModal').style.display = 'flex';
+    }
+    
+    function closeTermsModal() {
+      document.getElementById('termsModal').style.display = 'none';
+    }
+    
+    function openVisitaModal(property) {
+      currentProperty = property;
+      selectedDate = null;
+      selectedHorario = null;
+      currentYear = new Date().getFullYear();
+      currentMonth = new Date().getMonth();
+      
+      const modal = document.getElementById('visitaModal');
+      const container = document.getElementById('visitaFormContainer');
+      
+      container.innerHTML = `
+        <div class="property-info">
+          <h4>🏠 ${currentProperty.title}</h4>
+          <p>📐 ${currentProperty.m2} m² · 🛏️ ${currentProperty.cuartos} habitaciones · 🚿 ${currentProperty.baños} baños</p>
+        </div>
+        <div class="step-title">📅 Agendar visita</div>
+        <div class="form-group">
+          <label>NOMBRE COMPLETO *</label>
+          <input type="text" id="visitaNombre" placeholder="Ej: Juan Pérez">
+        </div>
+        <div class="form-group">
+          <label>TELÉFONO *</label>
+          <input type="tel" id="visitaTelefono" placeholder="Ej: 3001234567">
+        </div>
+        <div class="form-group">
+          <label>CORREO ELECTRÓNICO</label>
+          <input type="email" id="visitaEmail" placeholder="ejemplo@correo.com">
+        </div>
+        <div class="inline-checkbox">
+          <input type="checkbox" id="visitaTerms">
+          <label>Acepto <span class="terms-link" id="visitaTermsLink">términos y condiciones</span></label>
+        </div>
+        <div class="calendar-card">
+          <div class="calendar-nav">
+            <button class="nav-btn" id="prevMonthBtn"><i class="fas fa-chevron-left"></i></button>
+            <div class="month-year"></div>
+            <button class="nav-btn" id="nextMonthBtn"><i class="fas fa-chevron-right"></i></button>
+          </div>
+          <div class="weekdays"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+          <div class="days-grid"></div>
+        </div>
+        <div class="form-group">
+          <label>SELECCIONA UN HORARIO</label>
+          <div class="horarios-list"></div>
+        </div>
+        <button class="btn-submit" id="submitVisita">📩 Agendar visita por WhatsApp</button>
+      `;
+      
+      const calendarCard = container.querySelector('.calendar-card');
+      const prevBtn = container.querySelector('#prevMonthBtn');
+      const nextBtn = container.querySelector('#nextMonthBtn');
+      const horariosContainer = container.querySelector('.horarios-list');
+      
+      renderCalendar(calendarCard);
+      
+      if (horariosContainer) {
+        renderHorarios(horariosContainer);
+      }
+      
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => { 
+          currentMonth--; 
+          if (currentMonth < 0) { currentMonth = 11; currentYear--; } 
+          renderCalendar(calendarCard);
+          selectedDate = null;
+          selectedHorario = null;
+          if (horariosContainer) renderHorarios(horariosContainer);
+        });
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => { 
+          currentMonth++; 
+          if (currentMonth > 11) { currentMonth = 0; currentYear++; } 
+          renderCalendar(calendarCard);
+          selectedDate = null;
+          selectedHorario = null;
+          if (horariosContainer) renderHorarios(horariosContainer);
+        });
+      }
+      
+      const termsLink = document.getElementById('visitaTermsLink');
+      if (termsLink) termsLink.addEventListener('click', showTermsModal);
+      
+      const submitBtn = document.getElementById('submitVisita');
+      if (submitBtn) {
+        submitBtn.addEventListener('click', () => {
+          const nombre = document.getElementById('visitaNombre').value.trim();
+          const telefono = document.getElementById('visitaTelefono').value.trim();
+          const email = document.getElementById('visitaEmail').value.trim();
+          const terms = document.getElementById('visitaTerms').checked;
+          
+          if (!nombre || !telefono) { alert('⚠️ Por favor completa nombre y teléfono'); return; }
+          if (!terms) { alert('⚠️ Debes aceptar los términos y condiciones'); return; }
+          if (!selectedDate) { alert('⚠️ Selecciona una fecha'); return; }
+          if (!selectedHorario) { alert('⚠️ Selecciona un horario'); return; }
+          
+          const fecha = new Date(selectedDate).toLocaleDateString('es-ES', { year:'numeric', month:'long', day:'numeric' });
+          const mensaje = `🏠 *AGENDA DE VISITA - QRP2P INMOBILIARIA*\n\n` +
+            `🏠 *Inmueble:* ${currentProperty.title}\n` +
+            `📐 ${currentProperty.m2} m² · ${currentProperty.cuartos} hab · ${currentProperty.baños} baños\n` +
+            `👤 *Cliente:* ${nombre}\n` +
+            `📱 *Teléfono:* ${telefono}\n` +
+            `✉️ *Correo:* ${email || 'No especificado'}\n` +
+            `📅 *Fecha:* ${fecha}\n` +
+            `⏰ *Horario:* ${selectedHorario}\n\n` +
+            `--- Visita agendada desde web ---`;
+          
+          window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`, '_blank');
+          modal.style.display = 'none';
+        });
+      }
+      
+      modal.style.display = 'flex';
+    }
+    
+    function openOfertaModal(property) {
+      currentProperty = property;
+      const isRent = currentProperty.category === 'arriendo';
+      const modal = document.getElementById('ofertaModal');
+      const container = document.getElementById('ofertaFormContainer');
+      
+      if (isRent) {
+        container.innerHTML = `
+          <div class="property-info">
+            <h4>🏠 ${currentProperty.title}</h4>
+            <p>📐 ${currentProperty.m2} m² · 🛏️ ${currentProperty.cuartos} habitaciones · 🚿 ${currentProperty.baños} baños</p>
+            <p><strong>💰 Valor arriendo:</strong> ${formatPrice(currentProperty.priceRent)}</p>
+          </div>
+          <div class="section">
+            <div class="section-title">📋 Iniciar proceso de arrendamiento</div>
+            <div class="form-group">
+              <label>TIEMPO DE ARRENDO DESEADO</label>
+              <select id="tiempoArriendo">
+                <option value="6 meses">6 meses</option>
+                <option value="1 año">1 año</option>
+                <option value="2 años">2 años</option>
+                <option value="Más de 2 años">Más de 2 años</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>FECHA DESEADA PARA INICIAR</label>
+              <input type="date" id="fechaInicioArriendo">
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">👤 Datos del interesado</div>
+            <div class="comprador-card">
+              <div class="tipo-comprador-selector">
+                <span>TIPO DE PERSONA:</span>
+                <label><input type="radio" name="tipoPersona" value="natural" checked> Persona Natural</label>
+                <label><input type="radio" name="tipoPersona" value="juridica"> Persona Jurídica</label>
+              </div>
+              <div id="camposNaturalArriendo">
+                <div class="row-2">
+                  <div class="form-group"><label>PRIMER NOMBRE *</label><input type="text" id="nombre1Arr" placeholder="Juan"></div>
+                  <div class="form-group"><label>PRIMER APELLIDO *</label><input type="text" id="apellido1Arr" placeholder="Pérez"></div>
+                </div>
+                <div class="row-2">
+                  <div class="form-group"><label>SEGUNDO APELLIDO *</label><input type="text" id="apellido2Arr" placeholder="García"></div>
+                  <div class="form-group"><label>TIPO DOCUMENTO *</label>
+                    <select id="tipoDocArr"><option value="">Selecciona</option><option value="Cédula">Cédula</option><option value="Pasaporte">Pasaporte</option></select>
+                  </div>
+                </div>
+                <div class="row-2">
+                  <div class="form-group"><label>NÚMERO DOCUMENTO *</label><input type="text" id="numDocArr" placeholder="Ej: 12345678"></div>
+                  <div class="form-group"><label>TELÉFONO *</label><input type="tel" id="telefonoArr" placeholder="3001234567"></div>
+                </div>
+                <div class="form-group"><label>CORREO ELECTRÓNICO *</label><input type="email" id="emailArr" placeholder="ejemplo@correo.com"></div>
+              </div>
+              <div id="camposJuridicaArriendo" style="display: none;">
+                <div class="form-group"><label>RAZÓN SOCIAL *</label><input type="text" id="razonSocialArr" placeholder="Nombre de la empresa"></div>
+                <div class="row-2">
+                  <div class="form-group"><label>NIT *</label><input type="text" id="nitArr" placeholder="900.123.456-7"></div>
+                  <div class="form-group"><label>REPRESENTANTE LEGAL *</label><input type="text" id="representanteArr" placeholder="Nombre completo"></div>
+                </div>
+                <div class="row-2">
+                  <div class="form-group"><label>TELÉFONO *</label><input type="tel" id="telefonoJurArr" placeholder="3001234567"></div>
+                  <div class="form-group"><label>CORREO *</label><input type="email" id="emailJurArr" placeholder="empresa@correo.com"></div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>COMENTARIOS ADICIONALES</label>
+              <textarea rows="3" id="comentariosArriendo" placeholder="Ej: Mascotas, parqueadero, etc..."></textarea>
+            </div>
+          </div>
+          <button class="btn-submit" id="submitArriendo">📩 Enviar solicitud de arriendo por WhatsApp</button>
+        `;
+        
+        const radioNatural = container.querySelector('input[name="tipoPersona"][value="natural"]');
+        const radioJuridica = container.querySelector('input[name="tipoPersona"][value="juridica"]');
+        const camposNatural = container.querySelector('#camposNaturalArriendo');
+        const camposJuridica = container.querySelector('#camposJuridicaArriendo');
+        
+        if (radioNatural && radioJuridica) {
+          radioNatural.addEventListener('change', () => { camposNatural.style.display = 'block'; camposJuridica.style.display = 'none'; });
+          radioJuridica.addEventListener('change', () => { camposNatural.style.display = 'none'; camposJuridica.style.display = 'block'; });
+        }
+        
+        document.getElementById('submitArriendo').addEventListener('click', () => {
+          const isJuridica = radioJuridica.checked;
+          const tiempoArriendo = document.getElementById('tiempoArriendo').value;
+          const fechaInicio = document.getElementById('fechaInicioArriendo').value || 'No especificada';
+          
+          let mensaje = `🏠 *SOLICITUD DE ARRIENDO - QRP2P INMOBILIARIA*\n\n` +
+            `🏠 *Inmueble:* ${currentProperty.title}\n` +
+            `📐 ${currentProperty.m2} m² · ${currentProperty.cuartos} hab · ${currentProperty.baños} baños\n` +
+            `💰 *Valor arriendo:* ${formatPrice(currentProperty.priceRent)}\n` +
+            `📅 *Tiempo deseado:* ${tiempoArriendo}\n` +
+            `📆 *Fecha inicio:* ${fechaInicio}\n\n`;
+          
+          mensaje += `👤 *DATOS DEL INTERESADO*\n`;
+          if (isJuridica) {
+            const razon = document.getElementById('razonSocialArr')?.value.trim() || '';
+            const nit = document.getElementById('nitArr')?.value.trim() || '';
+            const representante = document.getElementById('representanteArr')?.value.trim() || '';
+            const telefono = document.getElementById('telefonoJurArr')?.value.trim() || '';
+            const email = document.getElementById('emailJurArr')?.value.trim() || '';
+            if (!razon || !nit || !representante || !telefono || !email) { alert('⚠️ Completa todos los campos'); return; }
+            mensaje += `📌 Tipo: Persona Jurídica\n📌 Razón social: ${razon}\n📌 NIT: ${nit}\n📌 Representante: ${representante}\n📱 Teléfono: ${telefono}\n✉️ Correo: ${email}\n`;
+          } else {
+            const nombre1 = document.getElementById('nombre1Arr')?.value.trim() || '';
+            const apellido1 = document.getElementById('apellido1Arr')?.value.trim() || '';
+            const apellido2 = document.getElementById('apellido2Arr')?.value.trim() || '';
+            const tipoDoc = document.getElementById('tipoDocArr')?.value || '';
+            const numDoc = document.getElementById('numDocArr')?.value.trim() || '';
+            const telefono = document.getElementById('telefonoArr')?.value.trim() || '';
+            const email = document.getElementById('emailArr')?.value.trim() || '';
+            if (!nombre1 || !apellido1 || !apellido2 || !tipoDoc || !numDoc || !telefono || !email) { alert('⚠️ Completa todos los campos'); return; }
+            mensaje += `📌 Tipo: Persona Natural\n📌 Nombre: ${nombre1} ${apellido1} ${apellido2}\n📌 Documento: ${tipoDoc} ${numDoc}\n📱 Teléfono: ${telefono}\n✉️ Correo: ${email}\n`;
+          }
+          
+          const comentarios = document.getElementById('comentariosArriendo')?.value || '';
+          if (comentarios) mensaje += `\n📝 *COMENTARIOS:*\n${comentarios}\n`;
+          
+          window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`, '_blank');
+          modal.style.display = 'none';
+        });
+      } else {
+        container.innerHTML = `
+          <div class="property-info">
+            <h4>🏠 ${currentProperty.title}</h4>
+            <p>📐 ${currentProperty.m2} m² · 🛏️ ${currentProperty.cuartos} habitaciones · 🚿 ${currentProperty.baños} baños</p>
+            <p><strong>💰 Precio referencia:</strong> ${formatPrice(currentProperty.price)}</p>
+          </div>
+          <div class="section">
+            <div class="section-title">📋 Información de la oferta</div>
+            <div class="form-group">
+              <label>¿CÓMO VOY A PAGAR?</label>
+              <div class="radio-group">
+                <label><input type="radio" name="tipoPago" value="contado" id="pagoContado" checked> Pago de contado</label>
+                <label><input type="radio" name="tipoPago" value="cuotaInicial" id="pagoCuotaInicial"> Cuota inicial + crédito</label>
+              </div>
+            </div>
+            <div id="cuotaInicialSection" style="display: none;">
+              <div class="form-group">
+                <label>VALOR DE CUOTA INICIAL (COP$)</label>
+                <input type="number" id="cuotaInicial" placeholder="Ej: 50000000">
+              </div>
+            </div>
+            <div id="financiamientoSection" style="display: none;">
+              <div class="section-subtitle" style="font-weight:700; margin:0.5rem 0;">💰 ¿Cómo voy a financiar el saldo restante?</div>
+              <div class="checkbox-group">
+                <label><input type="checkbox" name="saldoFinancia" value="Recursos propios"> Recursos propios</label>
+                <label><input type="checkbox" name="saldoFinancia" value="Crédito hipotecario"> Crédito hipotecario</label>
+                <label><input type="checkbox" name="saldoFinancia" value="Cesantías"> Cesantías</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>VALOR OFERTADO (COP$) *</label>
+              <input type="number" id="valorOfertado" placeholder="Ej: ${currentProperty.price}" value="${currentProperty.price}">
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">👤 Datos del comprador</div>
+            <div class="comprador-card">
+              <div class="tipo-comprador-selector">
+                <span>TIPO DE COMPRADOR:</span>
+                <label><input type="radio" name="tipoComprador" value="natural" checked> Persona Natural</label>
+                <label><input type="radio" name="tipoComprador" value="juridica"> Persona Jurídica</label>
+              </div>
+              <div id="camposNaturalVenta">
+                <div class="row-2">
+                  <div class="form-group"><label>PRIMER NOMBRE *</label><input type="text" id="nombre1Ven" placeholder="Juan"></div>
+                  <div class="form-group"><label>PRIMER APELLIDO *</label><input type="text" id="apellido1Ven" placeholder="Pérez"></div>
+                </div>
+                <div class="row-2">
+                  <div class="form-group"><label>SEGUNDO APELLIDO *</label><input type="text" id="apellido2Ven" placeholder="García"></div>
+                  <div class="form-group"><label>TIPO DOCUMENTO *</label>
+                    <select id="tipoDocVen"><option value="">Selecciona</option><option value="Cédula">Cédula</option><option value="Pasaporte">Pasaporte</option></select>
+                  </div>
+                </div>
+                <div class="row-2">
+                  <div class="form-group"><label>NÚMERO DOCUMENTO *</label><input type="text" id="numDocVen" placeholder="Ej: 12345678"></div>
+                  <div class="form-group"><label>TELÉFONO *</label><input type="tel" id="telefonoVen" placeholder="3001234567"></div>
+                </div>
+                <div class="form-group"><label>CORREO ELECTRÓNICO *</label><input type="email" id="emailVen" placeholder="ejemplo@correo.com"></div>
+              </div>
+              <div id="camposJuridicaVenta" style="display: none;">
+                <div class="form-group"><label>RAZÓN SOCIAL *</label><input type="text" id="razonSocialVen" placeholder="Nombre de la empresa"></div>
+                <div class="row-2">
+                  <div class="form-group"><label>NIT *</label><input type="text" id="nitVen" placeholder="900.123.456-7"></div>
+                  <div class="form-group"><label>REPRESENTANTE LEGAL *</label><input type="text" id="representanteVen" placeholder="Nombre completo"></div>
+                </div>
+                <div class="row-2">
+                  <div class="form-group"><label>TELÉFONO *</label><input type="tel" id="telefonoJurVen" placeholder="3001234567"></div>
+                  <div class="form-group"><label>CORREO *</label><input type="email" id="emailJurVen" placeholder="empresa@correo.com"></div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>COMENTARIOS ADICIONALES</label>
+              <textarea rows="3" id="comentariosVenta" placeholder="Ej: Necesito crédito hipotecario..."></textarea>
+            </div>
+          </div>
+          <button class="btn-submit" id="submitVenta">📩 Enviar oferta por WhatsApp</button>
+        `;
+        
+        const pagoContado = container.querySelector('#pagoContado');
+        const pagoCuotaInicial = container.querySelector('#pagoCuotaInicial');
+        const cuotaInicialSection = container.querySelector('#cuotaInicialSection');
+        const financiamientoSection = container.querySelector('#financiamientoSection');
+        
+        if (pagoContado && pagoCuotaInicial) {
+          pagoContado.addEventListener('change', () => {
+            cuotaInicialSection.style.display = 'none';
+            financiamientoSection.style.display = 'none';
+          });
+          pagoCuotaInicial.addEventListener('change', () => {
+            cuotaInicialSection.style.display = 'block';
+            financiamientoSection.style.display = 'block';
+          });
+        }
+        
+        const radioNatural = container.querySelector('input[name="tipoComprador"][value="natural"]');
+        const radioJuridica = container.querySelector('input[name="tipoComprador"][value="juridica"]');
+        const camposNatural = container.querySelector('#camposNaturalVenta');
+        const camposJuridica = container.querySelector('#camposJuridicaVenta');
+        
+        if (radioNatural && radioJuridica) {
+          radioNatural.addEventListener('change', () => { camposNatural.style.display = 'block'; camposJuridica.style.display = 'none'; });
+          radioJuridica.addEventListener('change', () => { camposNatural.style.display = 'none'; camposJuridica.style.display = 'block'; });
+        }
+        
+        document.getElementById('submitVenta').addEventListener('click', () => {
+          const isJuridica = radioJuridica.checked;
+          const tipoPago = container.querySelector('input[name="tipoPago"]:checked')?.value || 'contado';
+          let mensaje = `🏠 *OFERTA INMUEBLE - QRP2P INMOBILIARIA*\n\n` +
+            `🏠 *Inmueble:* ${currentProperty.title}\n` +
+            `📐 ${currentProperty.m2} m² · ${currentProperty.cuartos} hab · ${currentProperty.baños} baños\n` +
+            `💵 *Tipo de pago:* ${tipoPago === 'contado' ? 'Pago de contado' : 'Cuota inicial + crédito'}\n`;
+          
+          if (tipoPago === 'cuotaInicial') {
+            const cuotaInicial = document.getElementById('cuotaInicial')?.value || '0';
+            mensaje += `💰 *Valor cuota inicial:* $${parseInt(cuotaInicial).toLocaleString('es-CO')}\n`;
+            let saldoRecursos = [];
+            document.querySelectorAll('input[name="saldoFinancia"]:checked').forEach(cb => saldoRecursos.push(cb.value));
+            if (saldoRecursos.length) mensaje += `🏦 *Financiación saldo:* ${saldoRecursos.join(', ')}\n`;
+          }
+          
+          const valorOfertado = document.getElementById('valorOfertado')?.value || '0';
+          mensaje += `💵 *Valor ofertado:* $${parseInt(valorOfertado).toLocaleString('es-CO')}\n\n`;
+          
+          mensaje += `👤 *DATOS DEL COMPRADOR*\n`;
+          if (isJuridica) {
+            const razon = document.getElementById('razonSocialVen')?.value.trim() || '';
+            const nit = document.getElementById('nitVen')?.value.trim() || '';
+            const representante = document.getElementById('representanteVen')?.value.trim() || '';
+            const telefono = document.getElementById('telefonoJurVen')?.value.trim() || '';
+            const email = document.getElementById('emailJurVen')?.value.trim() || '';
+            if (!razon || !nit || !representante || !telefono || !email) { alert('⚠️ Completa todos los campos'); return; }
+            mensaje += `📌 Tipo: Persona Jurídica\n📌 Razón social: ${razon}\n📌 NIT: ${nit}\n📌 Representante: ${representante}\n📱 Teléfono: ${telefono}\n✉️ Correo: ${email}\n`;
+          } else {
+            const nombre1 = document.getElementById('nombre1Ven')?.value.trim() || '';
+            const apellido1 = document.getElementById('apellido1Ven')?.value.trim() || '';
+            const apellido2 = document.getElementById('apellido2Ven')?.value.trim() || '';
+            const tipoDoc = document.getElementById('tipoDocVen')?.value || '';
+            const numDoc = document.getElementById('numDocVen')?.value.trim() || '';
+            const telefono = document.getElementById('telefonoVen')?.value.trim() || '';
+            const email = document.getElementById('emailVen')?.value.trim() || '';
+            if (!nombre1 || !apellido1 || !apellido2 || !tipoDoc || !numDoc || !telefono || !email) { alert('⚠️ Completa todos los campos'); return; }
+            mensaje += `📌 Tipo: Persona Natural\n📌 Nombre: ${nombre1} ${apellido1} ${apellido2}\n📌 Documento: ${tipoDoc} ${numDoc}\n📱 Teléfono: ${telefono}\n✉️ Correo: ${email}\n`;
+          }
+          
+          const comentarios = document.getElementById('comentariosVenta')?.value || '';
+          if (comentarios) mensaje += `\n📝 *COMENTARIOS:*\n${comentarios}\n`;
+          
+          window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`, '_blank');
+          modal.style.display = 'none';
+        });
+      }
+      
+      modal.style.display = 'flex';
     }
 
     function generarPopupHTML(property) {
@@ -457,8 +1460,50 @@
       `;
     }
 
+    function centrarMapa() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            if (estaEnCali(latitude, longitude)) {
+              if (userMarker) mapa.removeLayer(userMarker);
+              userMarker = L.marker([latitude, longitude], {
+                icon: L.divIcon({
+                  className: 'user-location-marker',
+                  html: '📍',
+                  iconSize: [24, 24]
+                })
+              }).addTo(mapa).bindPopup('📍 Tu ubicación en Cali');
+              mapa.setView([latitude, longitude], 15);
+              userMarker.openPopup();
+            } else {
+              mostrarNotificacion("Servicio exclusivo para Cali. Estás fuera del área de cobertura.");
+              mapa.setView([3.4516, -76.5320], 13);
+              if (userMarker) mapa.removeLayer(userMarker);
+              userMarker = L.marker([latitude, longitude], {
+                icon: L.divIcon({
+                  className: 'user-location-marker',
+                  html: '⚠️',
+                  iconSize: [24, 24]
+                })
+              }).addTo(mapa).bindPopup('⚠️ Fuera de Cali');
+            }
+          },
+          (error) => {
+            console.log(`Error: ${error.message}`);
+            mapa.setView([3.4516, -76.5320], 13);
+            mostrarNotificacion("No se pudo obtener tu ubicación. Mostrando centro de Cali.");
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        mapa.setView([3.4516, -76.5320], 13);
+        mostrarNotificacion("Tu navegador no soporta geolocalización. Mostrando centro de Cali.");
+      }
+    }
+
     function initializeMap() {
-      mapa = L.map('mapa', { center: [3.4516, -76.5320], zoom: 13, zoomControl: false });
+      mapa = L.map('mapa', { center: [3.4516, -76.5320], zoom: 13, zoomControl: true });
       L.control.zoom({ position: 'bottomright' }).addTo(mapa);
 
       googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
@@ -507,7 +1552,6 @@
           setTimeout(() => {
             const popupNode = document.querySelector('.custom-popup');
             if (popupNode) {
-              // Configurar carrusel
               const prevBtn = popupNode.querySelector(`.popup-prev-btn[data-id="${prop.id}"]`);
               const nextBtn = popupNode.querySelector(`.popup-next-btn[data-id="${prop.id}"]`);
               const imgElement = popupNode.querySelector(`#popup-img-${prop.id}`);
@@ -531,24 +1575,22 @@
                 });
               }
               
-              // Configurar botones de acción
               const visitBtn = popupNode.querySelector(`.popup-add-to-cart[data-id="${prop.id}"]`);
               const offerBtn = popupNode.querySelector(`.popup-buy-now[data-id="${prop.id}"]`);
               
               if (visitBtn) {
                 visitBtn.addEventListener('click', (e) => {
                   e.stopPropagation();
-                  const mensaje = `🏠 *AGENDA DE VISITA - QRP2P INMOBILIARIA*\n\n🏠 *Inmueble:* ${prop.title}\n📐 ${prop.m2} m² · ${prop.cuartos} hab · ${prop.baños} baños\n📍 ${prop.description}\n\n--- Visita agendada desde mapa ---`;
-                  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`, '_blank');
+                  openVisitaModal(prop);
+                  mapa.closePopup();
                 });
               }
               
               if (offerBtn) {
                 offerBtn.addEventListener('click', (e) => {
                   e.stopPropagation();
-                  const tipo = prop.category === 'venta' ? 'OFERTA' : 'SOLICITUD DE ARRIENDO';
-                  const mensaje = `🏠 *${tipo} - QRP2P INMOBILIARIA*\n\n🏠 *Inmueble:* ${prop.title}\n📐 ${prop.m2} m² · ${prop.cuartos} hab · ${prop.baños} baños\n📍 ${prop.description}\n\n--- Información solicitada desde mapa ---`;
-                  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`, '_blank');
+                  openOfertaModal(prop);
+                  mapa.closePopup();
                 });
               }
             }
@@ -625,10 +1667,6 @@
       }
     }
 
-    function centrarMapa() {
-      mapa.setView([3.4516, -76.5320], 13);
-    }
-
     function switchToMapView() {
       mapa.removeLayer(currentLayer);
       currentLayer = googleMapsLayer;
@@ -665,6 +1703,21 @@
           document.getElementById('sugerencias-busqueda').style.display = 'none';
         }
       });
+      
+      document.querySelectorAll('.close-visita-modal, .close-oferta-modal').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.getElementById('visitaModal').style.display = 'none';
+          document.getElementById('ofertaModal').style.display = 'none';
+        });
+      });
+      
+      window.addEventListener('click', (e) => {
+        if (e.target === document.getElementById('visitaModal')) document.getElementById('visitaModal').style.display = 'none';
+        if (e.target === document.getElementById('ofertaModal')) document.getElementById('ofertaModal').style.display = 'none';
+        if (e.target === document.getElementById('termsModal')) closeTermsModal();
+      });
+      
+      document.getElementById('closeTermsBtn').addEventListener('click', closeTermsModal);
     });
   </script>
 </body>
