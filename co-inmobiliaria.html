@@ -258,12 +258,52 @@
             background-position: center;
             position: relative;
             border-bottom: 1px solid var(--border);
-            background-color: #1a7f6b;
+            background-color: #f0f0f0;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+        }
+        
+        /* Bandera de Colombia */
+        .colombia-flag-bg {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .flag-stripe {
+            flex: 1;
+        }
+        
+        .flag-yellow {
+            background-color: #FCD116;
+            flex: 2;
+        }
+        
+        .flag-blue {
+            background-color: #003893;
+            flex: 1;
+        }
+        
+        .flag-red {
+            background-color: #CE1126;
+            flex: 1;
+        }
+        
+        /* Overlay con nombre de ciudad */
+        .city-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
             color: white;
-            font-size: 3rem;
+            padding: 1rem;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
         }
         
         .city-info {
@@ -473,9 +513,10 @@
                 grid-template-columns: repeat(2, 1fr); 
                 gap: 1rem;
             }
-            .city-image { height: 120px; font-size: 2rem; }
+            .city-image { height: 120px; }
             .city-info { padding: 1rem; }
             .city-name { font-size: 1rem; }
+            .city-overlay { font-size: 0.9rem; padding: 0.75rem; }
             #install-button { bottom: 10px; right: 10px; padding: 8px 16px; font-size: 0.9rem; }
             .toast-message { font-size: 0.85rem; padding: 8px 16px; white-space: nowrap; }
         }
@@ -591,8 +632,7 @@
                 actionText: "Ver inmuebles en Bogotá", 
                 url: "/bogota-inmuebles",
                 hasSale: true,
-                hasRent: true,
-                icon: "🏙️"
+                hasRent: true
             },
             { 
                 name: "Medellín, Antioquia", 
@@ -600,8 +640,7 @@
                 actionText: "Ver inmuebles en Medellín", 
                 url: "/medellin-inmuebles",
                 hasSale: true,
-                hasRent: true,
-                icon: "🏔️"
+                hasRent: true
             },
             { 
                 name: "Cali, Valle Del Cauca", 
@@ -609,8 +648,7 @@
                 actionText: "Ver inmuebles en Cali", 
                 url: "/cali-inmuebles",
                 hasSale: true,
-                hasRent: true,
-                icon: "💃"
+                hasRent: true
             },
             { 
                 name: "Barranquilla, Atlántico", 
@@ -618,8 +656,7 @@
                 actionText: "Ver inmuebles en Barranquilla", 
                 url: "/barranquilla-inmuebles",
                 hasSale: true,
-                hasRent: true,
-                icon: "🏖️"
+                hasRent: true
             }
         ];
         
@@ -660,7 +697,7 @@
             }, 2000);
         }
         
-        // Function to render cities
+        // Function to render cities con bandera de Colombia
         function renderCities(cityList) {
             const container = document.getElementById('cities-container');
             container.innerHTML = '';
@@ -677,12 +714,16 @@
                 
                 card.innerHTML = `
                     <div class="city-image">
-                        ${city.icon}
+                        <div class="colombia-flag-bg">
+                            <div class="flag-stripe flag-yellow"></div>
+                            <div class="flag-stripe flag-blue"></div>
+                            <div class="flag-stripe flag-red"></div>
+                        </div>
+                        <div class="city-overlay">
+                            🇨🇴 ${city.name}
+                        </div>
                     </div>
                     <div class="city-info">
-                        <h3 class="city-name">
-                            ${city.name}
-                        </h3>
                         <div class="property-types">
                             ${typeBadges}
                         </div>
