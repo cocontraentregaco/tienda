@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Directorio Inmobiliario - Alianzas Cali</title>
+  <style>
+    :root {
+      --primary-color: #1a1a1a;
+      --secondary-color: #333;
+      --accent-color: #0066cc;
+      --text-color: #333;
+      --light-text: #fff;
+      --bg-light: #f8f8f8;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    body { 
+      font-family: 'Roboto', sans-serif; 
+      color: var(--text-color); 
+      line-height: 1.6; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .login-container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      margin: 1rem;
+    }
+    
+    .logo {
+      margin-bottom: 1.5rem;
+    }
+    
+    .logo h1 {
+      color: var(--primary-color);
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .logo p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--secondary-color);
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+    }
+    
+    .btn { 
+      background: #000000;
+      color: #ffffff;
+      padding: 0.8rem 2rem; 
+      border-radius: 24px; 
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+    }
+    
+    .btn:hover {
+      background: #333333;
+      transform: translateY(-1px);
+    }
+    
+    .error-message {
+      color: #e74c3c;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      display: none;
+    }
+    
+    .dashboard-container {
+      width: 100%;
+      min-height: 100vh;
+      background: #f5f7fa;
+      display: none;
+    }
+    
+    .dashboard-header {
+      background: white;
+      padding: 1.2rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .header-title h2 {
+      color: var(--primary-color);
+      font-size: 1.5rem;
+    }
+    
+    .header-title p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .logout-btn {
+      background: #e74c3c;
+      color: white;
+      padding: 0.6rem 1.5rem;
+      border-radius: 24px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    
+    .logout-btn:hover {
+      background: #c0392b;
+      transform: translateY(-1px);
+    }
+    
+    .dashboard-content {
+      padding: 1.5rem;
+    }
+    
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 1.2rem;
+      box-shadow: var(--box-shadow);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .stat-icon {
+      width: 45px;
+      height: 45px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    
+    .stat-info h3 {
+      font-size: 1.6rem;
+      color: var(--primary-color);
+      margin-bottom: 0.2rem;
+    }
+    
+    .stat-info p {
+      color: #666;
+      font-size: 0.85rem;
+    }
+    
+    .table-container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+    }
+    
+    .table-header {
+      background: var(--primary-color);
+      color: white;
+      padding: 1rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .table-header h3 {
+      font-size: 1.2rem;
+      text-align: center;
+    }
+    
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.1);
+      padding: 0.5rem 1rem;
+      border-radius: 24px;
+      width: 100%;
+    }
+    
+    .search-box input {
+      background: transparent;
+      border: none;
+      color: white;
+      outline: none;
+      width: 100%;
+      font-size: 0.9rem;
+    }
+    
+    .search-box input::placeholder {
+      color: rgba(255,255,255,0.7);
+    }
+    
+    .search-hint {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.8rem;
+      margin-top: 0.3rem;
+      text-align: center;
+      display: block;
+    }
+    
+    .business-table {
+      width: 100%;
+      border-collapse: collapse;
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .business-table thead {
+      display: none;
+    }
+    
+    .business-table tbody {
+      display: block;
+      width: 100%;
+    }
+    
+    .business-table tr {
+      display: block;
+      border-bottom: 2px solid #eee;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      background: #fff;
+    }
+    
+    .business-table tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+    
+    .business-table td {
+      display: block;
+      text-align: left;
+      padding: 0.5rem 0;
+      border: none;
+      position: relative;
+      padding-left: 40%;
+      min-height: 2.5rem;
+    }
+    
+    .business-table td:before {
+      content: attr(data-label);
+      position: absolute;
+      left: 0.5rem;
+      width: 35%;
+      padding-right: 1rem;
+      white-space: nowrap;
+      text-align: left;
+      font-weight: 600;
+      color: var(--primary-color);
+      font-size: 0.85rem;
+    }
+    
+    .business-table td:last-child {
+      padding-left: 0;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+    
+    .business-table td:last-child:before {
+      display: none;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .action-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      min-width: 110px;
+      justify-content: center;
+    }
+    
+    .whatsapp-btn {
+      background: #25D366;
+      color: white;
+    }
+    
+    .whatsapp-btn:hover {
+      background: #1da851;
+    }
+    
+    .maps-btn {
+      background: #4285F4;
+      color: white;
+    }
+    
+    .maps-btn:hover {
+      background: #3367d6;
+    }
+    
+    .call-btn {
+      background: #34B7F1;
+      color: white;
+    }
+    
+    .call-btn:hover {
+      background: #1a9cd8;
+    }
+    
+    .category-badge {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-block;
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+    
+    .rating {
+      color: #ffc107;
+      font-weight: bold;
+    }
+    
+    .whatsapp-icon {
+      width: 16px;
+      height: 16px;
+      filter: invert(1);
+    }
+    
+    .maps-icon {
+      width: 16px;
+      height: 16px;
+      filter: invert(1);
+    }
+    
+    .call-icon {
+      width: 16px;
+      height: 16px;
+      filter: invert(1);
+    }
+    
+    .search-results-count {
+      background: #e3f2fd;
+      padding: 0.8rem 1.2rem;
+      border-bottom: 1px solid #bbdefb;
+      font-size: 0.9rem;
+      color: #1565c0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .clear-search-btn {
+      background: transparent;
+      border: 1px solid #1565c0;
+      color: #1565c0;
+      padding: 0.3rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: var(--transition);
+    }
+    
+    .clear-search-btn:hover {
+      background: #1565c0;
+      color: white;
+    }
+    
+    @media (min-width: 768px) {
+      .dashboard-content {
+        padding: 2rem;
+      }
+      
+      .stats-cards {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      
+      .stat-card {
+        padding: 1.5rem;
+      }
+      
+      .stat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+      }
+      
+      .table-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.2rem 1.5rem;
+      }
+      
+      .table-header h3 {
+        text-align: left;
+      }
+      
+      .search-box {
+        width: auto;
+        min-width: 300px;
+      }
+      
+      .search-hint {
+        display: none;
+      }
+      
+      .business-table {
+        display: table;
+        overflow-x: visible;
+      }
+      
+      .business-table thead {
+        display: table-header-group;
+        background: #f8f9fa;
+      }
+      
+      .business-table tbody {
+        display: table-row-group;
+      }
+      
+      .business-table tr {
+        display: table-row;
+        border-bottom: 1px solid #eee;
+        padding: 0;
+        margin: 0;
+        background: transparent;
+      }
+      
+      .business-table tr:hover {
+        background: #f8f9fa;
+      }
+      
+      .business-table td {
+        display: table-cell;
+        padding: 1rem 1.2rem;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+        padding-left: 1.2rem;
+        min-height: auto;
+      }
+      
+      .business-table td:before {
+        display: none;
+      }
+      
+      .business-table td:last-child {
+        padding: 1rem 1.2rem;
+        text-align: center;
+        margin-top: 0;
+      }
+      
+      .action-buttons {
+        justify-content: flex-start;
+      }
+      
+      .action-btn {
+        min-width: auto;
+      }
+    }
+    
+    @media (max-width: 767px) and (min-width: 480px) {
+      .business-table td {
+        padding-left: 35%;
+      }
+      
+      .business-table td:before {
+        width: 30%;
+      }
+      
+      .action-btn {
+        min-width: 100px;
+      }
+    }
+    
+    @media (max-width: 479px) {
+      .login-container {
+        padding: 1.5rem;
+      }
+      
+      .logo h1 {
+        font-size: 1.5rem;
+      }
+      
+      .dashboard-header {
+        padding: 1rem;
+        text-align: center;
+        justify-content: center;
+      }
+      
+      .logout-btn {
+        width: 100%;
+        max-width: 200px;
+      }
+      
+      .dashboard-content {
+        padding: 1rem;
+      }
+      
+      .stats-cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .business-table td {
+        padding-left: 45%;
+        font-size: 0.9rem;
+      }
+      
+      .business-table td:before {
+        width: 40%;
+        font-size: 0.8rem;
+      }
+      
+      .action-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+        min-width: 90px;
+      }
+      
+      .category-badge {
+        padding: 0.2rem 0.6rem;
+        font-size: 0.75rem;
+      }
+    }
+    
+    @media (max-width: 767px) {
+      .business-table tr {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      }
+      
+      .business-table td {
+        border-bottom: 1px solid #eee;
+      }
+      
+      .business-table td:last-child {
+        border-bottom: none;
+      }
+    }
+    
+    .searching-indicator {
+      display: none;
+      position: absolute;
+      right: 2.5rem;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Pantalla de Login -->
+  <div class="login-container" id="loginScreen">
+    <div class="logo">
+      <h1>Directorio Inmobiliario</h1>
+      <p>Alianzas Estratégicas - Cali, Colombia</p>
+    </div>
+    
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="accessKey">Clave de Acceso</label>
+        <input 
+          type="password" 
+          id="accessKey" 
+          placeholder="Ingresa la clave de acceso" 
+          required
+        >
+      </div>
+      
+      <button type="submit" class="btn">Acceder al Directorio</button>
+      
+      <div class="error-message" id="errorMessage">
+        Clave de acceso incorrecta. Intenta nuevamente.
+      </div>
+    </form>
+  </div>
+  
+  <!-- Panel del Directorio -->
+  <div class="dashboard-container" id="dashboard">
+    <header class="dashboard-header">
+      <div class="header-title">
+        <h2>Directorio Inmobiliario - Alianzas Cali</h2>
+        <p>Base de datos de aliados estratégicos del sector inmobiliario en Cali, Colombia</p>
+      </div>
+      
+      <button class="logout-btn" id="logoutBtn">
+        Cerrar Sesión
+      </button>
+    </header>
+    
+    <main class="dashboard-content">
+      <div class="stats-cards">
+        <div class="stat-card">
+          <div class="stat-icon">🏢</div>
+          <div class="stat-info">
+            <h3 id="totalBusinesses">24</h3>
+            <p>Aliados Registrados</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">📍</div>
+          <div class="stat-info">
+            <h3 id="totalCategories">12</h3>
+            <p>Categorías</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">⭐</div>
+          <div class="stat-info">
+            <h3 id="avgRating">4.3</h3>
+            <p>Rating Promedio</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <div class="table-header">
+          <h3>Base de Datos de Aliados Inmobiliarios</h3>
+          <div class="search-box">
+            <input 
+              type="text" 
+              id="searchInput" 
+              placeholder="Buscar aliados (ej: constructora, arquitecto, avalúos)..."
+              autocomplete="off"
+            >
+            <span>🔍</span>
+            <span class="searching-indicator" id="searchingIndicator">Buscando...</span>
+          </div>
+          <span class="search-hint">Busca por nombre, categoría, dirección o servicio</span>
+        </div>
+        
+        <div class="search-results-count" id="searchResults" style="display: none;">
+          <span id="resultsText">0 resultados encontrados</span>
+          <button class="clear-search-btn" id="clearSearchBtn">Limpiar búsqueda</button>
+        </div>
+        
+        <div class="table-wrapper">
+          <table class="business-table" id="businessTable">
+            <thead>
+              <tr>
+                <th>Aliado</th>
+                <th>Contacto</th>
+                <th>Categoría</th>
+                <th>Dirección</th>
+                <th>Rating</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- Los datos se cargarán dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Clave de acceso
+    const ACCESS_KEY = "18@Qrp2p";
+    
+    // Datos de aliados inmobiliarios en Cali, Colombia
+    const BUSINESS_DATA = [
+      {
+        id: 1,
+        nombre: "Constructora Urbania",
+        telefono: "+5725551234",
+        categoria: "Constructora",
+        direccion: "Calle 5 #25-45, Barrio Granada, Cali",
+        rating: 4.8,
+        horario: "8:00 AM - 6:00 PM",
+        descripcion: "Desarrollo de proyectos residenciales y comerciales",
+        searchable: "constructora urbania proyectos residenciales comerciales cali granada"
+      },
+      {
+        id: 2,
+        nombre: "Inmobiliaria Unión Real Estate",
+        telefono: "+5725552345",
+        categoria: "Inmobiliaria",
+        direccion: "Avenida 6N #20-30, Ciudad Jardín, Cali",
+        rating: 4.7,
+        horario: "9:00 AM - 7:00 PM",
+        descripcion: "Compra, venta y arriendo de propiedades",
+        searchable: "inmobiliaria union real estate compra venta arriendo propiedades ciudad jardin cali"
+      },
+      {
+        id: 3,
+        nombre: "Avalúos Técnicos del Valle",
+        telefono": "+5725553456",
+        categoria: "Avalúos",
+        direccion: "Carrera 38 #5-60, Barrio San Fernando, Cali",
+        rating: 4.6,
+        horario: "8:00 AM - 5:00 PM",
+        descripcion: "Servicios profesionales de avalúos comerciales y residenciales",
+        searchable: "avaluos tecnicos del valle comerciales residenciales san fernando cali"
+      },
+      {
+        id: 4,
+        nombre: "Arquitectura & Diseño Crearq",
+        telefono: "+5725554567",
+        categoria: "Arquitectura",
+        direccion: "Calle 18 #100-25, Barrio El Ingenio, Cali",
+        rating: 4.9,
+        horario: "8:30 AM - 6:30 PM",
+        descripcion: "Diseño arquitectónico y planificación de proyectos",
+        searchable: "arquitectura diseño crearq planificacion proyectos el ingenio cali"
+      },
+      {
+        id: 5,
+        nombre: "Construcciones Modernas SAS",
+        telefono: "+5725555678",
+        categoria: "Constructora",
+        direccion: "Avenida 3N #25-60, Barrio El Limonar, Cali",
+        rating: 4.5,
+        horario: "7:00 AM - 5:00 PM",
+        descripcion: "Construcción de edificios y urbanizaciones",
+        searchable: "construcciones modernas sas edificios urbanizaciones el limonar cali"
+      },
+      {
+        id: 6,
+        nombre: "Inversiones Inmobiliarias Proyéctate",
+        telefono: "+5725556789",
+        categoria: "Inversiones",
+        direccion: "Carrera 34 #10-80, Barrio El Peñón, Cali",
+        rating: 4.4,
+        horario: "9:00 AM - 6:00 PM",
+        descripcion: "Asesoría en inversión inmobiliaria",
+        searchable: "inversiones inmobiliarias proyéctate asesoria inversion el peñon cali"
+      },
+      {
+        id: 7,
+        nombre: "Remax Valle del Cauca",
+        telefono: "+5725557890",
+        categoria: "Inmobiliaria",
+        direccion: "Avenida 8N #30-75, Barrio Santa Mónica, Cali",
+        rating: 4.8,
+        horario: "8:00 AM - 8:00 PM",
+        descripcion: "Red inmobiliaria internacional con presencia en Cali",
+        searchable: "remax valle del cauca red inmobiliaria internacional santa monica cali"
+      },
+      {
+        id: 8,
+        nombre: "Estudio Jurídico Inmobiliario Legal",
+        telefono: "+5725558901",
+        categoria: "Legal",
+        direccion: "Calle 23 #15-40, Barrio Versalles, Cali",
+        rating: 4.7,
+        horario: "9:00 AM - 5:00 PM",
+        descripcion: "Asesoría legal en bienes raíces y contratos",
+        searchable: "estudio juridico inmobiliario legal bienes raices contratos versalles cali"
+      },
+      {
+        id: 9,
+        nombre: "Ingeniería Estructural G&C",
+        telefono: "+5725559012",
+        categoria: "Ingeniería",
+        direccion: "Avenida 4N #15-30, Barrio El Country, Cali",
+        rating: 4.6,
+        horario: "7:30 AM - 5:30 PM",
+        descripcion: "Diseño y cálculo estructural para proyectos inmobiliarios",
+        searchable: "ingenieria estructural g&c diseño calculo estructural el country cali"
+      },
+      {
+        id: 10,
+        nombre: "Home Staging Decor Studio",
+        telefono: "+5725550123",
+        categoria: "Home Staging",
+        direccion: "Calle 14 #12-90, Barrio San Antonio, Cali",
+        rating: 4.9,
+        horario: "10:00 AM - 7:00 PM",
+        descripcion: "Preparación y ambientación de propiedades para venta",
+        searchable: "home staging decor studio ambientacion propiedades venta san antonio cali"
+      },
+      {
+        id: 11,
+        nombre: "Fotografía Inmobiliaria Pixel Pro",
+        telefono: "+5725551235",
+        categoria: "Fotografía",
+        direccion: "Carrera 25 #8-45, Barrio Miraflores, Cali",
+        rating: 4.8,
+        horario: "9:00 AM - 6:00 PM",
+        descripcion: "Fotografía profesional y video tours para propiedades",
+        searchable: "fotografia inmobiliaria pixel pro video tours propiedades miraflores cali"
+      },
+      {
+        id: 12,
+        nombre: "Crédito Hipotecario Bancolombia",
+        telefono: "+5725552346",
+        categoria: "Financiamiento",
+        direccion: "Avenida 5N #35-20, Centro Comercial Unicentro, Cali",
+        rating: 4.5,
+        horario: "9:00 AM - 4:00 PM",
+        descripcion: "Asesoría en créditos hipotecarios y financiación",
+        searchable: "credito hipotecario bancolombia financiacion creditos unicentro cali"
+      }
+    ];
+    
+    // Referencias a elementos del DOM
+    const loginScreen = document.getElementById('loginScreen');
+    const dashboard = document.getElementById('dashboard');
+    const loginForm = document.getElementById('loginForm');
+    const errorMessage = document.getElementById('errorMessage');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const searchInput = document.getElementById('searchInput');
+    const tableBody = document.getElementById('tableBody');
+    const totalBusinesses = document.getElementById('totalBusinesses');
+    const totalCategories = document.getElementById('totalCategories');
+    const avgRating = document.getElementById('avgRating');
+    const searchResults = document.getElementById('searchResults');
+    const resultsText = document.getElementById('resultsText');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const searchingIndicator = document.getElementById('searchingIndicator');
+    
+    // Estado de la aplicación
+    let isAuthenticated = false;
+    let filteredData = [...BUSINESS_DATA];
+    let currentSearchTerm = '';
+    let searchTimeout = null;
+    
+    // Función para normalizar texto
+    function normalizeText(text) {
+      if (!text) return '';
+      
+      return text.toString()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+    
+    // Preprocesar datos para búsqueda
+    const BUSINESS_DATA_PREPROCESSED = BUSINESS_DATA.map(business => ({
+      ...business,
+      normalizedSearch: normalizeText(
+        `${business.nombre} ${business.categoria} ${business.direccion} ${business.descripcion} ${business.horario}`
+      )
+    }));
+    
+    // Función para llamar por teléfono
+    function makeCall(phoneNumber, nombre) {
+      const cleanNumber = phoneNumber.replace(/\D/g, '');
+      window.open(`tel:${cleanNumber}`, '_self');
+    }
+    
+    // Función para abrir WhatsApp
+    function openWhatsApp(phoneNumber, nombre) {
+      const cleanNumber = phoneNumber.replace(/\D/g, '');
+      const message = `Hola ${nombre}, me interesa conocer más sobre sus servicios inmobiliarios en Cali.`;
+      window.open(`https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    }
+    
+    // Función para abrir Google Maps
+    function openGoogleMaps(address, nombre) {
+      const encodedAddress = encodeURIComponent(`${address}, Cali, Colombia`);
+      const url = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+      window.open(url, '_blank');
+    }
+    
+    // Función para generar estrellas de rating
+    function generateStars(rating) {
+      const fullStar = '★';
+      const emptyStar = '☆';
+      let stars = '';
+      
+      for (let i = 1; i <= 5; i++) {
+        if (i <= Math.floor(rating)) {
+          stars += fullStar;
+        } else if (i - 0.5 <= rating) {
+          stars += '★';
+        } else {
+          stars += emptyStar;
+        }
+      }
+      return `<span class="rating">${stars} ${rating}</span>`;
+    }
+    
+    // Función para renderizar la tabla
+    function renderTable(data) {
+      tableBody.innerHTML = '';
+      
+      if (data.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td colspan="6" style="text-align: center; padding: 2rem; color: #666;">
+            <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">🔍</div>
+            <strong>No se encontraron aliados</strong>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;">Intenta con otros términos de búsqueda</p>
+          </td>
+        `;
+        tableBody.appendChild(row);
+        return;
+      }
+      
+      data.forEach(business => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+          <td data-label="Aliado">
+            <strong>${business.nombre}</strong><br>
+            <small style="color: #666;">${business.descripcion}</small><br>
+            <small style="color: #888;">${business.horario}</small>
+          </td>
+          <td data-label="Contacto">${business.telefono}</td>
+          <td data-label="Categoría"><span class="category-badge">${business.categoria}</span></td>
+          <td data-label="Dirección">${business.direccion}</td>
+          <td data-label="Rating">${generateStars(business.rating)}</td>
+          <td data-label="Acciones">
+            <div class="action-buttons">
+              <button class="action-btn call-btn" onclick="makeCall('${business.telefono}', '${business.nombre}')">
+                📞 Llamar
+              </button>
+              <button class="action-btn whatsapp-btn" onclick="openWhatsApp('${business.telefono}', '${business.nombre}')">
+                <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" class="whatsapp-icon" alt="WhatsApp">
+                WhatsApp
+              </button>
+              <button class="action-btn maps-btn" onclick="openGoogleMaps('${business.direccion}', '${business.nombre}')">
+                <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" class="maps-icon" alt="Maps">
+                Maps
+              </button>
+            </div>
+          </td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+      
+      // Actualizar estadísticas
+      updateStatistics(data);
+    }
+    
+    // Función para actualizar estadísticas
+    function updateStatistics(data) {
+      totalBusinesses.textContent = data.length;
+      
+      // Contar categorías únicas
+      const uniqueCategories = [...new Set(data.map(b => b.categoria))];
+      totalCategories.textContent = uniqueCategories.length;
+      
+      // Calcular rating promedio
+      if (data.length > 0) {
+        const totalRating = data.reduce((sum, business) => sum + business.rating, 0);
+        const average = totalRating / data.length;
+        avgRating.textContent = average.toFixed(1);
+      } else {
+        avgRating.textContent = "0.0";
+      }
+    }
+    
+    // Función para filtrar datos
+    function filterData(searchTerm) {
+      const term = normalizeText(searchTerm);
+      currentSearchTerm = searchTerm;
+      
+      if (!term) {
+        filteredData = [...BUSINESS_DATA_PREPROCESSED];
+        searchResults.style.display = 'none';
+      } else {
+        searchingIndicator.style.display = 'block';
+        
+        filteredData = BUSINESS_DATA_PREPROCESSED.filter(business => {
+          return business.normalizedSearch.includes(term);
+        });
+        
+        setTimeout(() => {
+          searchingIndicator.style.display = 'none';
+        }, 300);
+        
+        searchResults.style.display = 'flex';
+        const resultCount = filteredData.length;
+        resultsText.textContent = `${resultCount} resultado${resultCount !== 1 ? 's' : ''} encontrado${resultCount !== 1 ? 's' : ''} para "${searchTerm}"`;
+      }
+      
+      renderTable(filteredData);
+    }
+    
+    // Función para limpiar búsqueda
+    function clearSearch() {
+      searchInput.value = '';
+      currentSearchTerm = '';
+      filterData('');
+      searchInput.focus();
+    }
+    
+    // Event Listeners
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const inputKey = document.getElementById('accessKey').value;
+      
+      if (inputKey === ACCESS_KEY) {
+        isAuthenticated = true;
+        loginScreen.style.display = 'none';
+        dashboard.style.display = 'block';
+        errorMessage.style.display = 'none';
+        
+        renderTable(BUSINESS_DATA_PREPROCESSED);
+      } else {
+        errorMessage.style.display = 'block';
+        document.getElementById('accessKey').value = '';
+        document.getElementById('accessKey').focus();
+      }
+    });
+    
+    logoutBtn.addEventListener('click', function() {
+      isAuthenticated = false;
+      dashboard.style.display = 'none';
+      loginScreen.style.display = 'block';
+      document.getElementById('accessKey').value = '';
+      errorMessage.style.display = 'none';
+      clearSearch();
+    });
+    
+    searchInput.addEventListener('input', function(e) {
+      const term = e.target.value;
+      
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+      
+      if (term.length >= 2) {
+        searchingIndicator.style.display = 'block';
+      } else {
+        searchingIndicator.style.display = 'none';
+      }
+      
+      searchTimeout = setTimeout(() => {
+        filterData(term);
+      }, 300);
+    });
+    
+    clearSearchBtn.addEventListener('click', clearSearch);
+    
+    // Permitir acceso con Enter
+    document.getElementById('accessKey').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        loginForm.dispatchEvent(new Event('submit'));
+      }
+    });
+    
+    // Permitir limpiar búsqueda con Escape
+    searchInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        clearSearch();
+      }
+    });
+    
+    // Inicializar
+    renderTable(BUSINESS_DATA_PREPROCESSED);
+    
+    // Hacer funciones disponibles globalmente
+    window.makeCall = makeCall;
+    window.openWhatsApp = openWhatsApp;
+    window.openGoogleMaps = openGoogleMaps;
+    window.clearSearch = clearSearch;
+  </script>
+</body>
+</html>
