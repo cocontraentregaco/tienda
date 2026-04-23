@@ -821,6 +821,72 @@
         max-width: none;
       }
     }
+
+    /* Estilos para el modal de servicios */
+    .servicios-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+    .servicios-container {
+      background: white;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .servicios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eaeaea;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .close-servicios {
+      background: #f0f0f0;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+    }
+    .servicios-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .servicio-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+    }
+    .servicio-btn:hover {
+      background: #333333;
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 <body>
@@ -832,7 +898,7 @@
           <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
         </div>
         <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i>CENTRAR</button>
-        <button class="btn-mapa btn-registro" id="registro-btn"><i class="fas fa-key"></i>SOLICITAR CRÉDITO</button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-key"></i>SERVICIOS</button>
       </div>
       <div class="botones-derecha">
         <button class="map-type-btn active" id="map-btn">Mapa</button>
@@ -864,6 +930,25 @@
       <p><strong>2. Datos personales:</strong> Serán tratados conforme a la política de privacidad.</p>
       <p><strong>3. Aceptación:</strong> Al agendar, aceptas recibir información del inmueble.</p>
       <button class="close-terms" id="closeTermsBtn">Aceptar y cerrar</button>
+    </div>
+  </div>
+
+  <!-- MODAL DE SERVICIOS -->
+  <div id="serviciosModal" class="servicios-modal">
+    <div class="servicios-container">
+      <div class="servicios-header">
+        <h2>SERVICIOS</h2>
+        <button class="close-servicios" id="closeServiciosBtn">&times;</button>
+      </div>
+      <div class="servicios-botones">
+        <button class="servicio-btn" data-url="https://qrp2p.com/arrendar-inmueble">ARRENDAR INMUEBLE</button>
+        <button class="servicio-btn" data-url="https://qrp2p.com/vender-inmueble">VENDER INMUEBLE</button>
+        <button class="servicio-btn" data-url="https://qrp2p.com/hipotecar-inmueble">HIPOTECAR INMUEBLE</button>
+        <button class="servicio-btn" data-url="https://qrp2p.com/construir-inmueble">CONSTRUIR INMUEBLE</button>
+        <button class="servicio-btn" data-url="https://qrp2p.com/credito-inmobiliario">SOLICITAR CRÉDITO INMOBILIARIO</button>
+        <button class="servicio-btn" data-url="https://qrp2p.com/inversion-inmobiliaria">INVERSIÓN INMOBILIARIA</button>
+        <button class="servicio-btn" data-url="https://wa.me/573041146297">WHATSAPP</button>
+      </div>
     </div>
   </div>
 
@@ -1712,16 +1797,38 @@
       document.getElementById('map-btn').classList.remove('active');
     }
 
+    // Función para abrir modal de servicios
+    function openServiciosModal() {
+      document.getElementById('serviciosModal').style.display = 'flex';
+    }
+
+    function closeServiciosModal() {
+      document.getElementById('serviciosModal').style.display = 'none';
+    }
+
     // EVENTOS E INICIALIZACIÓN
     document.addEventListener('DOMContentLoaded', function() {
       initializeMap();
       
       document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
-      document.getElementById('registro-btn').addEventListener('click', function() {
-        window.open('https://qrp2p.com/credito-inmobiliario-co', '_blank');
-      });
+      document.getElementById('servicios-btn').addEventListener('click', openServiciosModal);
       document.getElementById('map-btn').addEventListener('click', switchToMapView);
       document.getElementById('satellite-btn').addEventListener('click', switchToSatelliteView);
+      document.getElementById('closeServiciosBtn').addEventListener('click', closeServiciosModal);
+      
+      // Cerrar modal al hacer clic fuera del contenido
+      window.addEventListener('click', (e) => {
+        const serviciosModal = document.getElementById('serviciosModal');
+        if (e.target === serviciosModal) closeServiciosModal();
+      });
+      
+      // Agregar eventos a los botones de servicios
+      document.querySelectorAll('.servicio-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const url = this.getAttribute('data-url');
+          if (url) window.open(url, '_blank');
+        });
+      });
       
       const searchInputMapa = document.getElementById('buscador');
       searchInputMapa.addEventListener('input', handleSearchInput);
