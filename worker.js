@@ -4,8 +4,7 @@ const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/img/icon-192.png',
-  '/img/icon-512.png',
+  'https://qrp2p.com/img/P2Pblack.png',
   'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css',
   'https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Serif+Pro:wght@400;600&display=swap'
 ];
@@ -396,8 +395,8 @@ async function sendOrderEmail(orderData) {
 self.addEventListener('push', event => {
   const options = {
     body: event.data ? event.data.text() : 'New update from QRP2P Marketplace',
-    icon: '/img/icon-192.png',
-    badge: '/img/icon-96.png',
+    icon: 'https://qrp2p.com/img/P2Pblack.png',
+    badge: 'https://qrp2p.com/img/P2Pblack.png',
     vibrate: [200, 100, 200],
     data: {
       dateOfArrival: Date.now(),
@@ -407,12 +406,12 @@ self.addEventListener('push', event => {
       {
         action: 'explore',
         title: 'Ver Marketplace',
-        icon: '/img/icon-96.png'
+        icon: 'https://qrp2p.com/img/P2Pblack.png'
       },
       {
         action: 'close',
         title: 'Cerrar',
-        icon: '/img/icon-96.png'
+        icon: 'https://qrp2p.com/img/P2Pblack.png'
       }
     ]
   };
