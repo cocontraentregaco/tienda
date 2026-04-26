@@ -126,6 +126,28 @@
       background: #f0f0f0;
       padding: 0.3rem;
       border-radius: 50px;
+      align-items: center;
+    }
+    
+    .btn-descarga {
+      background: transparent;
+      color: #000000;
+      font-size: 0.85rem;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.5rem 0.8rem;
+      border-radius: 40px;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .btn-descarga:hover {
+      background: #f0f0f0;
+      border-color: #000;
     }
     
     .map-type-btn {
@@ -798,6 +820,10 @@
         width: 100%;
         justify-content: center;
       }
+      .btn-descarga {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.6rem;
+      }
       .contenedor-buscador {
         max-width: 100%;
         width: 100%;
@@ -901,6 +927,7 @@
         <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-key"></i>SERVICIOS</button>
       </div>
       <div class="botones-derecha">
+        <a href="#" id="descargarInfoBtn" class="btn-descarga"><i class="fas fa-download"></i> Descargar toda la información</a>
         <button class="map-type-btn active" id="map-btn">Mapa</button>
         <button class="map-type-btn" id="satellite-btn">Satélite</button>
       </div>
@@ -956,6 +983,9 @@
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
   <script>
     const WHATSAPP_NUMBER = "573041146297";
+    
+    // CAMBIA ESTA URL POR EL LINK DE DESCARGA DE GOOGLE DRIVE QUE NECESITES
+    const GOOGLE_DRIVE_DOWNLOAD_URL = "https://drive.google.com/uc?export=download&id=TU_ID_DE_ARCHIVO";
     
     // Límites de Cali
     const LIMITES_CALI = {
@@ -1157,6 +1187,10 @@
           <label>CORREO ELECTRÓNICO</label>
           <input type="email" id="visitaEmail" placeholder="ejemplo@correo.com">
         </div>
+        <div class="form-group">
+          <label>CÓDIGO DE AGENTE INMOBILIARIO (opcional)</label>
+          <input type="text" id="visitaCodigoAgente" placeholder="Ej: AG-1234">
+        </div>
         <div class="inline-checkbox">
           <input type="checkbox" id="visitaTerms">
           <label>Acepto <span class="terms-link" id="visitaTermsLink">términos y condiciones</span></label>
@@ -1218,6 +1252,7 @@
           const nombre = document.getElementById('visitaNombre').value.trim();
           const telefono = document.getElementById('visitaTelefono').value.trim();
           const email = document.getElementById('visitaEmail').value.trim();
+          const codigoAgente = document.getElementById('visitaCodigoAgente').value.trim();
           const terms = document.getElementById('visitaTerms').checked;
           
           if (!nombre || !telefono) { alert('⚠️ Por favor completa nombre y teléfono'); return; }
@@ -1226,15 +1261,17 @@
           if (!selectedHorario) { alert('⚠️ Selecciona un horario'); return; }
           
           const fecha = new Date(selectedDate).toLocaleDateString('es-ES', { year:'numeric', month:'long', day:'numeric' });
-          const mensaje = `🏠 *AGENDA DE VISITA - QRP2P INMOBILIARIA*\n\n` +
+          let mensaje = `🏠 *AGENDA DE VISITA - QRP2P INMOBILIARIA*\n\n` +
             `🏠 *Inmueble:* ${currentProperty.title}\n` +
             `📐 ${currentProperty.m2} m² · ${currentProperty.cuartos} hab · ${currentProperty.baños} baños\n` +
             `👤 *Cliente:* ${nombre}\n` +
             `📱 *Teléfono:* ${telefono}\n` +
             `✉️ *Correo:* ${email || 'No especificado'}\n` +
             `📅 *Fecha:* ${fecha}\n` +
-            `⏰ *Horario:* ${selectedHorario}\n\n` +
-            `--- Visita agendada desde web ---`;
+            `⏰ *Horario:* ${selectedHorario}\n`;
+          
+          if (codigoAgente) mensaje += `🔑 *Código agente:* ${codigoAgente}\n`;
+          mensaje += `\n--- Visita agendada desde web ---`;
           
           window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`, '_blank');
           modal.style.display = 'none';
@@ -1311,6 +1348,10 @@
               </div>
             </div>
             <div class="form-group">
+              <label>CÓDIGO DE AGENTE INMOBILIARIO (opcional)</label>
+              <input type="text" id="arriendoCodigoAgente" placeholder="Ej: AG-1234">
+            </div>
+            <div class="form-group">
               <label>COMENTARIOS ADICIONALES</label>
               <textarea rows="3" id="comentariosArriendo" placeholder="Ej: Mascotas, parqueadero, etc..."></textarea>
             </div>
@@ -1332,6 +1373,7 @@
           const isJuridica = radioJuridica.checked;
           const tiempoArriendo = document.getElementById('tiempoArriendo').value;
           const fechaInicio = document.getElementById('fechaInicioArriendo').value || 'No especificada';
+          const codigoAgente = document.getElementById('arriendoCodigoAgente')?.value.trim() || '';
           
           let mensaje = `🏠 *SOLICITUD DE ARRIENDO - QRP2P INMOBILIARIA*\n\n` +
             `🏠 *Inmueble:* ${currentProperty.title}\n` +
@@ -1360,6 +1402,8 @@
             if (!nombre1 || !apellido1 || !apellido2 || !tipoDoc || !numDoc || !telefono || !email) { alert('⚠️ Completa todos los campos'); return; }
             mensaje += `📌 Tipo: Persona Natural\n📌 Nombre: ${nombre1} ${apellido1} ${apellido2}\n📌 Documento: ${tipoDoc} ${numDoc}\n📱 Teléfono: ${telefono}\n✉️ Correo: ${email}\n`;
           }
+          
+          if (codigoAgente) mensaje += `\n🔑 *Código agente:* ${codigoAgente}\n`;
           
           const comentarios = document.getElementById('comentariosArriendo')?.value || '';
           if (comentarios) mensaje += `\n📝 *COMENTARIOS:*\n${comentarios}\n`;
@@ -1440,6 +1484,10 @@
               </div>
             </div>
             <div class="form-group">
+              <label>CÓDIGO DE AGENTE INMOBILIARIO (opcional)</label>
+              <input type="text" id="ventaCodigoAgente" placeholder="Ej: AG-1234">
+            </div>
+            <div class="form-group">
               <label>COMENTARIOS ADICIONALES</label>
               <textarea rows="3" id="comentariosVenta" placeholder="Ej: Necesito crédito hipotecario..."></textarea>
             </div>
@@ -1476,6 +1524,8 @@
         document.getElementById('submitVenta').addEventListener('click', () => {
           const isJuridica = radioJuridica.checked;
           const tipoPago = container.querySelector('input[name="tipoPago"]:checked')?.value || 'contado';
+          const codigoAgente = document.getElementById('ventaCodigoAgente')?.value.trim() || '';
+          
           let mensaje = `🏠 *OFERTA INMUEBLE - QRP2P INMOBILIARIA*\n\n` +
             `🏠 *Inmueble:* ${currentProperty.title}\n` +
             `📐 ${currentProperty.m2} m² · ${currentProperty.cuartos} hab · ${currentProperty.baños} baños\n` +
@@ -1512,6 +1562,8 @@
             if (!nombre1 || !apellido1 || !apellido2 || !tipoDoc || !numDoc || !telefono || !email) { alert('⚠️ Completa todos los campos'); return; }
             mensaje += `📌 Tipo: Persona Natural\n📌 Nombre: ${nombre1} ${apellido1} ${apellido2}\n📌 Documento: ${tipoDoc} ${numDoc}\n📱 Teléfono: ${telefono}\n✉️ Correo: ${email}\n`;
           }
+          
+          if (codigoAgente) mensaje += `\n🔑 *Código agente:* ${codigoAgente}\n`;
           
           const comentarios = document.getElementById('comentariosVenta')?.value || '';
           if (comentarios) mensaje += `\n📝 *COMENTARIOS:*\n${comentarios}\n`;
@@ -1608,8 +1660,6 @@
         wheelPxPerZoomLevel: 120
       });
       
-      // No agregamos zoom control
-
       googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
         maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
       });
@@ -1797,13 +1847,16 @@
       document.getElementById('map-btn').classList.remove('active');
     }
 
-    // Función para abrir modal de servicios
     function openServiciosModal() {
       document.getElementById('serviciosModal').style.display = 'flex';
     }
 
     function closeServiciosModal() {
       document.getElementById('serviciosModal').style.display = 'none';
+    }
+    
+    function descargarInformacion() {
+      window.open(GOOGLE_DRIVE_DOWNLOAD_URL, '_blank');
     }
 
     // EVENTOS E INICIALIZACIÓN
@@ -1815,14 +1868,16 @@
       document.getElementById('map-btn').addEventListener('click', switchToMapView);
       document.getElementById('satellite-btn').addEventListener('click', switchToSatelliteView);
       document.getElementById('closeServiciosBtn').addEventListener('click', closeServiciosModal);
+      document.getElementById('descargarInfoBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        descargarInformacion();
+      });
       
-      // Cerrar modal al hacer clic fuera del contenido
       window.addEventListener('click', (e) => {
         const serviciosModal = document.getElementById('serviciosModal');
         if (e.target === serviciosModal) closeServiciosModal();
       });
       
-      // Agregar eventos a los botones de servicios
       document.querySelectorAll('.servicio-btn').forEach(btn => {
         btn.addEventListener('click', function() {
           const url = this.getAttribute('data-url');
