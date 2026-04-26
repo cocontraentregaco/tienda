@@ -126,28 +126,6 @@
       background: #f0f0f0;
       padding: 0.3rem;
       border-radius: 50px;
-      align-items: center;
-    }
-    
-    .btn-descarga {
-      background: transparent;
-      color: #000000;
-      font-size: 0.85rem;
-      text-decoration: none;
-      font-weight: 600;
-      padding: 0.5rem 0.8rem;
-      border-radius: 40px;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      cursor: pointer;
-      border: 1px solid #e0e0e0;
-    }
-    
-    .btn-descarga:hover {
-      background: #f0f0f0;
-      border-color: #000;
     }
     
     .map-type-btn {
@@ -174,7 +152,6 @@
       min-height: 0;
     }
     
-    /* Ocultar botones de zoom de Leaflet */
     .leaflet-control-zoom {
       display: none !important;
     }
@@ -267,7 +244,6 @@
       justify-content: center;
     }
     
-    /* Estilos de la tarjeta dentro del popup */
     .popup-product-card {
       background: #ffffff;
       border-radius: 20px;
@@ -364,6 +340,12 @@
     .popup-product-actions {
       display: flex;
       gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .popup-product-actions-secundarias {
+      display: flex;
+      gap: 0.5rem;
     }
     
     .popup-add-to-cart, .popup-buy-now {
@@ -390,6 +372,37 @@
       background-color: #f0f0f0;
       color: #000000;
       border: 1px solid #ddd;
+    }
+    
+    .popup-download-btn, .popup-maps-btn {
+      padding: 0.5rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Libre Baskerville', serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.3rem;
+      text-decoration: none;
+    }
+    
+    .popup-download-btn {
+      background-color: #25D366;
+      color: #000000;
+    }
+    
+    .popup-maps-btn {
+      background-color: #000000;
+      color: #ffffff;
+    }
+    
+    .popup-download-btn:hover, .popup-maps-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
     }
     
     .gm-style .gm-style-iw-c {
@@ -820,10 +833,6 @@
         width: 100%;
         justify-content: center;
       }
-      .btn-descarga {
-        font-size: 0.75rem;
-        padding: 0.4rem 0.6rem;
-      }
       .contenedor-buscador {
         max-width: 100%;
         width: 100%;
@@ -848,7 +857,6 @@
       }
     }
 
-    /* Estilos para el modal de servicios */
     .servicios-modal {
       display: none;
       position: fixed;
@@ -927,7 +935,6 @@
         <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-key"></i>SERVICIOS</button>
       </div>
       <div class="botones-derecha">
-        <a href="#" id="descargarInfoBtn" class="btn-descarga"><i class="fas fa-download"></i> Descargar toda la información</a>
         <button class="map-type-btn active" id="map-btn">Mapa</button>
         <button class="map-type-btn" id="satellite-btn">Satélite</button>
       </div>
@@ -960,7 +967,6 @@
     </div>
   </div>
 
-  <!-- MODAL DE SERVICIOS -->
   <div id="serviciosModal" class="servicios-modal">
     <div class="servicios-container">
       <div class="servicios-header">
@@ -984,10 +990,6 @@
   <script>
     const WHATSAPP_NUMBER = "573041146297";
     
-    // CAMBIA ESTA URL POR EL LINK DE DESCARGA DE GOOGLE DRIVE QUE NECESITES
-    const GOOGLE_DRIVE_DOWNLOAD_URL = "https://drive.google.com/uc?export=download&id=TU_ID_DE_ARCHIVO";
-    
-    // Límites de Cali
     const LIMITES_CALI = {
       minLat: 3.3000,
       maxLat: 3.5500,
@@ -995,14 +997,56 @@
       maxLng: -76.4800
     };
     
-    // INMUEBLES VERIFICADOS EN CALI
+    // INMUEBLES VERIFICADOS EN CALI con sus respectivos URLs de descarga y Google Maps
     const properties = [
-      { id: 1, title: "Apartamento en el Norte de Cali", price: 450000000, priceRent: 2800000, description: "Hermoso apartamento en exclusiva zona residencial", category: "venta", m2: 120, cuartos: 3, baños: 2, latlng: [3.4545, -76.5350], images: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500", "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=500"] },
-      { id: 2, title: "Casa en Ciudad Jardín", price: 680000000, priceRent: 3500000, description: "Casa con jardín y piscina privada", category: "venta", m2: 200, cuartos: 4, baños: 3, latlng: [3.3750, -76.5450], images: ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500", "https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=500"] },
-      { id: 3, title: "Oficina en el Centro Empresarial", price: 0, priceRent: 1800000, description: "Oficina completamente amoblada", category: "arriendo", m2: 80, cuartos: 2, baños: 1, latlng: [3.4516, -76.5320], images: ["https://images.unsplash.com/photo-1497366216548-37526070297c?w=500", "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=500"] },
-      { id: 4, title: "Apartamento en el Sur", price: 320000000, priceRent: 1900000, description: "Apartamento familiar", category: "venta", m2: 95, cuartos: 3, baños: 2, latlng: [3.4000, -76.5200], images: ["https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=500", "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=500"] },
-      { id: 5, title: "Local Comercial", price: 0, priceRent: 2500000, description: "Local en zona comercial", category: "arriendo", m2: 60, cuartos: 1, baños: 1, latlng: [3.4300, -76.5500], images: ["https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500", "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=500"] },
-      { id: 6, title: "Casa en Pance", price: 850000000, priceRent: 4200000, description: "Espectacular casa con piscina y zona verde", category: "venta", m2: 280, cuartos: 5, baños: 4, latlng: [3.3500, -76.5800], images: ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500", "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=500"] }
+      { 
+        id: 1, title: "Apartamento en el Norte de Cali", price: 450000000, priceRent: 2800000, 
+        description: "Hermoso apartamento en exclusiva zona residencial", category: "venta", 
+        m2: 120, cuartos: 3, baños: 2, latlng: [3.4545, -76.5350], 
+        images: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500", "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=500"],
+        downloadUrl: "https://drive.google.com/uc?export=download&id=TU_ID_1",
+        mapsUrl: "https://maps.google.com/?q=3.4545,-76.5350"
+      },
+      { 
+        id: 2, title: "Casa en Ciudad Jardín", price: 680000000, priceRent: 3500000, 
+        description: "Casa con jardín y piscina privada", category: "venta", 
+        m2: 200, cuartos: 4, baños: 3, latlng: [3.3750, -76.5450], 
+        images: ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500", "https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=500"],
+        downloadUrl: "https://drive.google.com/uc?export=download&id=TU_ID_2",
+        mapsUrl: "https://maps.google.com/?q=3.3750,-76.5450"
+      },
+      { 
+        id: 3, title: "Oficina en el Centro Empresarial", price: 0, priceRent: 1800000, 
+        description: "Oficina completamente amoblada", category: "arriendo", 
+        m2: 80, cuartos: 2, baños: 1, latlng: [3.4516, -76.5320], 
+        images: ["https://images.unsplash.com/photo-1497366216548-37526070297c?w=500", "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=500"],
+        downloadUrl: "https://drive.google.com/uc?export=download&id=TU_ID_3",
+        mapsUrl: "https://maps.google.com/?q=3.4516,-76.5320"
+      },
+      { 
+        id: 4, title: "Apartamento en el Sur", price: 320000000, priceRent: 1900000, 
+        description: "Apartamento familiar", category: "venta", 
+        m2: 95, cuartos: 3, baños: 2, latlng: [3.4000, -76.5200], 
+        images: ["https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=500", "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=500"],
+        downloadUrl: "https://drive.google.com/uc?export=download&id=TU_ID_4",
+        mapsUrl: "https://maps.google.com/?q=3.4000,-76.5200"
+      },
+      { 
+        id: 5, title: "Local Comercial", price: 0, priceRent: 2500000, 
+        description: "Local en zona comercial", category: "arriendo", 
+        m2: 60, cuartos: 1, baños: 1, latlng: [3.4300, -76.5500], 
+        images: ["https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500", "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=500"],
+        downloadUrl: "https://drive.google.com/uc?export=download&id=TU_ID_5",
+        mapsUrl: "https://maps.google.com/?q=3.4300,-76.5500"
+      },
+      { 
+        id: 6, title: "Casa en Pance", price: 850000000, priceRent: 4200000, 
+        description: "Espectacular casa con piscina y zona verde", category: "venta", 
+        m2: 280, cuartos: 5, baños: 4, latlng: [3.3500, -76.5800], 
+        images: ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500", "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=500"],
+        downloadUrl: "https://drive.google.com/uc?export=download&id=TU_ID_6",
+        mapsUrl: "https://maps.google.com/?q=3.3500,-76.5800"
+      }
     ];
 
     let mapa;
@@ -1582,7 +1626,7 @@
       const actionIcon = property.category === 'venta' ? 'fa-hand-holding-usd' : 'fa-key';
       
       return `
-        <div class="popup-product-card" data-id="${property.id}" data-images='${JSON.stringify(property.images)}'>
+        <div class="popup-product-card" data-id="${property.id}">
           <div class="popup-product-image-container" id="popup-img-container-${property.id}">
             <img src="${property.images[0]}" alt="${property.title}" class="popup-product-image" id="popup-img-${property.id}">
             <div class="popup-image-nav">
@@ -1603,6 +1647,10 @@
             <div class="popup-product-actions">
               <button class="popup-add-to-cart" data-id="${property.id}"><i class="fas fa-calendar-check"></i> Agendar visita</button>
               <button class="popup-buy-now" data-id="${property.id}"><i class="${actionIcon}"></i> ${actionText}</button>
+            </div>
+            <div class="popup-product-actions-secundarias">
+              <a href="${property.downloadUrl}" target="_blank" class="popup-download-btn"><i class="fas fa-download"></i> Descargar ficha</a>
+              <a href="${property.mapsUrl}" target="_blank" class="popup-maps-btn"><i class="fas fa-location-dot"></i> Ver en Maps</a>
             </div>
           </div>
         </div>
@@ -1854,10 +1902,6 @@
     function closeServiciosModal() {
       document.getElementById('serviciosModal').style.display = 'none';
     }
-    
-    function descargarInformacion() {
-      window.open(GOOGLE_DRIVE_DOWNLOAD_URL, '_blank');
-    }
 
     // EVENTOS E INICIALIZACIÓN
     document.addEventListener('DOMContentLoaded', function() {
@@ -1868,10 +1912,6 @@
       document.getElementById('map-btn').addEventListener('click', switchToMapView);
       document.getElementById('satellite-btn').addEventListener('click', switchToSatelliteView);
       document.getElementById('closeServiciosBtn').addEventListener('click', closeServiciosModal);
-      document.getElementById('descargarInfoBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        descargarInformacion();
-      });
       
       window.addEventListener('click', (e) => {
         const serviciosModal = document.getElementById('serviciosModal');
