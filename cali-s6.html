@@ -1,1 +1,1024 @@
-a
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>QRP2P - Sección 6 | Inversión y Avalúos - Cali</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      background: #ffffff;
+      color: #111111;
+      line-height: 1.5;
+    }
+
+    /* Pantalla de Login */
+    .login-container {
+      max-width: 400px;
+      margin: 5rem auto;
+      background: #ffffff;
+      border: 1px solid #cccccc;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+
+    .login-container .logo h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      color: #000000;
+    }
+
+    .login-container .logo h1 span {
+      color: #333333;
+    }
+
+    .login-container .logo p {
+      color: #555555;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      font-size: 0.85rem;
+      color: #111111;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1px solid #bbbbbb;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: #ffffff;
+      transition: all 0.2s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #000000;
+      box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+    }
+
+    .btn {
+      background: #000000;
+      color: #ffffff;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      width: 100%;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 0.5rem;
+    }
+
+    .btn:hover {
+      background: #333333;
+      transform: translateY(-1px);
+    }
+
+    .error-message {
+      color: #d32f2f;
+      font-size: 0.8rem;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    /* Dashboard */
+    .dashboard-container {
+      width: 100%;
+      min-height: 100vh;
+      background: #f5f5f5;
+      display: none;
+    }
+
+    .dashboard-header {
+      background: #000000;
+      color: white;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-title h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .header-title h2 span {
+      color: #cccccc;
+    }
+
+    .header-title p {
+      font-size: 0.85rem;
+      opacity: 0.8;
+      margin-top: 0.3rem;
+    }
+
+    .logout-btn {
+      background: #333333;
+      color: white;
+      padding: 0.6rem 1.5rem;
+      border-radius: 40px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: #555555;
+      transform: translateY(-1px);
+    }
+
+    .dashboard-content {
+      padding: 1.5rem;
+    }
+
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      background: #000000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    .stat-info h3 {
+      font-size: 1.8rem;
+      color: #000000;
+    }
+
+    .stat-info p {
+      color: #666;
+      font-size: 0.85rem;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid #e0e0e0;
+      overflow: hidden;
+    }
+
+    .table-header {
+      background: #000000;
+      color: white;
+      padding: 1rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .table-header h3 {
+      font-size: 1.2rem;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.15);
+      padding: 0.6rem 1rem;
+      border-radius: 40px;
+      width: 100%;
+      max-width: 350px;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      color: white;
+      outline: none;
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    .search-box input::placeholder {
+      color: rgba(255,255,255,0.7);
+    }
+
+    .search-box span {
+      color: rgba(255,255,255,0.8);
+    }
+
+    .search-results-count {
+      background: #e3f2fd;
+      padding: 0.8rem 1.5rem;
+      border-bottom: 1px solid #bbdefb;
+      font-size: 0.85rem;
+      color: #1565c0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .clear-search-btn {
+      background: transparent;
+      border: 1px solid #1565c0;
+      color: #1565c0;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: all 0.2s ease;
+    }
+
+    .clear-search-btn:hover {
+      background: #1565c0;
+      color: white;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    .business-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .business-table th {
+      background: #f8f9fa;
+      padding: 1rem 1rem;
+      text-align: left;
+      font-weight: 700;
+      color: #000000;
+      border-bottom: 2px solid #e0e0e0;
+      font-size: 0.85rem;
+    }
+
+    .business-table td {
+      padding: 1rem 1rem;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 0.85rem;
+      vertical-align: top;
+    }
+
+    .business-table tr:hover {
+      background: #f8f9fa;
+    }
+
+    .entity-id {
+      display: inline-block;
+      background: #000000;
+      color: white;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .badge-avaluos {
+      background: #1a237e;
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      display: inline-block;
+      margin-top: 0.3rem;
+    }
+
+    .badge-inversion {
+      background: #2e7d32;
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      display: inline-block;
+      margin-top: 0.3rem;
+    }
+
+    .info-detail {
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .info-detail strong {
+      color: #000000;
+    }
+
+    .maps-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: #4285F4;
+      color: white;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 0.7rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+      transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .maps-link:hover {
+      background: #3367d6;
+      transform: translateY(-1px);
+    }
+
+    .whatsapp-btn {
+      background: #25D366;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: all 0.2s ease;
+    }
+
+    .whatsapp-btn:hover {
+      background: #1da851;
+      transform: translateY(-1px);
+    }
+
+    .web-link {
+      color: #1a237e;
+      text-decoration: none;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin-top: 0.3rem;
+    }
+
+    .web-link:hover {
+      text-decoration: underline;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .feature-list li {
+      font-size: 0.75rem;
+      padding: 0.2rem 0;
+      position: relative;
+      padding-left: 1rem;
+    }
+
+    .feature-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #2e7d32;
+      font-weight: bold;
+    }
+
+    .price-tag {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a237e;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem;
+      }
+      
+      .dashboard-content {
+        padding: 1rem;
+      }
+      
+      .stats-cards {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      .business-table th {
+        display: none;
+      }
+      
+      .business-table td {
+        display: block;
+        padding: 0.8rem;
+        border-bottom: 1px solid #e0e0e0;
+        position: relative;
+        padding-left: 40%;
+      }
+      
+      .business-table td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0.8rem;
+        width: 35%;
+        font-weight: 700;
+        color: #000000;
+        font-size: 0.75rem;
+      }
+      
+      .business-table tr {
+        display: block;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        background: white;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Pantalla de Login -->
+  <div class="login-container" id="loginScreen">
+    <div class="logo">
+      <h1>QRP2P <span>Inmobiliaria</span></h1>
+      <p>Sección 6 - Inversión y Avalúos</p>
+    </div>
+    
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="accessKey">Clave de Acceso</label>
+        <input 
+          type="password" 
+          id="accessKey" 
+          placeholder="Ingresa la clave de acceso" 
+          required
+        >
+      </div>
+      
+      <button type="submit" class="btn">Acceder</button>
+      
+      <div class="error-message" id="errorMessage">
+        Clave de acceso incorrecta.
+      </div>
+    </form>
+  </div>
+  
+  <!-- Panel de Inversión y Avalúos -->
+  <div class="dashboard-container" id="dashboard">
+    <header class="dashboard-header">
+      <div class="header-title">
+        <h2>QRP2P <span>Inversión y Avalúos</span></h2>
+        <p>Peritajes, tasaciones, consultoría en inversión inmobiliaria y análisis de rentabilidad en Cali</p>
+      </div>
+      
+      <button class="logout-btn" id="logoutBtn">
+        Cerrar Sesión
+      </button>
+    </header>
+    
+    <main class="dashboard-content">
+      <div class="stats-cards">
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-info">
+            <h3 id="totalServices">0</h3>
+            <p>Servicios Especializados</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">🏦</div>
+          <div class="stat-info">
+            <h3 id="totalAvaluos">0</h3>
+            <p>Empresas de Avalúos</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">💹</div>
+          <div class="stat-info">
+            <h3 id="totalInversion">0</h3>
+            <p>Consultoría Inversión</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <div class="table-header">
+          <h3>📋 Avalúos, Tasaciones y Consultoría en Inversión Inmobiliaria</h3>
+          <div class="search-box">
+            <input 
+              type="text" 
+              id="searchInput" 
+              placeholder="Buscar por empresa, tipo de servicio, zona..."
+              autocomplete="off"
+            >
+            <span>🔍</span>
+          </div>
+        </div>
+        
+        <div class="search-results-count" id="searchResults" style="display: none;">
+          <span id="resultsText">0 resultados encontrados</span>
+          <button class="clear-search-btn" id="clearSearchBtn">Limpiar búsqueda</button>
+        </div>
+        
+        <div class="table-wrapper">
+          <table class="business-table">
+            <thead>
+              <tr>
+                <th>ID / Empresa</th>
+                <th>Especialidad</th>
+                <th>Servicios Ofrecidos</th>
+                <th>Ubicación</th>
+                <th>Contacto</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- Los datos se cargarán dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Clave de acceso QRP2P
+    const ACCESS_KEY = "18@Qrp2p";
+    
+    // Datos de empresas y profesionales de inversión y avalúos
+    const INVESTMENT_APPRAISAL_SERVICES = [
+      // Empresas de Avalúos
+      {
+        id: "QRP2P-I001",
+        tipo: "avaluos",
+        nombre: "Avalúos y Peritajes del Valle S.A.S.",
+        especialidad: "Avalúos Comerciales y Residenciales",
+        documento: "NIT: 901234567-8",
+        telefono: "+573102346000",
+        whatsapp: "+573102346000",
+        email: "contacto@avaluosdelvalle.com",
+        direccion: "Calle 15 # 8-12, Ciudad Jardín, Cali",
+        servicios: "Avalúos comerciales, residenciales, industriales, para entidades financieras",
+        experiencia: "25 años de experiencia, +15,000 avalúos realizados",
+        certificaciones: "Registrados ante Lonja de Propiedad Raíz, Avaluadores inscritos",
+        horario: "Lun a Vie 8:00 AM - 6:00 PM",
+        tarifaEstimada: "Desde $350,000",
+        coordenadas: { lat: 3.4012, lng: -76.5405 },
+        searchable: "avaluos peritajes valle comercial residencial ciudad jardin"
+      },
+      {
+        id: "QRP2P-I002",
+        tipo: "avaluos",
+        nombre: "Tasaciones y Avalúos Profesionales",
+        especialidad: "Avalúos Hipotecarios y Judiciales",
+        documento: "NIT: 812345678-9",
+        telefono: "+573102346001",
+        whatsapp: "+573102346001",
+        email: "info@tasacionesprofesionales.com",
+        direccion: "Carrera 56 # 9-45, Norte, Cali",
+        servicios: "Avalúos hipotecarios, judiciales, peritazgos, avalúos fiscales",
+        experiencia: "18 años de experiencia, avalúos para 15 bancos nacionales",
+        certificaciones: "Certificados por Sociedad de Tasadores, miembros de ACOVAL",
+        horario: "Lun a Vie 8:30 AM - 7:00 PM",
+        tarifaEstimada: "Desde $320,000",
+        coordenadas: { lat: 3.4892, lng: -76.5123 },
+        searchable: "tasaciones avaluos hipotecarios judiciales norte cali"
+      },
+      {
+        id: "QRP2P-I003",
+        tipo: "avaluos",
+        nombre: "Grupo Avalúos Inmobiliarios",
+        especialidad: "Avalúos Masivos y Cartera Inmobiliaria",
+        documento: "NIT: 901234568-9",
+        telefono: "+573102346002",
+        whatsapp: "+573102346002",
+        email: "gerencia@avaluosgrupogai.com",
+        direccion: "Calle 18 # 10-25, Granada, Cali",
+        servicios: "Avalúos masivos para bancos, fondos de inversión, carteras hipotecarias",
+        experiencia: "30 años de experiencia, especialistas en avalúos nacionales",
+        certificaciones: "Certificación ISO 9001, avalúos bajo estándares internacionales",
+        horario: "Lun a Vie 7:00 AM - 5:00 PM",
+        tarifaEstimada: "Desde $400,000",
+        coordenadas: { lat: 3.4567, lng: -76.5321 },
+        searchable: "grupo avaluos masivos cartera hipotecaria granada"
+      },
+      // Consultoría en Inversión Inmobiliaria
+      {
+        id: "QRP2P-I004",
+        tipo: "inversion",
+        nombre: "Inversiones Inmobiliarias del Valle",
+        especialidad: "Asesoría en Inversión de Inmuebles",
+        documento: "NIT: 765432109-8",
+        telefono: "+573102346003",
+        whatsapp: "+573102346003",
+        email: "asesoria@inversionesvalle.com",
+        direccion: "Carrera 38 # 5-60, El Limonar, Cali",
+        servicios: "Análisis de rentabilidad, factibilidad de proyectos, compra venta de cartera",
+        experiencia: "15 años asesorando inversores, +500 proyectos valorados",
+        certificaciones: "Certificación en Finanzas, asesores certificados",
+        horario: "Lun a Vie 9:00 AM - 6:00 PM",
+        tarifaEstimada: "Consulta inicial gratuita",
+        coordenadas: { lat: 3.3762, lng: -76.5342 },
+        searchable: "inversiones inmobiliarias valle asesoria rentabilidad limonar"
+      },
+      {
+        id: "QRP2P-I005",
+        tipo: "inversion",
+        nombre: "Capital Inmobiliario S.A.S.",
+        especialidad: "Estructuración de Proyectos y Valorización",
+        documento: "NIT: 654321098-7",
+        telefono: "+573102346004",
+        whatsapp: "+573102346004",
+        email: "contacto@capitalinmobiliario.com",
+        direccion: "Calle 44 # 4-33, San Fernando, Cali",
+        servicios: "Estructuración financiera, valorización, plusvalía, ROI de proyectos",
+        experiencia: "12 años de experiencia, +200 proyectos estructurados exitosamente",
+        certificaciones: "Certificación en Finanzas, especialistas en valorización inmobiliaria",
+        horario: "Lun a Vie 8:00 AM - 7:00 PM",
+        tarifaEstimada: "Depende del proyecto",
+        coordenadas: { lat: 3.4142, lng: -76.5456 },
+        searchable: "capital inmobiliario estructuración proyectos valorización san fernando"
+      },
+      {
+        id: "QRP2P-I006",
+        tipo: "inversion",
+        nombre: "Rentabilidad Inmobiliaria Cali",
+        especialidad: "Análisis de Rentabilidad y Market Research",
+        documento: "NIT: 543210987-6",
+        telefono: "+573102346005",
+        whatsapp: "+573102346005",
+        email: "info@rentabilidadinmobiliaria.com",
+        direccion: "Carrera 24 # 7-89, Santa Mónica, Cali",
+        servicios: "Estudios de mercado, proyecciones de rentabilidad, análisis de competencia",
+        experiencia: "10 años de investigación inmobiliaria en Cali y el Valle",
+        certificaciones: "Convenios con universidades para estudios de mercado",
+        horario: "Lun a Vie 8:30 AM - 6:30 PM",
+        tarifaEstimada: "Desde $500,000 estudio",
+        coordenadas: { lat: 3.4721, lng: -76.5289 },
+        searchable: "rentabilidad inmobiliaria estudio mercado proyecciones santa monica"
+      },
+      // Avalúos Especializados
+      {
+        id: "QRP2P-I007",
+        tipo: "avaluos",
+        nombre: "Ingeniería de Avalúos y Peritajes",
+        especialidad: "Avalúos Industriales y Maquinaria",
+        documento: "NIT: 432109876-5",
+        telefono: "+573102346006",
+        whatsapp: "+573102346006",
+        email: "avaluos@ingenieriaavalios.com",
+        direccion: "Calle 23 # 6-45, El Ingenio, Cali",
+        servicios: "Avalúos de bodegas, naves industriales, maquinaria pesada, equipos",
+        experiencia: "22 años en avalúos industriales, peritos reconocidos judicialmente",
+        certificaciones: "Registrados en el Registro Nacional de Avaluadores",
+        horario: "Lun a Vie 7:00 AM - 6:00 PM",
+        tarifaEstimada: "Desde $450,000",
+        coordenadas: { lat: 3.3987, lng: -76.5512 },
+        searchable: "ingeniería avaluos industriales maquinaria bodegas el ingenio"
+      },
+      {
+        id: "QRP2P-I008",
+        tipo: "avaluos",
+        nombre: "Tasaciones Expertas Colombia",
+        especialidad: "Avalúos para Sucesiones y Particiones",
+        documento: "NIT: 321098765-4",
+        telefono: "+573102346007",
+        whatsapp: "+573102346007",
+        email: "contacto@tasacionesexpertas.com",
+        direccion: "Carrera 28 # 6-55, Pance, Cali",
+        servicios: "Avalúos para procesos sucesorales, particiones, liquidaciones de patrimonio",
+        experiencia: "20 años de experiencia, avalúos judiciales y extrajudiciales",
+        certificaciones: "Avalúos con respaldo jurídico, aceptados en juzgados",
+        horario: "Lun a Vie 8:00 AM - 5:00 PM",
+        tarifaEstimada: "Desde $380,000",
+        coordenadas: { lat: 3.3212, lng: -76.5623 },
+        searchable: "tasaciones expertas sucesiones particiones avaluos judiciales pance"
+      },
+      // Asesoría de Inversiones adicionales
+      {
+        id: "QRP2P-I009",
+        tipo: "inversion",
+        nombre: "DOMUS Inversiones Inmobiliarias",
+        especialidad: "Flipping Inmobiliario y Remodelación",
+        documento: "NIT: 210987654-3",
+        telefono: "+573102346008",
+        whatsapp: "+573102346008",
+        email: "info@domusinversiones.com",
+        direccion: "Calle 12 # 8-22, San Antonio, Cali",
+        servicios: "Estrategias de flipping, compra, remodelación y reventa",
+        experiencia: "8 años, +150 propiedades remodeladas y vendidas exitosamente",
+        certificaciones: "Certificados en construcción y valorización",
+        horario: "Lun a Vie 9:00 AM - 7:00 PM",
+        tarifaEstimada: "Consultoría: $200,000/sesión",
+        coordenadas: { lat: 3.4356, lng: -76.5421 },
+        searchable: "domus inversiones flipping remodelación compra reventa san antonio"
+      },
+      {
+        id: "QRP2P-I010",
+        tipo: "inversion",
+        nombre: "Plusvalía Inmobiliaria S.A.S.",
+        especialidad: "Consultoría para Inversionistas Extranjeros",
+        documento: "NIT: 109876543-2",
+        telefono: "+573102346009",
+        whatsapp: "+573102346009",
+        email: "extranjeros@plusvaliainmobiliaria.com",
+        direccion: "Carrera 100 # 12-45, Ciudad Jardín, Cali",
+        servicios: "Asesoría a inversionistas extranjeros, análisis normativo, legal y fiscal",
+        experiencia: "10 años atendiendo inversión extranjera en Colombia",
+        certificaciones: "Certificación en Inversión Internacional y Finanzas",
+        horario: "Lun a Vie 8:00 AM - 5:00 PM (inglés disponible)",
+        tarifaEstimada: "Depende del proyecto",
+        coordenadas: { lat: 3.3985, lng: -76.5456 },
+        searchable: "plusvalía inmobiliaria inversionistas extranjeros ingles ciudad jardin"
+      },
+      // Avalúos gubernamentales
+      {
+        id: "QRP2P-I011",
+        tipo: "avaluos",
+        nombre: "Lonja de Propiedad Raíz del Valle",
+        especialidad: "Registro de Avalúos y Certificaciones",
+        documento: "NIT: 890123456-7",
+        telefono: "+573102346010",
+        whatsapp: "+573102346010",
+        email: "certificaciones@lonjavalle.com",
+        direccion: "Calle 15 # 8-50, Ciudad Jardín, Cali",
+        servicios: "Certificación de avalúos, registro de peritos, mediación en conflictos",
+        experiencia: "50 años de trayectoria, entidad gremial oficial",
+        certificaciones: "Entidad autorizada por Superintendencia de Notariado y Registro",
+        horario: "Lun a Vie 8:00 AM - 4:00 PM",
+        tarifaEstimada: "Según tarifario oficial",
+        coordenadas: { lat: 3.3988, lng: -76.5400 },
+        searchable: "lonja propiedad raiz valle certificaciones avaluos ciudad jardin"
+      },
+      {
+        id: "QRP2P-I012",
+        tipo: "inversion",
+        nombre: "Fondo de Inversión Inmobiliaria Bancolombia",
+        especialidad: "Inversión Colectiva en Proyectos",
+        documento: "NIT: 801234567-1",
+        telefono: "+573102346011",
+        whatsapp: "+573102346011",
+        email: "fondos.inmobiliarios@bancolombia.com",
+        direccion: "Carrera 56 # 9-70, Norte, Cali",
+        servicios: "Fondos de inversión inmobiliaria, portafolios diversificados",
+        experiencia: "+15 años en fondos colectivos, patrimonio gestionado: $2B+",
+        certificaciones: "Supervisado por Superintendencia Financiera",
+        horario: "Lun a Vie 8:30 AM - 6:00 PM",
+        tarifaEstimada: "Inversión mínima: $10,000,000",
+        coordenadas: { lat: 3.4880, lgn: -76.5130 },
+        searchable: "fondo inversion inmobiliaria bancolombia portafolios fondos colectivos"
+      },
+      {
+        id: "QRP2P-I013",
+        tipo: "avaluos",
+        nombre: "Tasaciones y Avalúos Rápidos",
+        especialidad: "Avalúos Expres en 24 Horas",
+        documento: "NIT: 987654321-0",
+        telefono: "+573102346012",
+        whatsapp: "+573102346012",
+        email: "rapido@avaluosrapidos.com",
+        direccion: "Calle 44 # 4-50, San Fernando, Cali",
+        servicios: "Avalúos exprés para ventas rápidas, preaprobación de créditos",
+        experiencia: "7 años de experiencia, tiempo de respuesta garantizado",
+        certificaciones: "Peritos inscritos en Cámara de Comercio",
+        horario: "Lun a Vie 9:00 AM - 8:00 PM, Sáb 9:00 AM - 2:00 PM",
+        tarifaEstimada: "Desde $280,000",
+        coordenadas: { lat: 3.4135, lng: -76.5445 },
+        searchable: "avaluos rapidos 24 horas exprés preaprobación san fernando"
+      }
+    ];
+    
+    // Función para normalizar texto
+    function normalizeText(text) {
+      if (!text) return '';
+      return text.toString()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+    
+    // Preprocesar datos
+    const SERVICES_PREPROCESSED = INVESTMENT_APPRAISAL_SERVICES.map(service => ({
+      ...service,
+      normalizedSearch: normalizeText(`${service.nombre} ${service.especialidad} ${service.servicios} ${service.direccion}`)
+    }));
+    
+    // Función para abrir Google Maps
+    function openGoogleMaps(address) {
+      const encodedAddress = encodeURIComponent(`${address}`);
+      window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_blank');
+    }
+    
+    // Función para abrir WhatsApp
+    function openWhatsApp(phoneNumber, nombre, especialidad) {
+      const cleanNumber = phoneNumber.replace(/\D/g, '');
+      const message = `Hola, me comunico desde QRP2P INMOBILIARIA. Estoy interesado en recibir información sobre sus servicios de ${especialidad} ofrecidos por ${nombre}. ¿Podrían asesorarme?`;
+      window.open(`https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    }
+    
+    // Renderizar tabla
+    let filteredData = [...SERVICES_PREPROCESSED];
+    
+    function renderTable(data) {
+      const tableBody = document.getElementById('tableBody');
+      tableBody.innerHTML = '';
+      
+      if (data.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td colspan="5" style="text-align: center; padding: 2rem; color: #666;">
+            <strong>No se encontraron servicios de inversión o avalúos</strong>
+            <p style="margin-top: 0.5rem;">Intenta con otros términos de búsqueda</p>
+          </td>
+        `;
+        tableBody.appendChild(row);
+        updateStatistics(data);
+        return;
+      }
+      
+      data.forEach(service => {
+        const row = document.createElement('tr');
+        const isAvaluo = service.tipo === 'avaluos';
+        const badgeClass = isAvaluo ? 'badge-avaluos' : 'badge-inversion';
+        const tipoLabel = isAvaluo ? '📄 Avalúos y Tasaciones' : '📈 Inversión y Consultoría';
+        const tarifaText = service.tarifaEstimada ? `<span class="price-tag">💰 ${service.tarifaEstimada}</span><br>` : '';
+        
+        row.innerHTML = `
+          <td data-label="ID / Empresa">
+            <span class="entity-id">${service.id}</span>
+            <div style="margin-top: 0.4rem; font-weight: 700; font-size: 1rem;">${service.nombre}</div>
+            <span class="${badgeClass}" style="display: inline-block; margin-top: 0.3rem;">${tipoLabel}</span>
+            <div style="margin-top: 0.3rem; font-size: 0.7rem; color: #666;">${service.documento}</div>
+          </td>
+          <td data-label="Especialidad">
+            <div class="info-detail">
+              <strong>📌 ${service.especialidad}</strong><br>
+              ${tarifaText}
+              <strong>⏱️ ${service.horario}</strong><br>
+              ${service.certificaciones ? `<small>🏅 ${service.certificaciones}</small><br>` : ''}
+              ${service.experiencia ? `<small>⭐ ${service.experiencia}</small>` : ''}
+            </div>
+          </td>
+          <td data-label="Servicios Ofrecidos">
+            <div class="info-detail">
+              <strong>🔧 Servicios:</strong><br>
+              ${service.servicios}
+            </div>
+          </td>
+          <td data-label="Ubicación">
+            <div class="info-detail">
+              📍 ${service.direccion}<br>
+              <button class="maps-link" onclick="openGoogleMaps('${service.direccion.replace(/'/g, "\\'")}')">
+                🗺️ Ver en Google Maps
+              </button>
+            </div>
+          </td>
+          <td data-label="Contacto">
+            <div class="info-detail">
+              📞 ${service.telefono}<br>
+              ✉️ <a href="mailto:${service.email}" class="web-link">${service.email}</a><br><br>
+              <button class="whatsapp-btn" onclick="openWhatsApp('${service.telefono}', '${service.nombre.replace(/'/g, "\\'")}', '${service.especialidad.replace(/'/g, "\\'")}')">
+                💬 WhatsApp
+              </button>
+            </div>
+          </td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+      
+      updateStatistics(data);
+    }
+    
+    function updateStatistics(data) {
+      const totalServices = document.getElementById('totalServices');
+      const totalAvaluos = document.getElementById('totalAvaluos');
+      const totalInversion = document.getElementById('totalInversion');
+      
+      totalServices.textContent = data.length;
+      const avaluosCount = data.filter(s => s.tipo === 'avaluos').length;
+      const inversionCount = data.filter(s => s.tipo === 'inversion').length;
+      
+      totalAvaluos.textContent = avaluosCount;
+      totalInversion.textContent = inversionCount;
+    }
+    
+    function filterData(searchTerm) {
+      const term = normalizeText(searchTerm);
+      const searchResultsDiv = document.getElementById('searchResults');
+      const resultsText = document.getElementById('resultsText');
+      
+      if (!term) {
+        filteredData = [...SERVICES_PREPROCESSED];
+        searchResultsDiv.style.display = 'none';
+      } else {
+        filteredData = SERVICES_PREPROCESSED.filter(service => {
+          return service.normalizedSearch.includes(term);
+        });
+        
+        searchResultsDiv.style.display = 'flex';
+        const resultCount = filteredData.length;
+        resultsText.textContent = `${resultCount} servicio${resultCount !== 1 ? 's' : ''} encontrado${resultCount !== 1 ? 's' : ''} para "${searchTerm}"`;
+      }
+      
+      renderTable(filteredData);
+    }
+    
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      filterData('');
+      document.getElementById('searchInput').focus();
+    }
+    
+    // Login y autenticación
+    const loginScreen = document.getElementById('loginScreen');
+    const dashboard = document.getElementById('dashboard');
+    const loginForm = document.getElementById('loginForm');
+    const errorMessage = document.getElementById('errorMessage');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const inputKey = document.getElementById('accessKey').value;
+      
+      if (inputKey === ACCESS_KEY) {
+        loginScreen.style.display = 'none';
+        dashboard.style.display = 'block';
+        errorMessage.style.display = 'none';
+        renderTable(SERVICES_PREPROCESSED);
+      } else {
+        errorMessage.style.display = 'block';
+        document.getElementById('accessKey').value = '';
+        document.getElementById('accessKey').focus();
+      }
+    });
+    
+    logoutBtn.addEventListener('click', function() {
+      dashboard.style.display = 'none';
+      loginScreen.style.display = 'block';
+      document.getElementById('accessKey').value = '';
+      errorMessage.style.display = 'none';
+      clearSearch();
+    });
+    
+    searchInput.addEventListener('input', function(e) {
+      filterData(e.target.value);
+    });
+    
+    clearSearchBtn.addEventListener('click', clearSearch);
+    
+    document.getElementById('accessKey').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        loginForm.dispatchEvent(new Event('submit'));
+      }
+    });
+    
+    // Inicializar
+    renderTable(SERVICES_PREPROCESSED);
+    
+    // Hacer funciones globales
+    window.openGoogleMaps = openGoogleMaps;
+    window.openWhatsApp = openWhatsApp;
+  </script>
+</body>
+</html>
