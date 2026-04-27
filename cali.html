@@ -508,6 +508,12 @@
       border-color: #000000;
     }
     
+    input:disabled {
+      background-color: #f5f5f5;
+      color: #666;
+      cursor: not-allowed;
+    }
+    
     .inline-checkbox {
       display: flex;
       align-items: center;
@@ -1352,8 +1358,6 @@
               <select id="tiempoArriendo">
                 <option value="6 meses">6 meses</option>
                 <option value="1 año">1 año</option>
-                <option value="2 años">2 años</option>
-                <option value="Más de 2 años">Más de 2 años</option>
               </select>
             </div>
             <div class="form-group">
@@ -1480,21 +1484,24 @@
             </div>
             <div id="cuotaInicialSection" style="display: none;">
               <div class="form-group">
-                <label>VALOR DE CUOTA INICIAL (COP$)</label>
-                <input type="number" id="cuotaInicial" placeholder="Ej: 50000000">
+                <label>VALOR DE CUOTA INICIAL (COP$) *</label>
+                <label style="font-size:0.7rem; color:#666;">Mínimo 30% del valor del inmueble (${formatPrice(currentProperty.price * 0.3)})</label>
+                <input type="number" id="cuotaInicial" placeholder="Ej: ${currentProperty.price * 0.3}" min="${currentProperty.price * 0.3}">
               </div>
+              <div id="errorCuota" style="color:#ff6b6b; font-size:0.7rem; margin-top:0.3rem; display:none;"></div>
             </div>
             <div id="financiamientoSection" style="display: none;">
               <div class="section-subtitle" style="font-weight:700; margin:0.5rem 0;">💰 ¿Cómo voy a financiar el saldo restante?</div>
               <div class="checkbox-group">
-                <label><input type="checkbox" name="saldoFinancia" value="Recursos propios"> Recursos propios</label>
-                <label><input type="checkbox" name="saldoFinancia" value="Crédito hipotecario"> Crédito hipotecario</label>
+                <label><input type="checkbox" name="saldoFinancia" value="Solicitar crédito inmobiliario"> Solicitar crédito inmobiliario</label>
+                <label><input type="checkbox" name="saldoFinancia" value="Ya cuenta con preaprobado de crédito"> Ya cuenta con preaprobado de crédito</label>
                 <label><input type="checkbox" name="saldoFinancia" value="Cesantías"> Cesantías</label>
               </div>
             </div>
             <div class="form-group">
               <label>VALOR OFERTADO (COP$) *</label>
-              <input type="number" id="valorOfertado" placeholder="Ej: ${currentProperty.price}" value="${currentProperty.price}">
+              <input type="number" id="valorOfertado" value="${currentProperty.price}" disabled>
+              <label style="font-size:0.7rem; color:#666; margin-top:0.3rem;">💰 Precio fijo del inmueble</label>
             </div>
           </div>
           <div class="section">
@@ -1550,6 +1557,10 @@
         const pagoCuotaInicial = container.querySelector('#pagoCuotaInicial');
         const cuotaInicialSection = container.querySelector('#cuotaInicialSection');
         const financiamientoSection = container.querySelector('#financiamientoSection');
+        const cuotaInicialInput = container.querySelector('#cuotaInicial');
+        const errorCuota = container.querySelector('#errorCuota');
+        const precioReferencia = currentProperty.price;
+        const cuotaMinima = precioReferencia * 0.3;
         
         if (pagoContado && pagoCuotaInicial) {
           pagoContado.addEventListener('change', () => {
@@ -1559,6 +1570,20 @@
           pagoCuotaInicial.addEventListener('change', () => {
             cuotaInicialSection.style.display = 'block';
             financiamientoSection.style.display = 'block';
+            cuotaInicialInput.placeholder = `Mínimo ${formatPrice(cuotaMinima)}`;
+            cuotaInicialInput.min = cuotaMinima;
+          });
+        }
+        
+        if (cuotaInicialInput) {
+          cuotaInicialInput.addEventListener('input', function() {
+            const valor = parseFloat(this.value);
+            if (valor && valor < cuotaMinima) {
+              errorCuota.style.display = 'block';
+              errorCuota.innerText = `⚠️ La cuota inicial mínima es del 30% (${formatPrice(cuotaMinima)})`;
+            } else {
+              errorCuota.style.display = 'none';
+            }
           });
         }
         
@@ -1577,6 +1602,14 @@
           const tipoPago = container.querySelector('input[name="tipoPago"]:checked')?.value || 'contado';
           const codigoAgente = document.getElementById('ventaCodigoAgente')?.value.trim() || '';
           
+          if (tipoPago === 'cuotaInicial') {
+            const cuotaInicial = parseFloat(document.getElementById('cuotaInicial')?.value || '0');
+            if (!cuotaInicial || cuotaInicial < cuotaMinima) {
+              alert(`⚠️ La cuota inicial debe ser al menos del 30% (${formatPrice(cuotaMinima)})`);
+              return;
+            }
+          }
+          
           let mensaje = `🏠 *OFERTA INMUEBLE - QRP2P INMOBILIARIA*\n\n` +
             `🏠 *Inmueble:* ${currentProperty.title}\n` +
             `📐 ${currentProperty.m2} m² · ${currentProperty.cuartos} hab · ${currentProperty.baños} baños\n` +
@@ -1584,14 +1617,14 @@
           
           if (tipoPago === 'cuotaInicial') {
             const cuotaInicial = document.getElementById('cuotaInicial')?.value || '0';
-            mensaje += `💰 *Valor cuota inicial:* $${parseInt(cuotaInicial).toLocaleString('es-CO')}\n`;
+            mensaje += `💰 *Valor cuota inicial:* ${formatPrice(parseInt(cuotaInicial))}\n`;
             let saldoRecursos = [];
             document.querySelectorAll('input[name="saldoFinancia"]:checked').forEach(cb => saldoRecursos.push(cb.value));
             if (saldoRecursos.length) mensaje += `🏦 *Financiación saldo:* ${saldoRecursos.join(', ')}\n`;
           }
           
-          const valorOfertado = document.getElementById('valorOfertado')?.value || '0';
-          mensaje += `💵 *Valor ofertado:* $${parseInt(valorOfertado).toLocaleString('es-CO')}\n\n`;
+          const valorOfertado = currentProperty.price;
+          mensaje += `💵 *Valor ofertado:* ${formatPrice(valorOfertado)} (Precio fijo)\n\n`;
           
           mensaje += `👤 *DATOS DEL COMPRADOR*\n`;
           if (isJuridica) {
