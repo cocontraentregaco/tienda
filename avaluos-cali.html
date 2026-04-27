@@ -491,6 +491,13 @@
                     <div class="form-group"><label>Número documento *</label><input type="text" id="numDoc" required></div>
                 </div>
 
+                <!-- CÓDIGO DEL AGENTE INMOBILIARIO (CAMPO OPCIONAL NUEVO) -->
+                <div class="form-group">
+                    <label>🏷️ Código del agente inmobiliario (opcional)</label>
+                    <input type="text" id="codigoAgente" placeholder="Ej: AGENTE-001, REF-1234, etc.">
+                    <small class="hint">Si tienes un código de referencia de un agente inmobiliario, ingrésalo aquí.</small>
+                </div>
+
                 <!-- DATOS DEL INMUEBLE -->
                 <div style="font-weight: 700; border-left: 3px solid #000000; padding-left: 0.6rem; margin: 1rem 0 0.8rem;">🏢 Datos del inmueble a avaluar</div>
                 <div class="form-group">
@@ -658,6 +665,7 @@
             return;
         }
 
+        const codigoAgente = document.getElementById('codigoAgente').value.trim(); // Nuevo campo opcional
         const matricula = document.getElementById('matricula').value.trim();
         const tipoInmueble = document.getElementById('tipoInmueble').value;
         const areaTerreno = document.getElementById('areaTerreno').value;
@@ -688,6 +696,12 @@
         mensaje += `${nombres} ${apellidos}%0A`;
         mensaje += `Tel: ${telefono} | Email: ${email}%0A`;
         mensaje += `Documento: ${document.getElementById('tipoDoc').value} ${numDoc}%0A`;
+        
+        // Agregar código de agente si fue proporcionado (nuevo)
+        if(codigoAgente) {
+            mensaje += `Código agente: ${codigoAgente}%0A`;
+        }
+        
         mensaje += "%0A*INMUEBLE A AVALUAR*%0A";
         mensaje += `Dirección: ${direccion}%0A`;
         mensaje += `Tipo: ${tipoInmueble} | Estrato: ${estrato}%0A`;
