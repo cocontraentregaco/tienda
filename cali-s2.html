@@ -1,1 +1,981 @@
-a
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>QRP2P - Sección 2 | Inmuebles para Alquiler en Cali</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      background: #ffffff;
+      color: #111111;
+      line-height: 1.5;
+    }
+
+    /* Pantalla de Login */
+    .login-container {
+      max-width: 400px;
+      margin: 5rem auto;
+      background: #ffffff;
+      border: 1px solid #cccccc;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+
+    .login-container .logo h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      color: #000000;
+    }
+
+    .login-container .logo h1 span {
+      color: #333333;
+    }
+
+    .login-container .logo p {
+      color: #555555;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      font-size: 0.85rem;
+      color: #111111;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1px solid #bbbbbb;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: #ffffff;
+      transition: all 0.2s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #000000;
+      box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+    }
+
+    .btn {
+      background: #000000;
+      color: #ffffff;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      width: 100%;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 0.5rem;
+    }
+
+    .btn:hover {
+      background: #333333;
+      transform: translateY(-1px);
+    }
+
+    .error-message {
+      color: #d32f2f;
+      font-size: 0.8rem;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    /* Dashboard */
+    .dashboard-container {
+      width: 100%;
+      min-height: 100vh;
+      background: #f5f5f5;
+      display: none;
+    }
+
+    .dashboard-header {
+      background: #000000;
+      color: white;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-title h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .header-title h2 span {
+      color: #cccccc;
+    }
+
+    .header-title p {
+      font-size: 0.85rem;
+      opacity: 0.8;
+      margin-top: 0.3rem;
+    }
+
+    .logout-btn {
+      background: #333333;
+      color: white;
+      padding: 0.6rem 1.5rem;
+      border-radius: 40px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: #555555;
+      transform: translateY(-1px);
+    }
+
+    .dashboard-content {
+      padding: 1.5rem;
+    }
+
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      background: #000000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    .stat-info h3 {
+      font-size: 1.8rem;
+      color: #000000;
+    }
+
+    .stat-info p {
+      color: #666;
+      font-size: 0.85rem;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid #e0e0e0;
+      overflow: hidden;
+    }
+
+    .table-header {
+      background: #000000;
+      color: white;
+      padding: 1rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .table-header h3 {
+      font-size: 1.2rem;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.15);
+      padding: 0.6rem 1rem;
+      border-radius: 40px;
+      width: 100%;
+      max-width: 350px;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      color: white;
+      outline: none;
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    .search-box input::placeholder {
+      color: rgba(255,255,255,0.7);
+    }
+
+    .search-box span {
+      color: rgba(255,255,255,0.8);
+    }
+
+    .search-results-count {
+      background: #e3f2fd;
+      padding: 0.8rem 1.5rem;
+      border-bottom: 1px solid #bbdefb;
+      font-size: 0.85rem;
+      color: #1565c0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .clear-search-btn {
+      background: transparent;
+      border: 1px solid #1565c0;
+      color: #1565c0;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: all 0.2s ease;
+    }
+
+    .clear-search-btn:hover {
+      background: #1565c0;
+      color: white;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    .business-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .business-table th {
+      background: #f8f9fa;
+      padding: 1rem 1rem;
+      text-align: left;
+      font-weight: 700;
+      color: #000000;
+      border-bottom: 2px solid #e0e0e0;
+      font-size: 0.85rem;
+    }
+
+    .business-table td {
+      padding: 1rem 1rem;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 0.85rem;
+      vertical-align: top;
+    }
+
+    .business-table tr:hover {
+      background: #f8f9fa;
+    }
+
+    .property-id {
+      display: inline-block;
+      background: #000000;
+      color: white;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .owner-info, .property-info {
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .owner-info strong, .property-info strong {
+      color: #000000;
+    }
+
+    .maps-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: #4285F4;
+      color: white;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .maps-link:hover {
+      background: #3367d6;
+      transform: translateY(-1px);
+    }
+
+    .whatsapp-owner-btn {
+      background: #25D366;
+      color: white;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: all 0.2s ease;
+    }
+
+    .whatsapp-owner-btn:hover {
+      background: #1da851;
+      transform: translateY(-1px);
+    }
+
+    .badge-own {
+      background: #2e7d32;
+      color: white;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 12px;
+      margin-left: 0.5rem;
+    }
+
+    .badge-captured {
+      background: #ed6c02;
+      color: white;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 12px;
+      margin-left: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem;
+      }
+      
+      .dashboard-content {
+        padding: 1rem;
+      }
+      
+      .stats-cards {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      .business-table th {
+        display: none;
+      }
+      
+      .business-table td {
+        display: block;
+        padding: 0.8rem;
+        border-bottom: 1px solid #e0e0e0;
+        position: relative;
+        padding-left: 40%;
+      }
+      
+      .business-table td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0.8rem;
+        width: 35%;
+        font-weight: 700;
+        color: #000000;
+        font-size: 0.75rem;
+      }
+      
+      .business-table tr {
+        display: block;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        background: white;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Pantalla de Login -->
+  <div class="login-container" id="loginScreen">
+    <div class="logo">
+      <h1>QRP2P <span>Inmobiliaria</span></h1>
+      <p>Sección 2 - Gestión de Rentas</p>
+    </div>
+    
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="accessKey">Clave de Acceso</label>
+        <input 
+          type="password" 
+          id="accessKey" 
+          placeholder="Ingresa la clave de acceso" 
+          required
+        >
+      </div>
+      
+      <button type="submit" class="btn">Acceder</button>
+      
+      <div class="error-message" id="errorMessage">
+        Clave de acceso incorrecta.
+      </div>
+    </form>
+  </div>
+  
+  <!-- Panel de Inmuebles para Alquiler -->
+  <div class="dashboard-container" id="dashboard">
+    <header class="dashboard-header">
+      <div class="header-title">
+        <h2>QRP2P <span>Inmuebles para Alquiler</span></h2>
+        <p>Gestión de rentas - Inmuebles propios y captados en Cali, Colombia</p>
+      </div>
+      
+      <button class="logout-btn" id="logoutBtn">
+        Cerrar Sesión
+      </button>
+    </header>
+    
+    <main class="dashboard-content">
+      <div class="stats-cards">
+        <div class="stat-card">
+          <div class="stat-icon">🏠</div>
+          <div class="stat-info">
+            <h3 id="totalProperties">0</h3>
+            <p>Total Inmuebles</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">🏢</div>
+          <div class="stat-info">
+            <h3 id="ownProperties">0</h3>
+            <p>Propios QRP2P</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">📋</div>
+          <div class="stat-info">
+            <h3 id="capturedProperties">0</h3>
+            <p>Captados por Agentes</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <div class="table-header">
+          <h3>📋 Catálogo de Inmuebles para Alquiler</h3>
+          <div class="search-box">
+            <input 
+              type="text" 
+              id="searchInput" 
+              placeholder="Buscar por ID, dirección o propietario..."
+              autocomplete="off"
+            >
+            <span>🔍</span>
+          </div>
+        </div>
+        
+        <div class="search-results-count" id="searchResults" style="display: none;">
+          <span id="resultsText">0 resultados encontrados</span>
+          <button class="clear-search-btn" id="clearSearchBtn">Limpiar búsqueda</button>
+        </div>
+        
+        <div class="table-wrapper">
+          <table class="business-table">
+            <thead>
+              <tr>
+                <th>ID / Tipo</th>
+                <th>Datos del Propietario</th>
+                <th>Datos del Inmueble</th>
+                <th>Ubicación</th>
+                <th>Contacto</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- Los datos se cargarán dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Clave de acceso QRP2P
+    const ACCESS_KEY = "18@Qrp2p";
+    
+    // Datos de inmuebles para alquiler (propios y captados)
+    const RENTAL_PROPERTIES = [
+      {
+        id: "QRP2P-R001",
+        tipoPropiedad: "propia",
+        propietario: {
+          nombre: "QRP2P INMOBILIARIA",
+          tipoIdentificacion: "NIT",
+          numeroIdentificacion: "901234567-1",
+          telefono: "+573146824438",
+          email: "rentas@qrp2p.com"
+        },
+        inmueble: {
+          tipo: "Apartamento",
+          direccion: "Calle 15 # 8-12, Ciudad Jardín",
+          metrosCuadrados: 85,
+          habitaciones: 3,
+          baños: 2,
+          parqueaderos: 1,
+          estrato: 5,
+          valorArriendo: "$2,500,000",
+          descripcion: "Apartamento en conjunto cerrado, piscina, zona social"
+        },
+        coordenadas: { lat: 3.4012, lng: -76.5405 },
+        searchable: "QRP2P-R001 ciudad jardin apartamento 85m2"
+      },
+      {
+        id: "QRP2P-R002",
+        tipoPropiedad: "propia",
+        propietario: {
+          nombre: "QRP2P INMOBILIARIA",
+          tipoIdentificacion: "NIT",
+          numeroIdentificacion: "901234567-1",
+          telefono: "+573146824438",
+          email: "rentas@qrp2p.com"
+        },
+        inmueble: {
+          tipo: "Casa",
+          direccion: "Carrera 38 # 5-60, El Limonar",
+          metrosCuadrados: 180,
+          habitaciones: 4,
+          baños: 3,
+          parqueaderos: 2,
+          estrato: 4,
+          valorArriendo: "$3,800,000",
+          descripcion: "Casa con jardín, terraza, zona de BBQ"
+        },
+        coordenadas: { lat: 3.3762, lng: -76.5342 },
+        searchable: "QRP2P-R002 limonar casa 180m2"
+      },
+      {
+        id: "QRP2P-R003",
+        tipoPropiedad: "captado",
+        propietario: {
+          nombre: "María Elena Restrepo",
+          tipoIdentificacion: "Cédula de ciudadanía",
+          numeroIdentificacion: "52345678",
+          telefono: "+573102345699",
+          email: "mrestrepo@gmail.com"
+        },
+        inmueble: {
+          tipo: "Apartamento",
+          direccion: "Calle 18 # 10-25, Granada",
+          metrosCuadrados: 65,
+          habitaciones: 2,
+          baños: 1,
+          parqueaderos: 0,
+          estrato: 4,
+          valorArriendo: "$1,800,000",
+          descripcion: "Apartamento moderno, cerca a centros comerciales"
+        },
+        coordenadas: { lat: 3.4567, lng: -76.5321 },
+        searchable: "QRP2P-R003 granada apartamento maria elena"
+      },
+      {
+        id: "QRP2P-R004",
+        tipoPropiedad: "captado",
+        propietario: {
+          nombre: "Juan Carlos Ordóñez",
+          tipoIdentificacion: "Cédula de ciudadanía",
+          numeroIdentificacion: "87654321",
+          telefono: "+573102345700",
+          email: "jcordonez@hotmail.com"
+        },
+        inmueble: {
+          tipo: "Oficina",
+          direccion: "Carrera 56 # 9-45, Norte, cerca a Unicentro",
+          metrosCuadrados: 120,
+          habitaciones: 0,
+          baños: 2,
+          parqueaderos: 2,
+          estrato: 5,
+          valorArriendo: "$4,200,000",
+          descripcion: "Oficina en edificio corporativo, 24/7 seguridad"
+        },
+        coordenadas: { lat: 3.4892, lng: -76.5123 },
+        searchable: "QRP2P-R004 oficina norte unicentro juan carlos"
+      },
+      {
+        id: "QRP2P-R005",
+        tipoPropiedad: "propia",
+        propietario: {
+          nombre: "QRP2P INMOBILIARIA",
+          tipoIdentificacion: "NIT",
+          numeroIdentificacion: "901234567-1",
+          telefono: "+573146824438",
+          email: "rentas@qrp2p.com"
+        },
+        inmueble: {
+          tipo: "Local Comercial",
+          direccion: "Calle 44 # 4-33, San Fernando",
+          metrosCuadrados: 95,
+          habitaciones: 0,
+          baños: 1,
+          parqueaderos: 1,
+          estrato: 5,
+          valorArriendo: "$3,500,000",
+          descripcion: "Local con vitrina, alto flujo peatonal"
+        },
+        coordenadas: { lat: 3.4142, lng: -76.5456 },
+        searchable: "QRP2P-R005 local comercial san fernando"
+      },
+      {
+        id: "QRP2P-R006",
+        tipoPropiedad: "captado",
+        propietario: {
+          nombre: "Liliana María Torres",
+          tipoIdentificacion: "Cédula de ciudadanía",
+          numeroIdentificacion: "98765432",
+          telefono: "+573102345701",
+          email: "liliana.torres@yahoo.com"
+        },
+        inmueble: {
+          tipo: "Casa",
+          direccion: "Carrera 24 # 7-89, Santa Mónica Residencial",
+          metrosCuadrados: 250,
+          habitaciones: 5,
+          baños: 4,
+          parqueaderos: 3,
+          estrato: 6,
+          valorArriendo: "$6,500,000",
+          descripcion: "Casa de lujo, piscina, acabados finos"
+        },
+        coordenadas: { lat: 3.4721, lng: -76.5289 },
+        searchable: "QRP2P-R006 santa monica casa lujo liliana"
+      },
+      {
+        id: "QRP2P-R007",
+        tipoPropiedad: "captado",
+        propietario: {
+          nombre: "Roberto Gómez Martínez",
+          tipoIdentificacion: "Cédula de ciudadanía",
+          numeroIdentificacion: "76543210",
+          telefono: "+573102345702",
+          email: "rgomez@gmail.com"
+        },
+        inmueble: {
+          tipo: "Apartamento",
+          direccion: "Calle 23 # 6-45, El Ingenio",
+          metrosCuadrados: 110,
+          habitaciones: 3,
+          baños: 2,
+          parqueaderos: 2,
+          estrato: 5,
+          valorArriendo: "$3,200,000",
+          descripcion: "Apartamento familiar, cerca a colegios"
+        },
+        coordenadas: { lat: 3.3987, lng: -76.5512 },
+        searchable: "QRP2P-R007 el ingenio apartamento roberto"
+      },
+      {
+        id: "QRP2P-R008",
+        tipoPropiedad: "propia",
+        propietario: {
+          nombre: "QRP2P INMOBILIARIA",
+          tipoIdentificacion: "NIT",
+          numeroIdentificacion: "901234567-1",
+          telefono: "+573146824438",
+          email: "rentas@qrp2p.com"
+        },
+        inmueble: {
+          tipo: "Bodega",
+          direccion: "Calle 70 # 12-30, Zona Industrial, Yumbo",
+          metrosCuadrados: 450,
+          habitaciones: 0,
+          baños: 2,
+          parqueaderos: 4,
+          estrato: 3,
+          valorArriendo: "$5,800,000",
+          descripcion: "Bodega con muelles de carga, 24/7"
+        },
+        coordenadas: { lat: 3.5172, lng: -76.4965 },
+        searchable: "QRP2P-R008 bodega yumbo industrial"
+      },
+      {
+        id: "QRP2P-R009",
+        tipoPropiedad: "captado",
+        propietario: {
+          nombre: "Ana Sofía Villamizar",
+          tipoIdentificacion: "Cédula de extranjería",
+          numeroIdentificacion: "CC1234567",
+          telefono: "+573102345703",
+          email: "asvilla@outlook.com"
+        },
+        inmueble: {
+          tipo: "Apartaestudio",
+          direccion: "Calle 12 # 8-22, San Antonio",
+          metrosCuadrados: 40,
+          habitaciones: 1,
+          baños: 1,
+          parqueaderos: 0,
+          estrato: 3,
+          valorArriendo: "$1,200,000",
+          descripcion: "Ideal para estudiantes, amoblado"
+        },
+        coordenadas: { lat: 3.4356, lng: -76.5421 },
+        searchable: "QRP2P-R009 apartaestudio san antonio villamizar"
+      },
+      {
+        id: "QRP2P-R010",
+        tipoPropiedad: "captado",
+        propietario: {
+          nombre: "Federico Londoño",
+          tipoIdentificacion: "Cédula de ciudadanía",
+          numeroIdentificacion: "65432109",
+          telefono: "+573102345704",
+          email: "fede.londono@gmail.com"
+        },
+        inmueble: {
+          tipo: "Casa",
+          direccion: "Carrera 28 # 6-55, Pance",
+          metrosCuadrados: 320,
+          habitaciones: 4,
+          baños: 4,
+          parqueaderos: 3,
+          estrato: 6,
+          valorArriendo: "$7,200,000",
+          descripcion: "Campestre, área verde, club house"
+        },
+        coordenadas: { lat: 3.3212, lng: -76.5623 },
+        searchable: "QRP2P-R010 pance campestre federico"
+      }
+    ];
+    
+    // Formatear texto para búsqueda
+    function normalizeText(text) {
+      if (!text) return '';
+      return text.toString()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+    
+    // Preprocesar datos
+    const PROPERTIES_PREPROCESSED = RENTAL_PROPERTIES.map(prop => ({
+      ...prop,
+      normalizedSearch: normalizeText(`${prop.id} ${prop.inmueble.direccion} ${prop.propietario.nombre} ${prop.inmueble.tipo}`)
+    }));
+    
+    // Función para abrir Google Maps
+    function openGoogleMaps(address) {
+      const encodedAddress = encodeURIComponent(`${address}, Cali, Colombia`);
+      window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_blank');
+    }
+    
+    // Función para abrir WhatsApp del propietario
+    function openWhatsAppOwner(phoneNumber, ownerName, propertyId) {
+      const cleanNumber = phoneNumber.replace(/\D/g, '');
+      const message = `Hola ${ownerName}, me comunico desde QRP2P INMOBILIARIA por el inmueble ${propertyId}. Estoy interesado en obtener más información sobre el arriendo.`;
+      window.open(`https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    }
+    
+    // Renderizar tabla con todos los datos solicitados
+    let filteredData = [...PROPERTIES_PREPROCESSED];
+    let currentSearchTerm = '';
+    
+    function renderTable(data) {
+      const tableBody = document.getElementById('tableBody');
+      tableBody.innerHTML = '';
+      
+      if (data.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td colspan="5" style="text-align: center; padding: 2rem; color: #666;">
+            <strong>No se encontraron inmuebles</strong>
+            <p style="margin-top: 0.5rem;">Intenta con otros términos de búsqueda</p>
+          </td>
+        `;
+        tableBody.appendChild(row);
+        updateStatistics(data);
+        return;
+      }
+      
+      data.forEach(prop => {
+        const row = document.createElement('tr');
+        const esPropio = prop.tipoPropiedad === 'propia';
+        
+        row.innerHTML = `
+          <td data-label="ID / Tipo">
+            <span class="property-id">${prop.id}</span><br>
+            <span class="${esPropio ? 'badge-own' : 'badge-captured'}">
+              ${esPropio ? '🏢 Propio QRP2P' : '📋 Captado por Agente'}
+            </span>
+            <div style="margin-top: 0.4rem; font-size: 0.75rem; color: #666;">
+              ${prop.inmueble.tipo}
+            </div>
+          </td>
+          <td data-label="Datos del Propietario">
+            <div class="owner-info">
+              <strong>${prop.propietario.nombre}</strong><br>
+              ${prop.propietario.tipoIdentificacion}: ${prop.propietario.numeroIdentificacion}<br>
+              📞 ${prop.propietario.telefono}<br>
+              ✉️ ${prop.propietario.email}
+            </div>
+          </td>
+          <td data-label="Datos del Inmueble">
+            <div class="property-info">
+              <strong>📐 ${prop.inmueble.metrosCuadrados} m²</strong><br>
+              🛏️ ${prop.inmueble.habitaciones} habitaciones | 🚽 ${prop.inmueble.baños} baños<br>
+              🚗 ${prop.inmueble.parqueaderos} parqueaderos | ⭐ Estrato ${prop.inmueble.estrato}<br>
+              💰 <strong>${prop.inmueble.valorArriendo}/mes</strong><br>
+              <small>${prop.inmueble.descripcion}</small>
+            </div>
+          </td>
+          <td data-label="Ubicación">
+            <div class="property-info">
+              <strong>📍 ${prop.inmueble.direccion}</strong><br>
+              <button class="maps-link" onclick="openGoogleMaps('${prop.inmueble.direccion.replace(/'/g, "\\'")}')">
+                🗺️ Ver en Google Maps
+              </button>
+            </div>
+          </td>
+          <td data-label="Contacto">
+            <button class="whatsapp-owner-btn" onclick="openWhatsAppOwner('${prop.propietario.telefono}', '${prop.propietario.nombre.replace(/'/g, "\\'")}', '${prop.id}')">
+              💬 WhatsApp del Propietario
+            </button>
+          </td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+      
+      updateStatistics(data);
+    }
+    
+    function updateStatistics(data) {
+      const totalProperties = document.getElementById('totalProperties');
+      const ownProperties = document.getElementById('ownProperties');
+      const capturedProperties = document.getElementById('capturedProperties');
+      
+      totalProperties.textContent = data.length;
+      const ownCount = data.filter(p => p.tipoPropiedad === 'propia').length;
+      const capturedCount = data.filter(p => p.tipoPropiedad === 'captado').length;
+      
+      ownProperties.textContent = ownCount;
+      capturedProperties.textContent = capturedCount;
+    }
+    
+    function filterData(searchTerm) {
+      const term = normalizeText(searchTerm);
+      currentSearchTerm = searchTerm;
+      const searchResultsDiv = document.getElementById('searchResults');
+      const resultsText = document.getElementById('resultsText');
+      
+      if (!term) {
+        filteredData = [...PROPERTIES_PREPROCESSED];
+        searchResultsDiv.style.display = 'none';
+      } else {
+        filteredData = PROPERTIES_PREPROCESSED.filter(prop => {
+          return prop.normalizedSearch.includes(term);
+        });
+        
+        searchResultsDiv.style.display = 'flex';
+        const resultCount = filteredData.length;
+        resultsText.textContent = `${resultCount} inmueble${resultCount !== 1 ? 's' : ''} encontrado${resultCount !== 1 ? 's' : ''} para "${searchTerm}"`;
+      }
+      
+      renderTable(filteredData);
+    }
+    
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      filterData('');
+      document.getElementById('searchInput').focus();
+    }
+    
+    // Login y autenticación
+    const loginScreen = document.getElementById('loginScreen');
+    const dashboard = document.getElementById('dashboard');
+    const loginForm = document.getElementById('loginForm');
+    const errorMessage = document.getElementById('errorMessage');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const inputKey = document.getElementById('accessKey').value;
+      
+      if (inputKey === ACCESS_KEY) {
+        loginScreen.style.display = 'none';
+        dashboard.style.display = 'block';
+        errorMessage.style.display = 'none';
+        renderTable(PROPERTIES_PREPROCESSED);
+      } else {
+        errorMessage.style.display = 'block';
+        document.getElementById('accessKey').value = '';
+        document.getElementById('accessKey').focus();
+      }
+    });
+    
+    logoutBtn.addEventListener('click', function() {
+      dashboard.style.display = 'none';
+      loginScreen.style.display = 'block';
+      document.getElementById('accessKey').value = '';
+      errorMessage.style.display = 'none';
+      clearSearch();
+    });
+    
+    searchInput.addEventListener('input', function(e) {
+      filterData(e.target.value);
+    });
+    
+    clearSearchBtn.addEventListener('click', clearSearch);
+    
+    document.getElementById('accessKey').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        loginForm.dispatchEvent(new Event('submit'));
+      }
+    });
+    
+    // Inicializar
+    renderTable(PROPERTIES_PREPROCESSED);
+    
+    // Hacer funciones globales
+    window.openGoogleMaps = openGoogleMaps;
+    window.openWhatsAppOwner = openWhatsAppOwner;
+  </script>
+</body>
+</html>
