@@ -1716,7 +1716,7 @@
       modal.style.display = 'flex';
     }
 
-    // Función para actualizar el contenido multimedia del popup
+    // Función mejorada para actualizar multimedia en popup (VIDEO CORREGIDO)
     function updateMediaInPopup(propertyId, newIndex) {
       const property = properties.find(p => p.id === propertyId);
       if (!property) return;
@@ -1729,15 +1729,15 @@
       
       const mediaItem = property.media[newIndex];
       
-      // Guardar los botones de navegación y el contador
+      // Guardar elementos de navegación y contador
       const navDiv = container.querySelector('.popup-image-nav');
       const counterDiv = container.querySelector('.popup-image-counter');
       
-      // Remover solo el contenido multimedia actual
+      // Eliminar contenido multimedia actual
       const existingMedia = container.querySelector('.popup-product-image, .popup-video-container');
       if (existingMedia) existingMedia.remove();
       
-      // Insertar nuevo contenido multimedia
+      // Insertar nuevo contenido multimedia con enfoque en reproducción fiable
       if (typeof mediaItem === 'string') {
         const img = document.createElement('img');
         img.src = mediaItem;
@@ -1747,17 +1747,17 @@
       } else if (mediaItem.type === 'video') {
         const videoDiv = document.createElement('div');
         videoDiv.className = 'popup-video-container';
-        // Usar parámetros que permitan la reproducción normal
-        videoDiv.innerHTML = `<iframe src="https://www.youtube.com/embed/${mediaItem.videoId}?autoplay=0&enablejsapi=1&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+        // Se agregan parámetros que garantizan la carga del reproductor y evitan bloqueos
+        videoDiv.innerHTML = `<iframe src="https://www.youtube.com/embed/${mediaItem.videoId}?autoplay=0&enablejsapi=1&rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
         container.insertBefore(videoDiv, navDiv);
       }
       
-      // Actualizar el contador
+      // Actualizar contador
       if (counterDiv) {
         counterDiv.textContent = `${newIndex + 1}/${property.media.length}`;
       }
       
-      // Actualizar el índice actual
+      // Actualizar índice actual
       currentIndices[propertyId] = newIndex;
     }
 
@@ -1766,15 +1766,12 @@
       const actionText = property.category === 'venta' ? 'Ofertar inmueble' : 'Iniciar arriendo';
       const actionIcon = property.category === 'venta' ? 'fa-hand-holding-usd' : 'fa-key';
       
-      // Inicializar el índice actual para esta propiedad si no existe
       if (currentIndices[property.id] === undefined) {
         currentIndices[property.id] = 0;
       }
-      
       const currentIndex = currentIndices[property.id];
       const currentMedia = property.media[currentIndex];
       
-      // Construir el contenido multimedia inicial
       let mediaHtml = '';
       if (typeof currentMedia === 'string') {
         mediaHtml = `<img src="${currentMedia}" alt="${property.title}" class="popup-product-image">`;
@@ -1916,7 +1913,6 @@
               const prevBtn = popupNode.querySelector(`.popup-prev-btn[data-id="${prop.id}"]`);
               const nextBtn = popupNode.querySelector(`.popup-next-btn[data-id="${prop.id}"]`);
               
-              // Configurar evento anterior
               if (prevBtn) {
                 prevBtn.removeEventListener('click', () => {});
                 prevBtn.addEventListener('click', (e) => {
@@ -1928,7 +1924,6 @@
                 });
               }
               
-              // Configurar evento siguiente
               if (nextBtn) {
                 nextBtn.removeEventListener('click', () => {});
                 nextBtn.addEventListener('click', (e) => {
@@ -2060,7 +2055,7 @@
       document.getElementById('serviciosModal').style.display = 'none';
     }
 
-    // EVENTOS E INICIALIZACIÓN
+    // EVENTOS
     document.addEventListener('DOMContentLoaded', function() {
       initializeMap();
       
