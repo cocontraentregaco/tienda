@@ -1729,27 +1729,25 @@
       
       const mediaItem = property.media[newIndex];
       
-      // Limpiar el contenedor pero mantener los botones de navegación y el contador
+      // Guardar los botones de navegación y el contador
       const navDiv = container.querySelector('.popup-image-nav');
       const counterDiv = container.querySelector('.popup-image-counter');
       
-      // Remover solo el contenido multimedia actual (imagen o iframe)
+      // Remover solo el contenido multimedia actual
       const existingMedia = container.querySelector('.popup-product-image, .popup-video-container');
       if (existingMedia) existingMedia.remove();
       
       // Insertar nuevo contenido multimedia
       if (typeof mediaItem === 'string') {
-        // Es imagen
         const img = document.createElement('img');
         img.src = mediaItem;
         img.alt = property.title;
         img.className = 'popup-product-image';
         container.insertBefore(img, navDiv);
       } else if (mediaItem.type === 'video') {
-        // Es video de YouTube
         const videoDiv = document.createElement('div');
         videoDiv.className = 'popup-video-container';
-        // Usar enablejsapi=1 para mejor control, y permitir reproducción automática solo si el usuario quiere
+        // Usar parámetros que permitan la reproducción normal
         videoDiv.innerHTML = `<iframe src="https://www.youtube.com/embed/${mediaItem.videoId}?autoplay=0&enablejsapi=1&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
         container.insertBefore(videoDiv, navDiv);
       }
@@ -1759,7 +1757,7 @@
         counterDiv.textContent = `${newIndex + 1}/${property.media.length}`;
       }
       
-      // Guardar el nuevo índice actual para esta propiedad
+      // Actualizar el índice actual
       currentIndices[propertyId] = newIndex;
     }
 
