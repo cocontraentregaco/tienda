@@ -307,9 +307,26 @@
         }
 
         .terminos-contenido.open {
-            max-height: 750px;
+            max-height: 400px; /* Altura fija con scroll */
+            overflow-y: auto;  /* Scroll vertical */
             padding: 1.2rem;
             border-top: 1px solid #e0e0e0;
+        }
+
+        /* Personalizar scroll para mejor experiencia */
+        .terminos-contenido.open::-webkit-scrollbar {
+            width: 6px;
+        }
+        .terminos-contenido.open::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        .terminos-contenido.open::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        .terminos-contenido.open::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
 
         .check-group {
@@ -450,7 +467,7 @@
                 </div>
                 <div class="row-2">
                     <div class="form-group"><label>Teléfono / WhatsApp *</label><input type="tel" id="vendedorTelefono" required></div>
-                    <div class="form-group"><label>Correo electrónico *</label><input type="email" id="vendedorEmail" required></div>
+                    <div class="form-group"><label>Correo electrónico (opcional)</label><input type="email" id="vendedorEmail" placeholder="tucorreo@ejemplo.com"></div>
                 </div>
                 <div class="row-2">
                     <div class="form-group"><label>Tipo documento</label><select id="tipoDocVendedor"><option>CC</option><option>CE</option><option>Pasaporte</option><option>NIT</option></select></div>
@@ -464,16 +481,15 @@
 
                 <!-- DOCUMENTACIÓN LEGAL -->
                 <div style="font-weight: 700; border-left: 3px solid #000000; padding-left: 0.6rem; margin: 1rem 0 0.8rem;">📜 Documentación legal del inmueble</div>
-                <div class="form-group">
-                    <label>Número de escritura pública (si tienes)</label>
-                    <input type="text" id="escrituraPublica" placeholder="Ej: 1234 del 15-03-2010 Notaría 5">
-                </div>
+                
+                <!-- Número de escritura ELIMINADO según solicitud -->
+                
                 <div class="form-group">
                     <label>Número de matrícula inmobiliaria</label>
                     <input type="text" id="matriculaInmobiliaria" placeholder="Ej: 370-1234567">
                 </div>
                 
-                <!-- OPCIÓN CUANDO NO HAY MATRÍCULA - RADIO CORREGIDOS -->
+                <!-- OPCIÓN CUANDO NO HAY MATRÍCULA -->
                 <div class="form-group">
                     <label>Si NO tienes matrícula inmobiliaria, selecciona tu situación:</label>
                     <div class="radio-group">
@@ -489,6 +505,21 @@
                     <label>¿Cuántos años lleva en posesión del inmueble? *</label>
                     <input type="number" id="aniosPosesion" placeholder="Ej: 8 años" step="1" min="0">
                     <small class="hint">Este dato es clave para la declaración jurada y el estudio de títulos.</small>
+                </div>
+
+                <!-- SERVICIOS PÚBLICOS - NUEVA SECCIÓN -->
+                <div style="font-weight: 700; border-left: 3px solid #000000; padding-left: 0.6rem; margin: 1rem 0 0.8rem;">💡 Servicios públicos</div>
+                <div class="form-group">
+                    <label>¿Los servicios públicos están al día?</label>
+                    <div class="radio-group">
+                        <div class="radio-option"><input type="radio" name="serviciosDia" id="serviciosSi" value="Sí, totalmente al día"><label for="serviciosSi">Sí, totalmente al día</label></div>
+                        <div class="radio-option"><input type="radio" name="serviciosDia" id="serviciosNo" value="No, tengo deuda"><label for="serviciosNo">No, tengo deuda</label></div>
+                    </div>
+                </div>
+                <div class="form-group" id="grupoDeudaServicios" style="display:none;">
+                    <label>Valor aproximado de la deuda en servicios públicos (COP$)</label>
+                    <input type="number" id="deudaServicios" placeholder="Ej: 850.000">
+                    <small class="hint">Agua, luz, gas, internet, etc.</small>
                 </div>
 
                 <!-- ESTADO LEGAL -->
@@ -539,7 +570,7 @@
                 <!-- DETALLES DEL INMUEBLE -->
                 <div style="font-weight: 700; border-left: 3px solid #000000; padding-left: 0.6rem; margin: 1rem 0 0.8rem;">🏢 Características del inmueble</div>
                 <div class="row-2">
-                    <div class="form-group"><label>Tipo de inmueble *</label><select id="tipoInmuebleVenta" required><option value="Casa">Casa</option><option value="Apartamento">Apartamento</option><option value="Local comercial">Local comercial</option><option value="Bodega">Bodega</option><option value="Oficina">Oficina</option><option value="Apartaestudio">Apartaestudio</option><option value="Lote / Terreno">Lote / Terreno</option></select></div>
+                    <div class="form-group"><label>Tipo de inmueble *</label><select id="tipoInmuebleVenta" required><option value="Casa">Casa</option><option value="Apartamento">Apartamento</option><option value="Local comercial">Local comercial</option><option value="Bodega">Bodega</option><option value="Oficina">Oficina</option><option value="Apartaestudio">Apartaestudio</option><option value="Lote / Terreno">Lote / Terreno</option><option value="Finca">Finca</option></select></div>
                     <div class="form-group"><label>Dirección completa en Cali *</label><input type="text" id="direccionVenta" placeholder="Calle / carrera, barrio, Cali" required></div>
                 </div>
                 <div class="row-3">
@@ -606,7 +637,19 @@
 </footer>
 
 <script>
-    // Mostrar/ocultar campos condicionales
+    // Mostrar/ocultar campos condicionales para SERVICIOS PÚBLICOS
+    const serviciosSiRadio = document.getElementById('serviciosSi');
+    const serviciosNoRadio = document.getElementById('serviciosNo');
+    const grupoDeudaServicios = document.getElementById('grupoDeudaServicios');
+    function toggleServicios() {
+        if (serviciosNoRadio && serviciosNoRadio.checked) grupoDeudaServicios.style.display = 'block';
+        else grupoDeudaServicios.style.display = 'none';
+    }
+    if(serviciosSiRadio) serviciosSiRadio.addEventListener('change', toggleServicios);
+    if(serviciosNoRadio) serviciosNoRadio.addEventListener('change', toggleServicios);
+    toggleServicios();
+
+    // Mostrar/ocultar campos condicionales para PREDIAL
     const predialSiRadio = document.getElementById('predialSi');
     const predialNoRadio = document.getElementById('predialNo');
     const grupoDeuda = document.getElementById('grupoDeudaPredial');
@@ -656,7 +699,7 @@
     radioOpciones.forEach(radio => radio.addEventListener('change', toggleAniosPosesion));
     toggleAniosPosesion();
 
-    // Términos desplegables
+    // Términos desplegables con scroll
     const headerV = document.getElementById('terminosVentaHeader');
     const contenidoV = document.getElementById('terminosVentaContenido');
     const iconoV = headerV.querySelector('.toggle-icon');
@@ -692,10 +735,14 @@
         const emailV = document.getElementById('vendedorEmail').value.trim();
         const numDocV = document.getElementById('numDocVendedor').value.trim();
         const codAgente = document.getElementById('codAgente').value.trim();
-        const escritura = document.getElementById('escrituraPublica').value.trim();
         const matricula = document.getElementById('matriculaInmobiliaria').value.trim();
         const opcionTitulo = document.querySelector('input[name="opcionTitulo"]:checked')?.value || '';
         const aniosPosesion = document.getElementById('aniosPosesion').value;
+        
+        // Servicios públicos
+        const serviciosEstado = document.querySelector('input[name="serviciosDia"]:checked')?.value || '';
+        const deudaServiciosVal = document.getElementById('deudaServicios').value;
+        
         const predialEstado = document.querySelector('input[name="predialDia"]:checked')?.value || '';
         const deudaPredialVal = document.getElementById('deudaPredial').value;
         const hipotecaEstado = document.querySelector('input[name="hipoteca"]:checked')?.value || '';
@@ -713,7 +760,7 @@
         const valorVenta = document.getElementById('valorVenta').value;
         const descripcion = document.getElementById('descripcionInmueble').value;
         
-        if(!vendedorNom || !vendedorApe || !telefonoV || !emailV || !numDocV || !direccion || !areaConst || !valorVenta || !hab || !ban) {
+        if(!vendedorNom || !vendedorApe || !telefonoV || !numDocV || !direccion || !areaConst || !valorVenta || !hab || !ban) {
             alert("Por favor completa todos los campos obligatorios (*)");
             return;
         }
@@ -722,14 +769,20 @@
         msg += "═══════════════════════════════%0A";
         msg += "*VENDEDOR*%0A";
         msg += `${vendedorNom} ${vendedorApe}%0A`;
-        msg += `Tel: ${telefonoV} | Email: ${emailV}%0A`;
+        msg += `Tel: ${telefonoV}`;
+        if(emailV) msg += ` | Email: ${emailV}`;
+        msg += `%0A`;
         msg += `Documento: ${document.getElementById('tipoDocVendedor').value} ${numDocV}%0A`;
         if(codAgente) msg += `Código agente: ${codAgente}%0A`;
         msg += "%0A*DOCUMENTACIÓN LEGAL*%0A";
-        if(escritura) msg += `Escritura pública: ${escritura}%0A`;
         msg += `Matrícula: ${matricula || "No registrada"}%0A`;
         msg += `Situación titularidad: ${opcionTitulo}%0A`;
         if(aniosPosesion && (opcionTitulo.includes("declaración") || opcionTitulo.includes("posesión"))) msg += `Años de posesión: ${aniosPosesion} años%0A`;
+        
+        msg += "%0A*SERVICIOS PÚBLICOS*%0A";
+        msg += `Estado: ${serviciosEstado} ${serviciosEstado.includes('deuda') ? ` - Deuda: COP ${Number(deudaServiciosVal).toLocaleString()}` : ''}%0A`;
+        
+        msg += "%0A*IMPUESTOS Y CARGAS*%0A";
         msg += `Predial: ${predialEstado} ${predialEstado.includes('deuda') ? ` - Deuda: COP ${Number(deudaPredialVal).toLocaleString()}` : ''}%0A`;
         msg += `Hipoteca: ${hipotecaEstado} ${hipotecaEstado.includes('hipotecado') ? `Saldo: COP ${Number(saldoHipoteca).toLocaleString()}` : ''}%0A`;
         msg += `Patrimonio familiar: ${patrimonio}%0A`;
