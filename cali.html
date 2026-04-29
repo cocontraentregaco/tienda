@@ -399,14 +399,18 @@
       font-size: 0.75rem;
     }
     
-    .enlace-descarga {
-      color: #25D366;
+    .enlace-info {
+      color: #000000;
       text-decoration: none;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
     
-    .enlace-descarga:hover {
+    .enlace-info:hover {
+      opacity: 0.7;
       text-decoration: underline;
     }
     
@@ -1066,8 +1070,8 @@
         id: 1, title: "Casa en Venta en Conjunto Cerrado Pampalinda", price: 800000000, priceRent: 2800000, 
         description: "Hermoso apartamento en exclusiva zona residencial", category: "venta", 
         m2: 120, cuartos: 3, baños: 2, latlng: [3.4545, -76.5350], 
-        media: ["https://co.qrp2p.com/wp-content/uploads/2026/02/9504046_render.png", "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=500", {type:"video", videoId:"dQw4w9WgXcQ"}],
-        downloadUrl: "https://drive.google.com/uc?export=view&id=1hXh4vB1pSFS68FEyrhbpoB4mVnr7FK1C",
+        media: ["https://drive.google.com/uc?export=view&id=1hXh4vB1pSFS68FEyrhbpoB4mVnr7FK1C", "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=500", {type:"video", videoId:"dQw4w9WgXcQ"}],
+        infoUrl: "https://qrp2p.com/propiedad/1",
         mapsUrl: "https://maps.app.goo.gl/DHWLoB3V4RV9JvoZ8?g_st=ic"
       },
       { 
@@ -1075,7 +1079,7 @@
         description: "Casa con jardín y piscina privada", category: "venta", 
         m2: 200, cuartos: 4, baños: 3, latlng: [3.3750, -76.5450], 
         media: ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500", "https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=500", {type:"video", videoId:"9bZkp7q19f0"}],
-        downloadUrl: "https://drive.google.com/uc?export=download&id=TU_ID_2",
+        infoUrl: "https://qrp2p.com/propiedad/2",
         mapsUrl: "https://maps.google.com/?q=3.3750,-76.5450"
       },
       { 
@@ -1083,7 +1087,7 @@
         description: "Oficina completamente amoblada", category: "arriendo", 
         m2: 80, cuartos: 2, baños: 1, latlng: [3.4516, -76.5320], 
         media: ["https://images.unsplash.com/photo-1497366216548-37526070297c?w=500", "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=500", {type:"video", videoId:"JGwWNGJdvx8"}],
-        downloadUrl: "https://drive.google.com/uc?export=download&id=TU_ID_3",
+        infoUrl: "https://qrp2p.com/propiedad/3",
         mapsUrl: "https://maps.google.com/?q=3.4516,-76.5320"
       },
       { 
@@ -1091,7 +1095,7 @@
         description: "Apartamento familiar", category: "venta", 
         m2: 95, cuartos: 3, baños: 2, latlng: [3.4000, -76.5200], 
         media: ["https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=500", "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=500", {type:"video", videoId:"tgbNymZ7vqY"}],
-        downloadUrl: "https://drive.google.com/uc?export=download&id=TU_ID_4",
+        infoUrl: "https://qrp2p.com/propiedad/4",
         mapsUrl: "https://maps.google.com/?q=3.4000,-76.5200"
       },
       { 
@@ -1099,7 +1103,7 @@
         description: "Local en zona comercial", category: "arriendo", 
         m2: 60, cuartos: 1, baños: 1, latlng: [3.4300, -76.5500], 
         media: ["https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500", "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=500", {type:"video", videoId:"CevxZvSJLk8"}],
-        downloadUrl: "https://drive.google.com/uc?export=download&id=TU_ID_5",
+        infoUrl: "https://qrp2p.com/propiedad/5",
         mapsUrl: "https://maps.google.com/?q=3.4300,-76.5500"
       },
       { 
@@ -1107,7 +1111,7 @@
         description: "Espectacular casa con piscina y zona verde", category: "venta", 
         m2: 280, cuartos: 5, baños: 4, latlng: [3.3500, -76.5800], 
         media: ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500", "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=500", {type:"video", videoId:"kXYiU_JCYtU"}],
-        downloadUrl: "https://drive.google.com/uc?export=download&id=TU_ID_6",
+        infoUrl: "https://qrp2p.com/propiedad/6",
         mapsUrl: "https://maps.google.com/?q=3.3500,-76.5800"
       }
     ];
@@ -1381,10 +1385,316 @@
       const container = document.getElementById('ofertaFormContainer');
       
       if (isRent) {
-        container.innerHTML = `... (contenido de arriendo) ...`; // Acortado por brevedad
-        // El código completo de arriendo está en la versión anterior
+        container.innerHTML = `
+          <div class="property-info">
+            <h4>🏠 ${currentProperty.title}</h4>
+            <p>📐 ${currentProperty.m2} m² · 🛏️ ${currentProperty.cuartos} habitaciones · 🚿 ${currentProperty.baños} baños</p>
+            <p><strong>💰 Valor arriendo:</strong> ${formatPrice(currentProperty.priceRent)}</p>
+          </div>
+          <div class="section">
+            <div class="section-title">📋 Iniciar proceso de arrendamiento</div>
+            <div class="form-group">
+              <label>TIEMPO DE ARRENDO DESEADO</label>
+              <select id="tiempoArriendo">
+                <option value="6 meses">6 meses</option>
+                <option value="1 año">1 año</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>FECHA DESEADA PARA INICIAR</label>
+              <input type="date" id="fechaInicioArriendo">
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">👤 Datos del interesado</div>
+            <div class="comprador-card">
+              <div class="tipo-comprador-selector">
+                <span>TIPO DE PERSONA:</span>
+                <label><input type="radio" name="tipoPersona" value="natural" checked> Persona Natural</label>
+                <label><input type="radio" name="tipoPersona" value="juridica"> Persona Jurídica</label>
+              </div>
+              <div id="camposNaturalArriendo">
+                <div class="row-2">
+                  <div class="form-group"><label>PRIMER NOMBRE *</label><input type="text" id="nombre1Arr" placeholder="Juan"></div>
+                  <div class="form-group"><label>PRIMER APELLIDO *</label><input type="text" id="apellido1Arr" placeholder="Pérez"></div>
+                </div>
+                <div class="row-2">
+                  <div class="form-group"><label>SEGUNDO APELLIDO *</label><input type="text" id="apellido2Arr" placeholder="García"></div>
+                  <div class="form-group"><label>TIPO DOCUMENTO *</label>
+                    <select id="tipoDocArr"><option value="">Selecciona</option><option value="Cédula">Cédula</option><option value="Pasaporte">Pasaporte</option></select>
+                  </div>
+                </div>
+                <div class="row-2">
+                  <div class="form-group"><label>NÚMERO DOCUMENTO *</label><input type="text" id="numDocArr" placeholder="Ej: 12345678"></div>
+                  <div class="form-group"><label>TELÉFONO *</label><input type="tel" id="telefonoArr" placeholder="3001234567"></div>
+                </div>
+                <div class="form-group"><label>CORREO ELECTRÓNICO *</label><input type="email" id="emailArr" placeholder="ejemplo@correo.com"></div>
+              </div>
+              <div id="camposJuridicaArriendo" style="display: none;">
+                <div class="form-group"><label>RAZÓN SOCIAL *</label><input type="text" id="razonSocialArr" placeholder="Nombre de la empresa"></div>
+                <div class="row-2">
+                  <div class="form-group"><label>NIT *</label><input type="text" id="nitArr" placeholder="900.123.456-7"></div>
+                  <div class="form-group"><label>REPRESENTANTE LEGAL *</label><input type="text" id="representanteArr" placeholder="Nombre completo"></div>
+                </div>
+                <div class="row-2">
+                  <div class="form-group"><label>TELÉFONO *</label><input type="tel" id="telefonoJurArr" placeholder="3001234567"></div>
+                  <div class="form-group"><label>CORREO *</label><input type="email" id="emailJurArr" placeholder="empresa@correo.com"></div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>CÓDIGO DE AGENTE INMOBILIARIO (opcional)</label>
+              <input type="text" id="arriendoCodigoAgente" placeholder="Ej: AG-1234">
+            </div>
+            <div class="form-group">
+              <label>COMENTARIOS ADICIONALES</label>
+              <textarea rows="3" id="comentariosArriendo" placeholder="Ej: Mascotas, parqueadero, etc..."></textarea>
+            </div>
+          </div>
+          <button class="btn-submit" id="submitArriendo">📩 Enviar solicitud de arriendo por WhatsApp</button>
+        `;
+        
+        const radioNatural = container.querySelector('input[name="tipoPersona"][value="natural"]');
+        const radioJuridica = container.querySelector('input[name="tipoPersona"][value="juridica"]');
+        const camposNatural = container.querySelector('#camposNaturalArriendo');
+        const camposJuridica = container.querySelector('#camposJuridicaArriendo');
+        
+        if (radioNatural && radioJuridica) {
+          radioNatural.addEventListener('change', () => { camposNatural.style.display = 'block'; camposJuridica.style.display = 'none'; });
+          radioJuridica.addEventListener('change', () => { camposNatural.style.display = 'none'; camposJuridica.style.display = 'block'; });
+        }
+        
+        document.getElementById('submitArriendo').addEventListener('click', () => {
+          const isJuridica = radioJuridica.checked;
+          const tiempoArriendo = document.getElementById('tiempoArriendo').value;
+          const fechaInicio = document.getElementById('fechaInicioArriendo').value || 'No especificada';
+          const codigoAgente = document.getElementById('arriendoCodigoAgente')?.value.trim() || '';
+          
+          let mensaje = `🏠 *SOLICITUD DE ARRIENDO - QRP2P INMOBILIARIA*\n\n` +
+            `🏠 *Inmueble:* ${currentProperty.title}\n` +
+            `📐 ${currentProperty.m2} m² · ${currentProperty.cuartos} hab · ${currentProperty.baños} baños\n` +
+            `💰 *Valor arriendo:* ${formatPrice(currentProperty.priceRent)}\n` +
+            `📅 *Tiempo deseado:* ${tiempoArriendo}\n` +
+            `📆 *Fecha inicio:* ${fechaInicio}\n\n`;
+          
+          mensaje += `👤 *DATOS DEL INTERESADO*\n`;
+          if (isJuridica) {
+            const razon = document.getElementById('razonSocialArr')?.value.trim() || '';
+            const nit = document.getElementById('nitArr')?.value.trim() || '';
+            const representante = document.getElementById('representanteArr')?.value.trim() || '';
+            const telefono = document.getElementById('telefonoJurArr')?.value.trim() || '';
+            const email = document.getElementById('emailJurArr')?.value.trim() || '';
+            if (!razon || !nit || !representante || !telefono || !email) { alert('⚠️ Completa todos los campos'); return; }
+            mensaje += `📌 Tipo: Persona Jurídica\n📌 Razón social: ${razon}\n📌 NIT: ${nit}\n📌 Representante: ${representante}\n📱 Teléfono: ${telefono}\n✉️ Correo: ${email}\n`;
+          } else {
+            const nombre1 = document.getElementById('nombre1Arr')?.value.trim() || '';
+            const apellido1 = document.getElementById('apellido1Arr')?.value.trim() || '';
+            const apellido2 = document.getElementById('apellido2Arr')?.value.trim() || '';
+            const tipoDoc = document.getElementById('tipoDocArr')?.value || '';
+            const numDoc = document.getElementById('numDocArr')?.value.trim() || '';
+            const telefono = document.getElementById('telefonoArr')?.value.trim() || '';
+            const email = document.getElementById('emailArr')?.value.trim() || '';
+            if (!nombre1 || !apellido1 || !apellido2 || !tipoDoc || !numDoc || !telefono || !email) { alert('⚠️ Completa todos los campos'); return; }
+            mensaje += `📌 Tipo: Persona Natural\n📌 Nombre: ${nombre1} ${apellido1} ${apellido2}\n📌 Documento: ${tipoDoc} ${numDoc}\n📱 Teléfono: ${telefono}\n✉️ Correo: ${email}\n`;
+          }
+          
+          if (codigoAgente) mensaje += `\n🔑 *Código agente:* ${codigoAgente}\n`;
+          
+          const comentarios = document.getElementById('comentariosArriendo')?.value || '';
+          if (comentarios) mensaje += `\n📝 *COMENTARIOS:*\n${comentarios}\n`;
+          
+          window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`, '_blank');
+          modal.style.display = 'none';
+        });
       } else {
-        container.innerHTML = `... (contenido de venta) ...`; // Acortado por brevedad
+        container.innerHTML = `
+          <div class="property-info">
+            <h4>🏠 ${currentProperty.title}</h4>
+            <p>📐 ${currentProperty.m2} m² · 🛏️ ${currentProperty.cuartos} habitaciones · 🚿 ${currentProperty.baños} baños</p>
+            <p><strong>💰 Precio referencia:</strong> ${formatPrice(currentProperty.price)}</p>
+          </div>
+          <div class="section">
+            <div class="section-title">📋 Información de la oferta</div>
+            <div class="form-group">
+              <label>¿CÓMO VOY A PAGAR?</label>
+              <div class="radio-group">
+                <label><input type="radio" name="tipoPago" value="contado" id="pagoContado" checked> Pago de contado</label>
+                <label><input type="radio" name="tipoPago" value="cuotaInicial" id="pagoCuotaInicial"> Cuota inicial + crédito</label>
+              </div>
+            </div>
+            <div id="cuotaInicialSection" style="display: none;">
+              <div class="form-group">
+                <label>VALOR DE CUOTA INICIAL (COP$) *</label>
+                <label style="font-size:0.7rem; color:#666;">Mínimo 30% del valor del inmueble (${formatPrice(currentProperty.price * 0.3)})</label>
+                <input type="number" id="cuotaInicial" placeholder="Ej: ${currentProperty.price * 0.3}" min="${currentProperty.price * 0.3}">
+              </div>
+              <div id="errorCuota" style="color:#ff6b6b; font-size:0.7rem; margin-top:0.3rem; display:none;"></div>
+            </div>
+            <div id="financiamientoSection" style="display: none;">
+              <div class="section-subtitle" style="font-weight:700; margin:0.5rem 0;">💰 ¿Cómo voy a financiar el saldo restante?</div>
+              <div class="checkbox-group">
+                <label><input type="checkbox" name="saldoFinancia" value="Solicitar crédito inmobiliario"> Solicitar crédito inmobiliario</label>
+                <label><input type="checkbox" name="saldoFinancia" value="Ya cuenta con preaprobado de crédito"> Ya cuenta con preaprobado de crédito</label>
+                <label><input type="checkbox" name="saldoFinancia" value="Cesantías"> Cesantías</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>VALOR OFERTADO (COP$) *</label>
+              <input type="number" id="valorOfertado" value="${currentProperty.price}" disabled>
+              <label style="font-size:0.7rem; color:#666; margin-top:0.3rem;">💰 Precio fijo del inmueble</label>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">👤 Datos del comprador</div>
+            <div class="comprador-card">
+              <div class="tipo-comprador-selector">
+                <span>TIPO DE COMPRADOR:</span>
+                <label><input type="radio" name="tipoComprador" value="natural" checked> Persona Natural</label>
+                <label><input type="radio" name="tipoComprador" value="juridica"> Persona Jurídica</label>
+              </div>
+              <div id="camposNaturalVenta">
+                <div class="row-2">
+                  <div class="form-group"><label>PRIMER NOMBRE *</label><input type="text" id="nombre1Ven" placeholder="Juan"></div>
+                  <div class="form-group"><label>PRIMER APELLIDO *</label><input type="text" id="apellido1Ven" placeholder="Pérez"></div>
+                </div>
+                <div class="row-2">
+                  <div class="form-group"><label>SEGUNDO APELLIDO *</label><input type="text" id="apellido2Ven" placeholder="García"></div>
+                  <div class="form-group"><label>TIPO DOCUMENTO *</label>
+                    <select id="tipoDocVen"><option value="">Selecciona</option><option value="Cédula">Cédula</option><option value="Pasaporte">Pasaporte</option></select>
+                  </div>
+                </div>
+                <div class="row-2">
+                  <div class="form-group"><label>NÚMERO DOCUMENTO *</label><input type="text" id="numDocVen" placeholder="Ej: 12345678"></div>
+                  <div class="form-group"><label>TELÉFONO *</label><input type="tel" id="telefonoVen" placeholder="3001234567"></div>
+                </div>
+                <div class="form-group"><label>CORREO ELECTRÓNICO *</label><input type="email" id="emailVen" placeholder="ejemplo@correo.com"></div>
+              </div>
+              <div id="camposJuridicaVenta" style="display: none;">
+                <div class="form-group"><label>RAZÓN SOCIAL *</label><input type="text" id="razonSocialVen" placeholder="Nombre de la empresa"></div>
+                <div class="row-2">
+                  <div class="form-group"><label>NIT *</label><input type="text" id="nitVen" placeholder="900.123.456-7"></div>
+                  <div class="form-group"><label>REPRESENTANTE LEGAL *</label><input type="text" id="representanteVen" placeholder="Nombre completo"></div>
+                </div>
+                <div class="row-2">
+                  <div class="form-group"><label>TELÉFONO *</label><input type="tel" id="telefonoJurVen" placeholder="3001234567"></div>
+                  <div class="form-group"><label>CORREO *</label><input type="email" id="emailJurVen" placeholder="empresa@correo.com"></div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>CÓDIGO DE AGENTE INMOBILIARIO (opcional)</label>
+              <input type="text" id="ventaCodigoAgente" placeholder="Ej: AG-1234">
+            </div>
+            <div class="form-group">
+              <label>COMENTARIOS ADICIONALES</label>
+              <textarea rows="3" id="comentariosVenta" placeholder="Ej: Necesito crédito hipotecario..."></textarea>
+            </div>
+          </div>
+          <button class="btn-submit" id="submitVenta">📩 Enviar oferta por WhatsApp</button>
+        `;
+        
+        const pagoContado = container.querySelector('#pagoContado');
+        const pagoCuotaInicial = container.querySelector('#pagoCuotaInicial');
+        const cuotaInicialSection = container.querySelector('#cuotaInicialSection');
+        const financiamientoSection = container.querySelector('#financiamientoSection');
+        const cuotaInicialInput = container.querySelector('#cuotaInicial');
+        const errorCuota = container.querySelector('#errorCuota');
+        const precioReferencia = currentProperty.price;
+        const cuotaMinima = precioReferencia * 0.3;
+        
+        if (pagoContado && pagoCuotaInicial) {
+          pagoContado.addEventListener('change', () => {
+            cuotaInicialSection.style.display = 'none';
+            financiamientoSection.style.display = 'none';
+          });
+          pagoCuotaInicial.addEventListener('change', () => {
+            cuotaInicialSection.style.display = 'block';
+            financiamientoSection.style.display = 'block';
+            cuotaInicialInput.placeholder = `Mínimo ${formatPrice(cuotaMinima)}`;
+            cuotaInicialInput.min = cuotaMinima;
+          });
+        }
+        
+        if (cuotaInicialInput) {
+          cuotaInicialInput.addEventListener('input', function() {
+            const valor = parseFloat(this.value);
+            if (valor && valor < cuotaMinima) {
+              errorCuota.style.display = 'block';
+              errorCuota.innerText = `⚠️ La cuota inicial mínima es del 30% (${formatPrice(cuotaMinima)})`;
+            } else {
+              errorCuota.style.display = 'none';
+            }
+          });
+        }
+        
+        const radioNatural = container.querySelector('input[name="tipoComprador"][value="natural"]');
+        const radioJuridica = container.querySelector('input[name="tipoComprador"][value="juridica"]');
+        const camposNatural = container.querySelector('#camposNaturalVenta');
+        const camposJuridica = container.querySelector('#camposJuridicaVenta');
+        
+        if (radioNatural && radioJuridica) {
+          radioNatural.addEventListener('change', () => { camposNatural.style.display = 'block'; camposJuridica.style.display = 'none'; });
+          radioJuridica.addEventListener('change', () => { camposNatural.style.display = 'none'; camposJuridica.style.display = 'block'; });
+        }
+        
+        document.getElementById('submitVenta').addEventListener('click', () => {
+          const isJuridica = radioJuridica.checked;
+          const tipoPago = container.querySelector('input[name="tipoPago"]:checked')?.value || 'contado';
+          const codigoAgente = document.getElementById('ventaCodigoAgente')?.value.trim() || '';
+          
+          if (tipoPago === 'cuotaInicial') {
+            const cuotaInicial = parseFloat(document.getElementById('cuotaInicial')?.value || '0');
+            if (!cuotaInicial || cuotaInicial < cuotaMinima) {
+              alert(`⚠️ La cuota inicial debe ser al menos del 30% (${formatPrice(cuotaMinima)})`);
+              return;
+            }
+          }
+          
+          let mensaje = `🏠 *OFERTA INMUEBLE - QRP2P INMOBILIARIA*\n\n` +
+            `🏠 *Inmueble:* ${currentProperty.title}\n` +
+            `📐 ${currentProperty.m2} m² · ${currentProperty.cuartos} hab · ${currentProperty.baños} baños\n` +
+            `💵 *Tipo de pago:* ${tipoPago === 'contado' ? 'Pago de contado' : 'Cuota inicial + crédito'}\n`;
+          
+          if (tipoPago === 'cuotaInicial') {
+            const cuotaInicial = document.getElementById('cuotaInicial')?.value || '0';
+            mensaje += `💰 *Valor cuota inicial:* ${formatPrice(parseInt(cuotaInicial))}\n`;
+            let saldoRecursos = [];
+            document.querySelectorAll('input[name="saldoFinancia"]:checked').forEach(cb => saldoRecursos.push(cb.value));
+            if (saldoRecursos.length) mensaje += `🏦 *Financiación saldo:* ${saldoRecursos.join(', ')}\n`;
+          }
+          
+          const valorOfertado = currentProperty.price;
+          mensaje += `💵 *Valor ofertado:* ${formatPrice(valorOfertado)} (Precio fijo)\n\n`;
+          
+          mensaje += `👤 *DATOS DEL COMPRADOR*\n`;
+          if (isJuridica) {
+            const razon = document.getElementById('razonSocialVen')?.value.trim() || '';
+            const nit = document.getElementById('nitVen')?.value.trim() || '';
+            const representante = document.getElementById('representanteVen')?.value.trim() || '';
+            const telefono = document.getElementById('telefonoJurVen')?.value.trim() || '';
+            const email = document.getElementById('emailJurVen')?.value.trim() || '';
+            if (!razon || !nit || !representante || !telefono || !email) { alert('⚠️ Completa todos los campos'); return; }
+            mensaje += `📌 Tipo: Persona Jurídica\n📌 Razón social: ${razon}\n📌 NIT: ${nit}\n📌 Representante: ${representante}\n📱 Teléfono: ${telefono}\n✉️ Correo: ${email}\n`;
+          } else {
+            const nombre1 = document.getElementById('nombre1Ven')?.value.trim() || '';
+            const apellido1 = document.getElementById('apellido1Ven')?.value.trim() || '';
+            const apellido2 = document.getElementById('apellido2Ven')?.value.trim() || '';
+            const tipoDoc = document.getElementById('tipoDocVen')?.value || '';
+            const numDoc = document.getElementById('numDocVen')?.value.trim() || '';
+            const telefono = document.getElementById('telefonoVen')?.value.trim() || '';
+            const email = document.getElementById('emailVen')?.value.trim() || '';
+            if (!nombre1 || !apellido1 || !apellido2 || !tipoDoc || !numDoc || !telefono || !email) { alert('⚠️ Completa todos los campos'); return; }
+            mensaje += `📌 Tipo: Persona Natural\n📌 Nombre: ${nombre1} ${apellido1} ${apellido2}\n📌 Documento: ${tipoDoc} ${numDoc}\n📱 Teléfono: ${telefono}\n✉️ Correo: ${email}\n`;
+          }
+          
+          if (codigoAgente) mensaje += `\n🔑 *Código agente:* ${codigoAgente}\n`;
+          
+          const comentarios = document.getElementById('comentariosVenta')?.value || '';
+          if (comentarios) mensaje += `\n📝 *COMENTARIOS:*\n${comentarios}\n`;
+          
+          window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`, '_blank');
+          modal.style.display = 'none';
+        });
       }
       modal.style.display = 'flex';
     }
@@ -1447,7 +1757,7 @@
             <div class="precio-line">
               <span class="popup-product-price">${displayPrice}</span>
               <div class="enlaces-secundarios">
-                <a href="${property.downloadUrl}" target="_blank" class="enlace-descarga">📥 Descargar ficha</a>
+                <a href="${property.infoUrl}" target="_blank" class="enlace-info"><i class="fas fa-key"></i> Más información</a>
                 <a href="${property.mapsUrl}" target="_blank" class="enlace-mapa"><i class="fas fa-location-dot"></i></a>
               </div>
             </div>
