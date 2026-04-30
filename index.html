@@ -1,473 +1,563 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
-  <title>QRP2P Inmobiliaria Global | Inmuebles Verificados</title>
-  <meta name="description" content="Encuentra inmuebles verificados en ciudades de todo el mundo. Venta y arriendo con opción de agendar visita u ofertar.">
-  <meta name="keywords" content="inmobiliaria global, apartamentos, casas, oficinas, propiedades verified, qrp2p">
-  <meta name="author" content="QRP2P Inmobiliaria">
-  <meta name="robots" content="index, follow">
-  <meta property="og:title" content="QRP2P Inmobiliaria Global | Inmuebles Verificados">
-  <meta property="og:description" content="Tu plataforma de confianza para encontrar propiedades verificadas en venta y arriendo alrededor del mundo.">
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    body {
-      font-family: 'Libre Baskerville', serif;
-      background-color: #ffffff;
-      color: #111111;
-      line-height: 1.5;
-      font-size: 16px;
-      overflow: hidden;
-      position: fixed;
-      width: 100%;
-      height: 100%;
-    }
-    #contenedor-mapa {
-      width: 100%;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-    }
-    #barra-superior {
-      display: flex;
-      gap: 0.8rem;
-      padding: 0.8rem;
-      background: #ffffff;
-      width: 100%;
-      z-index: 1000;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      border-bottom: 1px solid #eaeaea;
-      flex-shrink: 0;
-    }
-    .contenedor-buscador {
-      position: relative;
-      flex: 1;
-      max-width: 400px;
-    }
-    #buscador {
-      width: 100%;
-      padding: 0.6rem 1.2rem;
-      border: 1.5px solid #e0e0e0;
-      border-radius: 50px;
-      font-size: 16px;
-      font-family: 'Libre Baskerville', serif;
-      transition: all 0.3s ease;
-      background: #ffffff;
-      user-select: text;
-    }
-    #buscador:focus {
-      outline: none;
-      border-color: #000000;
-    }
-    .btn-mapa {
-      background: #000000;
-      color: #ffffff;
-      padding: 0.6rem 1.2rem;
-      border-radius: 40px;
-      text-decoration: none;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      white-space: nowrap;
-      display: flex;
-      gap: 5px;
-      font-family: 'Libre Baskerville', serif;
-      align-items: center;
-    }
-    .btn-mapa:hover { background: #333333; }
-    .btn-centrar { background-color: #000000; }
-    .btn-servicios { background-color: #25D366; color: #000000; }
-    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; }
-    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
-    .map-type-btn {
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 40px;
-      cursor: pointer;
-      background: transparent;
-      font-family: 'Libre Baskerville', serif;
-      font-weight: 600;
-    }
-    .map-type-btn.active { background: #000000; color: white; }
-    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
-    .leaflet-control-zoom { display: none !important; }
-    .sugerencias-busqueda {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      border-radius: 0 0 20px 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      z-index: 1000;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
-    }
-    .sugerencia-item {
-      padding: 12px 15px;
-      cursor: pointer;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .sugerencia-item:hover { background-color: #f5f5f5; }
-    .sugerencia-texto { flex: 1; }
-    .sugerencia-boton {
-      margin-left: 10px;
-      padding: 6px 12px;
-      background-color: #000000;
-      color: white;
-      border: none;
-      border-radius: 20px;
-      cursor: pointer;
-    }
-    .cargando {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(0,0,0,.3);
-      border-radius: 50%;
-      border-top-color: #000;
-      animation: spin 1s ease-in-out infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-    .inmueble-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
-    .popup-video-container { width: 100%; height: 260px; background-color: #000; position: relative; }
-    .popup-video-container iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; }
-    .popup-product-card {
-      background: #ffffff;
-      border-radius: 20px;
-      overflow: hidden;
-      width: 420px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    .popup-product-image-container { position: relative; width: 100%; height: 260px; overflow: hidden; background-color: #f0f0f0; }
-    .popup-product-image { width: 100%; height: 100%; object-fit: cover; }
-    .popup-image-nav { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; padding: 0 8px; transform: translateY(-50%); z-index: 10; }
-    .popup-nav-btn { background-color: rgba(0, 0, 0, 0.6); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
-    .popup-nav-btn:hover { background-color: rgba(0, 0, 0, 0.8); }
-    .popup-image-counter { position: absolute; bottom: 8px; right: 8px; background-color: rgba(0, 0, 0, 0.65); color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; z-index: 10; }
-    .popup-product-info { padding: 1rem; }
-    .popup-product-title { font-size: 1rem; margin-bottom: 0.5rem; font-weight: 700; }
-    .precio-line { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; }
-    .popup-product-price { font-size: 1.2rem; font-weight: 800; color: #000000; }
-    .popup-branch-name { font-size: 1rem; font-weight: 700; color: #2c3e66; background: #f0f2f5; padding: 0.3rem 0.8rem; border-radius: 20px; display: inline-block; }
-    .enlaces-secundarios { display: flex; gap: 0.8rem; font-size: 0.75rem; }
-    .enlace-info { color: #000000; text-decoration: none; font-weight: 600; cursor: pointer; display: flex; gap: 4px; }
-    .enlace-mapa { color: #000000; text-decoration: none; font-size: 1rem; cursor: pointer; }
-    .popup-product-details { margin-bottom: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .popup-product-details span { background-color: #f5f5f5; padding: 0.2rem 0.6rem; border-radius: 30px; font-size: 0.7rem; }
-    .popup-product-actions { display: flex; gap: 0.5rem; }
-    .popup-action-redirect, .popup-view-branch {
-      padding: 0.5rem;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-family: 'Libre Baskerville', serif;
-      font-size: 0.7rem;
-      font-weight: 600;
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.3rem;
-      transition: all 0.2s ease;
-      text-decoration: none;
-    }
-    .popup-action-redirect { background-color: #000000; color: #ffffff; }
-    .popup-view-branch { background-color: #2c3e66; color: white; }
-    .gm-style .gm-style-iw-c { border-radius: 20px !important; padding: 0 !important; max-width: 440px !important; }
-    .gm-style .gm-style-iw-d { overflow: auto !important; max-height: none !important; padding: 0 !important; }
-    .gm-style-iw-tc { display: none; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.85);
-      z-index: 2000;
-      justify-content: center;
-      align-items: center;
-      overflow-y: auto;
-      padding: 1rem;
+    <!-- SEO Profesional -->
+    <title>QRP2P | Marketplace Inmobiliario Seguro - Cali, Valle del Cauca</title>
+    <meta name="description" content="Marketplace inmobiliario seguro en Cali y Valle del Cauca. Encuentra propiedades, bienes raíces y terrenos con QRP2P. Búsqueda inteligente y resultados en tiempo real.">
+    <meta name="keywords" content="inmobiliaria Cali, bienes raíces Valle del Cauca, propiedades Colombia, marketplace inmobiliario, QRP2P, comprar casa Cali, terrenos Valle">
+    <meta name="author" content="QRP2P">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="Spanish">
+    <meta name="revisit-after" content="7 days">
+    <meta name="copyright" content="QRP2P">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://qrp2p.app/">
+    <meta property="og:title" content="QRP2P | Marketplace Inmobiliario Seguro - Cali, Valle">
+    <meta property="og:description" content="Plataforma inmobiliaria segura con búsqueda inteligente de propiedades en Cali y Valle del Cauca.">
+    <meta property="og:image" content="https://qrp2p.app/icon-512.png">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="QRP2P | Marketplace Inmobiliario Seguro">
+    <meta name="twitter:description" content="Encuentra propiedades en Cali y Valle del Cauca de manera segura y rápida.">
+    <meta name="twitter:image" content="https://qrp2p.app/icon-512.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://qrp2p.app/">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="QRP2P">
+    <meta name="theme-color" content="#000000">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons PWA -->
+    <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAACXBIWXMAAAsTAAALEwEAmpwYAAABPElEQVR4nO3aMQ6AIAwF0E7G4E030V2P4GYiePwHYyzQlpbSmoFE35e8pC1fS4FCKBQKhUKhUCgUCoVCoVAoFAqFQqFQKBQKhUKhUCj8g/M+cx7mPBeAEEIIIYQQQgghhBBCCHHOBYB+L8Y2QgghhBDivA4A+t2MbYQQQgghxHkdAPS7GdsIIYQQQojzOgDodzO2EUIIIYQQ4rwOAPrdjG2EEEIIIcR5HQD0uxnbCCGEEEKI8zoA6HczthFCCCGE2DMNAPpdxjZCCCGEOC8DgH63sY0QQgghxHkZAPS7jW2EEEIIIcR5GQD0u41thBBCCCHOywCg321sI4QQQgghzssAoN9tbCOEEEIIIc7LAKDfbWwjhBBCCCHOywCg321sI4QQQgghzssAoN9tbCOEEEIIIc7LAKDfbWwjhBBCCCHO6wCg321sI4QQQgghzssAoN9tbCOEEEIIIc7LAKDfbWwjhBBCCCHO6wCg361sI4QQQgghzssAoN+tbCOEEEIIIc7LAKDfrWwjhBBCCCHOywCg361sI4QQQgghzuv+Asq7p45hN96fAAAAAElFTkSuQmCC">
+    <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAACXBIWXMAAAsTAAALEwEAmpwYAAABPElEQVR4nO3aMQ6AIAwF0E7G4E030V2P4GYiePwHYyzQlpbSmoFE35e8pC1fS4FCKBQKhUKhUCgUCoVCoVAoFAqFQqFQKBQKhUKh8A/O+8x5mPNcAEIIIYQQQgghhBBCCCHEnBcA+r0Y2wghhBBCiPM6AOh3M7YRQgghhBDndQDQ72ZsI4QQQgghzusAoN/N2EYIIYQQQpzXAUC/m7GNEEIIIYQ4rwOAfjdjGyGEEEIIcV4HAP1uxjZCCCGEEC8NAPrdjG2EEEIIIc7LAKDfbWwjhBBCCCGa+3NfPmMbIYQQQojzOgDodxvbbH+O7RIhhBDivAwA+t3Gtn0d2yVCCCHaYzn/naK/GdsIIYQQQpzXAUC/29i2r2O7RAghRL9u+6yBfgMhjkN+7mPbvuK+dHxfH8d2iRDiWcd5n3l42S/YI/2uA4B+N2ObHmNb8V4GAP1uxjY9xrbiKx0A9LsZ2/QY24qvAn7uY5seY1txHgD6vY1teoxthTgvAP2eY5seY1shzssAoN9zbNNjbCvEeRkA9HuObXqMbcVX/Z77fecBQjzpsP/j+HH+94DnR4r9j+M6AMR3AEC/m7FNj7FNnwH0+xjbdBjb9BlAv4+xTYexTZ8B9PsY23QY2/QZQL+PsU2HsU2fAfT7GNt0GNv0GUC/j7FNh7FNnwH0+xjbdBjb9BlAv4+xTYexTZ8B9PsY23QY2/QZQL+PsU2HsU2fAfT7GNt0GNv0GUC/j7FNh7FNnwH0+xjbdBjb9BlAv4+xTYexTZ8B9PsY23QY2/QZQL+PsU2HsU2fAfT7GNt0GNv0GUC/j7FNh7FNnwH0+xjbdBjb9BlAv4+xTYexTZ8B9PsY23QYW50H0O9tbNNhbHXef/cS+n2MbTqMrc77b/QC+j3HNh3GVuf9N3oB/V5jmw5jq/P+G72AXm+xTYex1Xn/jV5Ar7fYpsPY6rz/Ri+g11ts02Fsdd5/oxfQ6y226TC2Ou+/0Qvo9RbbdBhbnfdf9F9o8z1/2m90neP+DwZzP8ddG9t0Gtuc9P8SDgD6XU+/W/m5j20MA/T7evpdjG2MA/T7evpdjG2MA/T7evpdjG3/D+6Hfu9/0SgUCoVCoVAoFAqFQqFQKBQKhUKhUCgUCoVCoVAoFAqFQqFQKBQKhUKhUCgUCoVCoVAo/IX3f5OfPfDgxCiwAAAAAElFTkSuQmCC">
+    
+    <!-- Schema.org para inmobiliaria -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "RealEstateAgent",
+        "name": "QRP2P",
+        "description": "Marketplace inmobiliario seguro en Cali y Valle del Cauca",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Cali",
+            "addressRegion": "Valle del Cauca",
+            "addressCountry": "CO"
+        },
+        "areaServed": ["Cali", "Valle del Cauca", "Colombia"],
+        "url": "https://qrp2p.app",
+        "logo": "https://qrp2p.app/icon-512.png",
+        "priceRange": "$$"
     }
-    .modal-container {
-      max-width: 580px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      border-radius: 28px;
-      background: white;
-      box-shadow: 0 20px 35px rgba(0,0,0,0.3);
-    }
-    .close-modal {
-      position: sticky;
-      top: 0;
-      right: 0;
-      display: flex;
-      justify-content: flex-end;
-      padding: 0.8rem 1rem;
-      background: white;
-      border-bottom: 1px solid #eee;
-      z-index: 10;
-    }
-    .close-modal button {
-      background: #f0f0f0;
-      border: none;
-      font-size: 1.4rem;
-      cursor: pointer;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-    }
-    .form-panel {
-      padding: 1.2rem 1.5rem;
-    }
-    .step-title {
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    label {
-      display: block;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      margin-bottom: 0.3rem;
-      color: #333;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 0.7rem 0.9rem;
-      font-size: 15px !important;
-      border: 1.5px solid #e0e0e0;
-      border-radius: 16px;
-      font-family: inherit;
-      user-select: text;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #000000;
-    }
-    .inline-checkbox {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      margin: 0.8rem 0;
-    }
-    .inline-checkbox input { width: 1rem; height: 1rem; margin: 0; }
-    .inline-checkbox label { margin: 0; text-transform: none; font-size: 0.8rem; }
-    .terms-link { color: #000; text-decoration: underline; cursor: pointer; font-weight: 600; }
-    .btn-submit { width: 100%; padding: 0.8rem; font-size: 0.9rem; font-weight: 700; background: #000000; color: white; border: none; border-radius: 50px; cursor: pointer; margin-top: 1rem; }
-    .property-info { background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%); border-radius: 18px; padding: 0.8rem 1rem; margin-bottom: 1rem; }
-    .property-info h4 { font-size: 1rem; margin-bottom: 0.3rem; }
-    .terms-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 3000; justify-content: center; align-items: center; padding: 1rem; }
-    .terms-modal-content { background: white; max-width: 450px; width: 100%; border-radius: 28px; padding: 1.5rem; max-height: 70vh; overflow-y: auto; }
-    .servicios-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 2500; justify-content: center; align-items: center; }
-    .servicios-container { background: white; border-radius: 28px; width: 90%; max-width: 480px; max-height: 80vh; overflow-y: auto; padding: 1.2rem; }
-    .servicios-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eaeaea; padding-bottom: 0.6rem; margin-bottom: 1rem; }
-    .servicios-botones { display: flex; flex-direction: column; gap: 0.7rem; }
-    .servicio-btn { background: #000000; color: white; border: none; padding: 0.8rem; border-radius: 50px; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-align: center; font-family: 'Libre Baskerville', serif; }
-    @media (max-width: 680px) {
-      .modal-container { max-width: 95%; }
-      .form-panel { padding: 1rem; }
-      .popup-product-card { width: 310px; }
-      .btn-mapa { padding: 0.5rem 0.8rem; font-size: 0.7rem; }
-      .botones-izquierda { gap: 0.4rem; }
-    }
-  </style>
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .bg-pure {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            z-index: 0;
+        }
+
+        .landing-center {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: #ffffff;
+            border-bottom: 2px solid #ffffff;
+        }
+
+        .tagline {
+            font-size: 0.75rem;
+            color: #666666;
+            margin-top: 0.5rem;
+            letter-spacing: 0.3px;
+        }
+
+        .search-wrapper {
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            background: #000000;
+            border: 1px solid #ffffff;
+            border-radius: 0px;
+            padding: 1rem 1.25rem;
+            font-size: 1.25rem;
+            font-weight: 400;
+            color: #ffffff;
+            outline: none;
+            transition: all 0.2s linear;
+            font-family: inherit;
+            letter-spacing: -0.2px;
+        }
+
+        .search-input::placeholder {
+            color: #444444;
+            font-weight: 350;
+        }
+
+        .search-input:focus {
+            border-color: #ffffff;
+            background: #000000;
+        }
+
+        .results-container {
+            width: 100%;
+            margin-top: 1.5rem;
+            background: #000000;
+            border: none;
+            max-height: 65vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #ffffff #1a1a1a;
+        }
+
+        .results-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .results-container::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .results-container::-webkit-scrollbar-thumb {
+            background: #ffffff;
+        }
+
+        .city-result-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.9rem 0.5rem;
+            border-bottom: 0.5px solid #2a2a2a;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            background: #000000;
+        }
+
+        .city-result-item:hover {
+            background: #111111;
+            border-bottom-color: #ffffff;
+        }
+
+        .city-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .city-name {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .city-location {
+            font-size: 0.7rem;
+            color: #777777;
+        }
+
+        .action-hint {
+            font-size: 0.7rem;
+            color: #555555;
+            border: 0.5px solid #333;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .city-result-item:hover .action-hint {
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #555555;
+            font-size: 0.85rem;
+        }
+
+        .results-container.hide-results {
+            display: none;
+        }
+
+        .install-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a1a;
+            border: 1px solid #ffffff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0px;
+            display: none;
+            z-index: 100;
+            gap: 1rem;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .install-banner.show {
+            display: flex;
+        }
+
+        .install-btn {
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 0.4rem 1rem;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .install-btn:hover {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 600px) {
+            .search-input {
+                font-size: 1rem;
+                padding: 0.9rem 1rem;
+            }
+            .logo {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div id="contenedor-mapa">
-    <div id="barra-superior">
-      <div class="botones-izquierda">
-        <div class="contenedor-buscador">
-          <input type="search" id="buscador" placeholder="Search city" enterkeyhint="search">
-          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
-        </div>
-        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i> CENTER</button>
-      </div>
-      <div class="botones-derecha">
-        <button class="map-type-btn active" id="map-btn">Map</button>
-        <button class="map-type-btn" id="satellite-btn">Satellite</button>
-      </div>
+<div class="bg-pure"></div>
+
+<div class="landing-center">
+    <div class="logo-container">
+        <div class="logo">QRP2P<span>.</span></div>
+        <div class="tagline">Marketplace Inmobiliario Seguro</div>
     </div>
-    <div id="mapa"></div>
-  </div>
-  <div id="termsModal" class="terms-modal"><div class="terms-modal-content"><h3>Términos y Condiciones</h3><p>Al continuar aceptas los términos de servicio.</p><button class="close-terms" id="closeTermsBtn">Aceptar</button></div></div>
-  <div id="serviciosModal" class="servicios-modal"><div class="servicios-container"><div class="servicios-header"><h2>SERVICIOS</h2><button class="close-servicios" id="closeServiciosBtn">&times;</button></div><div class="servicios-botones"><button class="servicio-btn" data-url="/agentes">AGENTES</button><button class="servicio-btn" data-url="/rentas">RENTAS</button><button class="servicio-btn" data-url="/ventas">VENTAS</button><button class="servicio-btn" data-url="/hipotecas">HIPOTÉCAS</button><button class="servicio-btn" data-url="/construccion">CONSTRUCCIÓN</button><button class="servicio-btn" data-url="/credito">CRÉDITO</button><button class="servicio-btn" data-url="/inversion">INVERSIÓN</button><button class="servicio-btn" data-url="/avaluos">AVALÚOS</button><button class="servicio-btn" data-url="https://co.qrp2p.com/">MARKETPLACE</button></div></div></div>
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-  <script>
-    const WHATSAPP_NUMBER = "573041146297";
     
-    // Propiedades globales: incluye sucursal Manhattan sin precio y botón VIEW
-    const properties = [
-      { id: 03, title: "QRP2P Sucursal Manhattan", price: null, priceRent: null, description: "Oficina principal en Nueva York - Rockefeller Center. Atención personalizada y asesoría global.", citySlug: "manhattan", isBranch: true, category: "sucursal", m2: 0, cuartos: 0, baños: 0, latlng: [40.7580, -73.9855], media: ["https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=500", "https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=500"], infoUrl: "https://qrp2p.com/manhattan", mapsUrl: "https://maps.google.com/?q=40.7580,-73.9855" }
+    <div class="search-wrapper">
+        <input type="text" id="globalSearch" class="search-input" placeholder="Buscar ciudad · Cali, Valle..." autocomplete="off">
+    </div>
+    <div id="resultsList" class="results-container hide-results"></div>
+</div>
+
+<div id="installBanner" class="install-banner">
+    <span>📱 Instala QRP2P en tu dispositivo</span>
+    <button id="installBtn" class="install-btn">Instalar</button>
+</div>
+
+<script>
+    // Base de datos de ciudades
+    let citiesDatabase = [
+        { 
+            id: 1,
+            name: "Cali", 
+            region: "Valle del Cauca, Colombia", 
+            link: "/real-estate/cali-valle",
+            searchTerms: ["cali", "valle", "cali valle", "santiago de cali", "cali valle del cauca"]
+        },
+        { 
+            id: 2,
+            name: "Palmira", 
+            region: "Valle del Cauca, Colombia", 
+            link: "/real-estate/palmira-valle",
+            searchTerms: ["palmira", "valle", "palmira valle"]
+        },
+        { 
+            id: 3,
+            name: "Buenaventura", 
+            region: "Valle del Cauca, Colombia", 
+            link: "/real-estate/buenaventura-valle",
+            searchTerms: ["buenaventura", "valle", "puerto"]
+        }
     ];
-    
-    let mapa, userMarker, marcadoresOriginales = [], buscadorTimeout, googleMapsLayer, googleSatelliteLayer, currentLayer, currentIndices = {};
 
-    function formatPrice(p) { 
-      if(p === null || p === 0) return null; 
-      return '$' + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
-    }
-    
-    function redirectToCityRoute(property) {
-      // Redirige dentro de la misma pestaña a una ruta amigable según la ciudad/sucursal
-      let path = '/';
-      if (property.citySlug === 'cali') path = '/cali';
-      else if (property.citySlug === 'yumbo') path = '/yumbovalle';
-      else if (property.citySlug === 'jamundí') path = '/jamundivalle';
-      else if (property.citySlug === 'valle') path = '/valle';
-      else if (property.citySlug === 'manhattan') path = '/manhattan-sucursal';
-      else path = `/${property.citySlug}`;
-      window.location.href = path;
+    let deferredPrompt = null;
+
+    function normalizeText(text) {
+        if (!text) return "";
+        return text
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9\s]/gi, '')
+            .trim()
+            .toLowerCase();
     }
 
-    function updateMediaInPopup(propertyId, newIndex){ 
-      const property=properties.find(p=>p.id===propertyId); 
-      if(!property) return; 
-      const popupNode=document.querySelector('.custom-popup'); 
-      if(!popupNode) return; 
-      const container=popupNode.querySelector(`#popup-img-container-${propertyId}`); 
-      if(!container) return; 
-      const mediaItem=property.media[newIndex]; 
-      const navDiv=container.querySelector('.popup-image-nav'); 
-      const counterDiv=container.querySelector('.popup-image-counter'); 
-      const existing=container.querySelector('.popup-product-image, .popup-video-container'); 
-      if(existing) existing.remove(); 
-      if(typeof mediaItem === 'string'){ 
-        const img=document.createElement('img'); img.src=mediaItem; img.alt=property.title; img.className='popup-product-image'; container.insertBefore(img, navDiv); 
-      } else if(mediaItem.type==='video'){ 
-        const videoDiv=document.createElement('div'); videoDiv.className='popup-video-container'; videoDiv.innerHTML=`<iframe src="https://www.youtube.com/embed/${mediaItem.videoId}?autoplay=0" frameborder="0" allowfullscreen></iframe>`; container.insertBefore(videoDiv, navDiv); 
-      } 
-      if(counterDiv) counterDiv.textContent=`${newIndex+1}/${property.media.length}`; 
-      currentIndices[propertyId]=newIndex; 
+    function filterCities(searchTerm) {
+        if (!searchTerm || searchTerm.trim() === "") return [];
+        
+        const normalizedSearch = normalizeText(searchTerm);
+        const searchWords = normalizedSearch.split(/\s+/).filter(w => w.length > 0);
+        
+        return citiesDatabase.filter(city => {
+            const searchableText = normalizeText(city.name + " " + city.region);
+            const searchableTerms = city.searchTerms.map(term => normalizeText(term)).join(" ");
+            const fullText = searchableText + " " + searchableTerms;
+            
+            const allWordsMatch = searchWords.every(word => fullText.includes(word));
+            if (allWordsMatch) return true;
+            if (fullText.includes(normalizedSearch)) return true;
+            
+            for (let term of city.searchTerms) {
+                if (normalizeText(term).includes(normalizedSearch)) return true;
+            }
+            return false;
+        });
     }
 
-    function generarPopupHTML(property){ 
-      const isBranch = property.isBranch === true;
-      let displayPriceHtml = '';
-      if(isBranch) {
-        displayPriceHtml = `<div class="popup-branch-name"><i class="fas fa-building"></i> Sucursal Oficial</div>`;
-      } else {
-        const displayPrice = property.category === 'venta' ? formatPrice(property.price) : formatPrice(property.priceRent);
-        displayPriceHtml = `<span class="popup-product-price">${displayPrice || "Consultar"}</span>`;
-      }
-      
-      const actionLabel = isBranch ? "VIEW" : "Agendar / Ofertar";
-      const actionIcon = isBranch ? "fa-eye" : (property.category==='venta' ? "fa-hand-holding-usd" : "fa-key");
-      const btnClass = isBranch ? "popup-view-branch" : "popup-action-redirect";
-      
-      if(currentIndices[property.id]===undefined) currentIndices[property.id]=0; 
-      const idx=currentIndices[property.id]; 
-      const media=property.media[idx]; 
-      let mediaHtml=''; 
-      if(typeof media==='string') mediaHtml=`<img src="${media}" alt="${property.title}" class="popup-product-image">`; 
-      else if(media && media.type==='video') mediaHtml=`<div class="popup-video-container"><iframe src="https://www.youtube.com/embed/${media.videoId}?autoplay=0" frameborder="0" allowfullscreen></iframe></div>`; 
-      
-      const detailsHtml = isBranch ? '' : `<div class="popup-product-details"><span><i class="fas fa-arrows-alt"></i> ${property.m2} m²</span><span><i class="fas fa-bed"></i> ${property.cuartos} hab</span><span><i class="fas fa-bath"></i> ${property.baños} baños</span></div>`;
-      
-      return `<div class="popup-product-card" data-id="${property.id}"><div class="popup-product-image-container" id="popup-img-container-${property.id}">${mediaHtml}<div class="popup-image-nav"><button class="popup-nav-btn popup-prev-btn" data-id="${property.id}"><i class="fas fa-chevron-left"></i></button><button class="popup-nav-btn popup-next-btn" data-id="${property.id}"><i class="fas fa-chevron-right"></i></button></div><div class="popup-image-counter">${idx+1}/${property.media.length}</div></div><div class="popup-product-info"><h3 class="popup-product-title">${property.title}</h3><div class="precio-line">${displayPriceHtml}<div class="enlaces-secundarios"><a href="${property.infoUrl}" target="_blank" class="enlace-info"><i class="fas fa-key"></i> Info</a><a href="${property.mapsUrl}" target="_blank" class="enlace-mapa"><i class="fas fa-location-dot"></i></a></div></div>${detailsHtml}<p style="font-size:0.7rem; margin-bottom:0.6rem;">${property.description}</p><div class="popup-product-actions"><button class="${btnClass}" data-id="${property.id}" data-branch="${isBranch}"><i class="fas ${actionIcon}"></i> ${actionLabel}</button></div></div></div>`; 
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
     }
 
-    function centrarMapa(){ 
-      if(navigator.geolocation){ 
-        navigator.geolocation.getCurrentPosition(pos=>{ let{latitude,longitude}=pos.coords; mapa.setView([latitude,longitude],13); if(userMarker)mapa.removeLayer(userMarker); userMarker=L.marker([latitude,longitude],{icon:L.divIcon({className:'user-location-marker',html:'📍',iconSize:[24,24]})}).addTo(mapa).bindPopup('Tu ubicación'); },()=>{ mapa.setView([40.7580,-73.9855],12); }); 
-      } else{ mapa.setView([40.7580,-73.9855],12); } 
+    function renderResults(citiesList) {
+        const container = document.getElementById('resultsList');
+        const searchInput = document.getElementById('globalSearch');
+        const currentSearchValue = searchInput ? searchInput.value : "";
+        
+        if (!currentSearchValue || currentSearchValue.trim() === "") {
+            container.classList.add('hide-results');
+            container.innerHTML = '';
+            return;
+        }
+
+        if (citiesList.length === 0) {
+            container.classList.remove('hide-results');
+            container.innerHTML = `<div class="no-results">✨ No encontramos resultados · Prueba "Cali" o "Valle"</div>`;
+            return;
+        }
+
+        container.classList.remove('hide-results');
+        container.innerHTML = '';
+        
+        citiesList.forEach(city => {
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'city-result-item';
+            resultDiv.innerHTML = `
+                <div class="city-info">
+                    <span class="city-name">${escapeHtml(city.name)}</span>
+                    <span class="city-location">${escapeHtml(city.region)}</span>
+                </div>
+                <div class="action-hint">→ ver</div>
+            `;
+            resultDiv.addEventListener('click', () => {
+                if (city.link) window.location.href = city.link;
+            });
+            container.appendChild(resultDiv);
+        });
     }
 
-    function initMap(){ 
-      mapa=L.map('mapa',{center:[40.7580,-73.9855],zoom:12,zoomControl:false}); 
-      googleMapsLayer=L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{maxZoom:20,subdomains:['mt0','mt1','mt2','mt3']}); 
-      googleSatelliteLayer=L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{maxZoom:20,subdomains:['mt0','mt1','mt2','mt3']}); 
-      currentLayer=googleMapsLayer; currentLayer.addTo(mapa); 
-      let clusters=L.markerClusterGroup({iconCreateFunction:cluster=>L.divIcon({html:`<div>${cluster.getChildCount()}</div>`,className:'cluster-marcadores',iconSize:[40,40]})}); 
-      let icono=L.divIcon({className:'inmueble-marker',html:'🔑',iconSize:[32,32],popupAnchor:[0,-16]}); 
-      properties.forEach(prop=>{ 
-        let popup=generarPopupHTML(prop); 
-        let marker=L.marker(prop.latlng,{icon:icono}).bindPopup(popup,{maxWidth:440,className:'custom-popup'}); 
-        marker.datosInmueble=prop; 
-        marker.datosBusqueda=`${prop.title} ${prop.description} ${prop.citySlug}`.toLowerCase(); 
-        marcadoresOriginales.push(marker); 
-        marker.on('popupopen',()=>{ 
-          setTimeout(()=>{ 
-            let node=document.querySelector('.custom-popup'); 
-            if(node){ 
-              let prev=node.querySelector(`.popup-prev-btn[data-id="${prop.id}"]`), next=node.querySelector(`.popup-next-btn[data-id="${prop.id}"]`); 
-              if(prev) prev.addEventListener('click',(e)=>{e.stopPropagation(); let idx=(currentIndices[prop.id]-1+prop.media.length)%prop.media.length; updateMediaInPopup(prop.id,idx);}); 
-              if(next) next.addEventListener('click',(e)=>{e.stopPropagation(); let idx=(currentIndices[prop.id]+1)%prop.media.length; updateMediaInPopup(prop.id,idx);}); 
-              let actionBtn=node.querySelector(`.${prop.isBranch ? 'popup-view-branch' : 'popup-action-redirect'}[data-id="${prop.id}"]`); 
-              if(actionBtn) actionBtn.addEventListener('click',(e)=>{ e.preventDefault(); redirectToCityRoute(prop); }); 
-            } 
-          },100); 
-        }); 
-        clusters.addLayer(marker); 
-      }); 
-      mapa.addLayer(clusters); 
+    function performSearch(searchValue) {
+        renderResults(filterCities(searchValue));
     }
 
-    function buscarInmuebles(q){ 
-      let term=q.toLowerCase(); 
-      let resultados=marcadoresOriginales.filter(m=>m.datosBusqueda.includes(term)); 
-      let sugerenciasDiv=document.getElementById('sugerencias-busqueda'); 
-      if(resultados.length){ 
-        sugerenciasDiv.innerHTML=''; 
-        resultados.forEach(m=>{ 
-          let item=document.createElement('div'); 
-          item.className='sugerencia-item'; 
-          item.innerHTML=`<div class="sugerencia-texto"><strong>🔑 ${m.datosInmueble.title}</strong><br><small>${m.datosInmueble.description}</small></div><button class="sugerencia-boton" data-id="${m.datosInmueble.id}">Ver</button>`; 
-          let btn=item.querySelector('.sugerencia-boton'); 
-          btn.addEventListener('click',(e)=>{ e.stopPropagation(); mapa.setView(m.getLatLng(),16); m.openPopup(); document.getElementById('buscador').value=m.datosInmueble.title; sugerenciasDiv.style.display='none'; }); 
-          item.addEventListener('click',()=>{ mapa.setView(m.getLatLng(),16); m.openPopup(); document.getElementById('buscador').value=m.datosInmueble.title; sugerenciasDiv.style.display='none'; }); 
-          sugerenciasDiv.appendChild(item); 
-        }); 
-      } else { sugerenciasDiv.innerHTML='<div class="sugerencia-item">❌ No se encontraron inmuebles verificados</div>'; } 
-    }
-
-    document.addEventListener('DOMContentLoaded',()=>{ 
-      initMap(); 
-      document.getElementById('centrar-btn').addEventListener('click',centrarMapa); 
-      document.getElementById('servicios-btn').addEventListener('click',()=>document.getElementById('serviciosModal').style.display='flex'); 
-      document.getElementById('map-btn').addEventListener('click',()=>{ mapa.removeLayer(currentLayer); currentLayer=googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
-      document.getElementById('satellite-btn').addEventListener('click',()=>{ mapa.removeLayer(currentLayer); currentLayer=googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
-      document.getElementById('closeServiciosBtn').addEventListener('click',()=>document.getElementById('serviciosModal').style.display='none'); 
-      window.addEventListener('click',(e)=>{if(e.target===document.getElementById('serviciosModal')) document.getElementById('serviciosModal').style.display='none';}); 
-      document.querySelectorAll('.servicio-btn').forEach(btn=>{btn.addEventListener('click',function(){ let url=this.getAttribute('data-url'); if(url) window.open(url,'_blank');});}); 
-      let inputBuscar=document.getElementById('buscador'); 
-      inputBuscar.addEventListener('input',(e)=>{ clearTimeout(buscadorTimeout); let term=e.target.value.trim(); let sugDiv=document.getElementById('sugerencias-busqueda'); if(term.length<2){ sugDiv.style.display='none'; return; } sugDiv.innerHTML='<div class="sugerencia-item">🔍 Buscando...</div>'; sugDiv.style.display='block'; buscadorTimeout=setTimeout(()=>buscarInmuebles(term),300); }); 
-      inputBuscar.addEventListener('keydown',(e)=>{if(e.key==='Enter'){ e.preventDefault(); let term=inputBuscar.value.trim(); if(term) buscarInmuebles(term); }}); 
-      document.addEventListener('click',(e)=>{ if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display='none'; }); 
-      document.getElementById('closeTermsBtn').addEventListener('click',()=>document.getElementById('termsModal').style.display='none'); 
-      window.addEventListener('click',(e)=>{ if(e.target===document.getElementById('termsModal')) document.getElementById('termsModal').style.display='none'; }); 
+    // PWA Installation
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById('installBanner').classList.add('show');
     });
-  </script>
+
+    document.getElementById('installBtn')?.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            console.log('PWA instalada');
+        }
+        deferredPrompt = null;
+        document.getElementById('installBanner').classList.remove('show');
+    });
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('globalSearch');
+        const resultsContainer = document.getElementById('resultsList');
+        
+        if (resultsContainer) {
+            resultsContainer.classList.add('hide-results');
+            resultsContainer.innerHTML = '';
+        }
+        
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const value = e.target.value;
+                if (value.trim() === "") {
+                    resultsContainer.classList.add('hide-results');
+                    resultsContainer.innerHTML = '';
+                } else {
+                    performSearch(value);
+                }
+            });
+            
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const currentValue = searchInput.value;
+                    if (currentValue.trim() === "") return;
+                    const filtered = filterCities(currentValue);
+                    if (filtered.length > 0) {
+                        window.location.href = filtered[0].link;
+                    }
+                }
+            });
+        }
+
+        // Registrar Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').then(reg => {
+                console.log('Service Worker registrado:', reg);
+            }).catch(err => {
+                console.log('Error SW:', err);
+            });
+        }
+    });
+</script>
+
+<script>
+    // Service Worker code (se crea automáticamente)
+    if (!document.querySelector('#sw-code')) {
+        const swCode = `
+self.addEventListener('install', event => {
+    self.skipWaiting();
+    event.waitUntil(
+        caches.open('qrp2p-v1').then(cache => {
+            return cache.addAll([
+                '/',
+                '/index.html',
+                '/manifest.json'
+            ]);
+        })
+    );
+});
+
+self.addEventListener('fetch', event => {
+    event.respondWith(
+        caches.match(event.request).then(response => {
+            return response || fetch(event.request);
+        })
+    );
+});
+
+self.addEventListener('activate', event => {
+    event.waitUntil(clients.claim());
+});
+        `;
+        
+        const blob = new Blob([swCode], { type: 'application/javascript' });
+        const swUrl = URL.createObjectURL(blob);
+        
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register(swUrl).then(reg => {
+                console.log('SW registrado correctamente');
+            });
+        }
+    }
+</script>
+
+<script>
+    // Manifest dinámico
+    const manifest = {
+        name: "QRP2P Marketplace Inmobiliario",
+        short_name: "QRP2P",
+        description: "Plataforma inmobiliaria segura en Cali y Valle del Cauca",
+        start_url: "/",
+        display: "standalone",
+        theme_color: "#000000",
+        background_color: "#000000",
+        scope: "/",
+        id: "com.qrp2p.app",
+        icons: [
+            {
+                src: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAACXBIWXMAAAsTAAALEwEAmpwYAAABPElEQVR4nO3aMQ6AIAwF0E7G4E030V2P4GYiePwHYyzQlpbSmoFE35e8pC1fS4FCKBQKhUKhUCgUCoVCoVAoFAqFQqFQKBQKhUKhULyU8z5zHua8FSAEQgghhBBCCCGEECJkXgDo92JsI4QQQggR0usAoN/N2EYIIYQQIqTXAUC/m7GNEEIIIURIrwOAfjdjGyGEEEKIkF4HAP1uxjZCCCGEECG9DgD63YxthBBCCCFCeh0A9LsZ2wghhBBChPQ6AOh3M7YRQgghhAjpdQDQ72ZsI4QQQggR0usAoN/N2EYIIYQQIqTXAUC/m7GNEEIIIURIrwOAfjdjGyGEEEKIkF4HAP1uxjZCCCGEECG9DgD63YxthBBCCCFCeh0A9LsZ2wghhBBChPQ6AOh3M7YRQgghhAjpdQDQ72ZsI4QQQggR0usAoN/N2EYIIYQQIqTXAUC/m7GNEEIIIURIrwOAfjdjGyGEEEKIkF4HAP1uxjZCCCGEECG9DgD63YxthBBCCCFCeh0A9LsZ2wghhBBChPQ6AOh3M7YRQgghhAjpdQDQ72ZsI4QQQggR0usAoN+sba/Xa16n+a/7CwTSJKSfW1unAAAAAElFTkSuQmCC",
+                sizes: "96x96",
+                type: "image/png",
+                purpose: "any maskable"
+            },
+            {
+                src: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAACXBIWXMAAAsTAAALEwEAmpwYAAABPElEQVR4nO3aMQ6AIAwF0E7G4E030V2P4GYiePwHYyzQlpbSmoFE35e8pC1fS4FCKBQKhUKhUCgUCoVCoVAoFAqFQqFQKBQKhUKhUCgUCoVCoVAoFAqFQqFQKBQKhUKhUCgUCoVCoVAoFAqFQqFQKBQKhULxUs77zHmY81aAEAiFQqFQKBQKhUKhUCgUCoVCoVAoFAqFQqFQKBTK5n2P8wRACCEhB0AIIRBDQAgBEAIQSgghIICBPAihBAQQEEIIAQGEEABCQAgBQAAIASAEhAAQAkJACAABgBAQAkAIASEAhIAQAEIACAAhAIQAEAIAGABCAAgBIASAABACQAgAIQAEgBAQAkAIACGAgAACQgAIIYCAABACQAgAIYAQEEIQAggIASEghAACAkAIAQEEhAAQAkAIASEAhIASEEIAJIQAEEIAAQEghICUEEJACAAhIAQAEABCCEAIQAgBICCEAIQQEEJACAABAAoAISAEEEJAACEAIQSEEIAAAoAAAkIICCEABAASAEIIKCCEgBACQggIAIQAAgJACAEgBBACQAgAAYAQEEIACAEgBIAQAAIACQAhBISAEABCAJiIcwAAAAD//wMAJqqvGmsM6uQAAAAASUVORK5CYII=",
+                sizes: "512x512",
+                type: "image/png",
+                purpose: "any maskable"
+            }
+        ]
+    };
+    
+    if (!document.querySelector('#manifest-json')) {
+        const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+        const manifestUrl = URL.createObjectURL(manifestBlob);
+        const link = document.querySelector('link[rel="manifest"]');
+        if (link) link.href = manifestUrl;
+    }
+</script>
 </body>
 </html>
