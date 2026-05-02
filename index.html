@@ -204,7 +204,7 @@
     .gm-style .gm-style-iw-d { overflow: auto !important; max-height: none !important; padding: 0 !important; }
     .gm-style-iw-tc { display: none; }
     
-    /* MODAL INFO (con iframe y toda la info) */
+    /* MODAL MÁS PEQUEÑO */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -220,7 +220,7 @@
       padding: 1rem;
     }
     .modal-container {
-      max-width: 680px;
+      max-width: 580px;
       width: 100%;
       max-height: 90vh;
       overflow-y: auto;
@@ -247,66 +247,6 @@
       width: 36px;
       height: 36px;
       border-radius: 50%;
-    }
-    .info-panel {
-      padding: 1.2rem 1.5rem;
-    }
-    .info-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-    .info-price {
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: #000;
-      margin-bottom: 1rem;
-    }
-    .info-details-grid {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.2rem;
-      background: #f5f5f5;
-      padding: 0.8rem;
-      border-radius: 20px;
-    }
-    .info-detail-item {
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
-    .info-description {
-      margin-bottom: 1.2rem;
-      line-height: 1.4;
-      color: #333;
-    }
-    .info-media {
-      margin: 1rem 0;
-      border-radius: 20px;
-      overflow: hidden;
-    }
-    .info-media iframe {
-      width: 100%;
-      height: 280px;
-      border: none;
-      border-radius: 20px;
-    }
-    .info-links {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    .info-links a {
-      background: #000;
-      color: white;
-      padding: 0.6rem 1rem;
-      border-radius: 40px;
-      text-decoration: none;
-      font-size: 0.8rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
     }
     .form-panel {
       padding: 1.2rem 1.5rem;
@@ -447,7 +387,6 @@
   </div>
   <div id="visitaModal" class="modal-overlay"><div class="modal-container"><div class="close-modal"><button class="close-visita-modal">&times;</button></div><div id="visitaFormContainer" class="form-panel"></div></div></div>
   <div id="ofertaModal" class="modal-overlay"><div class="modal-container"><div class="close-modal"><button class="close-oferta-modal">&times;</button></div><div id="ofertaFormContainer" class="form-panel"></div></div></div>
-  <div id="infoModal" class="modal-overlay"><div class="modal-container"><div class="close-modal"><button class="close-info-modal">&times;</button></div><div id="infoPanelContainer" class="info-panel"></div></div></div>
   <div id="termsModal" class="terms-modal"><div class="terms-modal-content"><h3 id="terms-title">Términos y Condiciones</h3><p id="terms-text">Al agendar aceptas recibir información del inmueble.</p><button class="close-terms" id="closeTermsBtn">Aceptar</button></div></div>
   <div id="serviciosModal" class="servicios-modal"><div class="servicios-container"><div class="servicios-header"><h2 id="servicios-modal-title">SERVICIOS</h2><button class="close-servicios" id="closeServiciosBtn">&times;</button></div><div class="servicios-botones"><button class="servicio-btn" data-url="/agentes-global" id="serv-agentes">AGENTES</button><button class="servicio-btn" data-url="/arrendar-inmueble-global" id="serv-rentas">RENTAS</button><button class="servicio-btn" data-url="/vender-inmueble-global" id="serv-ventas">VENTAS</button><button class="servicio-btn" data-url="/hipotecar-inmueble-global" id="serv-hipotecas">HIPOTÉCAS</button><button class="servicio-btn" data-url="/construccion-global" id="serv-construccion">CONSTRUCCIÓN</button><button class="servicio-btn" data-url="/credito-inmobiliario-global" id="serv-credito">CRÉDITO</button><button class="servicio-btn" data-url="/inversion-global" id="serv-inversion">INVERSIÓN</button><button class="servicio-btn" data-url="/avaluos-global" id="serv-avaluos">AVALÚOS</button></div></div></div>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -456,12 +395,19 @@
     const WHATSAPP_NUMBER = "573041146297";
     let currentLang = 'es';
     
+    // Función para determinar moneda según coordenadas (país)
     function getCurrencyForCoordinates(lat, lng) {
+      // Colombia: rango aproximado
       if (lat >= -4.5 && lat <= 12.5 && lng >= -79.0 && lng <= -66.9) return "COP";
+      // USA (contiguous) aproximado
       if (lat >= 24.0 && lat <= 49.0 && lng >= -125.0 && lng <= -66.0) return "USD";
+      // España
       if (lat >= 36.0 && lat <= 43.8 && lng >= -9.3 && lng <= 3.3) return "EUR";
+      // México
       if (lat >= 14.5 && lat <= 32.7 && lng >= -117.0 && lng <= -86.7) return "MXN";
+      // Argentina
       if (lat >= -55.0 && lat <= -21.8 && lng >= -73.6 && lng <= -53.6) return "ARS";
+      // Default USD global
       return "USD";
     }
     
@@ -472,72 +418,73 @@
     }
     
     const properties = [
-      { 
-        id: "CALI04", price: 800000000, priceRent: 0, category: "venta", m2: 188, cuartos: 4, baños: 3, latlng: [3.400458, -76.552114], currency: "COP",
+      { id: CALI04, price: 800000000, priceRent: 0, category: "venta", m2: 188, cuartos: 4, baños: 3, latlng: [3.400458, -76.552114], currency: "COP",
         title_es: "CASA EN VENTA EN PAMPALINDA CONJUNTO CERRADO CALI, VALLE DEL CAUCA, COLOMBIA - CALI04", title_en: "HOUSE FOR SALE IN PAMPALINDA GATED COMMUNITY, CALI, VALLE DEL CAUCA, COLOMBIA - CALI04",
         description_es: "ID: CALI-04 | DIRECCIÓN: Cl 2 a # 64 a - 15 ca 24", description_en: "ID: CALI-04 | ADDRESS: Cl 2 a # 64 a - 15 ca 24",
-        media: ["https://co.qrp2p.com/wp-content/uploads/2026/04/picture-6-scaled.png", {type:"video", videoId:"dQw4w9WgXcQ"}], 
-        infoUrl: "https://co.qrp2p.com/producto/casa-en-venta-en-pampalinda-conjunto-cerrado-cali-valle-del-cauca-colombia/", mapsUrl: "https://maps.app.goo.gl/DHWLoB3V4RV9JvoZ8" 
-      },
-      { 
-        id: "CALI03", price: 665000000, priceRent: 0, category: "venta", m2: 80, cuartos: 3, baños: 2, latlng: [3.4837766685285305, -76.51429001751426], currency: "COP",
+        media: ["https://co.qrp2p.com/wp-content/uploads/2026/04/picture-6-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-27-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-28-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-29-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-30-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-31-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-32-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-1-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-2-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-3-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-4-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-5-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-7-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-8-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-9-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-10-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-11-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-12-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-13-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-14-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-15-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-16-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-17-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-18-600x338.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-19-600x338.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-20-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-21-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-22-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-23-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-24-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-25-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-25-scaled.png", {type:"video", videoId:"dQw4w9WgXcQ"}], 
+        infoUrl: "https://co.qrp2p.com/producto/casa-en-venta-en-pampalinda-conjunto-cerrado-cali-valle-del-cauca-colombia/", mapsUrl: "https://maps.app.goo.gl/DHWLoB3V4RV9JvoZ8" },
+      { id: CALI03, price: 665000000, priceRent: 0, category: "venta", m2: 80, cuartos: 3, baños: 2, latlng: [3.4837766685285305, -76.51429001751426], currency: "COP",
         title_es: "APARTAMENTO EN VENTA EN LA FLORA PORTUS 3.52 CALI, VALLE DEL CAUCA, COLOMBIA - CALI03", title_en: "APARTMENT FOR SALE IN LA FLORA PORTUS 3.52 CALI, VALLE DEL CAUCA, COLOMBIA - CALI03",
         description_es: "ID: CALI-03 | DIRECCION: AVENIDA 3 #49 NORTE-123", description_en: "ID: CALI-03 | ADDRESS: AVENUE 3 #49 NORTH-123",
-        media: ["https://co.qrp2p.com/wp-content/uploads/2026/04/picture-13-1.png", {type:"video", videoId:"9bZkp7q19f0"}], 
-        infoUrl: "https://co.qrp2p.com/producto/apartamento-en-venta-en-la-flora-portus-3-52-cali-valle-del-cauca-colombia/", mapsUrl: "https://maps.google.com/?q=3.3750,-76.5450" 
-      }
+        media: ["https://co.qrp2p.com/wp-content/uploads/2026/04/picture-13-1.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-1-1.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-2-1.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-3-1.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-4-1.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-5-1.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-6-1.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-7-1.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-8-1.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-9-1.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-10-1.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-11-1.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-12-1.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-13-1.png", "https://co.qrp2p.com/wp-content/uploads/2026/04/picture-33.png", {type:"video", videoId:"9bZkp7q19f0"}], 
+        infoUrl: "https://co.qrp2p.com/producto/apartamento-en-venta-en-la-flora-portus-3-52-cali-valle-del-cauca-colombia/", mapsUrl: "https://maps.google.com/?q=3.3750,-76.5450" },
+      { id: CALI02, price: 660000000, priceRent: 0, category: "venta", m2: 165, cuartos: 3, baños: 3, latlng: [3.4523113550785416, -76.54792915001036], currency: "COP",
+        title_es: "APARTAMENTO EN VENTA EN SANTA TERESITA EDIFICIO PONTEVEDRA CALI, VALLE DEL CAUCA, COLOMBIA – CALI02", title_en: "APARTMENT FOR SALE IN SANTA TERESITA, PONTEVEDRA BUILDING, CALI, VALLE DEL CAUCA, COLOMBIA – CALI02",
+        description_es: "ID: CALI02 | DIRECCION: CL 6 OESTE # 1 A – 37", description_en: "ID: CALI02 | ADDRESS: CL 6 WEST # 1 A – 37",
+        media: ["https://co.qrp2p.com/wp-content/uploads/2026/05/picture-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-18-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-17-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-16-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-15-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-14-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-13-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-11-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-10-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-9-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-8-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-7-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-6-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-5-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-4-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-3-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-2-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-1-scaled.png", "https://co.qrp2p.com/wp-content/uploads/2026/05/picture-scaled.png", {type:"video", videoId:"JGwWNGJdvx8"}], 
+        infoUrl: "https://co.qrp2p.com/producto/apartamento-en-venta-en-santa-teresita-edificio-pontevedra-cali-valle-del-cauca-colombia-cali02/", mapsUrl: "https://maps.google.com/?q=3.4523113550785416, -76.54792915001036" },
+      { id: YUMBO02, price: 520000, priceRent: 0, category: "venta", m2: 75, cuartos: 3, baños: 2, latlng: [3.554304879016199, -76.50519959676657], currency: "COP",
+        title_es: "APARTAMENTO EN VENTA EN GUABINAS CONJUNTO GUATAPE YUMBO, VALLE DEL CAUCA - YUMBO02", title_en: "APARTMENT FOR SALE IN GUABINAS COMPLEX GUATAPE YUMBO, VALLE DEL CAUCA - YUMBO02",
+        description_es: "ID: YUMBO02 | DIRECCION: CALLE 9 # 20B - 404", description_en: "ID: YUMBO02 | ADDRESS: 9TH STREET # 20B - 404",
+        media: ["https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=500", "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500"], 
+        infoUrl: "https://qrp2p.com/propiedad/4", mapsUrl: "https://maps.google.com/?q=3.554304879016199, -76.50519959676657" }
     ];
     
+    // Asignar moneda automática si no tiene definida
     properties.forEach(p => { if(!p.currency) p.currency = getCurrencyForCoordinates(p.latlng[0], p.latlng[1]); });
     
-    const translations = { 
-      es: { buscar_placeholder: "Buscar inmuebles en todo el mundo...", centrar: "CENTRAR", servicios: "SERVICIOS", mapa: "Mapa", satelite: "Satélite", servicios_titulo: "SERVICIOS", agentes: "AGENTES", rentas: "RENTAS", ventas: "VENTAS", hipotecas: "HIPOTÉCAS", construccion: "CONSTRUCCIÓN", credito: "CRÉDITO", inversion: "INVERSIÓN", avaluos: "AVALÚOS", terms_title: "Términos y Condiciones", terms_text: "Al agendar aceptas recibir información del inmueble.", terms_accept: "Aceptar", visita_title: "📅 Agendar visita", oferta_title: "📩 Enviar oferta / Comprar", nombre_label: "NOMBRE COMPLETO *", telefono_label: "TELÉFONO *", email_label: "CORREO", codigo_agente_label: "CÓDIGO DE AGENTE (opcional)", comentarios_label: "COMENTARIOS", terms_check: "Acepto ", terms_link: "términos", submit_visita: "📩 Agendar por WhatsApp", submit_oferta: "📩 Enviar consulta de compra", no_results: "❌ No se encontraron inmuebles verificados", searching: "🔍 Buscando...", visit_btn: "Visita", offer_btn_venta: "Comprar", offer_btn_arriendo: "Iniciar arriendo", info_btn: "Info", select_date: "📅 Selecciona una fecha", monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'], weekdays: ['L', 'M', 'M', 'J', 'V', 'S', 'D'], pago_contado: "Contado", pago_credito: "Cuota inicial + Crédito", precio_fijo: "PRECIO TOTAL (FIJO)", valor_inicial: "VALOR DE LA CUOTA INICIAL (mínimo 30%)", opciones_financiacion: "OPCIÓN DE FINANCIACIÓN", cesantias: "Cesantías", credito_preaprobado: "Ya cuento con crédito pre aprobado", solicitar_credito: "Solicitar crédito inmobiliario con las mejores tasas" },
-      en: { buscar_placeholder: "Search properties worldwide...", centrar: "CENTER", servicios: "SERVICES", mapa: "Map", satelite: "Satellite", servicios_titulo: "SERVICES", agentes: "AGENTS", rentas: "RENTALS", ventas: "SALES", hipotecas: "MORTGAGES", construccion: "CONSTRUCTION", credito: "CREDIT", inversion: "INVESTMENT", avaluos: "APPRAISALS", terms_title: "Terms and Conditions", terms_text: "By scheduling you agree to receive property information.", terms_accept: "Accept", visita_title: "📅 Schedule visit", oferta_title: "📩 Send offer / Buy", nombre_label: "FULL NAME *", telefono_label: "PHONE *", email_label: "EMAIL", codigo_agente_label: "AGENT CODE (optional)", comentarios_label: "COMMENTS", terms_check: "I accept ", terms_link: "terms", submit_visita: "📩 Schedule via WhatsApp", submit_oferta: "📩 Send purchase inquiry", no_results: "❌ No verified properties found", searching: "🔍 Searching...", visit_btn: "Visit", offer_btn_venta: "Buy", offer_btn_arriendo: "Start rental", info_btn: "Info", select_date: "📅 Select a date", monthNames: ['January','February','March','April','May','June','July','August','September','October','November','December'], weekdays: ['M', 'T', 'W', 'T', 'F', 'S', 'S'], pago_contado: "Cash payment", pago_credito: "Down payment + Credit", precio_fijo: "TOTAL PRICE (FIXED)", valor_inicial: "DOWN PAYMENT (min 30%)", opciones_financiacion: "FINANCING OPTION", cesantias: "Severance funds", credito_preaprobado: "Pre-approved credit", solicitar_credito: "Request best mortgage rates" }
+    const translations = { /* ... mismo contenido de antes ... */ 
+      es: { buscar_placeholder: "Buscar inmuebles en todo el mundo...", centrar: "CENTRAR", servicios: "SERVICIOS", mapa: "Mapa", satelite: "Satélite", servicios_titulo: "SERVICIOS", agentes: "AGENTES", rentas: "RENTAS", ventas: "VENTAS", hipotecas: "HIPOTÉCAS", construccion: "CONSTRUCCIÓN", credito: "CRÉDITO", inversion: "INVERSIÓN", avaluos: "AVALÚOS", marketplace: "MARKETPLACE", terms_title: "Términos y Condiciones", terms_text: "Al agendar aceptas recibir información del inmueble.", terms_accept: "Aceptar", visita_title: "📅 Agendar visita", oferta_title: "📩 Enviar oferta", nombre_label: "NOMBRE COMPLETO *", telefono_label: "TELÉFONO *", email_label: "CORREO", codigo_agente_label: "CÓDIGO DE AGENTE (opcional)", comentarios_label: "COMENTARIOS", terms_check: "Acepto ", terms_link: "términos", submit_visita: "📩 Agendar por WhatsApp", submit_oferta: "📩 Enviar oferta", no_results: "❌ No se encontraron inmuebles verificados", searching: "🔍 Buscando...", visit_btn: "Visita", offer_btn_venta: "Ofertar inmueble", offer_btn_arriendo: "Iniciar arriendo", info_btn: "Info", select_date: "📅 Selecciona una fecha", monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'], weekdays: ['L', 'M', 'M', 'J', 'V', 'S', 'D'], pago_contado: "Contado", pago_credito: "Cuota inicial + Crédito", precio_fijo: "PRECIO TOTAL (FIJO)", valor_inicial: "VALOR DE LA CUOTA INICIAL (mínimo 30%)", opciones_financiacion: "OPCIÓN DE FINANCIACIÓN", cesantias: "Cesantías", credito_preaprobado: "Ya cuento con crédito pre aprobado", solicitar_credito: "Solicitar crédito inmobiliario con las mejores tasas" },
+      en: { buscar_placeholder: "Search properties worldwide...", centrar: "CENTER", servicios: "SERVICES", mapa: "Map", satelite: "Satellite", servicios_titulo: "SERVICES", agentes: "AGENTS", rentas: "RENTALS", ventas: "SALES", hipotecas: "MORTGAGES", construccion: "CONSTRUCTION", credito: "CREDIT", inversion: "INVESTMENT", avaluos: "APPRAISALS", marketplace: "MARKETPLACE", terms_title: "Terms and Conditions", terms_text: "By scheduling you agree to receive property information.", terms_accept: "Accept", visita_title: "📅 Schedule visit", oferta_title: "📩 Send offer", nombre_label: "FULL NAME *", telefono_label: "PHONE *", email_label: "EMAIL", codigo_agente_label: "AGENT CODE (optional)", comentarios_label: "COMMENTS", terms_check: "I accept ", terms_link: "terms", submit_visita: "📩 Schedule via WhatsApp", submit_oferta: "📩 Send offer", no_results: "❌ No verified properties found", searching: "🔍 Searching...", visit_btn: "Visit", offer_btn_venta: "Make offer", offer_btn_arriendo: "Start rental", info_btn: "Info", select_date: "📅 Select a date", monthNames: ['January','February','March','April','May','June','July','August','September','October','November','December'], weekdays: ['M', 'T', 'W', 'T', 'F', 'S', 'S'], pago_contado: "Cash payment", pago_credito: "Down payment + Credit", precio_fijo: "TOTAL PRICE (FIXED)", valor_inicial: "DOWN PAYMENT (min 30%)", opciones_financiacion: "FINANCING OPTION", cesantias: "Severance funds", credito_preaprobado: "Pre-approved credit", solicitar_credito: "Request best mortgage rates" }
     };
     
-    let mapa, userMarker, marcadoresOriginales = [], currentLayer, currentProperty = null, selectedDate = null, selectedHorario = null, currentYear = new Date().getFullYear(), currentMonth = new Date().getMonth(), today = new Date(); today.setHours(0,0,0,0);
+    let mapa, userMarker, marcadoresOriginales = [], buscadorTimeout, googleMapsLayer, googleSatelliteLayer, currentLayer, currentProperty = null, selectedDate = null, selectedHorario = null, currentYear = new Date().getFullYear(), currentMonth = new Date().getMonth(), today = new Date(); today.setHours(0,0,0,0);
     const allHorarios = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00'];
     let currentIndices = {};
+    let geolocationWatchId = null;
     
     function t(key) { return translations[currentLang][key] || key; }
-    function formatPriceForProp(prop, isRent = false) { let value = isRent ? prop.priceRent : prop.price; return value === 0 ? "Consultar" : formatPriceWithCurrency(value, prop.currency); }
-    
-    function openInfoModal(property) {
-      const title = currentLang === 'es' ? property.title_es : property.title_en;
-      const description = currentLang === 'es' ? property.description_es : property.description_en;
-      const price = property.category === 'venta' ? formatPriceForProp(property) : formatPriceForProp(property, true);
-      const youtubeId = property.media.find(m => m && m.type === 'video')?.videoId || 'dQw4w9WgXcQ';
-      const infoHtml = `
-        <div class="info-title">${title}</div>
-        <div class="info-price">${price}</div>
-        <div class="info-details-grid">
-          <span class="info-detail-item"><i class="fas fa-arrows-alt"></i> ${property.m2} m²</span>
-          <span class="info-detail-item"><i class="fas fa-bed"></i> ${property.cuartos} ${currentLang==='es'?'hab':'beds'}</span>
-          <span class="info-detail-item"><i class="fas fa-bath"></i> ${property.baños} ${currentLang==='es'?'baños':'baths'}</span>
-        </div>
-        <div class="info-description">${description}</div>
-        <div class="info-media"><iframe src="https://www.youtube.com/embed/${youtubeId}" frameborder="0" allowfullscreen></iframe></div>
-        <div class="info-links">
-          <a href="${property.infoUrl}" target="_blank"><i class="fas fa-globe"></i> ${currentLang==='es'?'Más detalles':'More info'}</a>
-          <a href="${property.mapsUrl}" target="_blank"><i class="fas fa-map-marker-alt"></i> ${currentLang==='es'?'Ver mapa':'View map'}</a>
-        </div>
-      `;
-      document.getElementById('infoPanelContainer').innerHTML = infoHtml;
-      document.getElementById('infoModal').style.display = 'flex';
+    function formatPriceForProp(prop, isRent = false) {
+      let value = isRent ? prop.priceRent : prop.price;
+      if(value === 0) return "Consultar";
+      return formatPriceWithCurrency(value, prop.currency);
     }
     
-    function generarPopupHTML(property){ 
-      const title = currentLang === 'es' ? property.title_es : property.title_en;
-      const description = currentLang === 'es' ? property.description_es : property.description_en;
-      const displayPrice = property.category==='venta' ? formatPriceForProp(property) : formatPriceForProp(property, true);
-      const actionText = property.category==='venta' ? t('offer_btn_venta') : t('offer_btn_arriendo'); 
-      const actionIcon = property.category==='venta' ? 'fa-cart-shopping' : 'fa-key'; 
-      if(currentIndices[property.id]===undefined) currentIndices[property.id]=0; 
-      const idx=currentIndices[property.id]; const media=property.media[idx]; 
-      let mediaHtml=''; 
-      if(typeof media==='string') mediaHtml=`<img src="${media}" alt="${title}" class="popup-product-image">`; 
-      else if(media.type==='video') mediaHtml=`<div class="popup-video-container"><iframe src="https://www.youtube.com/embed/${media.videoId}?autoplay=0" frameborder="0" allowfullscreen></iframe></div>`; 
-      return `<div class="popup-product-card" data-id="${property.id}"><div class="popup-product-image-container" id="popup-img-container-${property.id}">${mediaHtml}<div class="popup-image-nav"><button class="popup-nav-btn popup-prev-btn" data-id="${property.id}"><i class="fas fa-chevron-left"></i></button><button class="popup-nav-btn popup-next-btn" data-id="${property.id}"><i class="fas fa-chevron-right"></i></button></div><div class="popup-image-counter">${idx+1}/${property.media.length}</div></div><div class="popup-product-info"><h3 class="popup-product-title">${title}</h3><div class="precio-line"><span class="popup-product-price">${displayPrice}</span><div class="enlaces-secundarios"><a href="#" class="enlace-info info-modal-trigger" data-id="${property.id}"><i class="fas fa-circle-info"></i> ${t('info_btn')}</a><a href="${property.mapsUrl}" target="_blank" class="enlace-mapa"><i class="fas fa-location-dot"></i></a></div></div><div class="popup-product-details"><span><i class="fas fa-arrows-alt"></i> ${property.m2} m²</span><span><i class="fas fa-bed"></i> ${property.cuartos} ${currentLang==='es'?'hab':'beds'}</span><span><i class="fas fa-bath"></i> ${property.baños} ${currentLang==='es'?'baños':'baths'}</span></div><p style="font-size:0.7rem; margin-bottom:0.6rem;">${description}</p><div class="popup-product-actions"><button class="popup-add-to-cart" data-id="${property.id}"><i class="fas fa-calendar-check"></i> ${t('visit_btn')}</button><button class="popup-buy-now" data-id="${property.id}"><i class="${actionIcon}"></i> ${actionText}</button></div></div></div>`; 
+    function centrarMapaRapido() {
+      if (navigator.geolocation) {
+        // Mostrar feedback visual
+        const btn = document.getElementById('centrar-btn');
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span id="centrar-text">OBTENIENDO...</span>';
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            const { latitude, longitude } = pos.coords;
+            if (userMarker) mapa.removeLayer(userMarker);
+            userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'es' ? 'Tu ubicación actual' : 'Your current location');
+            mapa.setView([latitude, longitude], 16);
+            btn.innerHTML = originalHtml;
+          },
+          err => {
+            console.warn("Geolocation error:", err);
+            btn.innerHTML = originalHtml;
+            mapa.setView([20, 0], 2);
+            alert(currentLang === 'es' ? 'No se pudo obtener tu ubicación. Se mostrará vista global.' : 'Could not get your location. Showing global view.');
+          },
+          { enableHighAccuracy: true, timeout: 7000, maximumAge: 0 }
+        );
+      } else {
+        mapa.setView([20, 0], 2);
+      }
     }
     
     function openOfertaModal(property){ 
@@ -554,7 +501,7 @@
       formHtml += `<div class="form-group"><label>${t('precio_fijo')}</label><div class="fixed-price-field"><strong>${displayPrice}</strong></div></div>`;
       if(property.category === 'venta' && property.price > 0) {
         formHtml += `<div class="form-group"><label>MÉTODO DE PAGO</label><div class="radio-group" id="paymentMethodGroup"><label><input type="radio" name="paymentMethod" value="contado" checked> ${t('pago_contado')}</label><label><input type="radio" name="paymentMethod" value="credito"> ${t('pago_credito')}</label></div></div>`;
-        formHtml += `<div id="creditSection" style="display:none;"><div class="form-group"><label>${t('valor_inicial')}</label><input type="number" id="initialAmount" step="100000" value="${defaultInitial}" min="${defaultInitial}" max="${basePriceNum}"><small style="color:#555; display:block;">Mínimo: ${formatPriceWithCurrency(defaultInitial, property.currency)} (30%)</small></div><div class="form-group"><label>${t('opciones_financiacion')}</label><div class="financing-option"><label><input type="radio" name="financingOption" value="${t('cesantias')}"> ${t('cesantias')}</label><label><input type="radio" name="financingOption" value="${t('credito_preaprobado')}"> ${t('credito_preaprobado')}</label><label><input type="radio" name="financingOption" value="${t('solicitar_credito')}"> ${t('solicitar_credito')}</label></div></div></div>`;
+        formHtml += `<div id="creditSection" style="display:none;"><div class="form-group"><label>${t('valor_inicial')}</label><input type="number" id="initialAmount" step="100000" value="${defaultInitial}" min="${defaultInitial}" max="${basePriceNum}"><small style="color:#555;">Mínimo: ${formatPriceWithCurrency(defaultInitial, property.currency)} (30%)</small></div><div class="form-group"><label>${t('opciones_financiacion')}</label><div class="financing-option"><label><input type="radio" name="financingOption" value="${t('cesantias')}"> ${t('cesantias')}</label><label><input type="radio" name="financingOption" value="${t('credito_preaprobado')}"> ${t('credito_preaprobado')}</label><label><input type="radio" name="financingOption" value="${t('solicitar_credito')}"> ${t('solicitar_credito')}</label></div></div></div>`;
       }
       formHtml += `<div class="form-group"><label>${t('nombre_label')}</label><input type="text" id="ofertaNombre" placeholder="${currentLang==='es'?'Ej: Juan Pérez':'Ex: John Doe'}"></div><div class="form-group"><label>${t('telefono_label')}</label><input type="tel" id="ofertaTelefono" placeholder="3001234567"></div><div class="form-group"><label>${t('email_label')}</label><input type="email" id="ofertaEmail"></div><div class="form-group"><label>${t('codigo_agente_label')}</label><input type="text" id="ofertaCodigoAgente" placeholder="${currentLang==='es'?'Ej: AGENTE123':'Ex: AGENT123'}"></div><div class="form-group"><label>${t('comentarios_label')}</label><textarea rows="2" id="ofertaComentarios" placeholder="${currentLang==='es'?'Ej: Requiero financiación...':'Ex: I need financing...'}"></textarea></div><button class="btn-submit" id="submitOferta">${t('submit_oferta')}</button>`;
       container.innerHTML = formHtml;
@@ -562,9 +509,11 @@
       if(property.category === 'venta' && property.price > 0) {
         let radios = document.querySelectorAll('#paymentMethodGroup input');
         let creditDiv = document.getElementById('creditSection');
+        let initialInput = document.getElementById('initialAmount');
         function toggleCredit() { let selected = document.querySelector('input[name="paymentMethod"]:checked').value; creditDiv.style.display = selected === 'credito' ? 'block' : 'none'; }
         radios.forEach(r => r.addEventListener('change', toggleCredit));
         toggleCredit();
+        if(initialInput) initialInput.addEventListener('change', function() { let val = parseFloat(this.value); if(isNaN(val)) this.value = defaultInitial; else if(val < defaultInitial) { alert(`Mínimo inicial: ${formatPriceWithCurrency(defaultInitial, property.currency)}`); this.value = defaultInitial; } else if(val > basePriceNum) { alert(`No puede exceder el precio total`); this.value = basePriceNum; } });
       }
       document.getElementById('submitOferta').addEventListener('click',()=>{ 
         let nombre=document.getElementById('ofertaNombre').value.trim(), tel=document.getElementById('ofertaTelefono').value.trim(), email=document.getElementById('ofertaEmail').value.trim(), coment=document.getElementById('ofertaComentarios').value.trim(), codigoAgente=document.getElementById('ofertaCodigoAgente').value.trim(); 
@@ -580,14 +529,62 @@
             paymentDetails = `\n💰 Método: ${t('pago_credito')}\n💵 Inicial: ${formatPriceWithCurrency(parseInt(initialVal), property.currency)}\n🏦 Financiación: ${selectedFin}`;
           }
         }
-        let msg = `🏠 COMPRA: ${title}\n👤 ${nombre}\n📱 ${tel}\n✉️ ${email}\n📝 ${coment||(currentLang==='es'?'Sin comentarios':'No comments')}\n${codigoAgente ? `🆔 Agent Code: ${codigoAgente}` : ''}${paymentDetails}`; 
+        let msg = `🏠 OFERTA: ${title}\n👤 ${nombre}\n📱 ${tel}\n✉️ ${email}\n📝 ${coment||(currentLang==='es'?'Sin comentarios':'No comments')}\n${codigoAgente ? `🆔 Agent Code: ${codigoAgente}` : ''}${paymentDetails}`; 
         window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); 
         modal.style.display='none'; 
       }); 
       modal.style.display='flex'; 
     }
     
-    function openVisitaModal(property) { 
+    // Resto de funciones (renderCalendar, renderHorarios, showTermsModal, openVisitaModal, updateMedia, generarPopupHTML, refreshAllPopups, updateUILanguage, initMap, buscarInmuebles) se mantienen iguales pero usando las nuevas funciones de moneda
+    
+    function generarPopupHTML(property){ 
+      const title = currentLang === 'es' ? property.title_es : property.title_en;
+      const description = currentLang === 'es' ? property.description_es : property.description_en;
+      const displayPrice = property.category==='venta' ? formatPriceForProp(property) : formatPriceForProp(property, true);
+      const actionText = property.category==='venta'?t('offer_btn_venta'):t('offer_btn_arriendo'); 
+      const actionIcon = property.category==='venta'?'fa-hand-holding-usd':'fa-key'; 
+      if(currentIndices[property.id]===undefined) currentIndices[property.id]=0; 
+      const idx=currentIndices[property.id]; const media=property.media[idx]; 
+      let mediaHtml=''; 
+      if(typeof media==='string') mediaHtml=`<img src="${media}" alt="${title}" class="popup-product-image">`; 
+      else if(media.type==='video') mediaHtml=`<div class="popup-video-container"><iframe src="https://www.youtube.com/embed/${media.videoId}?autoplay=0" frameborder="0" allowfullscreen></iframe></div>`; 
+      return `<div class="popup-product-card" data-id="${property.id}"><div class="popup-product-image-container" id="popup-img-container-${property.id}">${mediaHtml}<div class="popup-image-nav"><button class="popup-nav-btn popup-prev-btn" data-id="${property.id}"><i class="fas fa-chevron-left"></i></button><button class="popup-nav-btn popup-next-btn" data-id="${property.id}"><i class="fas fa-chevron-right"></i></button></div><div class="popup-image-counter">${idx+1}/${property.media.length}</div></div><div class="popup-product-info"><h3 class="popup-product-title">${title}</h3><div class="precio-line"><span class="popup-product-price">${displayPrice}</span><div class="enlaces-secundarios"><a href="${property.infoUrl}" target="_blank" class="enlace-info"><i class="fas fa-key"></i> ${t('info_btn')}</a><a href="${property.mapsUrl}" target="_blank" class="enlace-mapa"><i class="fas fa-location-dot"></i></a></div></div><div class="popup-product-details"><span><i class="fas fa-arrows-alt"></i> ${property.m2} m²</span><span><i class="fas fa-bed"></i> ${property.cuartos} ${currentLang==='es'?'hab':'beds'}</span><span><i class="fas fa-bath"></i> ${property.baños} ${currentLang==='es'?'baños':'baths'}</span></div><p style="font-size:0.7rem; margin-bottom:0.6rem;">${description}</p><div class="popup-product-actions"><button class="popup-add-to-cart" data-id="${property.id}"><i class="fas fa-calendar-check"></i> ${t('visit_btn')}</button><button class="popup-buy-now" data-id="${property.id}"><i class="${actionIcon}"></i> ${actionText}</button></div></div></div>`; 
+    }
+    
+    function updateUILanguage() {
+      document.getElementById('buscador').placeholder = t('buscar_placeholder');
+      document.getElementById('centrar-text').innerText = t('centrar');
+      document.getElementById('servicios-text').innerText = t('servicios');
+      document.getElementById('map-text').innerText = t('mapa');
+      document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('servicios-modal-title').innerText = t('servicios_titulo');
+      document.getElementById('serv-agentes').innerText = t('agentes');
+      document.getElementById('serv-rentas').innerText = t('rentas');
+      document.getElementById('serv-ventas').innerText = t('ventas');
+      document.getElementById('serv-hipotecas').innerText = t('hipotecas');
+      document.getElementById('serv-construccion').innerText = t('construccion');
+      document.getElementById('serv-credito').innerText = t('credito');
+      document.getElementById('serv-inversion').innerText = t('inversion');
+      document.getElementById('serv-avaluos').innerText = t('avaluos');
+      document.getElementById('terms-title').innerText = t('terms_title');
+      document.getElementById('terms-text').innerText = t('terms_text');
+      document.getElementById('closeTermsBtn').innerText = t('terms_accept');
+      refreshAllPopups();
+    }
+    
+    function refreshAllPopups() { marcadoresOriginales.forEach(marker => { let prop = marker.datosInmueble; let newPopup = generarPopupHTML(prop); marker.bindPopup(newPopup, {maxWidth:440, className:'custom-popup'}); }); }
+    
+    function initMap(){ 
+      mapa=L.map('mapa',{center:[20, 0],zoom:2,zoomControl:false}); 
+      googleMapsLayer=L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{maxZoom:20,subdomains:['mt0','mt1','mt2','mt3']}); 
+      googleSatelliteLayer=L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{maxZoom:20,subdomains:['mt0','mt1','mt2','mt3']}); 
+      currentLayer=googleMapsLayer; currentLayer.addTo(mapa); 
+      let clusters=L.markerClusterGroup({iconCreateFunction:cluster=>L.divIcon({html:`<div>${cluster.getChildCount()}</div>`,className:'cluster-marcadores',iconSize:[40,40]})}); 
+      let icono=L.divIcon({className:'inmueble-marker',html:'🔑',iconSize:[32,32],popupAnchor:[0,-16]}); 
+      properties.forEach(prop=>{ let popup=generarPopupHTML(prop); let marker=L.marker(prop.latlng,{icon:icono}).bindPopup(popup,{maxWidth:440,className:'custom-popup'}); marker.datosInmueble=prop; marker.datosBusqueda=`${prop.title_es} ${prop.title_en} ${prop.description_es} ${prop.description_en}`.toLowerCase(); marcadoresOriginales.push(marker); marker.on('popupopen',()=>{ setTimeout(()=>{ let node=document.querySelector('.custom-popup'); if(node){ let prev=node.querySelector(`.popup-prev-btn[data-id="${prop.id}"]`), next=node.querySelector(`.popup-next-btn[data-id="${prop.id}"]`); if(prev) prev.addEventListener('click',(e)=>{e.stopPropagation(); let idx=(currentIndices[prop.id]-1+prop.media.length)%prop.media.length; updateMediaInPopup(prop.id,idx);}); if(next) next.addEventListener('click',(e)=>{e.stopPropagation(); let idx=(currentIndices[prop.id]+1)%prop.media.length; updateMediaInPopup(prop.id,idx);}); let visaBtn=node.querySelector(`.popup-add-to-cart[data-id="${prop.id}"]`), offerBtn=node.querySelector(`.popup-buy-now[data-id="${prop.id}"]`); if(visaBtn) visaBtn.addEventListener('click',(e)=>{e.preventDefault(); openVisitaModal(prop); mapa.closePopup();}); if(offerBtn) offerBtn.addEventListener('click',(e)=>{e.preventDefault(); openOfertaModal(prop); mapa.closePopup();}); } },100); }); clusters.addLayer(marker); }); mapa.addLayer(clusters); }
+    
+    function openVisitaModal(property) { /* misma implementación robusta pero sin cambios en moneda, solo para mantener coherencia */ 
       currentProperty=property; selectedDate=null; selectedHorario=null; currentYear=new Date().getFullYear(); currentMonth=new Date().getMonth(); 
       let modal=document.getElementById('visitaModal'), container=document.getElementById('visitaFormContainer'); 
       let title = currentLang === 'es' ? property.title_es : property.title_en;
@@ -601,91 +598,32 @@
       document.getElementById('submitVisita').addEventListener('click',()=>{ 
         let nombre=document.getElementById('visitaNombre').value.trim(), telefono=document.getElementById('visitaTelefono').value.trim(), email=document.getElementById('visitaEmail').value.trim(), codigoAgente=document.getElementById('visitaCodigoAgente').value.trim(), termsChecked=document.getElementById('visitaTerms').checked; 
         if(!nombre||!telefono){alert(currentLang==='es'?'Completa nombre y teléfono':'Complete name and phone'); return;} if(!termsChecked){alert(currentLang==='es'?'Acepta términos':'Accept terms'); return;} if(!selectedDate){alert(currentLang==='es'?'Selecciona fecha':'Select date'); return;} if(!selectedHorario){alert(currentLang==='es'?'Selecciona horario':'Select time'); return;} 
-        let fecha=new Date(selectedDate).toLocaleDateString(currentLang==='es'?'es-ES':'en-US'); let msg=`🏠 VISITA: ${title}\n👤 ${nombre}\n📱 ${telefono}\n✉️ ${email||'No'}\n📅 ${fecha} ⏰ ${selectedHorario}\n${codigoAgente ? `🆔 Agent Code: ${codigoAgente}` : ''}`; 
+        let fecha=new Date(selectedDate).toLocaleDateString(currentLang==='es'?'es-ES':'en-US'); let msg=`🏠 VISIT: ${title}\n👤 ${nombre}\n📱 ${telefono}\n✉️ ${email||'No'}\n📅 ${fecha} ⏰ ${selectedHorario}\n${codigoAgente ? `🆔 Agent Code: ${codigoAgente}` : ''}`; 
         window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); modal.style.display='none'; 
       }); modal.style.display='flex'; 
     }
-    
-    function renderCalendar(container) { 
-      let days=getDaysForMonth(currentYear,currentMonth); 
-      let monthSpan=container.querySelector('.month-year'); 
-      if(monthSpan) monthSpan.innerText=`${getMonthName(currentMonth)} ${currentYear}`; 
-      let daysGrid=container.querySelector('.days-grid'); 
-      if(!daysGrid) return; 
-      daysGrid.innerHTML=''; 
-      let weekdays = getWeekdays(); 
-      let weekdayHeaders = container.querySelector('.weekdays'); 
-      if(weekdayHeaders) weekdayHeaders.innerHTML = weekdays.map(d => `<span>${d}</span>`).join(''); 
-      days.forEach(cell=>{ 
-        let div=document.createElement('div'); 
-        let className='day-cell'; 
-        if(!cell.currentMonth) className+=' other-month'; 
-        if(!cell.isSelectable) className+=' disabled'; 
-        else className+=' available'; 
-        div.className=className; 
-        div.innerText=cell.day; 
-        if(cell.isSelectable){ 
-          div.addEventListener('click',(function(dateStr){ return function(){ document.querySelectorAll('#visitaFormContainer .day-cell').forEach(el=>el.classList.remove('selected')); div.classList.add('selected'); selectedDate=dateStr; let horariosContainer=document.querySelector('#visitaFormContainer .horarios-list'); if(horariosContainer) renderHorarios(horariosContainer); }; })(cell.dateStr)); 
-          if(selectedDate===cell.dateStr) div.classList.add('selected'); 
-        } daysGrid.appendChild(div); 
-      }); 
-    }
-    function renderHorarios(horariosContainer) { 
-      if(!horariosContainer) return; 
-      if(!selectedDate){ horariosContainer.innerHTML=`<div style="padding:0.6rem; text-align:center;">📅 ${t('select_date')}</div>`; return; } 
-      horariosContainer.innerHTML=''; 
-      allHorarios.forEach(slot=>{ 
-        let badge=document.createElement('span'); badge.className='horario-badge'; badge.innerText=slot; 
-        if(selectedHorario===slot) badge.classList.add('selected'); 
-        badge.addEventListener('click',()=>{ document.querySelectorAll('#visitaFormContainer .horario-badge').forEach(b=>b.classList.remove('selected')); badge.classList.add('selected'); selectedHorario=slot; }); 
-        horariosContainer.appendChild(badge); 
-      }); 
-    }
+    function renderCalendar(container) { /* ... igual que antes ... */ let days=getDaysForMonth(currentYear,currentMonth); let monthSpan=container.querySelector('.month-year'); if(monthSpan) monthSpan.innerText=`${getMonthName(currentMonth)} ${currentYear}`; let daysGrid=container.querySelector('.days-grid'); if(!daysGrid) return; daysGrid.innerHTML=''; let weekdays = getWeekdays(); let weekdayHeaders = container.querySelector('.weekdays'); if(weekdayHeaders) { weekdayHeaders.innerHTML = weekdays.map(d => `<span>${d}</span>`).join(''); } days.forEach(cell=>{ let div=document.createElement('div'); let className='day-cell'; if(!cell.currentMonth) className+=' other-month'; if(!cell.isSelectable) className+=' disabled'; else className+=' available'; div.className=className; div.innerText=cell.day; if(cell.isSelectable){ div.addEventListener('click',(function(dateStr){ return function(){ document.querySelectorAll('#visitaFormContainer .day-cell').forEach(el=>el.classList.remove('selected')); div.classList.add('selected'); selectedDate=dateStr; let horariosContainer=document.querySelector('#visitaFormContainer .horarios-list'); if(horariosContainer) renderHorarios(horariosContainer); }; })(cell.dateStr)); if(selectedDate===cell.dateStr) div.classList.add('selected'); } daysGrid.appendChild(div); }); }
+    function renderHorarios(horariosContainer) { if(!horariosContainer) return; if(!selectedDate){ horariosContainer.innerHTML=`<div style="padding:0.6rem; text-align:center;">📅 ${t('select_date')}</div>`; return; } horariosContainer.innerHTML=''; allHorarios.forEach(slot=>{ let badge=document.createElement('span'); badge.className='horario-badge'; badge.innerText=slot; if(selectedHorario===slot) badge.classList.add('selected'); badge.addEventListener('click',()=>{ document.querySelectorAll('#visitaFormContainer .horario-badge').forEach(b=>b.classList.remove('selected')); badge.classList.add('selected'); selectedHorario=slot; }); horariosContainer.appendChild(badge); }); }
     function getMonthName(month) { return t('monthNames')[month]; }
     function getWeekdays() { return t('weekdays'); }
-    function getDaysForMonth(year, month) { 
-      const firstDay = new Date(year, month, 1); let startWeekday = firstDay.getDay(); let offset = (startWeekday === 0 ? 6 : startWeekday - 1); const daysInMonth = new Date(year, month+1, 0).getDate(), prevMonthDays = new Date(year, month, 0).getDate(); let days = []; 
-      for(let i=0;i<offset;i++){ let dayNum = prevMonthDays - offset + i + 1, prevMonth=month-1, prevYear=year; if(prevMonth<0){prevMonth=11; prevYear--;} let dateStr=`${prevYear}-${String(prevMonth+1).padStart(2,'0')}-${String(dayNum).padStart(2,'0')}`; days.push({day:dayNum, isSelectable:!isDateInPast(dateStr), dateStr, currentMonth:false}); } 
-      for(let d=1;d<=daysInMonth;d++){ let dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; days.push({day:d, isSelectable:!isDateInPast(dateStr), dateStr, currentMonth:true}); } 
-      let remaining=42-days.length; for(let i=1;i<=remaining;i++){ let nextMonth=month+1, nextYear=year; if(nextMonth>11){nextMonth=0; nextYear++;} let dateStr=`${nextYear}-${String(nextMonth+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`; days.push({day:i, isSelectable:!isDateInPast(dateStr), dateStr, currentMonth:false}); } 
-      return days; 
-    }
+    function getDaysForMonth(year, month) { const firstDay = new Date(year, month, 1); let startWeekday = firstDay.getDay(); let offset = (startWeekday === 0 ? 6 : startWeekday - 1); const daysInMonth = new Date(year, month+1, 0).getDate(), prevMonthDays = new Date(year, month, 0).getDate(); let days = []; for(let i=0;i<offset;i++){ let dayNum = prevMonthDays - offset + i + 1, prevMonth=month-1, prevYear=year; if(prevMonth<0){prevMonth=11; prevYear--;} let dateStr=`${prevYear}-${String(prevMonth+1).padStart(2,'0')}-${String(dayNum).padStart(2,'0')}`; days.push({day:dayNum, isSelectable:!isDateInPast(dateStr), dateStr, currentMonth:false}); } for(let d=1;d<=daysInMonth;d++){ let dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; days.push({day:d, isSelectable:!isDateInPast(dateStr), dateStr, currentMonth:true}); } let remaining=42-days.length; for(let i=1;i<=remaining;i++){ let nextMonth=month+1, nextYear=year; if(nextMonth>11){nextMonth=0; nextYear++;} let dateStr=`${nextYear}-${String(nextMonth+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`; days.push({day:i, isSelectable:!isDateInPast(dateStr), dateStr, currentMonth:false}); } return days; }
     function isDateInPast(dateStr) { let date = new Date(dateStr); date.setHours(0,0,0,0); return date < today; }
     function showTermsModal() { document.getElementById('termsModal').style.display='flex'; }
     function closeTermsModal() { document.getElementById('termsModal').style.display='none'; }
-    function updateMediaInPopup(propertyId, newIndex){ 
-      const property=properties.find(p=>p.id===propertyId); if(!property) return; const popupNode=document.querySelector('.custom-popup'); if(!popupNode) return; const container=popupNode.querySelector(`#popup-img-container-${propertyId}`); if(!container) return; 
-      const mediaItem=property.media[newIndex]; const navDiv=container.querySelector('.popup-image-nav'); const counterDiv=container.querySelector('.popup-image-counter'); const existing=container.querySelector('.popup-product-image, .popup-video-container'); if(existing) existing.remove(); 
-      if(typeof mediaItem === 'string'){ const img=document.createElement('img'); img.src=mediaItem; img.alt=property.title_es; img.className='popup-product-image'; container.insertBefore(img, navDiv); } else if(mediaItem.type==='video'){ const videoDiv=document.createElement('div'); videoDiv.className='popup-video-container'; videoDiv.innerHTML=`<iframe src="https://www.youtube.com/embed/${mediaItem.videoId}?autoplay=0" frameborder="0" allowfullscreen></iframe>`; container.insertBefore(videoDiv, navDiv); } 
-      if(counterDiv) counterDiv.textContent=`${newIndex+1}/${property.media.length}`; currentIndices[propertyId]=newIndex; 
-    }
-    
-    function initMap(){ 
-      mapa=L.map('mapa',{center:[20, 0],zoom:2,zoomControl:false}); 
-      let googleMapsLayer=L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{maxZoom:20,subdomains:['mt0','mt1','mt2','mt3']}); 
-      let googleSatelliteLayer=L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{maxZoom:20,subdomains:['mt0','mt1','mt2','mt3']}); 
-      currentLayer=googleMapsLayer; currentLayer.addTo(mapa); 
-      let clusters=L.markerClusterGroup({iconCreateFunction:cluster=>L.divIcon({html:`<div>${cluster.getChildCount()}</div>`,className:'cluster-marcadores',iconSize:[40,40]})}); 
-      let icono=L.divIcon({className:'inmueble-marker',html:'🔑',iconSize:[32,32],popupAnchor:[0,-16]}); 
-      properties.forEach(prop=>{ let popup=generarPopupHTML(prop); let marker=L.marker(prop.latlng,{icon:icono}).bindPopup(popup,{maxWidth:440,className:'custom-popup'}); marker.datosInmueble=prop; marker.datosBusqueda=`${prop.title_es} ${prop.title_en} ${prop.description_es} ${prop.description_en}`.toLowerCase(); marcadoresOriginales.push(marker); marker.on('popupopen',()=>{ setTimeout(()=>{ let node=document.querySelector('.custom-popup'); if(node){ let prev=node.querySelector(`.popup-prev-btn[data-id="${prop.id}"]`), next=node.querySelector(`.popup-next-btn[data-id="${prop.id}"]`); if(prev) prev.addEventListener('click',(e)=>{e.stopPropagation(); let idx=(currentIndices[prop.id]-1+prop.media.length)%prop.media.length; updateMediaInPopup(prop.id,idx);}); if(next) next.addEventListener('click',(e)=>{e.stopPropagation(); let idx=(currentIndices[prop.id]+1)%prop.media.length; updateMediaInPopup(prop.id,idx);}); let infoTrigger=node.querySelector(`.info-modal-trigger[data-id="${prop.id}"]`); if(infoTrigger) infoTrigger.addEventListener('click',(e)=>{ e.preventDefault(); openInfoModal(prop); mapa.closePopup();}); let visaBtn=node.querySelector(`.popup-add-to-cart[data-id="${prop.id}"]`), offerBtn=node.querySelector(`.popup-buy-now[data-id="${prop.id}"]`); if(visaBtn) visaBtn.addEventListener('click',(e)=>{e.preventDefault(); openVisitaModal(prop); mapa.closePopup();}); if(offerBtn) offerBtn.addEventListener('click',(e)=>{e.preventDefault(); openOfertaModal(prop); mapa.closePopup();}); } },100); }); clusters.addLayer(marker); }); mapa.addLayer(clusters); }
-    
-    function centrarMapaRapido() { if (navigator.geolocation) { navigator.geolocation.getCurrentPosition(pos => { if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([pos.coords.latitude, pos.coords.longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'es' ? 'Tu ubicación actual' : 'Your current location'); mapa.setView([pos.coords.latitude, pos.coords.longitude], 16); }, err => mapa.setView([20, 0], 2), { enableHighAccuracy: true, timeout: 7000 }); } else mapa.setView([20, 0], 2); }
-    
-    function updateUILanguage() { document.getElementById('buscador').placeholder = t('buscar_placeholder'); document.getElementById('centrar-text').innerText = t('centrar'); document.getElementById('servicios-text').innerText = t('servicios'); document.getElementById('map-text').innerText = t('mapa'); document.getElementById('satellite-text').innerText = t('satelite'); document.getElementById('servicios-modal-title').innerText = t('servicios_titulo'); document.querySelectorAll('#servicios-modal .servicio-btn').forEach((btn,i)=>{ let texts=[t('agentes'),t('rentas'),t('ventas'),t('hipotecas'),t('construccion'),t('credito'),t('inversion'),t('avaluos')]; if(btn.innerText) btn.innerText = texts[i]; }); document.getElementById('terms-title').innerText = t('terms_title'); document.getElementById('terms-text').innerText = t('terms_text'); document.getElementById('closeTermsBtn').innerText = t('terms_accept'); refreshAllPopups(); }
-    function refreshAllPopups() { marcadoresOriginales.forEach(marker => { let prop = marker.datosInmueble; let newPopup = generarPopupHTML(prop); marker.bindPopup(newPopup, {maxWidth:440, className:'custom-popup'}); }); }
+    function updateMediaInPopup(propertyId, newIndex){ const property=properties.find(p=>p.id===propertyId); if(!property) return; const popupNode=document.querySelector('.custom-popup'); if(!popupNode) return; const container=popupNode.querySelector(`#popup-img-container-${propertyId}`); if(!container) return; const mediaItem=property.media[newIndex]; const navDiv=container.querySelector('.popup-image-nav'); const counterDiv=container.querySelector('.popup-image-counter'); const existing=container.querySelector('.popup-product-image, .popup-video-container'); if(existing) existing.remove(); if(typeof mediaItem === 'string'){ const img=document.createElement('img'); img.src=mediaItem; img.alt=property.title_es; img.className='popup-product-image'; container.insertBefore(img, navDiv); } else if(mediaItem.type==='video'){ const videoDiv=document.createElement('div'); videoDiv.className='popup-video-container'; videoDiv.innerHTML=`<iframe src="https://www.youtube.com/embed/${mediaItem.videoId}?autoplay=0" frameborder="0" allowfullscreen></iframe>`; container.insertBefore(videoDiv, navDiv); } if(counterDiv) counterDiv.textContent=`${newIndex+1}/${property.media.length}`; currentIndices[propertyId]=newIndex; }
     function buscarInmuebles(q){ let term=q.toLowerCase(); let resultados=marcadoresOriginales.filter(m=>m.datosBusqueda.includes(term)); let sugerenciasDiv=document.getElementById('sugerencias-busqueda'); if(resultados.length){ sugerenciasDiv.innerHTML=''; resultados.forEach(m=>{ let title = currentLang === 'es' ? m.datosInmueble.title_es : m.datosInmueble.title_en; let desc = currentLang === 'es' ? m.datosInmueble.description_es : m.datosInmueble.description_en; let item=document.createElement('div'); item.className='sugerencia-item'; item.innerHTML=`<div class="sugerencia-texto"><strong>🔑 ${title}</strong><br><small>${desc}</small></div><button class="sugerencia-boton" data-id="${m.datosInmueble.id}">${currentLang==='es'?'Ver':'View'}</button>`; let btn=item.querySelector('.sugerencia-boton'); btn.addEventListener('click',(e)=>{ e.stopPropagation(); mapa.setView(m.getLatLng(),16); m.openPopup(); document.getElementById('buscador').value=title; sugerenciasDiv.style.display='none'; }); item.addEventListener('click',()=>{ mapa.setView(m.getLatLng(),16); m.openPopup(); document.getElementById('buscador').value=title; sugerenciasDiv.style.display='none'; }); sugerenciasDiv.appendChild(item); }); } else { sugerenciasDiv.innerHTML=`<div class="sugerencia-item">${t('no_results')}</div>`; } }
     
     document.addEventListener('DOMContentLoaded',()=>{ 
       initMap(); updateUILanguage();
       document.getElementById('centrar-btn').addEventListener('click',centrarMapaRapido);
       document.getElementById('servicios-btn').addEventListener('click',()=>document.getElementById('serviciosModal').style.display='flex'); 
-      document.getElementById('map-btn').addEventListener('click',()=>{ mapa.removeLayer(currentLayer); currentLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{maxZoom:20,subdomains:['mt0','mt1','mt2','mt3']}); currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
-      document.getElementById('satellite-btn').addEventListener('click',()=>{ mapa.removeLayer(currentLayer); currentLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{maxZoom:20,subdomains:['mt0','mt1','mt2','mt3']}); currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      document.getElementById('map-btn').addEventListener('click',()=>{ mapa.removeLayer(currentLayer); currentLayer=googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click',()=>{ mapa.removeLayer(currentLayer); currentLayer=googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
       document.getElementById('closeServiciosBtn').addEventListener('click',()=>document.getElementById('serviciosModal').style.display='none'); 
       window.addEventListener('click',(e)=>{if(e.target===document.getElementById('serviciosModal')) document.getElementById('serviciosModal').style.display='none';}); 
       document.querySelectorAll('.servicio-btn').forEach(btn=>{btn.addEventListener('click',function(){ let url=this.getAttribute('data-url'); if(url) window.open(url,'_blank');});}); 
       document.querySelectorAll('.lang-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); refreshAllPopups(); document.getElementById('buscador').value = ''; document.getElementById('sugerencias-busqueda').style.display = 'none'; }); });
-      let inputBuscar=document.getElementById('buscador'); inputBuscar.addEventListener('input',(e)=>{ clearTimeout(buscadorTimeout); let term=e.target.value.trim(); let sugDiv=document.getElementById('sugerencias-busqueda'); if(term.length<2){ sugDiv.style.display='none'; return; } sugDiv.innerHTML=`<div class="sugerencia-item">${t('searching')}</div>`; sugDiv.style.display='block'; buscadorTimeout=setTimeout(()=>buscarInmuebles(term),300); }); inputBuscar.addEventListener('keydown',(e)=>{if(e.key==='Enter'){ e.preventDefault(); let term=inputBuscar.value.trim(); if(term) buscarInmuebles(term); }}); document.addEventListener('click',(e)=>{ if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display='none'; }); document.querySelectorAll('.close-visita-modal, .close-oferta-modal, .close-info-modal').forEach(btn=>{btn.addEventListener('click',()=>{document.getElementById('visitaModal').style.display='none'; document.getElementById('ofertaModal').style.display='none'; document.getElementById('infoModal').style.display='none';});}); window.addEventListener('click',(e)=>{ if(e.target===document.getElementById('visitaModal')) document.getElementById('visitaModal').style.display='none'; if(e.target===document.getElementById('ofertaModal')) document.getElementById('ofertaModal').style.display='none'; if(e.target===document.getElementById('infoModal')) document.getElementById('infoModal').style.display='none'; if(e.target===document.getElementById('termsModal')) closeTermsModal(); }); document.getElementById('closeTermsBtn').addEventListener('click',closeTermsModal); 
+      let inputBuscar=document.getElementById('buscador'); inputBuscar.addEventListener('input',(e)=>{ clearTimeout(buscadorTimeout); let term=e.target.value.trim(); let sugDiv=document.getElementById('sugerencias-busqueda'); if(term.length<2){ sugDiv.style.display='none'; return; } sugDiv.innerHTML=`<div class="sugerencia-item">${t('searching')}</div>`; sugDiv.style.display='block'; buscadorTimeout=setTimeout(()=>buscarInmuebles(term),300); }); inputBuscar.addEventListener('keydown',(e)=>{if(e.key==='Enter'){ e.preventDefault(); let term=inputBuscar.value.trim(); if(term) buscarInmuebles(term); }}); document.addEventListener('click',(e)=>{ if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display='none'; }); document.querySelectorAll('.close-visita-modal, .close-oferta-modal').forEach(btn=>{btn.addEventListener('click',()=>{document.getElementById('visitaModal').style.display='none'; document.getElementById('ofertaModal').style.display='none';});}); window.addEventListener('click',(e)=>{ if(e.target===document.getElementById('visitaModal')) document.getElementById('visitaModal').style.display='none'; if(e.target===document.getElementById('ofertaModal')) document.getElementById('ofertaModal').style.display='none'; if(e.target===document.getElementById('termsModal')) closeTermsModal(); }); document.getElementById('closeTermsBtn').addEventListener('click',closeTermsModal); 
     });
   </script>
 </body>
