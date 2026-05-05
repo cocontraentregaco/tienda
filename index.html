@@ -330,7 +330,7 @@
       color: #111;
       font-size: 1rem;
     }
-    /* ===== ÚNICA CORRECCIÓN: CÍRCULOS Y TEXTO ALINEADO ===== */
+    /* ===== CORRECCIÓN: CÍRCULOS Y TEXTO ALINEADO ===== */
     .radio-group,
     .financing-option {
       display: flex;
@@ -577,7 +577,7 @@
         if(!selectedDate){alert(currentLang==='es'?'Selecciona fecha':'Select date'); return;} 
         if(!selectedHorario){alert(currentLang==='es'?'Selecciona horario':'Select time'); return;} 
         let fecha=new Date(selectedDate).toLocaleDateString(currentLang==='es'?'es-ES':'en-US'); 
-        let msg=`🏠 VISIT: ${title}\n👤 ${nombre}\n🆔 ${tipoId}: ${numeroId}\n📱 ${telefono}\n✉️ ${email||'No'}\n📅 ${fecha} ⏰ ${selectedHorario}\n${codigoAgente ? `🆔 Agent Code: ${codigoAgente}` : ''}`; 
+        let msg=`VISITA: ${title}\nNombre: ${nombre}\nIdentificacion: ${tipoId} ${numeroId}\nTelefono: ${telefono}\nEmail: ${email||'No'}\nFecha: ${fecha} Horario: ${selectedHorario}\n${codigoAgente ? `Agent Code: ${codigoAgente}` : ''}`; 
         window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); 
         modal.style.display='none'; 
       }); 
@@ -597,8 +597,8 @@
       let formHtml = `<div class="property-info"><h4>🏠 ${title}</h4><p>${property.m2} m² · ${property.cuartos} ${currentLang==='es'?'hab':'beds'} · ${property.baños} ${currentLang==='es'?'baños':'baths'}</p><p>${desc}</p></div><div class="step-title">${t('oferta_title')}</div>`;
       formHtml += `<div class="form-group"><label>${t('precio_fijo')}</label><div class="fixed-price-field"><strong>${displayPrice}</strong></div></div>`;
       if(property.category === 'venta' && property.price > 0) {
-        formHtml += `<div class="form-group"><label>MÉTODO DE PAGO</label><div class="radio-group" id="paymentMethodGroup"><label><input type="radio" name="paymentMethod" value="contado" checked> ${t('pago_contado')}</label><label><input type="radio" name="paymentMethod" value="credito"> ${t('pago_credito')}</label></div></div>`;
-        formHtml += `<div id="creditSection" style="display:none;"><div class="form-group"><label>${t('valor_inicial')}</label><input type="number" id="initialAmount" step="100000" value="${defaultInitial}" min="${defaultInitial}" max="${basePriceNum}"><small style="color:#555;">Mínimo: ${formatPriceWithCurrency(defaultInitial, property.currency)} (30%)</small></div><div class="form-group"><label>${t('opciones_financiacion')}</label><div class="financing-option"><label><input type="radio" name="financingOption" value="${t('cesantias')}"> ${t('cesantias')}</label><label><input type="radio" name="financingOption" value="${t('credito_preaprobado')}"> ${t('credito_preaprobado')}</label><label><input type="radio" name="financingOption" value="${t('solicitar_credito')}"> ${t('solicitar_credito')}</label></div></div></div>`;
+        formHtml += `<div class="form-group"><label>METODO DE PAGO</label><div class="radio-group" id="paymentMethodGroup"><label><input type="radio" name="paymentMethod" value="contado" checked> ${t('pago_contado')}</label><label><input type="radio" name="paymentMethod" value="credito"> ${t('pago_credito')}</label></div></div>`;
+        formHtml += `<div id="creditSection" style="display:none;"><div class="form-group"><label>${t('valor_inicial')}</label><input type="number" id="initialAmount" step="100000" value="${defaultInitial}" min="${defaultInitial}" max="${basePriceNum}"><small style="color:#555;">Minimo: ${formatPriceWithCurrency(defaultInitial, property.currency)} (30%)</small></div><div class="form-group"><label>${t('opciones_financiacion')}</label><div class="financing-option"><label><input type="radio" name="financingOption" value="${t('cesantias')}"> ${t('cesantias')}</label><label><input type="radio" name="financingOption" value="${t('credito_preaprobado')}"> ${t('credito_preaprobado')}</label><label><input type="radio" name="financingOption" value="${t('solicitar_credito')}"> ${t('solicitar_credito')}</label></div></div></div>`;
       }
       formHtml += `<div class="form-group"><label>${t('nombre_label')}</label><input type="text" id="ofertaNombre" placeholder="${currentLang==='es'?'Ej: Juan Pérez':'Ex: John Doe'}"></div>`;
       formHtml += `<div class="row-2cols"><div class="form-group"><label>${t('tipo_id')}</label><input type="text" id="ofertaTipoId" placeholder="${currentLang==='es'?'Ej: Cédula, Pasaporte...':'Ex: ID Card, Passport...'}"></div><div class="form-group"><label>${t('numero_id')}</label><input type="text" id="ofertaNumeroId" placeholder="${currentLang==='es'?'Ej: 12345678':'Ex: 12345678'}"></div></div>`;
@@ -612,7 +612,7 @@
         function toggleCredit() { let selected = document.querySelector('input[name="paymentMethod"]:checked').value; creditDiv.style.display = selected === 'credito' ? 'block' : 'none'; }
         radios.forEach(r => r.addEventListener('change', toggleCredit));
         toggleCredit();
-        if(initialInput) initialInput.addEventListener('change', function() { let val = parseFloat(this.value); if(isNaN(val)) this.value = defaultInitial; else if(val < defaultInitial) { alert(`Mínimo inicial: ${formatPriceWithCurrency(defaultInitial, property.currency)}`); this.value = defaultInitial; } else if(val > basePriceNum) { alert(`No puede exceder el precio total`); this.value = basePriceNum; } });
+        if(initialInput) initialInput.addEventListener('change', function() { let val = parseFloat(this.value); if(isNaN(val)) this.value = defaultInitial; else if(val < defaultInitial) { alert(`Minimo inicial: ${formatPriceWithCurrency(defaultInitial, property.currency)}`); this.value = defaultInitial; } else if(val > basePriceNum) { alert(`No puede exceder el precio total`); this.value = basePriceNum; } });
       }
       document.getElementById('submitOferta').addEventListener('click',()=>{ 
         let nombre=document.getElementById('ofertaNombre').value.trim(), tel=document.getElementById('ofertaTelefono').value.trim(), email=document.getElementById('ofertaEmail').value.trim(), coment=document.getElementById('ofertaComentarios').value.trim(), codigoAgente=document.getElementById('ofertaCodigoAgente').value.trim(); 
@@ -623,15 +623,15 @@
         let paymentDetails = "";
         if(property.category === 'venta' && property.price > 0) {
           let method = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'contado';
-          if(method === 'contado') paymentDetails = `\n💰 Método: ${t('pago_contado')} · Total: ${displayPrice}`;
+          if(method === 'contado') paymentDetails = `\nMetodo: ${t('pago_contado')} - Total: ${displayPrice}`;
           else {
             let initialVal = document.getElementById('initialAmount')?.value || defaultInitial;
             let selectedFin = document.querySelector('input[name="financingOption"]:checked')?.value || '';
             if(!selectedFin) { alert(currentLang==='es'?'Selecciona opción de financiación':'Select financing option'); return; }
-            paymentDetails = `\n💰 Método: ${t('pago_credito')}\n💵 Inicial: ${formatPriceWithCurrency(parseInt(initialVal), property.currency)}\n🏦 Financiación: ${selectedFin}`;
+            paymentDetails = `\nMetodo: ${t('pago_credito')}\nInicial: ${formatPriceWithCurrency(parseInt(initialVal), property.currency)}\nFinanciacion: ${selectedFin}`;
           }
         }
-        let msg = `🏠 OFERTA: ${title}\n👤 ${nombre}\n🆔 ${tipoId}: ${numeroId}\n📱 ${tel}\n✉️ ${email}\n📝 ${coment||(currentLang==='es'?'Sin comentarios':'No comments')}\n${codigoAgente ? `🆔 Agent Code: ${codigoAgente}` : ''}${paymentDetails}`; 
+        let msg = `OFERTA: ${title}\nNombre: ${nombre}\nIdentificacion: ${tipoId} ${numeroId}\nTelefono: ${tel}\nEmail: ${email}\nComentarios: ${coment||(currentLang==='es'?'Sin comentarios':'No comments')}\n${codigoAgente ? `Agent Code: ${codigoAgente}` : ''}${paymentDetails}`; 
         window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); 
         modal.style.display='none'; 
       }); 
