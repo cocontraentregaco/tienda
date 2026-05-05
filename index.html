@@ -321,16 +321,55 @@
     .servicio-btn { background: #000000; color: white; border: none; padding: 0.8rem; border-radius: 50px; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-align: center; font-family: 'Libre Baskerville', serif; }
     .info-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); z-index: 2600; justify-content: center; align-items: center; }
     .info-container { background: white; border-radius: 28px; width: 90%; max-width: 500px; max-height: 70vh; overflow-y: auto; padding: 1.5rem; }
-    .fixed-price-field { background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 16px; padding: 0.7rem 0.9rem; font-weight: 700; color: #111; font-size: 1rem; }
-    .radio-group { display: flex; gap: 1.5rem; margin: 0.5rem 0 1rem; }
-    .radio-group label { display: flex; align-items: center; gap: 0.5rem; font-weight: normal; text-transform: none; cursor: pointer; }
-    .financing-option { display: flex; flex-direction: column; gap: 0.6rem; margin: 0.8rem 0; }
-    .financing-option label { display: flex; align-items: center; gap: 0.5rem; font-weight: normal; text-transform: none; cursor: pointer; }
+    .fixed-price-field {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 16px;
+      padding: 0.7rem 0.9rem;
+      font-weight: 700;
+      color: #111;
+      font-size: 1rem;
+    }
+    .radio-group {
+      display: flex;
+      gap: 1.5rem;
+      margin: 0.5rem 0 1rem;
+    }
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: normal;
+      text-transform: none;
+      cursor: pointer;
+    }
+    .financing-option {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin: 0.8rem 0;
+    }
+    .financing-option label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: normal;
+      text-transform: none;
+      cursor: pointer;
+    }
+    .row-2cols {
+      display: flex;
+      gap: 1rem;
+    }
+    .row-2cols .form-group {
+      flex: 1;
+    }
     @media (max-width: 680px) {
       .modal-container { max-width: 95%; }
       .form-panel { padding: 1rem; }
       .popup-product-card { width: 310px; }
       .btn-mapa { padding: 0.5rem 0.8rem; font-size: 0.8rem; }
+      .row-2cols { flex-direction: column; gap: 0; }
     }
   </style>
 </head>
@@ -367,12 +406,11 @@
     const WHATSAPP_NUMBER = "573041146297";
     let currentLang = 'es';
     
-    // Países y servicios
+    // PAÍSES Y SERVICIOS - FÁCILMENTE AMPLIABLE
     const paisesServicios = {
       "Colombia": { agentes: "/agentes-co", rentas: "/rentas-co", ventas: "/ventas-co", hipotecas: "/hipotecas-co", construccion: "/construccion-co", credito: "/credito-co", inversion: "/inversion-co", avaluos: "/avaluos-co" },
       "United States": { agentes: "/agentes-us", rentas: "/rentals-us", ventas: "/sales-us", hipotecas: "/mortgages-us", construccion: "/construction-us", credito: "/credit-us", inversion: "/investment-us", avaluos: "/appraisals-us" }
     };
-    let paisSeleccionado = null;
     
     function getCurrencyForCoordinates(lat, lng) {
       if (lat >= -4.5 && lat <= 12.5 && lng >= -79.0 && lng <= -66.9) return "COP";
@@ -401,8 +439,8 @@
     properties.forEach(p => { if(!p.currency) p.currency = getCurrencyForCoordinates(p.latlng[0], p.latlng[1]); });
     
     const translations = { 
-      es: { buscar_placeholder: "Buscar inmuebles en todo el mundo...", centrar: "CENTRAR", servicios: "SERVICIOS", mapa: "Mapa", satelite: "Satélite", servicios_titulo: "SERVICIOS", agentes: "AGENTES", rentas: "RENTAS", ventas: "VENTAS", hipotecas: "HIPOTÉCAS", construccion: "CONSTRUCCIÓN", credito: "CRÉDITO", inversion: "INVERSIÓN", avaluos: "AVALÚOS", visita_title: "📅 Agendar visita", oferta_title: "📩 Enviar oferta", nombre_label: "NOMBRE COMPLETO *", telefono_label: "TELÉFONO *", email_label: "CORREO", codigo_agente_label: "CÓDIGO DE AGENTE (opcional)", comentarios_label: "COMENTARIOS", terms_check: "Acepto ", terms_link: "términos", submit_visita: "📩 Agendar por WhatsApp", submit_oferta: "📩 Enviar oferta", visit_btn: "Visita", offer_btn_venta: "Ofertar inmueble", offer_btn_arriendo: "Iniciar arriendo", info_btn: "Info", select_date: "📅 Selecciona una fecha", monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'], weekdays: ['L', 'M', 'M', 'J', 'V', 'S', 'D'] },
-      en: { buscar_placeholder: "Search properties worldwide...", centrar: "CENTER", servicios: "SERVICES", mapa: "Map", satelite: "Satellite", servicios_titulo: "SERVICES", agentes: "AGENTS", rentas: "RENTALS", ventas: "SALES", hipotecas: "MORTGAGES", construccion: "CONSTRUCTION", credito: "CREDIT", inversion: "INVESTMENT", avaluos: "APPRAISALS", visita_title: "📅 Schedule visit", oferta_title: "📩 Send offer", nombre_label: "FULL NAME *", telefono_label: "PHONE *", email_label: "EMAIL", codigo_agente_label: "AGENT CODE (optional)", comentarios_label: "COMMENTS", terms_check: "I accept ", terms_link: "terms", submit_visita: "📩 Schedule via WhatsApp", submit_oferta: "📩 Send offer", visit_btn: "Visit", offer_btn_venta: "Make offer", offer_btn_arriendo: "Start rental", info_btn: "Info", select_date: "📅 Select a date", monthNames: ['January','February','March','April','May','June','July','August','September','October','November','December'], weekdays: ['M', 'T', 'W', 'T', 'F', 'S', 'S'] }
+      es: { buscar_placeholder: "Buscar inmuebles en todo el mundo...", centrar: "CENTRAR", servicios: "SERVICIOS", mapa: "Mapa", satelite: "Satélite", servicios_titulo: "SERVICIOS", agentes: "AGENTES", rentas: "RENTAS", ventas: "VENTAS", hipotecas: "HIPOTÉCAS", construccion: "CONSTRUCCIÓN", credito: "CRÉDITO", inversion: "INVERSIÓN", avaluos: "AVALÚOS", visita_title: "📅 Agendar visita", oferta_title: "📩 Enviar oferta", nombre_label: "NOMBRE COMPLETO *", telefono_label: "TELÉFONO *", email_label: "CORREO", codigo_agente_label: "CÓDIGO DE AGENTE (opcional)", comentarios_label: "COMENTARIOS", terms_check: "Acepto ", terms_link: "términos", submit_visita: "📩 Agendar por WhatsApp", submit_oferta: "📩 Enviar oferta", visit_btn: "Visita", offer_btn_venta: "Ofertar inmueble", offer_btn_arriendo: "Iniciar arriendo", info_btn: "Info", select_date: "📅 Selecciona una fecha", monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'], weekdays: ['L', 'M', 'M', 'J', 'V', 'S', 'D'], pago_contado: "Contado", pago_credito: "Cuota inicial + Crédito", precio_fijo: "PRECIO TOTAL (FIJO)", valor_inicial: "VALOR DE LA CUOTA INICIAL (mínimo 30%)", opciones_financiacion: "OPCIÓN DE FINANCIACIÓN", cesantias: "Cesantías", credito_preaprobado: "Ya cuento con crédito pre aprobado", solicitar_credito: "Solicitar crédito inmobiliario con las mejores tasas", tipo_id: "TIPO DE IDENTIFICACIÓN", numero_id: "NÚMERO DE IDENTIFICACIÓN" },
+      en: { buscar_placeholder: "Search properties worldwide...", centrar: "CENTER", servicios: "SERVICES", mapa: "Map", satelite: "Satellite", servicios_titulo: "SERVICES", agentes: "AGENTS", rentas: "RENTALS", ventas: "SALES", hipotecas: "MORTGAGES", construccion: "CONSTRUCTION", credito: "CREDIT", inversion: "INVESTMENT", avaluos: "APPRAISALS", visita_title: "📅 Schedule visit", oferta_title: "📩 Send offer", nombre_label: "FULL NAME *", telefono_label: "PHONE *", email_label: "EMAIL", codigo_agente_label: "AGENT CODE (optional)", comentarios_label: "COMMENTS", terms_check: "I accept ", terms_link: "terms", submit_visita: "📩 Schedule via WhatsApp", submit_oferta: "📩 Send offer", visit_btn: "Visit", offer_btn_venta: "Make offer", offer_btn_arriendo: "Start rental", info_btn: "Info", select_date: "📅 Select a date", monthNames: ['January','February','March','April','May','June','July','August','September','October','November','December'], weekdays: ['M', 'T', 'W', 'T', 'F', 'S', 'S'], pago_contado: "Cash payment", pago_credito: "Down payment + Credit", precio_fijo: "TOTAL PRICE (FIXED)", valor_inicial: "DOWN PAYMENT (min 30%)", opciones_financiacion: "FINANCING OPTION", cesantias: "Severance funds", credito_preaprobado: "Pre-approved credit", solicitar_credito: "Request best mortgage rates", tipo_id: "ID TYPE", numero_id: "ID NUMBER" }
     };
     
     let mapa, userMarker, marcadoresOriginales = [], buscadorTimeout, googleMapsLayer, googleSatelliteLayer, currentLayer, currentProperty = null, selectedDate = null, selectedHorario = null, currentYear = new Date().getFullYear(), currentMonth = new Date().getMonth(), today = new Date(); today.setHours(0,0,0,0);
@@ -511,7 +549,60 @@
     
     function openVisitaModal(property){ currentProperty=property; selectedDate=null; selectedHorario=null; currentYear=new Date().getFullYear(); currentMonth=new Date().getMonth(); let modal=document.getElementById('visitaModal'), container=document.getElementById('visitaFormContainer'); let title = currentLang === 'es' ? property.title_es : property.title_en; let desc = currentLang === 'es' ? property.description_es : property.description_en; container.innerHTML=`<div class="property-info"><h4>🏠 ${title}</h4><p>${property.m2} m² · ${property.cuartos} ${currentLang==='es'?'hab':'beds'} · ${property.baños} ${currentLang==='es'?'baños':'baths'}</p><p>${desc}</p></div><div class="step-title">${t('visita_title')}</div><div class="form-group"><label>${t('nombre_label')}</label><input type="text" id="visitaNombre" placeholder="${currentLang==='es'?'Ej: Juan Pérez':'Ex: John Doe'}"></div><div class="form-group"><label>${t('telefono_label')}</label><input type="tel" id="visitaTelefono" placeholder="3001234567"></div><div class="form-group"><label>${t('email_label')}</label><input type="email" id="visitaEmail"></div><div class="form-group"><label>${t('codigo_agente_label')}</label><input type="text" id="visitaCodigoAgente" placeholder="${currentLang==='es'?'Ej: AGENTE123':'Ex: AGENT123'}"></div><div class="inline-checkbox"><input type="checkbox" id="visitaTerms"><label>${t('terms_check')}<span class="terms-link" id="visitaTermsLink">${t('terms_link')}</span></label></div><div class="calendar-card"><div class="calendar-nav"><button class="popup-nav-btn" id="prevMonthBtn" style="background:#000;"><i class="fas fa-chevron-left"></i></button><div class="month-year"></div><button class="popup-nav-btn" id="nextMonthBtn" style="background:#000;"><i class="fas fa-chevron-right"></i></button></div><div class="weekdays"></div><div class="days-grid"></div></div><div class="form-group"><label>${currentLang==='es'?'HORARIO':'SCHEDULE'}</label><div class="horarios-list"></div></div><button class="btn-submit" id="submitVisita">${t('submit_visita')}</button>`; let calendarDiv=container.querySelector('.calendar-card'); let prev=container.querySelector('#prevMonthBtn'), next=container.querySelector('#nextMonthBtn'), horariosDiv=container.querySelector('.horarios-list'); renderCalendar(calendarDiv); if(horariosDiv) renderHorarios(horariosDiv); if(prev) prev.addEventListener('click',()=>{ currentMonth--; if(currentMonth<0){currentMonth=11; currentYear--;} renderCalendar(calendarDiv); selectedDate=null; selectedHorario=null; if(horariosDiv) renderHorarios(horariosDiv); }); if(next) next.addEventListener('click',()=>{ currentMonth++; if(currentMonth>11){currentMonth=0; currentYear++;} renderCalendar(calendarDiv); selectedDate=null; selectedHorario=null; if(horariosDiv) renderHorarios(horariosDiv); }); document.getElementById('visitaTermsLink')?.addEventListener('click',showTermsModal); document.getElementById('submitVisita').addEventListener('click',()=>{ let nombre=document.getElementById('visitaNombre').value.trim(), telefono=document.getElementById('visitaTelefono').value.trim(), email=document.getElementById('visitaEmail').value.trim(), codigoAgente=document.getElementById('visitaCodigoAgente').value.trim(), termsChecked=document.getElementById('visitaTerms').checked; if(!nombre||!telefono){alert(currentLang==='es'?'Completa nombre y teléfono':'Complete name and phone'); return;} if(!termsChecked){alert(currentLang==='es'?'Acepta términos':'Accept terms'); return;} if(!selectedDate){alert(currentLang==='es'?'Selecciona fecha':'Select date'); return;} if(!selectedHorario){alert(currentLang==='es'?'Selecciona horario':'Select time'); return;} let fecha=new Date(selectedDate).toLocaleDateString(currentLang==='es'?'es-ES':'en-US'); let msg=`🏠 VISIT: ${title}\n👤 ${nombre}\n📱 ${telefono}\n✉️ ${email||'No'}\n📅 ${fecha} ⏰ ${selectedHorario}\n${codigoAgente ? `🆔 Agent Code: ${codigoAgente}` : ''}`; window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); modal.style.display='none'; }); modal.style.display='flex'; }
     
-    function openOfertaModal(property){ currentProperty=property; let modal=document.getElementById('ofertaModal'), container=document.getElementById('ofertaFormContainer'); let title = currentLang === 'es' ? property.title_es : property.title_en; let desc = currentLang === 'es' ? property.description_es : property.description_en; let displayPrice = property.category==='venta' ? formatPriceForProp(property) : formatPriceForProp(property, true); container.innerHTML=`<div class="property-info"><h4>🏠 ${title}</h4><p>${property.m2} m² · ${property.cuartos} ${currentLang==='es'?'hab':'beds'} · ${property.baños} ${currentLang==='es'?'baños':'baths'}</p><p>${desc}</p></div><div class="step-title">${t('oferta_title')}</div><div class="form-group"><label>PRECIO TOTAL</label><div class="fixed-price-field"><strong>${displayPrice}</strong></div></div><div class="form-group"><label>${t('nombre_label')}</label><input type="text" id="ofertaNombre" placeholder="${currentLang==='es'?'Ej: Juan Pérez':'Ex: John Doe'}"></div><div class="form-group"><label>${t('telefono_label')}</label><input type="tel" id="ofertaTelefono" placeholder="3001234567"></div><div class="form-group"><label>${t('email_label')}</label><input type="email" id="ofertaEmail"></div><div class="form-group"><label>${t('codigo_agente_label')}</label><input type="text" id="ofertaCodigoAgente" placeholder="${currentLang==='es'?'Ej: AGENTE123':'Ex: AGENT123'}"></div><div class="form-group"><label>${t('comentarios_label')}</label><textarea rows="2" id="ofertaComentarios" placeholder="${currentLang==='es'?'Ej: Requiero financiación...':'Ex: I need financing...'}"></textarea></div><button class="btn-submit" id="submitOferta">${t('submit_oferta')}</button>`; document.getElementById('submitOferta').addEventListener('click',()=>{ let nombre=document.getElementById('ofertaNombre').value.trim(), tel=document.getElementById('ofertaTelefono').value.trim(), email=document.getElementById('ofertaEmail').value.trim(), coment=document.getElementById('ofertaComentarios').value.trim(), codigoAgente=document.getElementById('ofertaCodigoAgente').value.trim(); if(!nombre||!tel){alert(currentLang==='es'?'Completa datos':'Complete data'); return;} let msg = `🏠 OFERTA: ${title}\n👤 ${nombre}\n📱 ${tel}\n✉️ ${email}\n📝 ${coment||(currentLang==='es'?'Sin comentarios':'No comments')}\n${codigoAgente ? `🆔 Agent Code: ${codigoAgente}` : ''}`; window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); modal.style.display='none'; }); modal.style.display='flex'; }
+    function openOfertaModal(property){ 
+      currentProperty=property; 
+      let modal=document.getElementById('ofertaModal'), container=document.getElementById('ofertaFormContainer'); 
+      let title = currentLang === 'es' ? property.title_es : property.title_en;
+      let desc = currentLang === 'es' ? property.description_es : property.description_en;
+      let displayPrice = property.category==='venta' ? formatPriceForProp(property) : formatPriceForProp(property, true);
+      let basePriceNum = property.category==='venta' ? property.price : 0;
+      let minInitialPercent = 0.3;
+      let defaultInitial = Math.floor(basePriceNum * minInitialPercent);
+      let tipoIdOptions = currentLang === 'es' ? ['Cédula', 'Pasaporte', 'NIT', 'Cédula de Extranjería'] : ['ID Card', 'Passport', 'Tax ID', 'Foreigner ID'];
+      
+      let formHtml = `<div class="property-info"><h4>🏠 ${title}</h4><p>${property.m2} m² · ${property.cuartos} ${currentLang==='es'?'hab':'beds'} · ${property.baños} ${currentLang==='es'?'baños':'baths'}</p><p>${desc}</p></div><div class="step-title">${t('oferta_title')}</div>`;
+      formHtml += `<div class="form-group"><label>${t('precio_fijo')}</label><div class="fixed-price-field"><strong>${displayPrice}</strong></div></div>`;
+      if(property.category === 'venta' && property.price > 0) {
+        formHtml += `<div class="form-group"><label>MÉTODO DE PAGO</label><div class="radio-group" id="paymentMethodGroup"><label><input type="radio" name="paymentMethod" value="contado" checked> ${t('pago_contado')}</label><label><input type="radio" name="paymentMethod" value="credito"> ${t('pago_credito')}</label></div></div>`;
+        formHtml += `<div id="creditSection" style="display:none;"><div class="form-group"><label>${t('valor_inicial')}</label><input type="number" id="initialAmount" step="100000" value="${defaultInitial}" min="${defaultInitial}" max="${basePriceNum}"><small style="color:#555;">Mínimo: ${formatPriceWithCurrency(defaultInitial, property.currency)} (30%)</small></div><div class="form-group"><label>${t('opciones_financiacion')}</label><div class="financing-option"><label><input type="radio" name="financingOption" value="${t('cesantias')}"> ${t('cesantias')}</label><label><input type="radio" name="financingOption" value="${t('credito_preaprobado')}"> ${t('credito_preaprobado')}</label><label><input type="radio" name="financingOption" value="${t('solicitar_credito')}"> ${t('solicitar_credito')}</label></div></div></div>`;
+      }
+      formHtml += `<div class="form-group"><label>${t('nombre_label')}</label><input type="text" id="ofertaNombre" placeholder="${currentLang==='es'?'Ej: Juan Pérez':'Ex: John Doe'}"></div>`;
+      formHtml += `<div class="row-2cols"><div class="form-group"><label>${t('tipo_id')}</label><select id="ofertaTipoId"><option value="">Seleccionar</option>${tipoIdOptions.map(opt => `<option value="${opt}">${opt}</option>`).join('')}</select></div><div class="form-group"><label>${t('numero_id')}</label><input type="text" id="ofertaNumeroId" placeholder="${currentLang==='es'?'Ej: 12345678':'Ex: 12345678'}"></div></div>`;
+      formHtml += `<div class="form-group"><label>${t('telefono_label')}</label><input type="tel" id="ofertaTelefono" placeholder="3001234567"></div><div class="form-group"><label>${t('email_label')}</label><input type="email" id="ofertaEmail"></div><div class="form-group"><label>${t('codigo_agente_label')}</label><input type="text" id="ofertaCodigoAgente" placeholder="${currentLang==='es'?'Ej: AGENTE123':'Ex: AGENT123'}"></div><div class="form-group"><label>${t('comentarios_label')}</label><textarea rows="2" id="ofertaComentarios" placeholder="${currentLang==='es'?'Ej: Requiero financiación...':'Ex: I need financing...'}"></textarea></div><button class="btn-submit" id="submitOferta">${t('submit_oferta')}</button>`;
+      container.innerHTML = formHtml;
+      
+      if(property.category === 'venta' && property.price > 0) {
+        let radios = document.querySelectorAll('#paymentMethodGroup input');
+        let creditDiv = document.getElementById('creditSection');
+        let initialInput = document.getElementById('initialAmount');
+        function toggleCredit() { let selected = document.querySelector('input[name="paymentMethod"]:checked').value; creditDiv.style.display = selected === 'credito' ? 'block' : 'none'; }
+        radios.forEach(r => r.addEventListener('change', toggleCredit));
+        toggleCredit();
+        if(initialInput) initialInput.addEventListener('change', function() { let val = parseFloat(this.value); if(isNaN(val)) this.value = defaultInitial; else if(val < defaultInitial) { alert(`Mínimo inicial: ${formatPriceWithCurrency(defaultInitial, property.currency)}`); this.value = defaultInitial; } else if(val > basePriceNum) { alert(`No puede exceder el precio total`); this.value = basePriceNum; } });
+      }
+      document.getElementById('submitOferta').addEventListener('click',()=>{ 
+        let nombre=document.getElementById('ofertaNombre').value.trim(), tel=document.getElementById('ofertaTelefono').value.trim(), email=document.getElementById('ofertaEmail').value.trim(), coment=document.getElementById('ofertaComentarios').value.trim(), codigoAgente=document.getElementById('ofertaCodigoAgente').value.trim(); 
+        let tipoId = document.getElementById('ofertaTipoId')?.value || '';
+        let numeroId = document.getElementById('ofertaNumeroId')?.value.trim() || '';
+        if(!nombre||!tel){alert(currentLang==='es'?'Completa datos básicos (nombre y teléfono)':'Complete basic data (name and phone)'); return;} 
+        if(!tipoId || !numeroId){alert(currentLang==='es'?'Completa tipo y número de identificación':'Complete ID type and number'); return;}
+        let paymentDetails = "";
+        if(property.category === 'venta' && property.price > 0) {
+          let method = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'contado';
+          if(method === 'contado') paymentDetails = `\n💰 Método: ${t('pago_contado')} · Total: ${displayPrice}`;
+          else {
+            let initialVal = document.getElementById('initialAmount')?.value || defaultInitial;
+            let selectedFin = document.querySelector('input[name="financingOption"]:checked')?.value || '';
+            if(!selectedFin) { alert(currentLang==='es'?'Selecciona opción de financiación':'Select financing option'); return; }
+            paymentDetails = `\n💰 Método: ${t('pago_credito')}\n💵 Inicial: ${formatPriceWithCurrency(parseInt(initialVal), property.currency)}\n🏦 Financiación: ${selectedFin}`;
+          }
+        }
+        let msg = `🏠 OFERTA: ${title}\n👤 ${nombre}\n🆔 ${tipoId}: ${numeroId}\n📱 ${tel}\n✉️ ${email}\n📝 ${coment||(currentLang==='es'?'Sin comentarios':'No comments')}\n${codigoAgente ? `🆔 Agent Code: ${codigoAgente}` : ''}${paymentDetails}`; 
+        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); 
+        modal.style.display='none'; 
+      }); 
+      modal.style.display='flex'; 
+    }
     
     function renderCalendar(container) { let days=getDaysForMonth(currentYear,currentMonth); let monthSpan=container.querySelector('.month-year'); if(monthSpan) monthSpan.innerText=`${getMonthName(currentMonth)} ${currentYear}`; let daysGrid=container.querySelector('.days-grid'); if(!daysGrid) return; daysGrid.innerHTML=''; let weekdays = getWeekdays(); let weekdayHeaders = container.querySelector('.weekdays'); if(weekdayHeaders) { weekdayHeaders.innerHTML = weekdays.map(d => `<span>${d}</span>`).join(''); } days.forEach(cell=>{ let div=document.createElement('div'); let className='day-cell'; if(!cell.currentMonth) className+=' other-month'; if(!cell.isSelectable) className+=' disabled'; else className+=' available'; div.className=className; div.innerText=cell.day; if(cell.isSelectable){ div.addEventListener('click',(function(dateStr){ return function(){ document.querySelectorAll('#visitaFormContainer .day-cell').forEach(el=>el.classList.remove('selected')); div.classList.add('selected'); selectedDate=dateStr; let horariosContainer=document.querySelector('#visitaFormContainer .horarios-list'); if(horariosContainer) renderHorarios(horariosContainer); }; })(cell.dateStr)); if(selectedDate===cell.dateStr) div.classList.add('selected'); } daysGrid.appendChild(div); }); }
     function renderHorarios(horariosContainer) { if(!horariosContainer) return; if(!selectedDate){ horariosContainer.innerHTML=`<div style="padding:0.6rem; text-align:center;">📅 ${t('select_date')}</div>`; return; } horariosContainer.innerHTML=''; allHorarios.forEach(slot=>{ let badge=document.createElement('span'); badge.className='horario-badge'; badge.innerText=slot; if(selectedHorario===slot) badge.classList.add('selected'); badge.addEventListener('click',()=>{ document.querySelectorAll('#visitaFormContainer .horario-badge').forEach(b=>b.classList.remove('selected')); badge.classList.add('selected'); selectedHorario=slot; }); horariosContainer.appendChild(badge); }); }
