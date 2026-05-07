@@ -18,7 +18,7 @@
         /* -------------------------------
            RESET y estilos globales
            Blanco y negro puro + Baskerville
-           Minimalismo extremo + buscador profesional
+           Minimalismo extremo + buscador profesional (ancho corregido)
            REAL ESTATE VERSION
            CON BLOQUEO DE ZOOM, SELECCIÓN, COPIAR/PEGAR
         ------------------------------- */
@@ -40,7 +40,7 @@
             user-select: text;
         }
         
-        /* Deshabilitar copiar/pegar en toda la página (incluye eventos contextuales y atajos) */
+        /* Deshabilitar copiar/pegar en toda la página */
         body {
             background-color: #ffffff;
             color: #000000;
@@ -52,13 +52,14 @@
             align-items: center;
             justify-content: center;
             padding: 2rem;
-            /* Prevenir arrastre de imágenes o elementos */
             -webkit-touch-callout: none;
+            overflow-x: hidden;
         }
         
-        /* Bloquear zoom adicional mediante CSS (touch-action) */
+        /* Bloquear zoom mediante CSS */
         html {
-            touch-action: pan-x pan-y; /* Permite desplazamiento pero no zoom con pellizco */
+            touch-action: pan-x pan-y;
+            overflow-x: hidden;
         }
         
         /* Deshabilitar selección de imágenes y arrastre */
@@ -72,6 +73,7 @@
             width: 100%;
             margin: 0 auto;
             text-align: center;
+            overflow-x: hidden;
         }
 
         /* --- SELECTOR DE IDIOMA (ES / EN) --- */
@@ -156,9 +158,10 @@
             font-weight: 350;
         }
 
-        /* ---------- BUSCADOR PROFESIONAL ---------- */
+        /* ---------- BUSCADOR PROFESIONAL - ANCHO CORREGIDO ---------- */
         .search-section {
-            max-width: 480px;
+            max-width: 400px;
+            width: 100%;
             margin: 1.8rem auto 2rem;
             position: relative;
         }
@@ -170,21 +173,20 @@
 
         .search-icon {
             position: absolute;
-            left: 0;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: #8a8a8a;
             pointer-events: none;
             font-weight: 300;
-            left: 12px;
         }
 
         .search-input {
             width: 100%;
-            padding: 0.9rem 1rem 0.9rem 2.5rem;
+            padding: 0.85rem 1rem 0.85rem 2.3rem;
             font-family: 'Libre Baskerville', serif;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             background: #ffffff;
             border: 1px solid #cccccc;
             color: #000000;
@@ -207,12 +209,12 @@
 
         .search-clear {
             position: absolute;
-            right: 12px;
+            right: 10px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
             color: #9a9a9a;
             padding: 0 4px;
@@ -226,13 +228,10 @@
 
         .results-count {
             font-size: 0.7rem;
-            text-align: left;
-            margin-top: 0.5rem;
-            margin-left: 0.2rem;
+            text-align: center;
+            margin-top: 0.6rem;
             color: #5a5a5a;
             letter-spacing: 0.3px;
-            border-left: 1px solid #eaeaea;
-            padding-left: 0.6rem;
         }
 
         /* selector de países — grid con transiciones suaves */
@@ -248,6 +247,7 @@
         .country-card {
             flex: 1;
             min-width: 240px;
+            max-width: 280px;
             background: #ffffff;
             border: 1px solid #e0e0e0;
             padding: 2rem 1rem;
@@ -354,7 +354,18 @@
                 max-width: 280px;
             }
             .search-section {
+                max-width: 320px;
                 margin: 1.2rem auto;
+            }
+            .search-input {
+                padding: 0.75rem 1rem 0.75rem 2.3rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .search-section {
+                max-width: 280px;
             }
         }
 
@@ -390,7 +401,7 @@
         <p data-i18n="subtitle">Compra, vende e invierte en bienes raíces directamente entre propietarios. Sin comisiones abusivas. Elige tu región.</p>
     </div>
 
-    <!-- BUSCADOR PROFESIONAL -->
+    <!-- BUSCADOR PROFESIONAL - ANCHO CORREGIDO -->
     <div class="search-section">
         <div class="search-input-wrapper">
             <span class="search-icon">🔍</span>
@@ -425,16 +436,13 @@
                     e.stopPropagation();
                     return false;
                 }
-                // Para el input, permitimos comportamiento normal (copiar/pegar)
                 return true;
             });
         });
         
-        // Bloquear atajos de teclado para copiar/pegar/cortar en toda la página (Ctrl+C, Ctrl+V, Ctrl+X, Cmd+C, etc.)
-        // excepto cuando el foco está en el input del buscador
+        // Bloquear atajos de teclado para copiar/pegar/cortar
         document.addEventListener('keydown', function(e) {
             const isSearchInputFocused = document.activeElement && document.activeElement.id === 'countrySearch';
-            // Ctrl+C, Ctrl+V, Ctrl+X (o Cmd en Mac)
             if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'x')) {
                 if (!isSearchInputFocused) {
                     e.preventDefault();
@@ -442,7 +450,6 @@
                     return false;
                 }
             }
-            // Bloquear Ctrl+A (seleccionar todo) fuera del buscador
             if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
                 if (!isSearchInputFocused) {
                     e.preventDefault();
@@ -452,7 +459,7 @@
             }
         });
         
-        // Deshabilitar zoom por teclado (Ctrl + + / Ctrl + -) y prevenir cambios de zoom generales
+        // Deshabilitar zoom por teclado (Ctrl + + / Ctrl + -)
         document.addEventListener('keydown', function(e) {
             if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
                 e.preventDefault();
@@ -460,7 +467,7 @@
             }
         });
         
-        // Prevenir gesto de pellizco (pinch zoom) adicional mediante detección de eventos touch
+        // Prevenir gesto de pellizco (pinch zoom)
         let lastTouchEnd = 0;
         document.addEventListener('touchstart', function(e) {
             if (e.touches.length > 1) {
@@ -484,7 +491,7 @@
     })();
 
     // --------------------------------------------------------------
-    // 2. DATOS DE PAÍSES con claves para traducción y URLs
+    // 2. DATOS DE PAÍSES
     // --------------------------------------------------------------
     const countriesData = [
         {
@@ -504,7 +511,7 @@
     ];
 
     // --------------------------------------------------------------
-    // 3. TRADUCCIONES (ES / EN) - REAL ESTATE EDITION
+    // 3. TRADUCCIONES
     // --------------------------------------------------------------
     const translations = {
         es: {
@@ -536,7 +543,6 @@
     let currentLang = 'es';
     let currentFilter = '';
 
-    // Normalización para búsqueda flexible
     function normalizeString(str) {
         return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^\w\s]/g, '');
     }
