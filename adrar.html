@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <meta name="description" content="QRP2P Real Estate: El mercado inmobiliario P2P más elegante y minimalista. Busca y selecciona tu país para acceder a la plataforma de compra, venta e inversión en bienes raíces entre pares. Colombia o Estados Unidos.">
     <meta name="keywords" content="QRP2P, Real Estate, bienes raíces, marketplace P2P, Colombia, Estados Unidos, compra venta inmuebles, inversión, propiedades, peer-to-peer">
     <meta name="author" content="QRP2P Real Estate">
@@ -20,13 +20,27 @@
            Blanco y negro puro + Baskerville
            Minimalismo extremo + buscador profesional
            REAL ESTATE VERSION
+           CON BLOQUEO DE ZOOM, SELECCIÓN, COPIAR/PEGAR
         ------------------------------- */
+        
+        /* Bloquear selección de texto en toda la página */
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
-
+        
+        /* Excepción: permitir selección en el input del buscador para que el usuario pueda escribir/editar */
+        input, textarea, [contenteditable="true"] {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+        
+        /* Deshabilitar copiar/pegar en toda la página (incluye eventos contextuales y atajos) */
         body {
             background-color: #ffffff;
             color: #000000;
@@ -38,8 +52,21 @@
             align-items: center;
             justify-content: center;
             padding: 2rem;
+            /* Prevenir arrastre de imágenes o elementos */
+            -webkit-touch-callout: none;
         }
-
+        
+        /* Bloquear zoom adicional mediante CSS (touch-action) */
+        html {
+            touch-action: pan-x pan-y; /* Permite desplazamiento pero no zoom con pellizco */
+        }
+        
+        /* Deshabilitar selección de imágenes y arrastre */
+        img, a, button {
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+        
         .container {
             max-width: 1000px;
             width: 100%;
@@ -367,7 +394,7 @@
     <div class="search-section">
         <div class="search-input-wrapper">
             <span class="search-icon">🔍</span>
-            <input type="text" id="countrySearch" class="search-input" placeholder="Buscar país..." autocomplete="off">
+            <input type="text" id="countrySearch" class="search-input" placeholder="Buscar país..." autocomplete="off" spellcheck="false">
             <button id="clearSearch" class="search-clear" aria-label="Limpiar búsqueda">✕</button>
         </div>
         <div id="resultsCount" class="results-count"></div>
@@ -384,7 +411,80 @@
 
 <script>
     // --------------------------------------------------------------
-    // 1. DATOS DE PAÍSES con claves para traducción y URLs
+    // 1. BLOQUEO ADICIONAL DE COPY/PASTE/CUT Y EVENTOS DE TECLADO
+    // --------------------------------------------------------------
+    (function() {
+        // Bloquear eventos de copiar, cortar y pegar en toda la página
+        const blockEvents = ['copy', 'cut', 'paste', 'contextmenu', 'dragstart', 'selectstart'];
+        blockEvents.forEach(eventType => {
+            document.addEventListener(eventType, function(e) {
+                // Permitir excepciones solo dentro del input de búsqueda
+                const isSearchInput = e.target.id === 'countrySearch' || e.target.closest('#countrySearch');
+                if (!isSearchInput) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+                // Para el input, permitimos comportamiento normal (copiar/pegar)
+                return true;
+            });
+        });
+        
+        // Bloquear atajos de teclado para copiar/pegar/cortar en toda la página (Ctrl+C, Ctrl+V, Ctrl+X, Cmd+C, etc.)
+        // excepto cuando el foco está en el input del buscador
+        document.addEventListener('keydown', function(e) {
+            const isSearchInputFocused = document.activeElement && document.activeElement.id === 'countrySearch';
+            // Ctrl+C, Ctrl+V, Ctrl+X (o Cmd en Mac)
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'x')) {
+                if (!isSearchInputFocused) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+            }
+            // Bloquear Ctrl+A (seleccionar todo) fuera del buscador
+            if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+                if (!isSearchInputFocused) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+            }
+        });
+        
+        // Deshabilitar zoom por teclado (Ctrl + + / Ctrl + -) y prevenir cambios de zoom generales
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Prevenir gesto de pellizco (pinch zoom) adicional mediante detección de eventos touch
+        let lastTouchEnd = 0;
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        document.addEventListener('touchmove', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        document.addEventListener('touchend', function(e) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    })();
+
+    // --------------------------------------------------------------
+    // 2. DATOS DE PAÍSES con claves para traducción y URLs
     // --------------------------------------------------------------
     const countriesData = [
         {
@@ -404,7 +504,7 @@
     ];
 
     // --------------------------------------------------------------
-    // 2. TRADUCCIONES (ES / EN) - REAL ESTATE EDITION
+    // 3. TRADUCCIONES (ES / EN) - REAL ESTATE EDITION
     // --------------------------------------------------------------
     const translations = {
         es: {
@@ -436,12 +536,11 @@
     let currentLang = 'es';
     let currentFilter = '';
 
-    // Normalización para búsqueda flexible (elimina tildes, convierte a minúsculas)
+    // Normalización para búsqueda flexible
     function normalizeString(str) {
         return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^\w\s]/g, '');
     }
 
-    // Construir los términos de búsqueda para cada país (nombre traducido + términos predefinidos + subtítulo)
     function getSearchableTextForCountry(country, langData) {
         const countryName = langData[country.nameKey] || '';
         const countrySub = langData[country.subKey] || '';
@@ -450,7 +549,6 @@
         return normalizeString(combined);
     }
 
-    // Renderizar países según filtro e idioma actual
     function renderCountries() {
         const container = document.getElementById('countriesContainer');
         if (!container) return;
@@ -513,7 +611,6 @@
         });
     }
     
-    // Actualizar idioma
     function setLanguage(lang) {
         if (!translations[lang]) return;
         currentLang = lang;
