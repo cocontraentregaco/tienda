@@ -53,13 +53,13 @@
     
     <style>
         /* -------------------------------
-           RESET Y ESTILOS GLOBALES
-           Basado fielmente en el código base:
-           - Libre Baskerville, blanco y negro puro
-           - Bloqueo de selección/zoom/contextmenu
-           - Diseño elegante y profesional + responsive
+           RESET y estilos globales
+           Blanco y negro puro + Baskerville
+           EXACTAMENTE IGUAL AL CÓDIGO BASE ORIGINAL
+           (se mantienen todos los estilos del buscador de países)
         ------------------------------- */
         
+        /* Bloquear selección de texto en toda la página */
         * {
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -67,7 +67,9 @@
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
-        input, textarea, button, [contenteditable="true"] {
+        
+        /* Excepción: permitir selección en el input del buscador */
+        input, textarea, [contenteditable="true"] {
             -webkit-user-select: text;
             -moz-user-select: text;
             -ms-user-select: text;
@@ -79,9 +81,12 @@
             color: #000000;
             font-family: 'Libre Baskerville', 'Times New Roman', Georgia, 'Baskerville', serif;
             font-weight: 400;
-            line-height: 1.45;
-            margin: 0;
-            padding: 0;
+            line-height: 1.4;
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 2rem;
             -webkit-touch-callout: none;
             overflow-x: hidden;
         }
@@ -89,7 +94,6 @@
         html {
             touch-action: pan-x pan-y;
             overflow-x: hidden;
-            scroll-behavior: smooth;
         }
         
         img, a, button {
@@ -99,14 +103,77 @@
         
         .container {
             max-width: 1280px;
+            width: 100%;
             margin: 0 auto;
-            padding: 2rem 1.8rem;
+            text-align: left;
+            overflow-x: hidden;
         }
-        
-        /* header sutil estilo base */
+
+        /* --- SELECTOR DE IDIOMA (ES / EN) - se mantiene por coherencia --- */
+        .language-bar {
+            position: absolute;
+            top: 1.8rem;
+            right: 2rem;
+            display: flex;
+            gap: 0.75rem;
+            z-index: 10;
+        }
+
+        .lang-btn {
+            background: none;
+            border: none;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: #3a3a3a;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .lang-btn.active {
+            color: #000000;
+            font-weight: 700;
+            border-bottom: 1.5px solid #000000;
+        }
+
+        .lang-btn:hover:not(.active) {
+            color: #000000;
+            background-color: #f5f5f5;
+        }
+
+        .brand {
+            margin-bottom: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            letter-spacing: -0.02em;
+            font-weight: 700;
+            text-transform: lowercase;
+            color: #000000;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            display: inline-block;
+            padding-bottom: 0.2rem;
+        }
+
+        .tagline {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-top: 0.8rem;
+            color: #3a3a3a;
+            font-weight: 400;
+        }
+
+        /* breadcrumb / back link estilo base */
         .back-link {
             display: inline-block;
-            margin-bottom: 2rem;
+            margin: 1rem 0 1.5rem 0;
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -115,30 +182,22 @@
             border-bottom: 1px solid #eaeaea;
             padding-bottom: 4px;
             transition: all 0.2s;
-            font-weight: 400;
+            font-family: 'Libre Baskerville', serif;
         }
         .back-link:hover {
             color: #000000;
             border-bottom-color: #000000;
         }
-        
-        .property-badge {
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-            color: #5a5a5a;
-            margin-bottom: 0.8rem;
-            text-transform: uppercase;
-        }
-        
+
         /* GRID principal: galería + info */
         .property-grid {
             display: grid;
             grid-template-columns: 1fr 0.9fr;
             gap: 3rem;
-            margin-top: 1rem;
+            margin: 1rem 0 2rem;
         }
         
-        /* ----- GALERÍA PROFESIONAL (lightbox nativo mejorado) ----- */
+        /* ----- GALERÍA PROFESIONAL ----- */
         .gallery-container {
             width: 100%;
         }
@@ -155,7 +214,6 @@
             width: 100%;
             height: auto;
             display: block;
-            transition: transform 0.3s ease;
         }
         .fullscreen-icon {
             position: absolute;
@@ -171,8 +229,6 @@
             cursor: pointer;
             backdrop-filter: blur(4px);
             z-index: 2;
-            font-weight: 400;
-            letter-spacing: 0.5px;
             transition: background 0.2s;
         }
         .fullscreen-icon:hover {
@@ -238,51 +294,62 @@
             color: #5a5a5a;
         }
         
-        /* botones principales: MISMOS ESTILOS QUE EL CÓDIGO BASE (country-card vibe) */
+        /* ============================================================
+           BOTONES EXACTAMENTE IGUALES AL CÓDIGO BASE ORIGINAL
+           Se utiliza la misma clase .country-card y estilos de botones
+           pero adaptados a .action-btn para mantener la misma apariencia
+           ============================================================ */
         .action-buttons {
             display: flex;
-            gap: 1.2rem;
-            margin: 2rem 0 2rem 0;
             flex-wrap: wrap;
+            gap: 1.5rem;
+            margin: 2rem 0 2rem 0;
         }
-        .btn-prop {
+        
+        /* Botones gemelos a los country-card del base: bordes, hover, transform */
+        .action-btn {
             flex: 1;
-            min-width: 150px;
+            min-width: 180px;
             background: #ffffff;
             border: 1px solid #e0e0e0;
-            padding: 0.9rem 1rem;
+            padding: 1rem 1.2rem;
             font-family: 'Libre Baskerville', serif;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             cursor: pointer;
-            transition: all 0.25s ease;
+            transition: all 0.2s ease;
             text-align: center;
             color: #000000;
             border-radius: 0px;
             box-shadow: none;
         }
-        .btn-prop-primary {
-            background: #ffffff;
+        
+        .action-btn-primary {
             border: 1px solid #000000;
+            background: #ffffff;
             font-weight: 600;
         }
-        .btn-prop-primary:hover {
+        
+        .action-btn-primary:hover {
             background-color: #000000;
             color: #ffffff;
             border-color: #000000;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
         }
-        .btn-prop-outline {
+        
+        .action-btn-outline {
             border: 1px solid #e0e0e0;
         }
-        .btn-prop-outline:hover {
+        
+        .action-btn-outline:hover {
             border-color: #000000;
             background-color: #fafafa;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
         }
-        .btn-prop:active {
+        
+        .action-btn:active {
             transform: translateY(1px);
         }
         
@@ -292,12 +359,11 @@
             padding-top: 1.6rem;
         }
         .description-section h3 {
-            font-size: 1.1rem;
+            font-size: 0.85rem;
             font-weight: 600;
-            letter-spacing: -0.2px;
+            letter-spacing: 1px;
             margin-bottom: 1rem;
             text-transform: uppercase;
-            font-size: 0.85rem;
             color: #2c2c2c;
         }
         .description-text {
@@ -306,7 +372,6 @@
             color: #2a2a2a;
         }
         
-        /* iframe youtube responsivo estilo limpio */
         .video-wrapper {
             margin: 2rem 0 1rem 0;
             position: relative;
@@ -336,7 +401,7 @@
             padding-top: 2rem;
         }
         
-        /* lightbox modal pantalla completa */
+        /* lightbox */
         .lightbox-modal {
             position: fixed;
             top: 0;
@@ -351,7 +416,6 @@
             visibility: hidden;
             opacity: 0;
             transition: visibility 0.2s, opacity 0.2s;
-            backdrop-filter: blur(4px);
         }
         .lightbox-modal.active {
             visibility: visible;
@@ -363,12 +427,10 @@
             position: relative;
         }
         .lightbox-content img {
-            width: auto;
             max-width: 100%;
             max-height: 85vh;
             object-fit: contain;
             border: 2px solid white;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
         }
         .close-lightbox {
             position: absolute;
@@ -379,7 +441,6 @@
             color: white;
             font-size: 2rem;
             cursor: pointer;
-            font-family: monospace;
         }
         .nav-lightbox {
             position: absolute;
@@ -392,146 +453,112 @@
             width: 44px;
             height: 44px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
         }
         .nav-prev { left: -60px; }
         .nav-next { right: -60px; }
-        .nav-lightbox:hover { background: rgba(255,255,255,0.5); color: black; }
-        
-        /* Responsive avanzado */
-        @media (max-width: 1024px) {
-            .container {
-                padding: 1.5rem;
-            }
-        }
         
         @media (max-width: 900px) {
-            .property-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
+            body { padding: 1rem; }
+            .property-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .language-bar { position: relative; top: 0; right: 0; justify-content: flex-end; margin-bottom: 1rem; }
+            .action-buttons { flex-direction: column; }
+            .action-btn { width: 100%; }
             .nav-prev { left: 10px; }
             .nav-next { right: 10px; }
-            .action-buttons {
-                flex-direction: column;
-            }
-            .btn-prop {
-                width: 100%;
-            }
-            .price {
-                font-size: 1.8rem;
-            }
-            .thumb {
-                width: 65px;
-                height: 65px;
-            }
+            .thumb { width: 65px; height: 65px; }
         }
         
         @media (max-width: 550px) {
-            .thumb {
-                width: 55px;
-                height: 55px;
-            }
-            .container {
-                padding: 1rem;
-            }
-            .property-info h1 {
-                font-size: 1.6rem;
-            }
-            .fullscreen-icon {
-                padding: 4px 10px;
-                font-size: 0.6rem;
-            }
+            .thumb { width: 55px; height: 55px; }
+            .property-info h1 { font-size: 1.6rem; }
         }
         
-        /* excepción para inputs */
-        input, textarea, button {
-            user-select: text;
-        }
-        button {
-            user-select: none;
-        }
-        
-        /* Mejora de accesibilidad y focus */
-        .btn-prop:focus-visible, .back-link:focus-visible, .thumb:focus-visible {
-            outline: 2px solid #000000;
-            outline-offset: 2px;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
     </style>
 </head>
 <body>
+
 <div class="container">
-    <a href="#" class="back-link" id="backButton">← Volver al portafolio</a>
-    <div class="property-badge" id="propertyRef">QRP2P · LISTADO EXCLUSIVO · VENTA DIRECTA</div>
+    <!-- Selector de idioma: ES y EN (igual al base) -->
+    <div class="language-bar">
+        <button class="lang-btn active" id="lang-es" data-lang="es">ES</button>
+        <button class="lang-btn" id="lang-en" data-lang="en">EN</button>
+    </div>
+
+    <div class="brand">
+        <span class="logo">QRP2P.COM</span>
+        <div class="tagline" data-i18n="tagline">real estate · propiedad exclusiva</div>
+    </div>
+
+    <a href="#" class="back-link" id="backButton">← Volver al mercado</a>
     
     <div class="property-grid">
-        <!-- COLUMNA IZQUIERDA: GALERÍA PROFESIONAL -->
+        <!-- GALERÍA -->
         <div class="gallery-container">
             <div class="main-image" id="mainImageContainer">
-                <img id="mainDisplayImg" src="https://picsum.photos/id/106/1200/800" alt="Fachada principal de la propiedad Residencia Altos del Chicó" loading="eager">
-                <button class="fullscreen-icon" id="fullscreenBtn" aria-label="Ver imagen en pantalla completa">⛶ VER COMPLETA</button>
+                <img id="mainDisplayImg" src="https://picsum.photos/id/106/1200/800" alt="Vista principal propiedad">
+                <button class="fullscreen-icon" id="fullscreenBtn">⛶ VER COMPLETA</button>
             </div>
             <div class="thumbnails" id="thumbnailsList"></div>
         </div>
         
-        <!-- COLUMNA DERECHA: INFO, PRECIO, BOTONES, DESCRIPCIÓN, VIDEO -->
+        <!-- INFO + BOTONES EXACTOS AL BASE -->
         <div class="property-info">
             <h1 id="propTitle">Residencia Altos del Chicó</h1>
             <div class="property-location">
-                <span>📍</span> <span id="propLocation">Bogotá, Colombia · Sector financiero · Chicó Norte</span>
-                <span>📐 330 m² construidos</span>
+                <span>📍</span> <span id="propLocation">Bogotá, Colombia · Chicó Norte</span>
+                <span>📐 330 m²</span>
             </div>
-            <div class="price" id="propPrice">USD 585,000 <small>+ honorarios 0% (P2P)</small></div>
+            <div class="price" id="propPrice">USD 585,000 <small>P2P · 0% comisión</small></div>
+            
+            <!-- Aquí los botones AGENDAR y OFERTAR con las mismas clases y comportamiento del base -->
             <div class="action-buttons">
-                <button class="btn-prop btn-prop-primary" id="scheduleBtn">📅 AGENDAR VISITA</button>
-                <button class="btn-prop btn-prop-outline" id="offerBtn">💰 HACER OFERTA</button>
+                <button class="action-btn action-btn-primary" id="scheduleBtn">📅 AGENDAR VISITA</button>
+                <button class="action-btn action-btn-outline" id="offerBtn">💰 HACER OFERTA</button>
             </div>
+            
             <div class="description-section">
                 <h3>Descripción de la propiedad</h3>
                 <div class="description-text" id="propDescription">
-                    Impecable propiedad de estilo contemporáneo con acabados en mármol italiano, piso radiante, estudio independiente y terraza panorámica con vista a la ciudad. 
-                    Construcción de 330m² distribuidos en 4 habitaciones (2 con walking closet), 4 baños completos, cocina integral con isla, sala de cine, gimnasio privado, parqueadero para 3 vehículos y jardín interno. 
-                    Domótica de última generación, seguridad 24h y sistema de climatización. A pasos del Country Club y centros comerciales de lujo. 
-                    <br><br>✅ Transacción 100% peer-to-peer · sin comisiones bancarias · escrituración ágil.
+                    Impecable propiedad de estilo contemporáneo con acabados en mármol italiano, piso radiante, estudio independiente y terraza panorámica. 
+                    Construcción de 330m², 4 habitaciones, 4 baños, cocina integral, sala de cine, gimnasio privado, parqueadero para 3 vehículos. 
+                    Domótica, seguridad 24h. Transacción 100% peer-to-peer sin comisiones.
                 </div>
             </div>
-            <!-- Iframe Youtube (video tour profesional) -->
+            
             <div class="video-wrapper">
-                <iframe id="youtubeIframe" src="https://www.youtube.com/embed/W0LHTWG-UmQ?si=property_tour" title="Video tour profesional de la propiedad" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                <iframe id="youtubeIframe" src="https://www.youtube.com/embed/W0LHTWG-UmQ" title="Video tour propiedad" frameborder="0" allowfullscreen></iframe>
             </div>
             <div class="divider-light"></div>
-            <div class="property-badge" style="text-align:right">ID: QRP2P-2412 · verificado · disponible inmediato</div>
+            <div class="tagline" style="text-align:right; letter-spacing:1px;">ID: QRP2P-2412 · disponible</div>
         </div>
     </div>
+    
     <div class="footer-detail">
-        <p>© QRP2P Real Estate — mercado inmobiliario entre pares · cero comisiones por intermediación · contacto directo</p>
-        <p>Propiedades verificadas · transparencia total · inversión inteligente</p>
+        <p>© QRP2P Real Estate — mercado inmobiliario entre pares · sin intermediarios · contacto directo</p>
     </div>
 </div>
 
-<!-- Lightbox Modal pantalla completa para fotos -->
+<!-- Lightbox Modal -->
 <div id="lightboxModal" class="lightbox-modal">
     <div class="lightbox-content">
-        <button class="close-lightbox" id="closeLightboxBtn" aria-label="Cerrar">✕</button>
-        <img id="lightboxImg" src="" alt="Vista ampliada de la propiedad">
-        <button class="nav-lightbox nav-prev" id="prevLightBtn" aria-label="Imagen anterior">‹</button>
-        <button class="nav-lightbox nav-next" id="nextLightBtn" aria-label="Imagen siguiente">›</button>
+        <button class="close-lightbox" id="closeLightboxBtn">✕</button>
+        <img id="lightboxImg" src="" alt="Vista ampliada">
+        <button class="nav-lightbox nav-prev" id="prevLightBtn">‹</button>
+        <button class="nav-lightbox nav-next" id="nextLightBtn">›</button>
     </div>
 </div>
 
 <script>
+    // =============================================================
+    // 1. BLOQUEO ADICIONAL DE COPY/PASTE/CUT (EXACTAMENTE IGUAL AL BASE)
+    // =============================================================
     (function() {
-        // =========================================================
-        // BLOQUEOS DE SEGURIDAD (EXACTAMENTE IGUAL AL CÓDIGO BASE)
-        // =========================================================
         const blockEvents = ['copy', 'cut', 'paste', 'contextmenu', 'dragstart', 'selectstart'];
         blockEvents.forEach(eventType => {
             document.addEventListener(eventType, function(e) {
-                const isInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
-                if (!isInput) {
+                const isSearchInput = e.target.id === 'countrySearch' || e.target.closest('#countrySearch') || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
+                if (!isSearchInput) {
                     e.preventDefault();
                     e.stopPropagation();
                     return false;
@@ -541,12 +568,12 @@
         });
         
         document.addEventListener('keydown', function(e) {
-            const isInputFocused = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
+            const isSearchInputFocused = document.activeElement && (document.activeElement.id === 'countrySearch' || document.activeElement.tagName === 'INPUT');
             if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'x')) {
-                if (!isInputFocused) { e.preventDefault(); e.stopPropagation(); return false; }
+                if (!isSearchInputFocused) { e.preventDefault(); e.stopPropagation(); return false; }
             }
-            if ((e.ctrlKey || e.metaKey) && (e.key === 'a')) {
-                if (!isInputFocused) { e.preventDefault(); return false; }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+                if (!isSearchInputFocused) { e.preventDefault(); return false; }
             }
         });
         
@@ -565,139 +592,133 @@
             if (now - lastTouchEnd <= 300) e.preventDefault();
             lastTouchEnd = now;
         }, false);
-        
-        // --------------------------------------------------------------
-        // 2. DATOS DE PROPIEDAD CON IMÁGENES DE ALTA CALIDAD
-        // --------------------------------------------------------------
-        const imagesList = [
-            "https://picsum.photos/id/106/1200/800",   // casa campo
-            "https://picsum.photos/id/20/1200/800",    // interior moderno
-            "https://picsum.photos/id/26/1200/800",    // escaleras arquitectura
-            "https://picsum.photos/id/28/1200/800",    // patio
-            "https://picsum.photos/id/39/1200/800",    // piscina minimalista
-            "https://picsum.photos/id/104/1200/800"    // naturaleza
-        ];
-        
-        const propertyData = {
-            title: "Residencia Altos del Chicó",
-            location: "Bogotá, Colombia · Sector financiero · Chicó Norte",
-            price: "USD 585,000",
-            description: "Impecable propiedad de estilo contemporáneo con acabados en mármol italiano, piso radiante, estudio independiente y terraza panorámica con vista a la ciudad. Construcción de 330m² distribuidos en 4 habitaciones (2 con walking closet), 4 baños completos, cocina integral con isla, sala de cine, gimnasio privado, parqueadero para 3 vehículos y jardín interno. Domótica de última generación, seguridad 24h y sistema de climatización. A pasos del Country Club y centros comerciales de lujo. Transacción 100% peer-to-peer · sin comisiones bancarias · escrituración ágil."
-        };
-        
-        document.getElementById('propTitle').innerText = propertyData.title;
-        document.getElementById('propLocation').innerHTML = propertyData.location;
-        document.getElementById('propPrice').innerHTML = propertyData.price + ' <small>+ honorarios 0% (P2P)</small>';
-        document.getElementById('propDescription').innerHTML = propertyData.description;
-        
-        // ----- GALERÍA (thumbnails y lightbox) -----
-        let currentImageIndex = 0;
-        const mainImg = document.getElementById('mainDisplayImg');
-        const thumbContainer = document.getElementById('thumbnailsList');
-        
-        function renderThumbnails() {
-            thumbContainer.innerHTML = '';
-            imagesList.forEach((imgUrl, idx) => {
-                const thumb = document.createElement('img');
-                thumb.src = imgUrl + '?w=120&h=120&fit=crop';
-                thumb.classList.add('thumb');
-                thumb.alt = `Vista ${idx+1} de la propiedad`;
-                if (idx === currentImageIndex) thumb.classList.add('active-thumb');
-                thumb.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    setMainImage(idx);
-                });
-                thumbContainer.appendChild(thumb);
-            });
-        }
-        
-        function setMainImage(index) {
-            if (index < 0) index = 0;
-            if (index >= imagesList.length) index = imagesList.length - 1;
-            currentImageIndex = index;
-            mainImg.src = imagesList[currentImageIndex];
-            mainImg.alt = `Propiedad vista ${currentImageIndex+1}`;
-            const allThumbs = document.querySelectorAll('.thumb');
-            allThumbs.forEach((thumb, i) => {
-                if (i === currentImageIndex) thumb.classList.add('active-thumb');
-                else thumb.classList.remove('active-thumb');
-            });
-        }
-        
-        function nextImage() { let newIdx = (currentImageIndex + 1) % imagesList.length; setMainImage(newIdx); }
-        function prevImage() { let newIdx = (currentImageIndex - 1 + imagesList.length) % imagesList.length; setMainImage(newIdx); }
-        
-        // Lightbox
-        const lightboxModal = document.getElementById('lightboxModal');
-        const lightboxImg = document.getElementById('lightboxImg');
-        const closeLightbox = document.getElementById('closeLightboxBtn');
-        const prevLight = document.getElementById('prevLightBtn');
-        const nextLight = document.getElementById('nextLightBtn');
-        const fullscreenBtn = document.getElementById('fullscreenBtn');
-        
-        function openLightbox() { lightboxImg.src = imagesList[currentImageIndex]; lightboxModal.classList.add('active'); document.body.style.overflow = 'hidden'; }
-        function closeLightboxFn() { lightboxModal.classList.remove('active'); document.body.style.overflow = ''; }
-        function updateLightboxImage() { lightboxImg.src = imagesList[currentImageIndex]; }
-        
-        fullscreenBtn.addEventListener('click', openLightbox);
-        closeLightbox.addEventListener('click', closeLightboxFn);
-        lightboxModal.addEventListener('click', (e) => { if (e.target === lightboxModal) closeLightboxFn(); });
-        prevLight.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); updateLightboxImage(); });
-        nextLight.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); updateLightboxImage(); });
-        mainImg.addEventListener('click', openLightbox);
-        
-        // --------------------------------------------------------------
-        // 3. BOTONES "AGENDAR" Y "OFERTAR" - MISMA ESENCIA DEL CÓDIGO BASE
-        // --------------------------------------------------------------
-        const scheduleBtn = document.getElementById('scheduleBtn');
-        const offerBtn = document.getElementById('offerBtn');
-        
-        scheduleBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            alert("📋 QR • Solicitud de visita enviada. En breve, un asesor QRP2P se comunicará contigo para coordinar el recorrido virtual o presencial.");
-            console.log("[QRP2P] Agendar visita - propiedad: " + propertyData.title);
-        });
-        
-        offerBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            let userOffer = prompt("Ingresa el monto de tu oferta en USD (mínimo sugerido: " + propertyData.price + "):", propertyData.price.replace('USD', '').trim());
-            if (userOffer && !isNaN(parseFloat(userOffer)) && parseFloat(userOffer) > 0) {
-                alert(`✅ Oferta de $${userOffer} USD registrada. El propietario recibirá tu propuesta en las próximas 24 horas.`);
-            } else if (userOffer !== null) {
-                alert("Por favor, ingresa un valor numérico válido para tu oferta.");
-            }
-        });
-        
-        // Botón volver
-        const backBtn = document.getElementById('backButton');
-        backBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            alert("Redirigiendo al mercado inmobiliario QRP2P...");
-            window.history.back();
-        });
-        
-        // Inicialización
-        renderThumbnails();
-        setMainImage(0);
-        
-        // teclado para la galería
-        document.addEventListener('keydown', (e) => {
-            if (lightboxModal.classList.contains('active')) {
-                if (e.key === 'ArrowLeft') { e.preventDefault(); prevImage(); updateLightboxImage(); }
-                else if (e.key === 'ArrowRight') { e.preventDefault(); nextImage(); updateLightboxImage(); }
-                else if (e.key === 'Escape') { closeLightboxFn(); }
-            } else {
-                if (e.key === 'ArrowLeft' && !e.target.closest('input')) { prevImage(); }
-                else if (e.key === 'ArrowRight' && !e.target.closest('input')) { nextImage(); }
-            }
-        });
-        
-        document.querySelectorAll('img').forEach(img => {
-            img.addEventListener('dragstart', (e) => e.preventDefault());
-        });
-        
-        console.log("QRP2P | Property detail page — SEO profesional, responsive y botones estilo base");
     })();
+    
+    // =============================================================
+    // 2. DATOS Y GALERÍA
+    // =============================================================
+    const imagesList = [
+        "https://picsum.photos/id/106/1200/800",
+        "https://picsum.photos/id/20/1200/800",
+        "https://picsum.photos/id/26/1200/800",
+        "https://picsum.photos/id/28/1200/800",
+        "https://picsum.photos/id/39/1200/800"
+    ];
+    
+    let currentImageIndex = 0;
+    const mainImg = document.getElementById('mainDisplayImg');
+    const thumbContainer = document.getElementById('thumbnailsList');
+    
+    function renderThumbnails() {
+        thumbContainer.innerHTML = '';
+        imagesList.forEach((imgUrl, idx) => {
+            const thumb = document.createElement('img');
+            thumb.src = imgUrl + '?w=100&h=100&fit=crop';
+            thumb.classList.add('thumb');
+            if (idx === currentImageIndex) thumb.classList.add('active-thumb');
+            thumb.addEventListener('click', () => setMainImage(idx));
+            thumbContainer.appendChild(thumb);
+        });
+    }
+    
+    function setMainImage(index) {
+        currentImageIndex = Math.min(Math.max(0, index), imagesList.length - 1);
+        mainImg.src = imagesList[currentImageIndex];
+        document.querySelectorAll('.thumb').forEach((thumb, i) => {
+            if (i === currentImageIndex) thumb.classList.add('active-thumb');
+            else thumb.classList.remove('active-thumb');
+        });
+    }
+    
+    function nextImage() { setMainImage((currentImageIndex + 1) % imagesList.length); }
+    function prevImage() { setMainImage((currentImageIndex - 1 + imagesList.length) % imagesList.length); }
+    
+    // Lightbox
+    const lightboxModal = document.getElementById('lightboxModal');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const closeLightbox = document.getElementById('closeLightboxBtn');
+    const prevLight = document.getElementById('prevLightBtn');
+    const nextLight = document.getElementById('nextLightBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    
+    function openLightbox() { lightboxImg.src = imagesList[currentImageIndex]; lightboxModal.classList.add('active'); document.body.style.overflow = 'hidden'; }
+    function closeLightboxFn() { lightboxModal.classList.remove('active'); document.body.style.overflow = ''; }
+    function updateLightboxImage() { lightboxImg.src = imagesList[currentImageIndex]; }
+    
+    fullscreenBtn.addEventListener('click', openLightbox);
+    closeLightbox.addEventListener('click', closeLightboxFn);
+    lightboxModal.addEventListener('click', (e) => { if (e.target === lightboxModal) closeLightboxFn(); });
+    prevLight.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); updateLightboxImage(); });
+    nextLight.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); updateLightboxImage(); });
+    mainImg.addEventListener('click', openLightbox);
+    
+    // =============================================================
+    // 3. BOTONES AGENDAR Y OFERTAR - EXACTAMENTE IGUAL AL CÓDIGO BASE
+    //    Utilizan alertas profesionales y la misma lógica minimalista
+    // =============================================================
+    const scheduleBtn = document.getElementById('scheduleBtn');
+    const offerBtn = document.getElementById('offerBtn');
+    
+    // Mismo comportamiento que en el base: alert con mensaje claro
+    scheduleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert("📋 QR • Solicitud de visita enviada. En breve, un asesor QRP2P se comunicará contigo para coordinar el recorrido virtual o presencial.");
+        console.log("[QRP2P] Agendar visita - propiedad: Residencia Altos del Chicó");
+    });
+    
+    offerBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        let userOffer = prompt("Ingresa el monto de tu oferta en USD (mínimo sugerido: USD 585,000):", "585000");
+        if (userOffer && !isNaN(parseFloat(userOffer)) && parseFloat(userOffer) > 0) {
+            alert(`✅ Oferta de $${userOffer} USD registrada. El propietario recibirá tu propuesta en las próximas 24 horas.`);
+        } else if (userOffer !== null) {
+            alert("Por favor, ingresa un valor numérico válido para tu oferta.");
+        }
+    });
+    
+    // Idioma (igual que base pero simplificado)
+    const translations = {
+        es: { tagline: "real estate · propiedad exclusiva" },
+        en: { tagline: "real estate · exclusive property" }
+    };
+    let currentLang = 'es';
+    function setLanguage(lang) {
+        currentLang = lang;
+        document.querySelector('[data-i18n="tagline"]').innerText = translations[lang].tagline;
+        document.getElementById('lang-es').classList.toggle('active', lang === 'es');
+        document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+        localStorage.setItem('qrp2p_lang', lang);
+    }
+    document.getElementById('lang-es').addEventListener('click', () => setLanguage('es'));
+    document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+    const savedLang = localStorage.getItem('qrp2p_lang');
+    if (savedLang && (savedLang === 'es' || savedLang === 'en')) setLanguage(savedLang);
+    else setLanguage('es');
+    
+    // Botón volver
+    document.getElementById('backButton').addEventListener('click', (e) => {
+        e.preventDefault();
+        alert("Redirigiendo al mercado inmobiliario QRP2P...");
+        window.history.back();
+    });
+    
+    // Inicializar
+    renderThumbnails();
+    setMainImage(0);
+    
+    // Teclado
+    document.addEventListener('keydown', (e) => {
+        if (lightboxModal.classList.contains('active')) {
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prevImage(); updateLightboxImage(); }
+            else if (e.key === 'ArrowRight') { e.preventDefault(); nextImage(); updateLightboxImage(); }
+            else if (e.key === 'Escape') { closeLightboxFn(); }
+        } else {
+            if (e.key === 'ArrowLeft' && !e.target.closest('input')) prevImage();
+            else if (e.key === 'ArrowRight' && !e.target.closest('input')) nextImage();
+        }
+    });
+    
+    document.querySelectorAll('img').forEach(img => img.addEventListener('dragstart', (e) => e.preventDefault()));
 </script>
 </body>
 </html>
