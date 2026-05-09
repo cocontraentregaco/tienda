@@ -394,13 +394,15 @@
         
         .modal-content {
             background-color: #ffffff;
-            margin: 5% auto;
+            margin: 3% auto;
             padding: 2rem;
             width: 90%;
-            max-width: 500px;
+            max-width: 550px;
             border: 1px solid #e0e0e0;
             font-family: 'Libre Baskerville', serif;
             position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         .modal-content h3 {
@@ -435,6 +437,50 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 600;
+        }
+        
+        /* Radio buttons group */
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            margin: 0.5rem 0 1rem 0;
+            flex-wrap: wrap;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            text-transform: none;
+            font-weight: 400;
+            cursor: pointer;
+        }
+        .radio-group input[type="radio"] {
+            width: auto;
+            margin: 0;
+            cursor: pointer;
+        }
+        
+        /* Sub-opciones de crédito */
+        .credit-options {
+            display: none;
+            margin: 0.5rem 0 1rem 1rem;
+            padding: 0.8rem;
+            background: #f9f9f9;
+            border: 1px solid #eaeaea;
+        }
+        .credit-options label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+            font-size: 0.8rem;
+            text-transform: none;
+            font-weight: 400;
+        }
+        .credit-options input[type="radio"] {
+            width: auto;
+            margin: 0;
         }
         
         .modal-buttons {
@@ -556,7 +602,8 @@
             .thumb { width: 65px; height: 65px; }
             .nav-prev { left: 10px; }
             .nav-next { right: 10px; }
-            .modal-content { margin: 20% auto; width: 90%; }
+            .modal-content { margin: 10% auto; width: 95%; }
+            .radio-group { gap: 1rem; }
         }
         
         @media (max-width: 550px) {
@@ -645,8 +692,20 @@
         <span class="close-modal" id="closeScheduleModal">&times;</span>
         <h3>📅 Agendar Visita</h3>
         <form id="scheduleForm">
+            <label>TIPO DE DOCUMENTO</label>
+            <select id="scheduleDocType" required>
+                <option value="">Seleccionar</option>
+                <option value="Cédula de ciudadanía">Cédula de ciudadanía</option>
+                <option value="Cédula de extranjería">Cédula de extranjería</option>
+                <option value="Pasaporte">Pasaporte</option>
+                <option value="NIT">NIT</option>
+            </select>
+            
+            <label>NÚMERO DE DOCUMENTO</label>
+            <input type="text" id="scheduleDocNumber" required placeholder="Número de identificación">
+            
             <label>NOMBRE COMPLETO</label>
-            <input type="text" id="scheduleName" required placeholder="Tu nombre">
+            <input type="text" id="scheduleName" required placeholder="Tu nombre completo">
             
             <label>TELÉFONO (WhatsApp)</label>
             <input type="tel" id="schedulePhone" required placeholder="Código país + número">
@@ -682,8 +741,20 @@
         <span class="close-modal" id="closeOfferModal">&times;</span>
         <h3>💰 Hacer Oferta</h3>
         <form id="offerForm">
+            <label>TIPO DE DOCUMENTO</label>
+            <select id="offerDocType" required>
+                <option value="">Seleccionar</option>
+                <option value="Cédula de ciudadanía">Cédula de ciudadanía</option>
+                <option value="Cédula de extranjería">Cédula de extranjería</option>
+                <option value="Pasaporte">Pasaporte</option>
+                <option value="NIT">NIT</option>
+            </select>
+            
+            <label>NÚMERO DE DOCUMENTO</label>
+            <input type="text" id="offerDocNumber" required placeholder="Número de identificación">
+            
             <label>NOMBRE COMPLETO</label>
-            <input type="text" id="offerName" required placeholder="Tu nombre">
+            <input type="text" id="offerName" required placeholder="Tu nombre completo">
             
             <label>TELÉFONO (WhatsApp)</label>
             <input type="tel" id="offerPhone" required placeholder="Código país + número">
@@ -692,12 +763,32 @@
             <input type="number" id="offerAmount" required placeholder="Ej: 550000" step="1000">
             
             <label>FORMA DE PAGO</label>
-            <select id="offerPayment" required>
-                <option value="">Seleccionar forma</option>
-                <option value="Contado">Contado</option>
-                <option value="Crédito hipotecario">Crédito hipotecario</option>
-                <option value="Financiamiento directo">Financiamiento directo</option>
-            </select>
+            <div class="radio-group" id="paymentMethodGroup">
+                <label>
+                    <input type="radio" name="paymentMethod" value="Contado"> Contado
+                </label>
+                <label>
+                    <input type="radio" name="paymentMethod" value="Crédito"> Crédito
+                </label>
+            </div>
+            
+            <!-- Sección que se muestra solo si selecciona "Crédito" -->
+            <div id="creditOptions" class="credit-options">
+                <label>Tipo de financiación:</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="creditType" value="Tengo preaprobado"> Tengo preaprobado
+                    </label>
+                    <label>
+                        <input type="radio" name="creditType" value="Cesantías"> Cesantías
+                    </label>
+                    <label>
+                        <input type="radio" name="creditType" value="Solicitar crédito inmobiliario"> Solicitar crédito inmobiliario
+                    </label>
+                </div>
+                <label>MONTO INICIAL (USD)</label>
+                <input type="number" id="initialAmount" placeholder="Monto de inicial o cuota inicial" step="1000">
+            </div>
             
             <label>MENSAJE (opcional)</label>
             <textarea id="offerMessage" rows="3" placeholder="Detalles adicionales de tu oferta..."></textarea>
@@ -726,7 +817,7 @@
         const blockEvents = ['copy', 'cut', 'paste', 'contextmenu', 'dragstart', 'selectstart'];
         blockEvents.forEach(eventType => {
             document.addEventListener(eventType, function(e) {
-                const isInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
+                const isInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT';
                 if (!isInput) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -737,7 +828,7 @@
         });
         
         document.addEventListener('keydown', function(e) {
-            const isInputFocused = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
+            const isInputFocused = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'SELECT');
             if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'x')) {
                 if (!isInputFocused) { e.preventDefault(); return false; }
             }
@@ -756,6 +847,23 @@
             lastTouchEnd = now;
         }, false);
     })();
+    
+    // ==================== MOSTRAR/OCULTAR OPCIONES DE CRÉDITO ====================
+    const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
+    const creditOptions = document.getElementById('creditOptions');
+    
+    function toggleCreditOptions() {
+        const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+        if (selectedPayment && selectedPayment.value === 'Crédito') {
+            creditOptions.style.display = 'block';
+        } else {
+            creditOptions.style.display = 'none';
+        }
+    }
+    
+    paymentRadios.forEach(radio => {
+        radio.addEventListener('change', toggleCreditOptions);
+    });
     
     // ==================== GALERÍA DE IMÁGENES ====================
     const imagesList = [
@@ -811,146 +919,3 @@
     lightboxModal.addEventListener('click', (e) => { if (e.target === lightboxModal) closeLightboxFn(); });
     prevLight.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); updateLightboxImage(); });
     nextLight.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); updateLightboxImage(); });
-    mainImg.addEventListener('click', openLightbox);
-    
-    // ==================== MODALES ====================
-    const scheduleModal = document.getElementById('scheduleModal');
-    const offerModal = document.getElementById('offerModal');
-    const scheduleBtn = document.getElementById('scheduleBtn');
-    const offerBtn = document.getElementById('offerBtn');
-    
-    // Abrir modales
-    scheduleBtn.addEventListener('click', () => {
-        scheduleModal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-    });
-    
-    offerBtn.addEventListener('click', () => {
-        offerModal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-    });
-    
-    // Cerrar modales
-    function closeScheduleModal() {
-        scheduleModal.style.display = 'none';
-        document.body.style.overflow = '';
-        document.getElementById('scheduleForm').reset();
-    }
-    
-    function closeOfferModal() {
-        offerModal.style.display = 'none';
-        document.body.style.overflow = '';
-        document.getElementById('offerForm').reset();
-    }
-    
-    document.getElementById('closeScheduleModal').addEventListener('click', closeScheduleModal);
-    document.getElementById('cancelScheduleBtn').addEventListener('click', closeScheduleModal);
-    document.getElementById('closeOfferModal').addEventListener('click', closeOfferModal);
-    document.getElementById('cancelOfferBtn').addEventListener('click', closeOfferModal);
-    
-    // Cerrar al hacer clic fuera del modal
-    window.addEventListener('click', (e) => {
-        if (e.target === scheduleModal) closeScheduleModal();
-        if (e.target === offerModal) closeOfferModal();
-    });
-    
-    // ENVIAR AGENDAR VISITA a WhatsApp
-    document.getElementById('sendScheduleBtn').addEventListener('click', () => {
-        const nombre = document.getElementById('scheduleName').value.trim();
-        const telefono = document.getElementById('schedulePhone').value.trim();
-        const fecha = document.getElementById('scheduleDate').value;
-        const hora = document.getElementById('scheduleTime').value;
-        const mensaje = document.getElementById('scheduleMessage').value.trim();
-        
-        if (!nombre || !telefono || !fecha || !hora) {
-            alert('Por favor complete todos los campos obligatorios.');
-            return;
-        }
-        
-        const propiedad = "Residencia Altos del Chicó - Bogotá - USD 585,000";
-        const texto = `*SOLICITUD DE VISITA - QRP2P*\n\n` +
-                      `*Propiedad:* ${propiedad}\n` +
-                      `*Nombre:* ${nombre}\n` +
-                      `*Teléfono:* ${telefono}\n` +
-                      `*Fecha:* ${fecha}\n` +
-                      `*Hora:* ${hora}\n` +
-                      `*Mensaje:* ${mensaje || 'Sin comentarios adicionales'}`;
-        
-        const url = `https://wa.me/573001234567?text=${encodeURIComponent(texto)}`;
-        window.open(url, '_blank');
-        closeScheduleModal();
-    });
-    
-    // ENVIAR OFERTA a WhatsApp
-    document.getElementById('sendOfferBtn').addEventListener('click', () => {
-        const nombre = document.getElementById('offerName').value.trim();
-        const telefono = document.getElementById('offerPhone').value.trim();
-        const monto = document.getElementById('offerAmount').value.trim();
-        const pago = document.getElementById('offerPayment').value;
-        const mensaje = document.getElementById('offerMessage').value.trim();
-        
-        if (!nombre || !telefono || !monto || !pago) {
-            alert('Por favor complete todos los campos obligatorios.');
-            return;
-        }
-        
-        const propiedad = "Residencia Altos del Chicó - Bogotá - USD 585,000";
-        const texto = `*OFERTA - QRP2P*\n\n` +
-                      `*Propiedad:* ${propiedad}\n` +
-                      `*Nombre:* ${nombre}\n` +
-                      `*Teléfono:* ${telefono}\n` +
-                      `*Monto ofertado:* USD ${parseInt(monto).toLocaleString()}\n` +
-                      `*Forma de pago:* ${pago}\n` +
-                      `*Mensaje:* ${mensaje || 'Sin comentarios adicionales'}`;
-        
-        const url = `https://wa.me/573001234567?text=${encodeURIComponent(texto)}`;
-        window.open(url, '_blank');
-        closeOfferModal();
-    });
-    
-    // ==================== IDIOMA ====================
-    const translations = {
-        es: { tagline: "real estate · propiedad exclusiva" },
-        en: { tagline: "real estate · exclusive property" }
-    };
-    let currentLang = 'es';
-    function setLanguage(lang) {
-        currentLang = lang;
-        document.querySelector('[data-i18n="tagline"]').innerText = translations[lang].tagline;
-        document.getElementById('lang-es').classList.toggle('active', lang === 'es');
-        document.getElementById('lang-en').classList.toggle('active', lang === 'en');
-        localStorage.setItem('qrp2p_lang', lang);
-    }
-    document.getElementById('lang-es').addEventListener('click', () => setLanguage('es'));
-    document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
-    const savedLang = localStorage.getItem('qrp2p_lang');
-    if (savedLang && (savedLang === 'es' || savedLang === 'en')) setLanguage(savedLang);
-    else setLanguage('es');
-    
-    // Botón volver
-    document.getElementById('backButton').addEventListener('click', (e) => {
-        e.preventDefault();
-        window.history.back();
-    });
-    
-    // Inicializar
-    renderThumbnails();
-    setMainImage(0);
-    
-    // Navegación con teclado
-    document.addEventListener('keydown', (e) => {
-        if (lightboxModal.classList.contains('active')) {
-            if (e.key === 'ArrowLeft') { e.preventDefault(); prevImage(); updateLightboxImage(); }
-            else if (e.key === 'ArrowRight') { e.preventDefault(); nextImage(); updateLightboxImage(); }
-            else if (e.key === 'Escape') { closeLightboxFn(); }
-        }
-        if (e.key === 'Escape') {
-            if (scheduleModal.style.display === 'block') closeScheduleModal();
-            if (offerModal.style.display === 'block') closeOfferModal();
-        }
-    });
-    
-    document.querySelectorAll('img').forEach(img => img.addEventListener('dragstart', (e) => e.preventDefault()));
-</script>
-</body>
-</html>
