@@ -276,9 +276,7 @@
             color: #5a5a5a;
         }
         
-        /* ============================================================
-           BOTONES EXACTAMENTE IGUALES AL .country-card DEL CÓDIGO BASE
-        ============================================================ */
+        /* BOTONES ESTILO COUNTRY-CARD */
         .action-buttons {
             display: flex;
             flex-wrap: wrap;
@@ -381,6 +379,111 @@
             padding-top: 2rem;
         }
         
+        /* MODALES - Estilo profesional */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            background-color: #ffffff;
+            margin: 5% auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid #e0e0e0;
+            font-family: 'Libre Baskerville', serif;
+            position: relative;
+        }
+        
+        .modal-content h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.3px;
+        }
+        
+        .modal-content input,
+        .modal-content textarea,
+        .modal-content select {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0 1rem 0;
+            border: 1px solid #e0e0e0;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 0.9rem;
+            background: #ffffff;
+            box-sizing: border-box;
+        }
+        
+        .modal-content input:focus,
+        .modal-content textarea:focus,
+        .modal-content select:focus {
+            outline: none;
+            border-color: #000000;
+        }
+        
+        .modal-content label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 0.8rem;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            border: 1px solid #e0e0e0;
+            background: #ffffff;
+            transition: all 0.2s;
+        }
+        
+        .modal-btn-primary {
+            border-color: #000000;
+            background: #000000;
+            color: #ffffff;
+        }
+        
+        .modal-btn-primary:hover {
+            background: #2c2c2c;
+        }
+        
+        .modal-btn-secondary:hover {
+            border-color: #000000;
+            background: #fafafa;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .close-modal:hover {
+            color: #000;
+        }
+        
         /* lightbox */
         .lightbox-modal {
             position: fixed;
@@ -453,12 +556,14 @@
             .thumb { width: 65px; height: 65px; }
             .nav-prev { left: 10px; }
             .nav-next { right: 10px; }
+            .modal-content { margin: 20% auto; width: 90%; }
         }
         
         @media (max-width: 550px) {
             .thumb { width: 55px; height: 55px; }
             .property-info h1 { font-size: 1.4rem; }
             .price { font-size: 1.5rem; }
+            .modal-buttons { flex-direction: column; }
         }
         
         @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
@@ -496,27 +601,19 @@
             </div>
             <div class="price" id="propPrice">USD 585,000 <small>P2P · 0% comisión</small></div>
             
-            <!-- ======================================================== -->
-            <!-- BOTONES QUE ENVÍAN A WHATSAPP EXACTAMENTE COMO LO PIDE   -->
-            <!-- ======================================================== -->
+            <!-- BOTONES CON MODALES -->
             <div class="action-buttons">
-                <a href="https://wa.me/573001234567?text=Hola%2C%20estoy%20interesado%20en%20AGENDAR%20UNA%20VISITA%20para%20la%20propiedad%20Residencia%20Altos%20del%20Chic%C3%B3%20en%20Bogot%C3%A1%20con%20precio%20USD%20585%2C000" 
-                   class="country-card" 
-                   target="_blank"
-                   rel="noopener noreferrer">
+                <button class="country-card" id="scheduleBtn">
                     <div class="country-name">📅 AGENDAR VISITA</div>
                     <div class="divider"></div>
-                    <div class="country-sub">coordina tu recorrido por WhatsApp</div>
-                </a>
+                    <div class="country-sub">coordina tu recorrido</div>
+                </button>
                 
-                <a href="https://wa.me/573001234567?text=Hola%2C%20estoy%20interesado%20en%20HACER%20UNA%20OFERTA%20por%20la%20propiedad%20Residencia%20Altos%20del%20Chic%C3%B3%20en%20Bogot%C3%A1%20con%20precio%20USD%20585%2C000" 
-                   class="country-card" 
-                   target="_blank"
-                   rel="noopener noreferrer">
+                <button class="country-card" id="offerBtn">
                     <div class="country-name">💰 HACER OFERTA</div>
                     <div class="divider"></div>
-                    <div class="country-sub">envía tu propuesta por WhatsApp</div>
-                </a>
+                    <div class="country-sub">envía tu propuesta</div>
+                </button>
             </div>
             
             <div class="description-section">
@@ -542,6 +639,78 @@
     </div>
 </div>
 
+<!-- MODAL AGENDAR VISITA -->
+<div id="scheduleModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" id="closeScheduleModal">&times;</span>
+        <h3>📅 Agendar Visita</h3>
+        <form id="scheduleForm">
+            <label>NOMBRE COMPLETO</label>
+            <input type="text" id="scheduleName" required placeholder="Tu nombre">
+            
+            <label>TELÉFONO (WhatsApp)</label>
+            <input type="tel" id="schedulePhone" required placeholder="Código país + número">
+            
+            <label>FECHA PREFERIDA</label>
+            <input type="date" id="scheduleDate" required>
+            
+            <label>HORA PREFERIDA</label>
+            <select id="scheduleTime" required>
+                <option value="">Seleccionar hora</option>
+                <option value="09:00">09:00 AM</option>
+                <option value="10:00">10:00 AM</option>
+                <option value="11:00">11:00 AM</option>
+                <option value="14:00">02:00 PM</option>
+                <option value="15:00">03:00 PM</option>
+                <option value="16:00">04:00 PM</option>
+            </select>
+            
+            <label>MENSAJE (opcional)</label>
+            <textarea id="scheduleMessage" rows="3" placeholder="Comentarios adicionales..."></textarea>
+            
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn modal-btn-primary" id="sendScheduleBtn">ENVIAR SOLICITUD</button>
+                <button type="button" class="modal-btn modal-btn-secondary" id="cancelScheduleBtn">CANCELAR</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL HACER OFERTA -->
+<div id="offerModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" id="closeOfferModal">&times;</span>
+        <h3>💰 Hacer Oferta</h3>
+        <form id="offerForm">
+            <label>NOMBRE COMPLETO</label>
+            <input type="text" id="offerName" required placeholder="Tu nombre">
+            
+            <label>TELÉFONO (WhatsApp)</label>
+            <input type="tel" id="offerPhone" required placeholder="Código país + número">
+            
+            <label>MONTO DE OFERTA (USD)</label>
+            <input type="number" id="offerAmount" required placeholder="Ej: 550000" step="1000">
+            
+            <label>FORMA DE PAGO</label>
+            <select id="offerPayment" required>
+                <option value="">Seleccionar forma</option>
+                <option value="Contado">Contado</option>
+                <option value="Crédito hipotecario">Crédito hipotecario</option>
+                <option value="Financiamiento directo">Financiamiento directo</option>
+            </select>
+            
+            <label>MENSAJE (opcional)</label>
+            <textarea id="offerMessage" rows="3" placeholder="Detalles adicionales de tu oferta..."></textarea>
+            
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn modal-btn-primary" id="sendOfferBtn">ENVIAR OFERTA</button>
+                <button type="button" class="modal-btn modal-btn-secondary" id="cancelOfferBtn">CANCELAR</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lightbox Modal para fotos -->
 <div id="lightboxModal" class="lightbox-modal">
     <div class="lightbox-content">
         <button class="close-lightbox" id="closeLightboxBtn">✕</button>
@@ -588,7 +757,7 @@
         }, false);
     })();
     
-    // Galería de imágenes
+    // ==================== GALERÍA DE IMÁGENES ====================
     const imagesList = [
         "https://picsum.photos/id/106/1200/800",
         "https://picsum.photos/id/20/1200/800",
@@ -644,7 +813,102 @@
     nextLight.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); updateLightboxImage(); });
     mainImg.addEventListener('click', openLightbox);
     
-    // Idioma
+    // ==================== MODALES ====================
+    const scheduleModal = document.getElementById('scheduleModal');
+    const offerModal = document.getElementById('offerModal');
+    const scheduleBtn = document.getElementById('scheduleBtn');
+    const offerBtn = document.getElementById('offerBtn');
+    
+    // Abrir modales
+    scheduleBtn.addEventListener('click', () => {
+        scheduleModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    });
+    
+    offerBtn.addEventListener('click', () => {
+        offerModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    });
+    
+    // Cerrar modales
+    function closeScheduleModal() {
+        scheduleModal.style.display = 'none';
+        document.body.style.overflow = '';
+        document.getElementById('scheduleForm').reset();
+    }
+    
+    function closeOfferModal() {
+        offerModal.style.display = 'none';
+        document.body.style.overflow = '';
+        document.getElementById('offerForm').reset();
+    }
+    
+    document.getElementById('closeScheduleModal').addEventListener('click', closeScheduleModal);
+    document.getElementById('cancelScheduleBtn').addEventListener('click', closeScheduleModal);
+    document.getElementById('closeOfferModal').addEventListener('click', closeOfferModal);
+    document.getElementById('cancelOfferBtn').addEventListener('click', closeOfferModal);
+    
+    // Cerrar al hacer clic fuera del modal
+    window.addEventListener('click', (e) => {
+        if (e.target === scheduleModal) closeScheduleModal();
+        if (e.target === offerModal) closeOfferModal();
+    });
+    
+    // ENVIAR AGENDAR VISITA a WhatsApp
+    document.getElementById('sendScheduleBtn').addEventListener('click', () => {
+        const nombre = document.getElementById('scheduleName').value.trim();
+        const telefono = document.getElementById('schedulePhone').value.trim();
+        const fecha = document.getElementById('scheduleDate').value;
+        const hora = document.getElementById('scheduleTime').value;
+        const mensaje = document.getElementById('scheduleMessage').value.trim();
+        
+        if (!nombre || !telefono || !fecha || !hora) {
+            alert('Por favor complete todos los campos obligatorios.');
+            return;
+        }
+        
+        const propiedad = "Residencia Altos del Chicó - Bogotá - USD 585,000";
+        const texto = `*SOLICITUD DE VISITA - QRP2P*\n\n` +
+                      `*Propiedad:* ${propiedad}\n` +
+                      `*Nombre:* ${nombre}\n` +
+                      `*Teléfono:* ${telefono}\n` +
+                      `*Fecha:* ${fecha}\n` +
+                      `*Hora:* ${hora}\n` +
+                      `*Mensaje:* ${mensaje || 'Sin comentarios adicionales'}`;
+        
+        const url = `https://wa.me/573001234567?text=${encodeURIComponent(texto)}`;
+        window.open(url, '_blank');
+        closeScheduleModal();
+    });
+    
+    // ENVIAR OFERTA a WhatsApp
+    document.getElementById('sendOfferBtn').addEventListener('click', () => {
+        const nombre = document.getElementById('offerName').value.trim();
+        const telefono = document.getElementById('offerPhone').value.trim();
+        const monto = document.getElementById('offerAmount').value.trim();
+        const pago = document.getElementById('offerPayment').value;
+        const mensaje = document.getElementById('offerMessage').value.trim();
+        
+        if (!nombre || !telefono || !monto || !pago) {
+            alert('Por favor complete todos los campos obligatorios.');
+            return;
+        }
+        
+        const propiedad = "Residencia Altos del Chicó - Bogotá - USD 585,000";
+        const texto = `*OFERTA - QRP2P*\n\n` +
+                      `*Propiedad:* ${propiedad}\n` +
+                      `*Nombre:* ${nombre}\n` +
+                      `*Teléfono:* ${telefono}\n` +
+                      `*Monto ofertado:* USD ${parseInt(monto).toLocaleString()}\n` +
+                      `*Forma de pago:* ${pago}\n` +
+                      `*Mensaje:* ${mensaje || 'Sin comentarios adicionales'}`;
+        
+        const url = `https://wa.me/573001234567?text=${encodeURIComponent(texto)}`;
+        window.open(url, '_blank');
+        closeOfferModal();
+    });
+    
+    // ==================== IDIOMA ====================
     const translations = {
         es: { tagline: "real estate · propiedad exclusiva" },
         en: { tagline: "real estate · exclusive property" }
@@ -679,6 +943,10 @@
             if (e.key === 'ArrowLeft') { e.preventDefault(); prevImage(); updateLightboxImage(); }
             else if (e.key === 'ArrowRight') { e.preventDefault(); nextImage(); updateLightboxImage(); }
             else if (e.key === 'Escape') { closeLightboxFn(); }
+        }
+        if (e.key === 'Escape') {
+            if (scheduleModal.style.display === 'block') closeScheduleModal();
+            if (offerModal.style.display === 'block') closeOfferModal();
         }
     });
     
