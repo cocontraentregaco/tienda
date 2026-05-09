@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="description" content="QRP2P Real Estate — Propiedad exclusiva. Galería profesional, vista completa de imágenes, descripción detallada y cotización directa.">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#000000">
+    <title>QRP2P | Propiedad · Vista única</title>
+    <!-- Open Graph -->
+    <meta property="og:title" content="QRP2P Real Estate — Propiedad destacada">
+    <meta property="og:description" content="Galería profesional, precio competitivo, video integrado y opciones de contacto.">
+    <meta property="og:type" content="website">
+    <style>
+        /* -------------------------------
+           RESET Y ESTILOS GLOBALES
+           Basado en la identidad visual del código original:
+           - Libre Baskerville, blanco y negro puro
+           - Bloqueo de selección/zoom/contextmenu
+           - Diseño elegante y profesional
+        ------------------------------- */
+        
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        input, textarea, button, [contenteditable="true"] {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+        
+        body {
+            background-color: #ffffff;
+            color: #000000;
+            font-family: 'Libre Baskerville', 'Times New Roman', Georgia, 'Baskerville', serif;
+            font-weight: 400;
+            line-height: 1.45;
+            margin: 0;
+            padding: 0;
+            -webkit-touch-callout: none;
+            overflow-x: hidden;
+        }
+        
+        html {
+            touch-action: pan-x pan-y;
+            overflow-x: hidden;
+        }
+        
+        img, a, button {
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+        
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 1.8rem;
+        }
+        
+        /* header sutil */
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #3a3a3a;
+            text-decoration: none;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 4px;
+            transition: all 0.2s;
+        }
+        .back-link:hover {
+            color: #000000;
+            border-bottom-color: #000000;
+        }
+        
+        /* breadcrumb simple */
+        .property-badge {
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            color: #5a5a5a;
+            margin-bottom: 1rem;
+        }
+        
+        /* GRID principal: galería + info */
+        .property-grid {
+            display: grid;
+            grid-template-columns: 1fr 0.9fr;
+            gap: 3rem;
+            margin-top: 1rem;
+        }
+        
+        /* ----- GALERÍA PROFESIONAL (tipo lightbox nativo mejorado) ----- */
+        .gallery-container {
+            width: 100%;
+        }
+        
+        .main-image {
+            position: relative;
+            background-color: #f8f8f8;
+            cursor: pointer;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            border: 1px solid #ebebeb;
+        }
+        .main-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        .fullscreen-icon {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 8px 14px;
+            font-size: 0.75rem;
+            font-family: monospace;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            z-index: 2;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: background 0.2s;
+        }
+        .fullscreen-icon:hover {
+            background: #000000;
+        }
+        
+        .thumbnails {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 0.75rem;
+        }
+        .thumb {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid transparent;
+            opacity: 0.7;
+            transition: all 0.2s ease;
+            background: #f5f5f5;
+        }
+        .thumb.active-thumb {
+            border-color: #000000;
+            opacity: 1;
+        }
+        .thumb:hover {
+            opacity: 1;
+            border-color: #aaa;
+        }
+        
+        /* INFO DE PROPIEDAD */
+        .property-info h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            margin: 0 0 0.75rem 0;
+            line-height: 1.2;
+        }
+        .property-location {
+            font-size: 0.85rem;
+            color: #4a4a4a;
+            border-bottom: 1px solid #efefef;
+            padding-bottom: 1rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .price {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 1rem 0 1rem 0;
+            letter-spacing: -0.5px;
+            background: #fafaf9;
+            display: inline-block;
+            padding-right: 0.5rem;
+        }
+        .price small {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #5a5a5a;
+        }
+        
+        /* botones principales */
+        .action-buttons {
+            display: flex;
+            gap: 1.2rem;
+            margin: 2rem 0 2rem 0;
+            flex-wrap: wrap;
+        }
+        .btn {
+            flex: 1;
+            min-width: 150px;
+            background: none;
+            border: 1.5px solid #000000;
+            padding: 0.9rem 1rem;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-align: center;
+            color: #000000;
+            background: white;
+        }
+        .btn-primary {
+            background: #000000;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2c2c2c;
+            border-color: #2c2c2c;
+        }
+        .btn-outline:hover {
+            background: #f5f5f5;
+            border-color: #000;
+        }
+        
+        .description-section {
+            margin: 2rem 0;
+            border-top: 1px solid #eaeaea;
+            padding-top: 1.8rem;
+        }
+        .description-section h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+            margin-bottom: 1rem;
+        }
+        .description-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #2a2a2a;
+        }
+        
+        /* iframe youtube responsivo */
+        .video-wrapper {
+            margin: 2rem 0 1rem 0;
+            position: relative;
+            width: 100%;
+            background: #000;
+            border: 1px solid #eaeaea;
+        }
+        .video-wrapper iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            display: block;
+            border: none;
+        }
+        
+        .divider-light {
+            height: 1px;
+            background: #eaeaea;
+            margin: 1.5rem 0;
+        }
+        
+        .footer-detail {
+            margin-top: 3rem;
+            font-size: 0.7rem;
+            text-align: center;
+            color: #6c6c6c;
+            border-top: 1px solid #ececec;
+            padding-top: 2rem;
+        }
+        
+        /* modal de pantalla completa para fotos (lightbox elegante) */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s;
+            backdrop-filter: blur(4px);
+        }
+        .lightbox-modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .lightbox-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            position: relative;
+        }
+        .lightbox-content img {
+            width: auto;
+            max-width: 100%;
+            max-height: 85vh;
+            object-fit: contain;
+            border: 2px solid white;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+        }
+        .close-lightbox {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 2.2rem;
+            cursor: pointer;
+            font-family: monospace;
+        }
+        .nav-lightbox {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            font-size: 2rem;
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .nav-prev { left: -60px; }
+        .nav-next { right: -60px; }
+        .nav-lightbox:hover { background: rgba(255,255,255,0.5); color: black; }
+        
+        @media (max-width: 900px) {
+            .property-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .container {
+                padding: 1.5rem;
+            }
+            .nav-prev { left: 10px; }
+            .nav-next { right: 10px; }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+            .price {
+                font-size: 1.8rem;
+            }
+            .thumb {
+                width: 65px;
+                height: 65px;
+            }
+        }
+        
+        @media (max-width: 550px) {
+            .thumb {
+                width: 55px;
+                height: 55px;
+            }
+        }
+        
+        /* evitar seleccion no deseada, pero inputs permitidos */
+        input, textarea, button {
+            user-select: text;
+        }
+        button {
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="#" class="back-link" id="backButton">← Volver al portafolio</a>
+    <div class="property-badge" id="propertyRef">QRP2P · EXCLUSIVE LISTING</div>
+    
+    <div class="property-grid">
+        <!-- COLUMNA IZQUIERDA: GALERÍA PROFESIONAL -->
+        <div class="gallery-container">
+            <div class="main-image" id="mainImageContainer">
+                <img id="mainDisplayImg" src="https://placehold.co/800x600/f0f0f0/333?text=QRP2P+Property" alt="Vista principal de la propiedad">
+                <button class="fullscreen-icon" id="fullscreenBtn">⛶ VER COMPLETA</button>
+            </div>
+            <div class="thumbnails" id="thumbnailsList"></div>
+        </div>
+        
+        <!-- COLUMNA DERECHA: INFO, PRECIO, BOTONES, DESCRIPCIÓN, VIDEO -->
+        <div class="property-info">
+            <h1 id="propTitle">Casa Jardín Andino</h1>
+            <div class="property-location">
+                <span>📍</span> <span id="propLocation">Bogotá, Colombia · Zona Rosa</span>
+            </div>
+            <div class="price" id="propPrice">USD 425,000</div>
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="scheduleBtn">📅 AGENDAR VISITA</button>
+                <button class="btn btn-outline" id="offerBtn">💰 HACER OFERTA</button>
+            </div>
+            <div class="description-section">
+                <h3>Descripción de la propiedad</h3>
+                <div class="description-text" id="propDescription">
+                    Espectacular propiedad de estilo contemporáneo con acabados de lujo. 3 habitaciones, 4 baños, área construida 280m², terraza con vista a la ciudad.
+                    Cuenta con domótica, cocina integral, jardín privado y seguridad 24h. A pasos de centros comerciales y zonas verdes.
+                </div>
+            </div>
+            <!-- Iframe Youtube (video tour profesional) -->
+            <div class="video-wrapper">
+                <iframe id="youtubeIframe" src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=o3nC7VfsdHmgq_2P" title="YouTube video tour" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="divider-light"></div>
+            <div class="property-badge" style="text-align:right">ID: QRP2P-2409 · actualizado hoy</div>
+        </div>
+    </div>
+    <div class="footer-detail">
+        <p>© QRP2P Real Estate — mercado inmobiliario entre pares · transparencia total · sin comisiones ocultas</p>
+        <p>Propiedades verificadas · contacto directo con propietario</p>
+    </div>
+</div>
+
+<!-- Lightbox Modal pantalla completa para fotos -->
+<div id="lightboxModal" class="lightbox-modal">
+    <div class="lightbox-content">
+        <button class="close-lightbox" id="closeLightboxBtn">✕</button>
+        <img id="lightboxImg" src="" alt="Vista ampliada">
+        <button class="nav-lightbox nav-prev" id="prevLightBtn">‹</button>
+        <button class="nav-lightbox nav-next" id="nextLightBtn">›</button>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ========== BLOQUEOS DE SEGURIDAD (basados en el código original) ==========
+        const blockEvents = ['copy', 'cut', 'paste', 'contextmenu', 'dragstart', 'selectstart'];
+        blockEvents.forEach(eventType => {
+            document.addEventListener(eventType, function(e) {
+                const isAllowedInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.id === 'scheduleBtn' || e.target.id === 'offerBtn';
+                if (!isAllowedInput) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+                return true;
+            });
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            const activeTag = document.activeElement?.tagName;
+            const isInputField = activeTag === 'INPUT' || activeTag === 'TEXTAREA';
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'x')) {
+                if (!isInputField) {
+                    e.preventDefault();
+                }
+            }
+            if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '=')) {
+                e.preventDefault();
+            }
+        });
+        
+        let lastTouchEnd = 0;
+        document.addEventListener('touchstart', function(e) { if(e.touches.length > 1) e.preventDefault(); }, { passive: false });
+        document.addEventListener('touchmove', function(e) { if(e.touches.length > 1) e.preventDefault(); }, { passive: false });
+        document.addEventListener('touchend', function(e) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) e.preventDefault();
+            lastTouchEnd = now;
+        }, false);
+        
+        // ========== DATOS DE PROPIEDAD: galería de imágenes reales (simuladas pero profesionales) ==========
+        const imagesList = [
+            "https://picsum.photos/id/106/1200/800",   // hermosa casa campo
+            "https://picsum.photos/id/20/1200/800",    // escritorio moderno
+            "https://picsum.photos/id/26/1200/800",    // escaleras arquitectura
+            "https://picsum.photos/id/28/1200/800",    // patio interior
+            "https://picsum.photos/id/39/1200/800"     // piscina minimalista
+        ];
+        
+        // textos personalizados (para demostración)
+        const propertyData = {
+            title: "Residencia Altos del Chicó",
+            location: "Bogotá, Colombia · Sector financiero",
+            price: "USD 585,000",
+            description: "Impecable propiedad de 4 habitaciones, acabados en mármol, piso radiante, estudio independiente y terraza panorámica. Construcción 320m², parqueadero para 3 autos, gimnasio privado, zona de BBQ. A solo 5 minutos del exclusivo Club El Country. Ideal para inversionistas o familia premium. Incluye sistema de seguridad y domótica de última generación. Valor de mercado excepcional."
+        };
+        
+        // actualizar el DOM con los datos dinámicos
+        document.getElementById('propTitle').innerText = propertyData.title;
+        document.getElementById('propLocation').innerHTML = propertyData.location;
+        document.getElementById('propPrice').innerHTML = propertyData.price;
+        document.getElementById('propDescription').innerText = propertyData.description;
+        
+        // variables de galería
+        let currentImageIndex = 0;
+        const mainImg = document.getElementById('mainDisplayImg');
+        const thumbContainer = document.getElementById('thumbnailsList');
+        
+        // renderizar thumbnails
+        function renderThumbnails() {
+            thumbContainer.innerHTML = '';
+            imagesList.forEach((imgUrl, idx) => {
+                const thumb = document.createElement('img');
+                thumb.src = imgUrl + '?w=100&h=100&fit=crop'; // optimización
+                thumb.classList.add('thumb');
+                if (idx === currentImageIndex) thumb.classList.add('active-thumb');
+                thumb.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    setMainImage(idx);
+                });
+                thumbContainer.appendChild(thumb);
+            });
+        }
+        
+        function setMainImage(index) {
+            if (index < 0) index = 0;
+            if (index >= imagesList.length) index = imagesList.length - 1;
+            currentImageIndex = index;
+            const fullUrl = imagesList[currentImageIndex];
+            mainImg.src = fullUrl;
+            // actualizar clase active en thumbnails
+            const allThumbs = document.querySelectorAll('.thumb');
+            allThumbs.forEach((thumb, i) => {
+                if (i === currentImageIndex) thumb.classList.add('active-thumb');
+                else thumb.classList.remove('active-thumb');
+            });
+        }
+        
+        // navegación ligera para cambiar imagen
+        function nextImage() {
+            let newIdx = currentImageIndex + 1;
+            if (newIdx >= imagesList.length) newIdx = 0;
+            setMainImage(newIdx);
+        }
+        function prevImage() {
+            let newIdx = currentImageIndex - 1;
+            if (newIdx < 0) newIdx = imagesList.length - 1;
+            setMainImage(newIdx);
+        }
+        
+        // LIGHTBOX (pantalla completa)
+        const lightboxModal = document.getElementById('lightboxModal');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const closeLightbox = document.getElementById('closeLightboxBtn');
+        const prevLight = document.getElementById('prevLightBtn');
+        const nextLight = document.getElementById('nextLightBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        
+        function openLightbox() {
+            lightboxImg.src = imagesList[currentImageIndex];
+            lightboxModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeLightboxFn() {
+            lightboxModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        function updateLightboxImage() {
+            lightboxImg.src = imagesList[currentImageIndex];
+        }
+        
+        fullscreenBtn.addEventListener('click', openLightbox);
+        closeLightbox.addEventListener('click', closeLightboxFn);
+        lightboxModal.addEventListener('click', (e) => {
+            if (e.target === lightboxModal) closeLightboxFn();
+        });
+        
+        prevLight.addEventListener('click', (e) => {
+            e.stopPropagation();
+            prevImage();
+            updateLightboxImage();
+        });
+        nextLight.addEventListener('click', (e) => {
+            e.stopPropagation();
+            nextImage();
+            updateLightboxImage();
+        });
+        
+        // sincronizar cambios desde thumbs y botones
+        window.nextImageGlobal = nextImage;
+        window.prevImageGlobal = prevImage;
+        
+        // Permitir también click en la imagen principal para pantalla completa (opcional)
+        mainImg.addEventListener('click', () => {
+            openLightbox();
+        });
+        
+        // Botones de "agendar" y "ofertar" con alertas elegantes sin interrumpir (estilo profesional)
+        const scheduleBtn = document.getElementById('scheduleBtn');
+        const offerBtn = document.getElementById('offerBtn');
+        
+        scheduleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // simulación de acción profesional (puede reemplazarse por enlace o modal)
+            alert("📋 Solicitud de visita enviada. En breve, un asesor QRP2P se comunicará contigo para coordinar el recorrido virtual o presencial.");
+        });
+        
+        offerBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            let userOffer = prompt("Ingresa el monto de tu oferta en USD (mínimo sugerido: " + propertyData.price + "):", propertyData.price.replace('USD', '').trim());
+            if (userOffer && !isNaN(parseFloat(userOffer))) {
+                alert(`✅ Oferta de $${userOffer} USD registrada. El propietario recibirá tu propuesta en las próximas 24 horas.`);
+            } else if (userOffer !== null) {
+                alert("Por favor ingresa un valor numérico válido.");
+            }
+        });
+        
+        // Botón de volver (simula navegación)
+        const backBtn = document.getElementById('backButton');
+        backBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Podemos redirigir a la página de búsqueda (simulación o mostrar mensaje)
+            alert("Redirigiendo al mercado inmobiliario QRP2P... (página de búsqueda de países)");
+            // opcional: window.location.href = "/"; pero existen limitaciones demo; comportamiento coherente
+            // si se desea regresar a la página de base: window.history.back()
+            window.history.back();
+        });
+        
+        // Actualizar el iframe de youtube de forma opcional para mantener profesionalismo (puedes cambiar el ID)
+        // mantenemos el iframe con un video walkthrough real (video dummy pero se puede cambiar)
+        // Opcionalmente si quieres cambiar el embed a un tour más elegante:
+        const youtubeFrame = document.getElementById('youtubeIframe');
+        if (youtubeFrame) {
+            // se puede cambiar el video sin perder estilo, pero mantener muestra para coherencia
+            // usamos un video de arquitectura moderna real (property tour) pero sin infringir:
+            // Cambio por un video de muestra de arquitectura libre de derechos (Pexels? pero mejor demo)
+            // Reemplazamos para dar mejor experiencia: un video de casa moderna mostrando propiedad (ejemplo no copyright)
+            // elegimos un video incrustado de muestra de "Virtual Home Tour" genérico
+            youtubeFrame.src = "https://www.youtube.com/embed/7sE_tRZz7n4"; // cinematic property showcase (video libre de concepto)
+        }
+        
+        // Inicializar galería
+        renderThumbnails();
+        setMainImage(0);
+        
+        // eventos teclado para navegar dentro de la propiedad (izquierda/derecha en galería normal)
+        document.addEventListener('keydown', (e) => {
+            if (lightboxModal.classList.contains('active')) {
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    prevImage();
+                    updateLightboxImage();
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    nextImage();
+                    updateLightboxImage();
+                } else if (e.key === 'Escape') {
+                    closeLightboxFn();
+                }
+            } else {
+                // navegación sutil en la galería sin lightbox si se precia
+                if (e.key === 'ArrowLeft' && !e.target.closest('input')) {
+                    prevImage();
+                } else if (e.key === 'ArrowRight' && !e.target.closest('input')) {
+                    nextImage();
+                }
+            }
+        });
+        
+        // Referencia a la propiedad en la consola (solo para profesionalismo)
+        console.log("QRP2P Property page loaded — vista completa con galería profesional y pantalla completa.");
+        
+        // Evitar arrastrar imágenes fuera
+        const allImgs = document.querySelectorAll('img');
+        allImgs.forEach(img => {
+            img.addEventListener('dragstart', (e) => e.preventDefault());
+        });
+        
+    })();
+</script>
+</body>
+</html>
