@@ -40,7 +40,6 @@
     }
     </script>
     <style>
-        /* RESET y estilos globales */
         * {
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -89,7 +88,6 @@
             overflow-x: hidden;
         }
 
-        /* SELECTOR DE IDIOMA */
         .language-bar {
             position: absolute;
             top: 1rem;
@@ -162,7 +160,6 @@
             border-bottom-color: #000000;
         }
 
-        /* GRID principal */
         .property-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -188,7 +185,6 @@
             }
         }
         
-        /* GALERÍA */
         .gallery-container {
             width: 100%;
         }
@@ -250,7 +246,6 @@
             }
         }
         
-        /* INFO PROPIEDAD */
         .property-info h1 {
             font-size: 1.5rem;
             font-weight: 700;
@@ -294,7 +289,6 @@
             }
         }
         
-        /* BOTONES ESTILO COUNTRY-CARD */
         .action-buttons {
             display: flex;
             flex-wrap: wrap;
@@ -402,7 +396,7 @@
             padding-top: 1.5rem;
         }
         
-        /* MODALES - Responsive profesional */
+        /* MODALES */
         .modal {
             display: none;
             position: fixed;
@@ -471,7 +465,14 @@
             font-weight: 600;
         }
         
-        /* Radio buttons group */
+        /* Precio fijo - solo lectura */
+        .fixed-price {
+            background-color: #f5f5f5;
+            color: #000000;
+            font-weight: 700;
+            cursor: not-allowed;
+        }
+        
         .radio-group {
             display: flex;
             gap: 1rem;
@@ -493,7 +494,6 @@
             cursor: pointer;
         }
         
-        /* Sub-opciones de crédito */
         .credit-options {
             display: none;
             margin: 0.3rem 0 0.8rem 0;
@@ -563,7 +563,6 @@
             color: #000;
         }
         
-        /* lightbox */
         .lightbox-modal {
             position: fixed;
             top: 0;
@@ -739,7 +738,7 @@
     </div>
 </div>
 
-<!-- MODAL HACER OFERTA -->
+<!-- MODAL HACER OFERTA - PRECIO FIJO NO MODIFICABLE -->
 <div id="offerModal" class="modal">
     <div class="modal-content">
         <span class="close-modal" id="closeOfferModal">&times;</span>
@@ -756,6 +755,9 @@
             
             <label>TELÉFONO (WhatsApp) *</label>
             <input type="tel" id="offerPhone" required placeholder="Ej: 57 300 1234567">
+            
+            <label>PRECIO DE LA PROPIEDAD (FIJO)</label>
+            <input type="text" id="propertyPrice" class="fixed-price" value="$2.340.000.000 COP" readonly disabled>
             
             <label>MONTO DE OFERTA (COP) *</label>
             <input type="number" id="offerAmount" required placeholder="Ej: 2200000000" step="1000000">
@@ -818,10 +820,6 @@
             const isInputFocused = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
             if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'x')) {
                 if (!isInputFocused) { e.preventDefault(); return false; }
-            }
-            if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '=')) {
-                e.preventDefault();
-                return false;
             }
         });
         
@@ -1004,6 +1002,7 @@
                     `*Número Documento:* ${docNumber}\n` +
                     `*Nombre:* ${nombre}\n` +
                     `*Teléfono:* ${telefono}\n` +
+                    `*Precio propiedad:* $2.340.000.000 COP\n` +
                     `*Monto ofertado:* $${parseInt(monto).toLocaleString('es-CO')} COP\n` +
                     `*Forma de pago:* ${paymentMethod.value}\n`;
         
