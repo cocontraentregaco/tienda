@@ -919,3 +919,167 @@
     lightboxModal.addEventListener('click', (e) => { if (e.target === lightboxModal) closeLightboxFn(); });
     prevLight.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); updateLightboxImage(); });
     nextLight.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); updateLightboxImage(); });
+    mainImg.addEventListener('click', openLightbox);
+    
+    // ==================== MODALES ====================
+    const scheduleModal = document.getElementById('scheduleModal');
+    const offerModal = document.getElementById('offerModal');
+    const scheduleBtn = document.getElementById('scheduleBtn');
+    const offerBtn = document.getElementById('offerBtn');
+    
+    // Abrir modales
+    scheduleBtn.addEventListener('click', () => {
+        scheduleModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    });
+    
+    offerBtn.addEventListener('click', () => {
+        offerModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    });
+    
+    // Cerrar modales
+    function closeScheduleModal() {
+        scheduleModal.style.display = 'none';
+        document.body.style.overflow = '';
+        document.getElementById('scheduleForm').reset();
+    }
+    
+    function closeOfferModal() {
+        offerModal.style.display = 'none';
+        document.body.style.overflow = '';
+        document.getElementById('offerForm').reset();
+        creditOptions.style.display = 'none';
+        document.querySelectorAll('input[name="paymentMethod"]').forEach(r => r.checked = false);
+        document.querySelectorAll('input[name="creditType"]').forEach(r => r.checked = false);
+    }
+    
+    document.getElementById('closeScheduleModal').addEventListener('click', closeScheduleModal);
+    document.getElementById('cancelScheduleBtn').addEventListener('click', closeScheduleModal);
+    document.getElementById('closeOfferModal').addEventListener('click', closeOfferModal);
+    document.getElementById('cancelOfferBtn').addEventListener('click', closeOfferModal);
+    
+    // Cerrar al hacer clic fuera del modal
+    window.addEventListener('click', (e) => {
+        if (e.target === scheduleModal) closeScheduleModal();
+        if (e.target === offerModal) closeOfferModal();
+    });
+    
+    // ENVIAR AGENDAR VISITA a WhatsApp
+    document.getElementById('sendScheduleBtn').addEventListener('click', () => {
+        const docType = document.getElementById('scheduleDocType').value;
+        const docNumber = document.getElementById('scheduleDocNumber').value.trim();
+        const nombre = document.getElementById('scheduleName').value.trim();
+        const telefono = document.getElementById('schedulePhone').value.trim();
+        const fecha = document.getElementById('scheduleDate').value;
+        const hora = document.getElementById('scheduleTime').value;
+        const mensaje = document.getElementById('scheduleMessage').value.trim();
+        
+        if (!docType || !docNumber || !nombre || !telefono || !fecha || !hora) {
+            alert('Por favor complete todos los campos obligatorios.');
+            return;
+        }
+        
+        const propiedad = "Residencia Altos del Chicó - Bogotá - USD 585,000";
+        const texto = `*SOLICITUD DE VISITA - QRP2P*\n\n` +
+                      `*Propiedad:* ${propiedad}\n` +
+                      `*Tipo Documento:* ${docType}\n` +
+                      `*Número Documento:* ${docNumber}\n` +
+                      `*Nombre:* ${nombre}\n` +
+                      `*Teléfono:* ${telefono}\n` +
+                      `*Fecha:* ${fecha}\n` +
+                      `*Hora:* ${hora}\n` +
+                      `*Mensaje:* ${mensaje || 'Sin comentarios adicionales'}`;
+        
+        const url = `https://wa.me/573001234567?text=${encodeURIComponent(texto)}`;
+        window.open(url, '_blank');
+        closeScheduleModal();
+    });
+    
+    // ENVIAR OFERTA a WhatsApp
+    document.getElementById('sendOfferBtn').addEventListener('click', () => {
+        const docType = document.getElementById('offerDocType').value;
+        const docNumber = document.getElementById('offerDocNumber').value.trim();
+        const nombre = document.getElementById('offerName').value.trim();
+        const telefono = document.getElementById('offerPhone').value.trim();
+        const monto = document.getElementById('offerAmount').value.trim();
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+        const creditType = document.querySelector('input[name="creditType"]:checked');
+        const initialAmount = document.getElementById('initialAmount').value.trim();
+        const mensaje = document.getElementById('offerMessage').value.trim();
+        
+        if (!docType || !docNumber || !nombre || !telefono || !monto || !paymentMethod) {
+            alert('Por favor complete todos los campos obligatorios.');
+            return;
+        }
+        
+        const propiedad = "Residencia Altos del Chicó - Bogotá - USD 585,000";
+        let texto = `*OFERTA - QRP2P*\n\n` +
+                    `*Propiedad:* ${propiedad}\n` +
+                    `*Tipo Documento:* ${docType}\n` +
+                    `*Número Documento:* ${docNumber}\n` +
+                    `*Nombre:* ${nombre}\n` +
+                    `*Teléfono:* ${telefono}\n` +
+                    `*Monto ofertado:* USD ${parseInt(monto).toLocaleString()}\n` +
+                    `*Forma de pago:* ${paymentMethod.value}\n`;
+        
+        if (paymentMethod.value === 'Crédito') {
+            texto += `*Tipo de crédito:* ${creditType ? creditType.value : 'No especificado'}\n`;
+            if (initialAmount) {
+                texto += `*Monto inicial:* USD ${parseInt(initialAmount).toLocaleString()}\n`;
+            }
+        }
+        
+        texto += `*Mensaje:* ${mensaje || 'Sin comentarios adicionales'}`;
+        
+        const url = `https://wa.me/573001234567?text=${encodeURIComponent(texto)}`;
+        window.open(url, '_blank');
+        closeOfferModal();
+    });
+    
+    // ==================== IDIOMA ====================
+    const translations = {
+        es: { tagline: "real estate · propiedad exclusiva" },
+        en: { tagline: "real estate · exclusive property" }
+    };
+    let currentLang = 'es';
+    function setLanguage(lang) {
+        currentLang = lang;
+        document.querySelector('[data-i18n="tagline"]').innerText = translations[lang].tagline;
+        document.getElementById('lang-es').classList.toggle('active', lang === 'es');
+        document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+        localStorage.setItem('qrp2p_lang', lang);
+    }
+    document.getElementById('lang-es').addEventListener('click', () => setLanguage('es'));
+    document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+    const savedLang = localStorage.getItem('qrp2p_lang');
+    if (savedLang && (savedLang === 'es' || savedLang === 'en')) setLanguage(savedLang);
+    else setLanguage('es');
+    
+    // Botón volver
+    document.getElementById('backButton').addEventListener('click', (e) => {
+        e.preventDefault();
+        window.history.back();
+    });
+    
+    // Inicializar
+    renderThumbnails();
+    setMainImage(0);
+    
+    // Navegación con teclado
+    document.addEventListener('keydown', (e) => {
+        if (lightboxModal.classList.contains('active')) {
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prevImage(); updateLightboxImage(); }
+            else if (e.key === 'ArrowRight') { e.preventDefault(); nextImage(); updateLightboxImage(); }
+            else if (e.key === 'Escape') { closeLightboxFn(); }
+        }
+        if (e.key === 'Escape') {
+            if (scheduleModal.style.display === 'block') closeScheduleModal();
+            if (offerModal.style.display === 'block') closeOfferModal();
+        }
+    });
+    
+    document.querySelectorAll('img').forEach(img => img.addEventListener('dragstart', (e) => e.preventDefault()));
+</script>
+</body>
+</html>
