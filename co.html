@@ -558,6 +558,7 @@
     const WHATSAPP_NUMBER = "573041146297";
     let currentLang = 'es';
     
+    // SOLO COLOMBIA
     const paisesServicios = {
       "Colombia": { agentes: "/agentes-co", rentas: "/rentas-co", ventas: "/ventas-co", hipotecas: "/hipotecas-co", construccion: "/construccion-co", credito: "/credito-co", inversion: "/inversion-co", avaluos: "/avaluos-co" }
     };
@@ -654,7 +655,8 @@
         if(property && property.individualUrl) {
             window.open(property.individualUrl, '_blank');
         } else {
-            console.warn('URL individual no definida para la propiedad:', property.id);
+            console.warn('⚠️ URL individual no definida para la propiedad:', property?.id);
+            alert('La página individual de este inmueble aún no está disponible.');
         }
     }
     
@@ -669,36 +671,51 @@
       let mediaHtml=''; 
       if(typeof media==='string') mediaHtml=`<img src="${media}" alt="${title}" class="popup-product-image" data-fullscreen="${media}">`; 
       else if(media.type==='video') mediaHtml=`<div class="popup-video-container"><iframe src="https://www.youtube.com/embed/${media.videoId}?autoplay=0" frameborder="0" allowfullscreen></iframe></div>`; 
-      return `<div class="popup-product-card" data-id="${property.id}"><div class="popup-product-image-container" id="popup-img-container-${property.id}">${mediaHtml}<div class="popup-image-nav"><button class="popup-nav-btn popup-prev-btn" data-id="${property.id}"><i class="fas fa-chevron-left"></i></button><button class="popup-nav-btn popup-next-btn" data-id="${property.id}"><i class="fas fa-chevron-right"></i></button></div><div class="popup-image-counter">${idx+1}/${property.media.length}</div></div><div class="popup-product-info"><h3 class="popup-product-title" data-id="${property.id}">${title}</h3><div class="precio-line"><span class="popup-product-price">${displayPrice}</span><div class="enlaces-secundarios"><span class="enlace-info" data-id="${property.id}"><i class="fas fa-key"></i> ${t('info_btn')}</span><a href="${property.mapsUrl}" target="_blank" class="enlace-mapa"><i class="fas fa-location-dot"></i></a></div></div><div class="popup-product-details"><span><i class="fas fa-arrows-alt"></i> ${property.m2} m²</span><span><i class="fas fa-bed"></i> ${property.cuartos} ${currentLang==='es'?'hab':'beds'}</span><span><i class="fas fa-bath"></i> ${property.baños} ${currentLang==='es'?'baños':'baths'}</span></div><p style="font-size:0.7rem; margin-bottom:0.6rem;">${description}</p><div class="popup-product-actions"><button class="popup-add-to-cart" data-id="${property.id}"><i class="fas fa-calendar-check"></i> ${t('visit_btn')}</button><button class="popup-buy-now" data-id="${property.id}"><i class="${actionIcon}"></i> ${actionText}</button></div></div></div>`; 
+      return `<div class="popup-product-card" data-id="${property.id}"><div class="popup-product-image-container" id="popup-img-container-${property.id}">${mediaHtml}<div class="popup-image-nav"><button class="popup-nav-btn popup-prev-btn" data-id="${property.id}"><i class="fas fa-chevron-left"></i></button><button class="popup-nav-btn popup-next-btn" data-id="${property.id}"><i class="fas fa-chevron-right"></i></button></div><div class="popup-image-counter">${idx+1}/${property.media.length}</div></div><div class="popup-product-info"><h3 class="popup-product-title" data-id="${property.id}" data-individual-url="${property.individualUrl}">${title}</h3><div class="precio-line"><span class="popup-product-price">${displayPrice}</span><div class="enlaces-secundarios"><span class="enlace-info" data-id="${property.id}"><i class="fas fa-key"></i> ${t('info_btn')}</span><a href="${property.mapsUrl}" target="_blank" class="enlace-mapa"><i class="fas fa-location-dot"></i></a></div></div><div class="popup-product-details"><span><i class="fas fa-arrows-alt"></i> ${property.m2} m²</span><span><i class="fas fa-bed"></i> ${property.cuartos} ${currentLang==='es'?'hab':'beds'}</span><span><i class="fas fa-bath"></i> ${property.baños} ${currentLang==='es'?'baños':'baths'}</span></div><p style="font-size:0.7rem; margin-bottom:0.6rem;">${description}</p><div class="popup-product-actions"><button class="popup-add-to-cart" data-id="${property.id}"><i class="fas fa-calendar-check"></i> ${t('visit_btn')}</button><button class="popup-buy-now" data-id="${property.id}"><i class="${actionIcon}"></i> ${actionText}</button></div></div></div>`; 
     }
     
-    function attachLightboxAndRedirect(container, property) {
+    function attachClickHandlers(container, property) {
+      // Click en el contenedor de imagen (NO en la imagen, para no conflictuar con lightbox)
+      const imgContainer = container;
+      if(imgContainer && !imgContainer.hasAttribute('data-redirect-listener')) {
+        imgContainer.setAttribute('data-redirect-listener', 'true');
+        imgContainer.addEventListener('click', (e) => {
+          // Si el clic fue en la imagen, no redirigimos (la imagen abre lightbox)
+          if(e.target === imgContainer.querySelector('.popup-product-image')) {
+            return;
+          }
+          // Si el clic fue en los botones de navegación, no redirigimos
+          if(e.target.closest('.popup-nav-btn')) {
+            return;
+          }
+          // En cualquier otro caso, redirige
+          redirectToPropertyPage(property);
+        });
+      }
+      
+      // Click en el título
+      const titleEl = container.querySelector('.popup-product-title');
+      if(titleEl) {
+        titleEl.style.cursor = 'pointer';
+        // Remover listeners anteriores para evitar duplicados
+        const newTitleEl = titleEl.cloneNode(true);
+        titleEl.parentNode.replaceChild(newTitleEl, titleEl);
+        newTitleEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          redirectToPropertyPage(property);
+        });
+      }
+      
+      // Click en la imagen - abre lightbox
       const img = container.querySelector('.popup-product-image');
-      if(img) {
+      if(img && !img.hasAttribute('data-lightbox-listener')) {
+        img.setAttribute('data-lightbox-listener', 'true');
         img.style.cursor = 'pointer';
         img.addEventListener('click', (e) => {
           e.stopPropagation();
           const allImages = property.media.filter(m => typeof m === 'string');
           const currentIdx = currentIndices[property.id] || 0;
           if(allImages.length) openLightbox(allImages, currentIdx);
-        });
-      }
-      
-      const titleEl = container.querySelector('.popup-product-title');
-      if(titleEl) {
-        titleEl.style.cursor = 'pointer';
-        titleEl.addEventListener('click', (e) => {
-          e.stopPropagation();
-          redirectToPropertyPage(property);
-        });
-      }
-      
-      const imgContainer = container;
-      if(imgContainer && !imgContainer.hasAttribute('data-redirect-listener')) {
-        imgContainer.setAttribute('data-redirect-listener', 'true');
-        imgContainer.addEventListener('click', (e) => {
-          if(e.target === img) return;
-          redirectToPropertyPage(property);
         });
       }
     }
@@ -747,7 +764,7 @@
               if(visaBtn) visaBtn.addEventListener('click',(e)=>{e.preventDefault(); openVisitaModal(prop); mapa.closePopup();}); 
               if(offerBtn) offerBtn.addEventListener('click',(e)=>{e.preventDefault(); openOfertaModal(prop); mapa.closePopup();}); 
               const containerImg = node.querySelector(`#popup-img-container-${prop.id}`);
-              if(containerImg) attachLightboxAndRedirect(containerImg, prop);
+              if(containerImg) attachClickHandlers(containerImg, prop);
             } 
           },100); 
         }); 
@@ -774,6 +791,7 @@
         img.alt=property.title_es; 
         img.className='popup-product-image'; 
         img.style.cursor='pointer';
+        img.setAttribute('data-lightbox-listener', 'true');
         img.addEventListener('click', (e) => {
           e.stopPropagation();
           const allImages = property.media.filter(m => typeof m === 'string');
@@ -789,23 +807,8 @@
       if(counterDiv) counterDiv.textContent=`${newIndex+1}/${property.media.length}`; 
       currentIndices[propertyId]=newIndex; 
       
-      const titleEl = popupNode.querySelector('.popup-product-title');
-      if(titleEl) {
-        titleEl.style.cursor = 'pointer';
-        const newTitleEl = titleEl.cloneNode(true);
-        titleEl.parentNode.replaceChild(newTitleEl, titleEl);
-        newTitleEl.addEventListener('click', (e) => {
-          e.stopPropagation();
-          redirectToPropertyPage(property);
-        });
-      }
-      if(container && !container.hasAttribute('data-redirect-listener')) {
-        container.setAttribute('data-redirect-listener', 'true');
-        container.addEventListener('click', (e) => {
-          if(e.target === img || (img && e.target === img)) return;
-          redirectToPropertyPage(property);
-        });
-      }
+      // Reaplicar los eventos de click después de actualizar la imagen
+      attachClickHandlers(container, property);
     }
     
     function abrirServiciosModal() {
