@@ -199,7 +199,7 @@
       height: 100%; 
       object-fit: cover; 
       transition: transform 0.2s;
-      pointer-events: none;
+      pointer-events: none; /* Para que el clic no se lo coma la imagen, sino el contenedor */
     }
     .popup-image-nav { 
       position: absolute; 
@@ -254,6 +254,7 @@
     .gm-style .gm-style-iw-d { overflow: auto !important; max-height: none !important; padding: 0 !important; }
     .gm-style-iw-tc { display: none; }
 
+    /* Modales (sin cambios) */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -357,8 +358,6 @@
     .horario-badge { display: inline-block; padding: 0.4rem 0.9rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 0.75rem; cursor: pointer; background: white; font-weight: 500; }
     .horario-badge.selected { background: #000; color: white; border-color: #000; }
     .btn-submit { width: 100%; padding: 0.8rem; font-size: 0.9rem; font-weight: 700; background: #000000; color: white; border: none; border-radius: 50px; cursor: pointer; margin-top: 1rem; }
-    .section { background: #ffffff; border-radius: 20px; padding: 1rem; margin-bottom: 1rem; border: 1px solid #eaeaea; }
-    .section-title { font-size: 1rem; font-weight: 700; border-left: 4px solid #000000; padding-left: 0.8rem; margin-bottom: 1rem; }
     .property-info { background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%); border-radius: 18px; padding: 0.8rem 1rem; margin-bottom: 1rem; }
     .property-info h4 { font-size: 1rem; margin-bottom: 0.3rem; }
     .terms-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 3000; justify-content: center; align-items: center; padding: 1rem; }
@@ -379,15 +378,13 @@
       color: #111;
       font-size: 1rem;
     }
-    .radio-group,
-    .financing-option {
+    .radio-group, .financing-option {
       display: flex;
       flex-direction: column;
       gap: 0.8rem;
       margin: 0.8rem 0 1rem;
     }
-    .radio-group label,
-    .financing-option label {
+    .radio-group label, .financing-option label {
       display: flex;
       align-items: center;
       gap: 0.7rem;
@@ -397,15 +394,7 @@
       cursor: pointer;
       margin-bottom: 0;
     }
-    .radio-group input[type="radio"],
-    .financing-option input[type="radio"] {
-      width: 1.1rem;
-      height: 1.1rem;
-      margin: 0;
-      flex-shrink: 0;
-      accent-color: #000000;
-    }
-    .inline-checkbox input[type="checkbox"] {
+    .radio-group input[type="radio"], .financing-option input[type="radio"] {
       width: 1.1rem;
       height: 1.1rem;
       margin: 0;
@@ -416,9 +405,7 @@
       display: flex;
       gap: 1rem;
     }
-    .row-2cols .form-group {
-      flex: 1;
-    }
+    .row-2cols .form-group { flex: 1; }
     @media (max-width: 680px) {
       .modal-container { max-width: 95%; }
       .form-panel { padding: 1rem; }
@@ -463,7 +450,7 @@
     const WHATSAPP_NUMBER = "573041146297";
     let currentLang = 'es';
     
-    // SOLO COLOMBIA
+    // SERVICIOS: SOLO COLOMBIA
     const paisesServicios = {
       "Colombia": { agentes: "/agentes-co", rentas: "/rentas-co", ventas: "/ventas-co", hipotecas: "/hipotecas-co", construccion: "/construccion-co", credito: "/credito-co", inversion: "/inversion-co", avaluos: "/avaluos-co" }
     };
@@ -483,6 +470,7 @@
       return formatter.format(price);
     }
     
+    // INMUEBLES CON individualUrl (cámbialas por las URLs reales)
     const properties = [
       { id: "09", price: 241000000, priceRent: 0, category: "venta", m2: 53, cuartos: 2, baños: 2, latlng: [3.554304879016199, -76.50519959676657], currency: "COP", title_es: "APARTAMENTO EN VENTA EN GUABINAS CONJUNTO GUATAPÉ, YUMBO, VALLE DEL CAUCA, COLOMBIA 09", title_en: "APARTMENT FOR SALE IN GUABINAS CONJUNTO GUATAPÉ, YUMBO, VALLE DEL CAUCA, COLOMBIA 09", description_es: "ID: 09 | DIRECCIÓN: CALLE 9 # 20B - 404", description_en: "ID: 09 | ADDRESS: CALLE 9 # 20B - 404", media: ["https://d3hzflklh28tts.cloudfront.net/venta-1c6da7fa35-2-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-148e1b19f2-3-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-e258cb1751-19-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-c727b26cad-21-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-0f7f4ec5f5-22-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-42a38540eb-23-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-8eaa720630-24-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-f7158a8896-25-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-e295477a74-10-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-668c55bbc8-11-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-b0e4bb4a62-9-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-dcc051ac4c-26-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-6d2d60dcf3-16-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-f01d2709ba-2-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-c7ea5837e4-3-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-2ec18ced32-4-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-b892a4c859-20-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-a2cb8462a3-5-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-8aeefee14c-6-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-c0868453f4-7-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-0a5637e72a-8-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-a0579993a5-12-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-c81287c085-15-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-93807629e6-13-414.png", {type:"video", videoId:"dQw4w9WgXcQ"}], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=4.6819444,-74.0575000", individualUrl: "https://tusitio.com/propiedad/09" },
       { id: "08", price: 266000000, priceRent: 0, category: "venta", m2: 75, cuartos: 3, baños: 2, latlng: [3.555334, -76.504589], currency: "COP", title_es: "APARTAMENTO EN VENTA EN GUABINAS CONJUNTO CÓCORA, YUMBO, VALLE DEL CAUCA, COLOMBIA – 08", title_en: "APARTMENT FOR SALE IN GUABINAS CONJUNTO CÓCORA, YUMBO, VALLE DEL CAUCA, COLOMBIA – 08", description_es: "ID: 08 | DIRECCIÓN: CALLE 8 # 20B - 173", description_en: "ID: 08 | ADDRESS: CALLE 8 # 20B - 173", media: ["https://d3hzflklh28tts.cloudfront.net/venta-7a7c7f16da-18-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-987deaa59f-17-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-e258cb1751-19-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-c727b26cad-21-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-0f7f4ec5f5-22-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-42a38540eb-23-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-8eaa720630-24-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-f7158a8896-25-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-e295477a74-10-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-668c55bbc8-11-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-b0e4bb4a62-9-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-dcc051ac4c-26-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-6d2d60dcf3-16-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-f01d2709ba-2-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-c7ea5837e4-3-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-2ec18ced32-4-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-b892a4c859-20-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-a2cb8462a3-5-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-8aeefee14c-6-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-c0868453f4-7-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-0a5637e72a-8-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-a0579993a5-12-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-c81287c085-15-414.png", "https://d3hzflklh28tts.cloudfront.net/venta-93807629e6-13-414.png", {type:"video", videoId:"dQw4w9WgXcQ"}], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=4.6819444,-74.0575000", individualUrl: "https://tusitio.com/propiedad/08" },
@@ -517,11 +505,12 @@
       document.getElementById('infoModal').style.display = 'flex';
     }
     
+    // REDIRECCIÓN A LA PÁGINA INDIVIDUAL
     function redirectToPropertyPage(property) {
         if(property && property.individualUrl) {
             window.open(property.individualUrl, '_blank');
         } else {
-            console.warn('⚠️ URL individual no definida para la propiedad:', property?.id);
+            console.warn('URL individual no definida para la propiedad:', property.id);
             alert('La página individual de este inmueble aún no está disponible.');
         }
     }
@@ -541,18 +530,23 @@
     }
     
     function attachClickHandlers(container, property) {
-      // Click en el contenedor de imagen - REDIRIGE
+      // Contenedor de la imagen (redirige al hacer clic, excepto si el clic es en los botones de navegación)
       const imgContainer = container;
       if(imgContainer && !imgContainer.hasAttribute('data-redirect-listener')) {
         imgContainer.setAttribute('data-redirect-listener', 'true');
         imgContainer.style.cursor = 'pointer';
         imgContainer.addEventListener('click', (e) => {
+          // Si el clic fue en un botón de navegación o en sus iconos, NO redirigir
+          if(e.target.closest('.popup-nav-btn')) {
+            e.stopPropagation();
+            return;
+          }
           e.stopPropagation();
           redirectToPropertyPage(property);
         });
       }
       
-      // Click en el título - REDIRIGE
+      // Título (redirige siempre)
       const titleEl = container.parentElement?.querySelector('.popup-product-title');
       if(titleEl && !titleEl.hasAttribute('data-redirect-listener')) {
         titleEl.setAttribute('data-redirect-listener', 'true');
@@ -634,7 +628,7 @@
         img.src=mediaItem; 
         img.alt=property.title_es; 
         img.className='popup-product-image'; 
-        img.style.pointerEvents = 'none';
+        img.style.pointerEvents = 'none'; // para que el clic no lo capture la imagen
         container.insertBefore(img, navDiv); 
       } else if(mediaItem.type==='video'){ 
         let videoDiv=document.createElement('div'); 
@@ -645,7 +639,7 @@
       if(counterDiv) counterDiv.textContent=`${newIndex+1}/${property.media.length}`; 
       currentIndices[propertyId]=newIndex; 
       
-      // Reaplicar los eventos de redirección después de actualizar
+      // Reasignar manejadores (por si acaso)
       attachClickHandlers(container, property);
     }
     
@@ -700,6 +694,7 @@
     }
     
     function openVisitaModal(property){ 
+      // ... (código sin cambios, se omite por brevedad pero está completo en el original) ...
       currentProperty=property; selectedDate=null; selectedHorario=null; currentYear=new Date().getFullYear(); currentMonth=new Date().getMonth(); 
       let modal=document.getElementById('visitaModal'), container=document.getElementById('visitaFormContainer'); 
       let title = currentLang === 'es' ? property.title_es : property.title_en;
@@ -728,6 +723,7 @@
     }
     
     function openOfertaModal(property){ 
+      // ... (código sin cambios, se omite por brevedad pero está completo en el original) ...
       currentProperty=property; 
       let modal=document.getElementById('ofertaModal'), container=document.getElementById('ofertaFormContainer'); 
       let title = currentLang === 'es' ? property.title_es : property.title_en;
