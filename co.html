@@ -199,6 +199,7 @@
       height: 100%; 
       object-fit: cover; 
       transition: transform 0.2s;
+      pointer-events: none;
     }
     .popup-image-nav { 
       position: absolute; 
@@ -252,90 +253,6 @@
     .gm-style .gm-style-iw-c { border-radius: 20px !important; padding: 0 !important; max-width: 380px !important; }
     .gm-style .gm-style-iw-d { overflow: auto !important; max-height: none !important; padding: 0 !important; }
     .gm-style-iw-tc { display: none; }
-    
-    .lightbox-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.95);
-      z-index: 10000;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-    .lightbox-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .lightbox-img {
-      max-width: 90vw;
-      max-height: 85vh;
-      object-fit: contain;
-      border-radius: 8px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-    .lightbox-close {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      font-size: 40px;
-      color: white;
-      cursor: pointer;
-      background: none;
-      border: none;
-      z-index: 10001;
-      font-weight: bold;
-    }
-    .lightbox-nav {
-      position: absolute;
-      top: 50%;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 20px;
-      transform: translateY(-50%);
-      z-index: 10001;
-    }
-    .lightbox-nav-btn {
-      background-color: rgba(0,0,0,0.6);
-      color: white;
-      font-size: 30px;
-      border: none;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-    }
-    .lightbox-nav-btn:hover {
-      background-color: rgba(0,0,0,0.9);
-    }
-    .lightbox-counter {
-      position: absolute;
-      bottom: 20px;
-      left: 0;
-      right: 0;
-      text-align: center;
-      color: white;
-      background: rgba(0,0,0,0.6);
-      padding: 5px 12px;
-      width: fit-content;
-      margin: 0 auto;
-      border-radius: 30px;
-      font-size: 14px;
-      font-family: monospace;
-      z-index: 10001;
-    }
 
     .modal-overlay {
       display: none;
@@ -539,18 +456,6 @@
   <div id="termsModal" class="terms-modal"><div class="terms-modal-content"><h3 id="terms-title">Términos y Condiciones</h3><p id="terms-text">Al agendar aceptas recibir información del inmueble.</p><button class="close-terms" id="closeTermsBtn">Aceptar</button></div></div>
   <div id="serviciosModal" class="servicios-modal"><div class="servicios-container"><div class="servicios-header"><h2 id="servicios-modal-title">SERVICIOS</h2><button class="close-servicios" id="closeServiciosBtn">&times;</button></div><div id="paisesContainer" class="servicios-botones"></div><div id="serviciosPorPais" style="display:none;"><div id="serviciosLista" class="servicios-botones"></div><button id="volverPaises" class="servicio-btn" style="background:#333;">← Volver a países</button></div></div></div>
   <div id="infoModal" class="info-modal"><div class="info-container"><div class="servicios-header"><h2>Información del inmueble</h2><button id="closeInfoModalBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button></div><div id="infoContent"></div></div></div>
-  
-  <div id="lightbox" class="lightbox-overlay">
-    <button class="lightbox-close">&times;</button>
-    <div class="lightbox-container">
-      <img class="lightbox-img" src="" alt="Vista ampliada">
-    </div>
-    <div class="lightbox-nav">
-      <button class="lightbox-nav-btn lightbox-prev"><i class="fas fa-chevron-left"></i></button>
-      <button class="lightbox-nav-btn lightbox-next"><i class="fas fa-chevron-right"></i></button>
-    </div>
-    <div class="lightbox-counter"></div>
-  </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
@@ -600,45 +505,6 @@
     const allHorarios = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00'];
     let currentIndices = {};
     
-    let currentLightboxImages = [];
-    let currentLightboxIndex = 0;
-    const lightboxEl = document.getElementById('lightbox');
-    const lightboxImg = lightboxEl.querySelector('.lightbox-img');
-    const lightboxCounter = lightboxEl.querySelector('.lightbox-counter');
-    
-    function openLightbox(images, startIndex) {
-      if(!images || images.length === 0) return;
-      currentLightboxImages = images.filter(img => typeof img === 'string');
-      currentLightboxIndex = startIndex;
-      updateLightbox();
-      lightboxEl.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
-    
-    function updateLightbox() {
-      if(currentLightboxImages.length > 0) {
-        lightboxImg.src = currentLightboxImages[currentLightboxIndex];
-        lightboxCounter.textContent = `${currentLightboxIndex+1} / ${currentLightboxImages.length}`;
-      }
-    }
-    
-    function nextLightbox() {
-      if(currentLightboxImages.length === 0) return;
-      currentLightboxIndex = (currentLightboxIndex + 1) % currentLightboxImages.length;
-      updateLightbox();
-    }
-    
-    function prevLightbox() {
-      if(currentLightboxImages.length === 0) return;
-      currentLightboxIndex = (currentLightboxIndex - 1 + currentLightboxImages.length) % currentLightboxImages.length;
-      updateLightbox();
-    }
-    
-    function closeLightbox() {
-      lightboxEl.style.display = 'none';
-      document.body.style.overflow = '';
-    }
-    
     function t(key) { return translations[currentLang][key] || key; }
     function formatPriceForProp(prop, isRent = false) { let value = isRent ? prop.priceRent : prop.price; if(value === 0) return "Consultar"; return formatPriceWithCurrency(value, prop.currency); }
     
@@ -669,53 +535,31 @@
       if(currentIndices[property.id]===undefined) currentIndices[property.id]=0; 
       const idx=currentIndices[property.id]; const media=property.media[idx]; 
       let mediaHtml=''; 
-      if(typeof media==='string') mediaHtml=`<img src="${media}" alt="${title}" class="popup-product-image" data-fullscreen="${media}">`; 
+      if(typeof media==='string') mediaHtml=`<img src="${media}" alt="${title}" class="popup-product-image">`; 
       else if(media.type==='video') mediaHtml=`<div class="popup-video-container"><iframe src="https://www.youtube.com/embed/${media.videoId}?autoplay=0" frameborder="0" allowfullscreen></iframe></div>`; 
-      return `<div class="popup-product-card" data-id="${property.id}"><div class="popup-product-image-container" id="popup-img-container-${property.id}">${mediaHtml}<div class="popup-image-nav"><button class="popup-nav-btn popup-prev-btn" data-id="${property.id}"><i class="fas fa-chevron-left"></i></button><button class="popup-nav-btn popup-next-btn" data-id="${property.id}"><i class="fas fa-chevron-right"></i></button></div><div class="popup-image-counter">${idx+1}/${property.media.length}</div></div><div class="popup-product-info"><h3 class="popup-product-title" data-id="${property.id}" data-individual-url="${property.individualUrl}">${title}</h3><div class="precio-line"><span class="popup-product-price">${displayPrice}</span><div class="enlaces-secundarios"><span class="enlace-info" data-id="${property.id}"><i class="fas fa-key"></i> ${t('info_btn')}</span><a href="${property.mapsUrl}" target="_blank" class="enlace-mapa"><i class="fas fa-location-dot"></i></a></div></div><div class="popup-product-details"><span><i class="fas fa-arrows-alt"></i> ${property.m2} m²</span><span><i class="fas fa-bed"></i> ${property.cuartos} ${currentLang==='es'?'hab':'beds'}</span><span><i class="fas fa-bath"></i> ${property.baños} ${currentLang==='es'?'baños':'baths'}</span></div><p style="font-size:0.7rem; margin-bottom:0.6rem;">${description}</p><div class="popup-product-actions"><button class="popup-add-to-cart" data-id="${property.id}"><i class="fas fa-calendar-check"></i> ${t('visit_btn')}</button><button class="popup-buy-now" data-id="${property.id}"><i class="${actionIcon}"></i> ${actionText}</button></div></div></div>`; 
+      return `<div class="popup-product-card" data-id="${property.id}" data-individual-url="${property.individualUrl}"><div class="popup-product-image-container" data-url="${property.individualUrl}">${mediaHtml}<div class="popup-image-nav"><button class="popup-nav-btn popup-prev-btn" data-id="${property.id}"><i class="fas fa-chevron-left"></i></button><button class="popup-nav-btn popup-next-btn" data-id="${property.id}"><i class="fas fa-chevron-right"></i></button></div><div class="popup-image-counter">${idx+1}/${property.media.length}</div></div><div class="popup-product-info"><h3 class="popup-product-title" data-url="${property.individualUrl}">${title}</h3><div class="precio-line"><span class="popup-product-price">${displayPrice}</span><div class="enlaces-secundarios"><span class="enlace-info" data-id="${property.id}"><i class="fas fa-key"></i> ${t('info_btn')}</span><a href="${property.mapsUrl}" target="_blank" class="enlace-mapa"><i class="fas fa-location-dot"></i></a></div></div><div class="popup-product-details"><span><i class="fas fa-arrows-alt"></i> ${property.m2} m²</span><span><i class="fas fa-bed"></i> ${property.cuartos} ${currentLang==='es'?'hab':'beds'}</span><span><i class="fas fa-bath"></i> ${property.baños} ${currentLang==='es'?'baños':'baths'}</span></div><p style="font-size:0.7rem; margin-bottom:0.6rem;">${description}</p><div class="popup-product-actions"><button class="popup-add-to-cart" data-id="${property.id}"><i class="fas fa-calendar-check"></i> ${t('visit_btn')}</button><button class="popup-buy-now" data-id="${property.id}"><i class="${actionIcon}"></i> ${actionText}</button></div></div></div>`; 
     }
     
     function attachClickHandlers(container, property) {
-      // Click en el contenedor de imagen (NO en la imagen, para no conflictuar con lightbox)
+      // Click en el contenedor de imagen - REDIRIGE
       const imgContainer = container;
       if(imgContainer && !imgContainer.hasAttribute('data-redirect-listener')) {
         imgContainer.setAttribute('data-redirect-listener', 'true');
+        imgContainer.style.cursor = 'pointer';
         imgContainer.addEventListener('click', (e) => {
-          // Si el clic fue en la imagen, no redirigimos (la imagen abre lightbox)
-          if(e.target === imgContainer.querySelector('.popup-product-image')) {
-            return;
-          }
-          // Si el clic fue en los botones de navegación, no redirigimos
-          if(e.target.closest('.popup-nav-btn')) {
-            return;
-          }
-          // En cualquier otro caso, redirige
+          e.stopPropagation();
           redirectToPropertyPage(property);
         });
       }
       
-      // Click en el título
-      const titleEl = container.querySelector('.popup-product-title');
-      if(titleEl) {
+      // Click en el título - REDIRIGE
+      const titleEl = container.parentElement?.querySelector('.popup-product-title');
+      if(titleEl && !titleEl.hasAttribute('data-redirect-listener')) {
+        titleEl.setAttribute('data-redirect-listener', 'true');
         titleEl.style.cursor = 'pointer';
-        // Remover listeners anteriores para evitar duplicados
-        const newTitleEl = titleEl.cloneNode(true);
-        titleEl.parentNode.replaceChild(newTitleEl, titleEl);
-        newTitleEl.addEventListener('click', (e) => {
+        titleEl.addEventListener('click', (e) => {
           e.stopPropagation();
           redirectToPropertyPage(property);
-        });
-      }
-      
-      // Click en la imagen - abre lightbox
-      const img = container.querySelector('.popup-product-image');
-      if(img && !img.hasAttribute('data-lightbox-listener')) {
-        img.setAttribute('data-lightbox-listener', 'true');
-        img.style.cursor = 'pointer';
-        img.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const allImages = property.media.filter(m => typeof m === 'string');
-          const currentIdx = currentIndices[property.id] || 0;
-          if(allImages.length) openLightbox(allImages, currentIdx);
         });
       }
     }
@@ -790,13 +634,7 @@
         img.src=mediaItem; 
         img.alt=property.title_es; 
         img.className='popup-product-image'; 
-        img.style.cursor='pointer';
-        img.setAttribute('data-lightbox-listener', 'true');
-        img.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const allImages = property.media.filter(m => typeof m === 'string');
-          openLightbox(allImages, newIndex);
-        });
+        img.style.pointerEvents = 'none';
         container.insertBefore(img, navDiv); 
       } else if(mediaItem.type==='video'){ 
         let videoDiv=document.createElement('div'); 
@@ -807,7 +645,7 @@
       if(counterDiv) counterDiv.textContent=`${newIndex+1}/${property.media.length}`; 
       currentIndices[propertyId]=newIndex; 
       
-      // Reaplicar los eventos de click después de actualizar la imagen
+      // Reaplicar los eventos de redirección después de actualizar
       attachClickHandlers(container, property);
     }
     
@@ -964,11 +802,6 @@
       window.addEventListener('click',(e)=>{if(e.target===document.getElementById('serviciosModal')) document.getElementById('serviciosModal').style.display='none'; if(e.target===document.getElementById('infoModal')) document.getElementById('infoModal').style.display='none';});
       document.querySelectorAll('.lang-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); refreshAllPopups(); document.getElementById('buscador').value = ''; document.getElementById('sugerencias-busqueda').style.display = 'none'; }); });
       let inputBuscar=document.getElementById('buscador'); inputBuscar.addEventListener('input',(e)=>{ clearTimeout(buscadorTimeout); let term=e.target.value.trim(); let sugDiv=document.getElementById('sugerencias-busqueda'); if(term.length<2){ sugDiv.style.display='none'; return; } sugDiv.innerHTML=`<div class="sugerencia-item">🔍 Buscando...</div>`; sugDiv.style.display='block'; buscadorTimeout=setTimeout(()=>buscarInmuebles(term),300); }); inputBuscar.addEventListener('keydown',(e)=>{if(e.key==='Enter'){ e.preventDefault(); let term=inputBuscar.value.trim(); if(term) buscarInmuebles(term); }}); document.addEventListener('click',(e)=>{ if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display='none'; }); document.querySelectorAll('.close-visita-modal, .close-oferta-modal').forEach(btn=>{btn.addEventListener('click',()=>{document.getElementById('visitaModal').style.display='none'; document.getElementById('ofertaModal').style.display='none';});}); window.addEventListener('click',(e)=>{ if(e.target===document.getElementById('visitaModal')) document.getElementById('visitaModal').style.display='none'; if(e.target===document.getElementById('ofertaModal')) document.getElementById('ofertaModal').style.display='none'; if(e.target===document.getElementById('termsModal')) closeTermsModal(); }); document.getElementById('closeTermsBtn').addEventListener('click',closeTermsModal);
-      
-      document.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
-      document.querySelector('.lightbox-prev').addEventListener('click', prevLightbox);
-      document.querySelector('.lightbox-next').addEventListener('click', nextLightbox);
-      lightboxEl.addEventListener('click', (e) => { if(e.target === lightboxEl) closeLightbox(); });
     });
     
     function buscarInmuebles(q){ let term=q.toLowerCase(); let resultados=marcadoresOriginales.filter(m=>m.datosBusqueda.includes(term)); let sugerenciasDiv=document.getElementById('sugerencias-busqueda'); if(resultados.length){ sugerenciasDiv.innerHTML=''; resultados.forEach(m=>{ let title = currentLang === 'es' ? m.datosInmueble.title_es : m.datosInmueble.title_en; let desc = currentLang === 'es' ? m.datosInmueble.description_es : m.datosInmueble.description_en; let item=document.createElement('div'); item.className='sugerencia-item'; item.innerHTML=`<div class="sugerencia-texto"><strong>🔑 ${title}</strong><br><small>${desc}</small></div><button class="sugerencia-boton" data-id="${m.datosInmueble.id}">${currentLang==='es'?'Ver':'View'}</button>`; let btn=item.querySelector('.sugerencia-boton'); btn.addEventListener('click',(e)=>{ e.stopPropagation(); mapa.setView(m.getLatLng(),16); m.openPopup(); document.getElementById('buscador').value=title; sugerenciasDiv.style.display='none'; }); item.addEventListener('click',()=>{ mapa.setView(m.getLatLng(),16); m.openPopup(); document.getElementById('buscador').value=title; sugerenciasDiv.style.display='none'; }); sugerenciasDiv.appendChild(item); }); } else { sugerenciasDiv.innerHTML=`<div class="sugerencia-item">❌ No se encontraron inmuebles verificados</div>`; } }
