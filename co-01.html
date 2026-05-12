@@ -39,8 +39,6 @@
       }
     }
     </script>
-    <!-- Leaflet CSS para mapa con marcador bonito -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * {
             -webkit-user-select: none;
@@ -225,6 +223,9 @@
             gap: 8px;
             flex-wrap: wrap;
             margin-top: 0.5rem;
+            max-height: 100px;
+            overflow-x: auto;
+            padding-bottom: 5px;
         }
         .thumb {
             width: 65px;
@@ -389,18 +390,18 @@
             border: none;
         }
         
-        /* Estilos para el mapa con Leaflet */
+        /* Estilos para el mapa */
         .map-wrapper {
             margin: 1rem 0 1rem 0;
             width: 100%;
             border: 1px solid #eaeaea;
             background: #f8f8f8;
         }
-        #propertyMap {
+        .map-wrapper iframe {
             width: 100%;
             height: 300px;
-            background: #e9e9e9;
-            z-index: 1;
+            border: none;
+            display: block;
         }
         .map-caption {
             font-size: 0.65rem;
@@ -557,6 +558,7 @@
             font-weight: 600;
         }
         
+        /* Precio fijo - solo lectura */
         .fixed-price {
             background-color: #f5f5f5;
             color: #000000;
@@ -591,6 +593,19 @@
             padding: 0.8rem;
             background: #f9f9f9;
             border: 1px solid #eaeaea;
+        }
+        .credit-options label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+            font-size: 0.75rem;
+            text-transform: none;
+            font-weight: 400;
+        }
+        .credit-options input[type="radio"] {
+            width: auto;
+            margin: 0;
         }
         
         .modal-buttons {
@@ -703,7 +718,6 @@
         
         @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
     </style>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 
@@ -764,10 +778,15 @@
                 <iframe id="youtubeIframe" src="https://www.youtube.com/embed/W0LHTWG-UmQ" title="Video tour propiedad" frameborder="0" allowfullscreen loading="lazy"></iframe>
             </div>
             
-            <!-- MAPA CON LEAFLET Y MARCADOR 🔑 EN COORDENADAS EXACTAS -->
+            <!-- MAPA DE GOOGLE MAPS - UBICACIÓN DEL INMUEBLE CON BOTÓN DE RUTA -->
             <div class="map-wrapper">
-                <div id="propertyMap"></div>
-                <div class="map-caption">📍 Ubicación exacta: Altos del Chicó, Bogotá D.C., Colombia</div>
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.571490576322!2d-74.04018568463168!3d4.6762430965891855!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f9b4b063b8f1d%3A0x8b7b6f3b2b3b7b6f!2sChic%C3%B3%2C%20Bogot%C3%A1!5e0!3m2!1ses!2sco!4v1617182793846!5m2!1ses!2sco" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+                <div class="map-caption">📍 Ubicación: Altos del Chicó, Bogotá D.C., Colombia</div>
                 <button class="map-button" id="openDirectionsBtn">🔑 ABRIR RUTA EN GOOGLE MAPS</button>
             </div>
             
@@ -812,80 +831,180 @@
     </div>
 </div>
 
-<!-- MODALES (visita y oferta con código agente) -->
-<div id="scheduleModal" class="modal">...</div>
-<div id="offerModal" class="modal">...</div>
-<div id="lightboxModal" class="lightbox-modal">...</div>
+<!-- MODAL AGENDAR VISITA -->
+<div id="scheduleModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" id="closeScheduleModal">&times;</span>
+        <h3>📅 Agendar Visita</h3>
+        <form id="scheduleForm">
+            <label>TIPO DE DOCUMENTO *</label>
+            <input type="text" id="scheduleDocType" required placeholder="Ej: Cédula, Pasaporte, NIT...">
+            
+            <label>NÚMERO DE DOCUMENTO *</label>
+            <input type="text" id="scheduleDocNumber" required placeholder="Número de identificación">
+            
+            <label>NOMBRE COMPLETO *</label>
+            <input type="text" id="scheduleName" required placeholder="Tu nombre completo">
+            
+            <label>TELÉFONO (WhatsApp) *</label>
+            <input type="tel" id="schedulePhone" required placeholder="Ej: 57 300 1234567">
+            
+            <label>FECHA PREFERIDA *</label>
+            <input type="date" id="scheduleDate" required>
+            
+            <label>HORA PREFERIDA *</label>
+            <select id="scheduleTime" required>
+                <option value="">Seleccionar hora</option>
+                <option value="09:00">09:00 AM</option>
+                <option value="10:00">10:00 AM</option>
+                <option value="11:00">11:00 AM</option>
+                <option value="14:00">02:00 PM</option>
+                <option value="15:00">03:00 PM</option>
+                <option value="16:00">04:00 PM</option>
+            </select>
+            
+            <label>CÓDIGO DE AGENTE (opcional)</label>
+            <input type="text" id="scheduleAgentCode" placeholder="Ej: AG-1234">
+            
+            <label>MENSAJE (opcional)</label>
+            <textarea id="scheduleMessage" rows="3" placeholder="Comentarios adicionales..."></textarea>
+            
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn modal-btn-primary" id="sendScheduleBtn">ENVIAR SOLICITUD</button>
+                <button type="button" class="modal-btn modal-btn-secondary" id="cancelScheduleBtn">CANCELAR</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL HACER OFERTA - PRECIO FIJO, SIN MONTO, CON CAMPO AGENTE -->
+<div id="offerModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" id="closeOfferModal">&times;</span>
+        <h3>💰 Hacer Oferta</h3>
+        <form id="offerForm">
+            <label>TIPO DE DOCUMENTO *</label>
+            <input type="text" id="offerDocType" required placeholder="Ej: Cédula, Pasaporte, NIT...">
+            
+            <label>NÚMERO DE DOCUMENTO *</label>
+            <input type="text" id="offerDocNumber" required placeholder="Número de identificación">
+            
+            <label>NOMBRE COMPLETO *</label>
+            <input type="text" id="offerName" required placeholder="Tu nombre completo">
+            
+            <label>TELÉFONO (WhatsApp) *</label>
+            <input type="tel" id="offerPhone" required placeholder="Ej: 57 300 1234567">
+            
+            <label>PRECIO DE LA PROPIEDAD (FIJO) *</label>
+            <input type="text" id="propertyPrice" class="fixed-price" value="$2.340.000.000 COP" readonly disabled>
+            
+            <label>FORMA DE PAGO *</label>
+            <div class="radio-group" id="paymentMethodGroup">
+                <label><input type="radio" name="paymentMethod" value="Contado"> Contado</label>
+                <label><input type="radio" name="paymentMethod" value="Crédito"> Crédito</label>
+            </div>
+            
+            <div id="creditOptions" class="credit-options">
+                <label>Tipo de financiación:</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="creditType" value="Tengo preaprobado"> Tengo preaprobado</label>
+                    <label><input type="radio" name="creditType" value="Cesantías"> Cesantías</label>
+                    <label><input type="radio" name="creditType" value="Solicitar crédito inmobiliario"> Solicitar crédito inmobiliario</label>
+                </div>
+                <label>MONTO INICIAL (COP)</label>
+                <input type="number" id="initialAmount" placeholder="Monto de inicial o cuota inicial" step="1000000">
+            </div>
+            
+            <label>CÓDIGO DE AGENTE (opcional)</label>
+            <input type="text" id="offerAgentCode" placeholder="Ej: AG-1234">
+            
+            <label>MENSAJE (opcional)</label>
+            <textarea id="offerMessage" rows="3" placeholder="Detalles adicionales de tu oferta..."></textarea>
+            
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn modal-btn-primary" id="sendOfferBtn">ENVIAR OFERTA</button>
+                <button type="button" class="modal-btn modal-btn-secondary" id="cancelOfferBtn">CANCELAR</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lightbox Modal -->
+<div id="lightboxModal" class="lightbox-modal">
+    <div class="lightbox-content">
+        <button class="close-lightbox" id="closeLightboxBtn">✕</button>
+        <img id="lightboxImg" src="" alt="Vista ampliada">
+        <button class="nav-lightbox nav-prev" id="prevLightBtn">‹</button>
+        <button class="nav-lightbox nav-next" id="nextLightBtn">›</button>
+    </div>
+</div>
 
 <script>
-    // --- VALORES FIJOS ---
-    const PROPERTY_PRICE = 2340000000; // 2.340 millones COP
-    const PROPERTY_LAT = 4.676243;
-    const PROPERTY_LNG = -74.040186;
-    
-    // --- FUNCIÓN ACTUALIZAR CALCULADORA (actualiza dinámicamente) ---
-    function updateCostCalculator() {
-        const price = PROPERTY_PRICE;
-        // Porcentajes estándar Colombia (valores referenciales actualizados 2025)
-        const registroPorc = 0.01;      // 1% impuesto de registro (Bogotá)
-        const notariaPorc = 0.003;      // 0.3% derechos notariales aprox
-        const legalFijo = 980000;        // Estudio títulos + gastos administrativos (~$980k)
-        const certFijo = 350000;         // Certificados y avalúo simple (~$350k)
-        
-        const registro = price * registroPorc;
-        const notaria = price * notariaPorc;
-        const totalGastos = registro + notaria + legalFijo + certFijo;
-        
-        // Formateo COP
-        const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
-        document.getElementById('calcPrice').innerText = formatter.format(price);
-        document.getElementById('calcRegistro').innerText = formatter.format(registro);
-        document.getElementById('calcNotaria').innerText = formatter.format(notaria);
-        document.getElementById('calcLegal').innerText = formatter.format(legalFijo);
-        document.getElementById('calcCert').innerText = formatter.format(certFijo);
-        document.getElementById('calcTotal').innerText = formatter.format(totalGastos);
-    }
-    
-    // --- MAPA CON LEAFLET Y MARCADOR 🔑 ---
-    let mapInitialized = false;
-    function initMap() {
-        if (mapInitialized) return;
-        const mapElement = document.getElementById('propertyMap');
-        if (!mapElement) return;
-        const map = L.map('propertyMap').setView([PROPERTY_LAT, PROPERTY_LNG], 16);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; CartoDB',
-            subdomains: 'abcd',
-            maxZoom: 19
-        }).addTo(map);
-        
-        // Marcador personalizado con emoji 🔑 (usamos icono custom con texto)
-        const keyIcon = L.divIcon({
-            html: '🔑',
-            iconSize: [32, 32],
-            className: 'custom-key-icon',
-            popupAnchor: [0, -10]
+    // Bloqueos de copiar/pegar
+    (function() {
+        const blockEvents = ['copy', 'cut', 'paste', 'contextmenu', 'dragstart', 'selectstart'];
+        blockEvents.forEach(eventType => {
+            document.addEventListener(eventType, function(e) {
+                const isInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT';
+                if (!isInput) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+                return true;
+            });
         });
-        const marker = L.marker([PROPERTY_LAT, PROPERTY_LNG], { icon: keyIcon }).addTo(map);
-        marker.bindPopup('<b>📍 Residencia Altos del Chicó</b><br>Coordenadas exactas del inmueble').openPopup();
         
-        mapInitialized = true;
+        document.addEventListener('keydown', function(e) {
+            const isInputFocused = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'x')) {
+                if (!isInputFocused) { e.preventDefault(); return false; }
+            }
+        });
+        
+        let lastTouchEnd = 0;
+        document.addEventListener('touchstart', function(e) { if(e.touches.length > 1) e.preventDefault(); }, { passive: false });
+        document.addEventListener('touchmove', function(e) { if(e.touches.length > 1) e.preventDefault(); }, { passive: false });
+        document.addEventListener('touchend', function(e) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) e.preventDefault();
+            lastTouchEnd = now;
+        }, false);
+    })();
+    
+    // Mostrar/ocultar opciones de crédito
+    const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
+    const creditOptionsDiv = document.getElementById('creditOptions');
+    
+    function toggleCreditOptions() {
+        const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+        if (selectedPayment && selectedPayment.value === 'Crédito') {
+            creditOptionsDiv.style.display = 'block';
+        } else {
+            creditOptionsDiv.style.display = 'none';
+        }
     }
     
-    // --- RUTA A GOOGLE MAPS ---
-    const DIRECTIONS_URL = `https://www.google.com/maps/dir/?api=1&destination=${PROPERTY_LAT},${PROPERTY_LNG}&travelmode=driving`;
-    document.getElementById('openDirectionsBtn')?.addEventListener('click', () => {
-        window.open(DIRECTIONS_URL, '_blank');
+    paymentRadios.forEach(radio => {
+        radio.addEventListener('change', toggleCreditOptions);
     });
     
-    // --- GALERÍA DE IMÁGENES (igual que antes) ---
+    // MÁS FOTOS: Galería ampliada con 12 imágenes de alta calidad
     const imagesList = [
         "https://picsum.photos/id/106/1200/800",
         "https://picsum.photos/id/20/1200/800",
         "https://picsum.photos/id/26/1200/800",
         "https://picsum.photos/id/28/1200/800",
-        "https://picsum.photos/id/39/1200/800"
+        "https://picsum.photos/id/39/1200/800",
+        "https://picsum.photos/id/96/1200/800",
+        "https://picsum.photos/id/169/1200/800",
+        "https://picsum.photos/id/155/1200/800",
+        "https://picsum.photos/id/59/1200/800",
+        "https://picsum.photos/id/42/1200/800",
+        "https://picsum.photos/id/30/1200/800",
+        "https://picsum.photos/id/15/1200/800"
     ];
+    
     let currentImageIndex = 0;
     const mainImg = document.getElementById('mainDisplayImg');
     const thumbContainer = document.getElementById('thumbnailsList');
@@ -901,6 +1020,7 @@
             thumbContainer.appendChild(thumb);
         });
     }
+    
     function setMainImage(index) {
         currentImageIndex = Math.min(Math.max(0, index), imagesList.length - 1);
         mainImg.src = imagesList[currentImageIndex];
@@ -909,6 +1029,7 @@
             else thumb.classList.remove('active-thumb');
         });
     }
+    
     function nextImage() { setMainImage((currentImageIndex + 1) % imagesList.length); }
     function prevImage() { setMainImage((currentImageIndex - 1 + imagesList.length) % imagesList.length); }
     
@@ -919,42 +1040,197 @@
     const prevLight = document.getElementById('prevLightBtn');
     const nextLight = document.getElementById('nextLightBtn');
     const fullscreenBtn = document.getElementById('fullscreenBtn');
+    
     function openLightbox() { lightboxImg.src = imagesList[currentImageIndex]; lightboxModal.classList.add('active'); document.body.style.overflow = 'hidden'; }
     function closeLightboxFn() { lightboxModal.classList.remove('active'); document.body.style.overflow = ''; }
     function updateLightboxImage() { lightboxImg.src = imagesList[currentImageIndex]; }
-    fullscreenBtn?.addEventListener('click', openLightbox);
-    closeLightbox?.addEventListener('click', closeLightboxFn);
-    lightboxModal?.addEventListener('click', (e) => { if (e.target === lightboxModal) closeLightboxFn(); });
-    prevLight?.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); updateLightboxImage(); });
-    nextLight?.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); updateLightboxImage(); });
-    mainImg?.addEventListener('click', openLightbox);
     
-    // MODALES (resumen funcional con código agente, omitido por brevedad pero igual funcional)
-    // Se recrean dinámicamente? No, mejor mantener la estructura HTML ya existente pero como no la copiamos completa por legibilidad, la reinsertamos rápido.
-    // Como el usuario pide el código completo, debo devolver el HTML íntegro. Pero aquí por simplicidad en la respuesta mantengo la lógica completa.
-    // Para no cortar, incluyo la creación de los modales dentro del HTML final; pero como estoy en la respuesta de texto, el código final de arriba debe incluir los modales completos.
-    // Debido a que el prompt pide "envía este código exactamente igual" pero mejorado, y el asistente ya entregó la estructura inicial con modales, en esta versión final mantengo la integridad.
-    // Voy a inyectar los modales faltantes rápidamente en el DOM mediante JS? No, mejor los incluyo estáticamente en el HTML final.
-    // Pero para que esta respuesta sea correcta, el código completo que estoy generando incluye todo el HTML con modales.
+    fullscreenBtn.addEventListener('click', openLightbox);
+    closeLightbox.addEventListener('click', closeLightboxFn);
+    lightboxModal.addEventListener('click', (e) => { if (e.target === lightboxModal) closeLightboxFn(); });
+    prevLight.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); updateLightboxImage(); });
+    nextLight.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); updateLightboxImage(); });
+    mainImg.addEventListener('click', openLightbox);
     
-    // --- Inicializaciones ---
+    // Calculadora de gastos notariales
+    const PROPERTY_PRICE = 2340000000;
+    function updateCostCalculator() {
+        const registro = PROPERTY_PRICE * 0.01;
+        const notaria = PROPERTY_PRICE * 0.003;
+        const legalFijo = 980000;
+        const certFijo = 350000;
+        const total = registro + notaria + legalFijo + certFijo;
+        const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
+        document.getElementById('calcPrice').innerText = formatter.format(PROPERTY_PRICE);
+        document.getElementById('calcRegistro').innerText = formatter.format(registro);
+        document.getElementById('calcNotaria').innerText = formatter.format(notaria);
+        document.getElementById('calcLegal').innerText = formatter.format(legalFijo);
+        document.getElementById('calcCert').innerText = formatter.format(certFijo);
+        document.getElementById('calcTotal').innerText = formatter.format(total);
+    }
     updateCostCalculator();
-    // Esperar a que el DOM esté listo
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => { initMap(); });
-    } else {
-        initMap();
+    
+    // Google Maps Ruta
+    const DIRECTIONS_URL = `https://www.google.com/maps/dir/?api=1&destination=4.676243,-74.040186&travelmode=driving`;
+    document.getElementById('openDirectionsBtn').addEventListener('click', () => {
+        window.open(DIRECTIONS_URL, '_blank');
+    });
+    
+    // MODALES
+    const scheduleModal = document.getElementById('scheduleModal');
+    const offerModal = document.getElementById('offerModal');
+    const scheduleBtn = document.getElementById('scheduleBtn');
+    const offerBtn = document.getElementById('offerBtn');
+    
+    scheduleBtn.addEventListener('click', () => {
+        scheduleModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    });
+    
+    offerBtn.addEventListener('click', () => {
+        offerModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    });
+    
+    function closeScheduleModal() {
+        scheduleModal.style.display = 'none';
+        document.body.style.overflow = '';
+        document.getElementById('scheduleForm').reset();
     }
     
-    // Bloqueos de copia/pegar simplificados (igual funciona)
-    (function() {
-        const blockEvents = ['copy', 'cut', 'paste', 'contextmenu', 'dragstart'];
-        blockEvents.forEach(ev => document.addEventListener(ev, (e) => { if(!e.target.closest('input,textarea')) e.preventDefault(); }));
-    })();
+    function closeOfferModal() {
+        offerModal.style.display = 'none';
+        document.body.style.overflow = '';
+        document.getElementById('offerForm').reset();
+        creditOptionsDiv.style.display = 'none';
+        document.querySelectorAll('input[name="paymentMethod"]').forEach(r => r.checked = false);
+        document.querySelectorAll('input[name="creditType"]').forEach(r => r.checked = false);
+    }
     
-    // Aquí deberían ir los manejadores de modales, pero para mantener el código completo se asume que el HTML ya incluye los formularios.
-    // Voy a agregar listeners básicos para los botones de cierre (se asume que los IDs existen en el HTML final)
-    // Nota: El usuario debe recibir el código completo con todos los modales; en esta respuesta final los incluyo en el HTML.
+    document.getElementById('closeScheduleModal').addEventListener('click', closeScheduleModal);
+    document.getElementById('cancelScheduleBtn').addEventListener('click', closeScheduleModal);
+    document.getElementById('closeOfferModal').addEventListener('click', closeOfferModal);
+    document.getElementById('cancelOfferBtn').addEventListener('click', closeOfferModal);
+    
+    window.addEventListener('click', (e) => {
+        if (e.target === scheduleModal) closeScheduleModal();
+        if (e.target === offerModal) closeOfferModal();
+    });
+    
+    // Enviar Agendar Visita a WhatsApp
+    document.getElementById('sendScheduleBtn').addEventListener('click', () => {
+        const docType = document.getElementById('scheduleDocType').value.trim();
+        const docNumber = document.getElementById('scheduleDocNumber').value.trim();
+        const nombre = document.getElementById('scheduleName').value.trim();
+        const telefono = document.getElementById('schedulePhone').value.trim();
+        const fecha = document.getElementById('scheduleDate').value;
+        const hora = document.getElementById('scheduleTime').value;
+        const agentCode = document.getElementById('scheduleAgentCode').value.trim();
+        const mensaje = document.getElementById('scheduleMessage').value.trim();
+        
+        if (!docType || !docNumber || !nombre || !telefono || !fecha || !hora) {
+            alert('Por favor complete todos los campos obligatorios.');
+            return;
+        }
+        
+        const propiedad = "Residencia Altos del Chicó - Bogotá - $2.340.000.000 COP";
+        let texto = `*SOLICITUD DE VISITA - QRP2P*\n\n` +
+                    `*Propiedad:* ${propiedad}\n` +
+                    `*Tipo Documento:* ${docType}\n` +
+                    `*Número Documento:* ${docNumber}\n` +
+                    `*Nombre:* ${nombre}\n` +
+                    `*Teléfono:* ${telefono}\n` +
+                    `*Fecha:* ${fecha}\n` +
+                    `*Hora:* ${hora}\n`;
+        if (agentCode) texto += `*Código de agente:* ${agentCode}\n`;
+        texto += `*Mensaje:* ${mensaje || 'Sin comentarios adicionales'}`;
+        
+        const url = `https://wa.me/573001234567?text=${encodeURIComponent(texto)}`;
+        window.open(url, '_blank');
+        closeScheduleModal();
+    });
+    
+    // Enviar Oferta a WhatsApp
+    document.getElementById('sendOfferBtn').addEventListener('click', () => {
+        const docType = document.getElementById('offerDocType').value.trim();
+        const docNumber = document.getElementById('offerDocNumber').value.trim();
+        const nombre = document.getElementById('offerName').value.trim();
+        const telefono = document.getElementById('offerPhone').value.trim();
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+        const creditType = document.querySelector('input[name="creditType"]:checked');
+        const initialAmount = document.getElementById('initialAmount').value.trim();
+        const agentCode = document.getElementById('offerAgentCode').value.trim();
+        const mensaje = document.getElementById('offerMessage').value.trim();
+        
+        if (!docType || !docNumber || !nombre || !telefono || !paymentMethod) {
+            alert('Por favor complete todos los campos obligatorios.');
+            return;
+        }
+        
+        const propiedad = "Residencia Altos del Chicó - Bogotá - $2.340.000.000 COP";
+        let texto = `*OFERTA - QRP2P (PRECIO FIJO)*\n\n` +
+                    `*Propiedad:* ${propiedad}\n` +
+                    `*Tipo Documento:* ${docType}\n` +
+                    `*Número Documento:* ${docNumber}\n` +
+                    `*Nombre:* ${nombre}\n` +
+                    `*Teléfono:* ${telefono}\n` +
+                    `*Precio de venta (fijo):* $2.340.000.000 COP\n` +
+                    `*Forma de pago:* ${paymentMethod.value}\n`;
+        
+        if (paymentMethod.value === 'Crédito') {
+            texto += `*Tipo de crédito:* ${creditType ? creditType.value : 'No especificado'}\n`;
+            if (initialAmount) {
+                texto += `*Monto inicial:* $${parseInt(initialAmount).toLocaleString('es-CO')} COP\n`;
+            }
+        }
+        if (agentCode) texto += `*Código de agente:* ${agentCode}\n`;
+        texto += `*Mensaje:* ${mensaje || 'Sin comentarios adicionales'}`;
+        
+        const url = `https://wa.me/573001234567?text=${encodeURIComponent(texto)}`;
+        window.open(url, '_blank');
+        closeOfferModal();
+    });
+    
+    // Idioma
+    const translations = {
+        es: { tagline: "real estate · propiedad exclusiva" },
+        en: { tagline: "real estate · exclusive property" }
+    };
+    let currentLang = 'es';
+    function setLanguage(lang) {
+        currentLang = lang;
+        document.querySelector('[data-i18n="tagline"]').innerText = translations[lang].tagline;
+        document.getElementById('lang-es').classList.toggle('active', lang === 'es');
+        document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+        localStorage.setItem('qrp2p_lang', lang);
+    }
+    document.getElementById('lang-es').addEventListener('click', () => setLanguage('es'));
+    document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+    const savedLang = localStorage.getItem('qrp2p_lang');
+    if (savedLang && (savedLang === 'es' || savedLang === 'en')) setLanguage(savedLang);
+    else setLanguage('es');
+    
+    document.getElementById('backButton').addEventListener('click', (e) => {
+        e.preventDefault();
+        window.history.back();
+    });
+    
+    renderThumbnails();
+    setMainImage(0);
+    
+    document.addEventListener('keydown', (e) => {
+        if (lightboxModal.classList.contains('active')) {
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prevImage(); updateLightboxImage(); }
+            else if (e.key === 'ArrowRight') { e.preventDefault(); nextImage(); updateLightboxImage(); }
+            else if (e.key === 'Escape') { closeLightboxFn(); }
+        }
+        if (e.key === 'Escape') {
+            if (scheduleModal.style.display === 'block') closeScheduleModal();
+            if (offerModal.style.display === 'block') closeOfferModal();
+        }
+    });
+    
+    document.querySelectorAll('img').forEach(img => img.addEventListener('dragstart', (e) => e.preventDefault()));
 </script>
 </body>
 </html>
