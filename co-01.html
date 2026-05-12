@@ -435,7 +435,7 @@
             background: #2c2c2c;
         }
         
-        /* Calculadora de gastos - SIN GASTOS NOTARIALES */
+        /* Calculadora de gastos notariales */
         .cost-calculator {
             margin: 1rem 0 1rem 0;
             border: 1px solid #eaeaea;
@@ -790,7 +790,7 @@
                 <button class="map-button" id="openDirectionsBtn">🔑 ABRIR RUTA EN GOOGLE MAPS</button>
             </div>
             
-            <!-- CALCULADORA DE GASTOS (SIN GASTOS NOTARIALES) -->
+            <!-- CALCULADORA DE GASTOS NOTARIALES (Colombia) -->
             <div class="cost-calculator" id="costCalculator">
                 <h4>📋 ESTIMACIÓN DE GASTOS DE COMPRA (Colombia)</h4>
                 <div class="cost-row">
@@ -798,30 +798,26 @@
                     <span class="cost-value" id="calcPrice">$2.340.000.000 COP</span>
                 </div>
                 <div class="cost-row">
-                    <span class="cost-label">Impuesto de Beneficencia / Registro (1%):</span>
-                    <span class="cost-value" id="calcBeneficencia">$0 COP</span>
+                    <span class="cost-label">Impuesto de registro (1%):</span>
+                    <span class="cost-value" id="calcRegistro">$0 COP</span>
                 </div>
                 <div class="cost-row">
-                    <span class="cost-label">Impuesto de Registro adicional (0.67%):</span>
-                    <span class="cost-value" id="calcRegistroAdicional">$0 COP</span>
+                    <span class="cost-label">Derechos de notaría (~0.3%):</span>
+                    <span class="cost-value" id="calcNotaria">$0 COP</span>
                 </div>
                 <div class="cost-row">
-                    <span class="cost-label">Retención en la fuente vendedor (2.5%):</span>
-                    <span class="cost-value" id="calcRetencion">$0 COP</span>
+                    <span class="cost-label">Estudio de títulos y gastos legales:</span>
+                    <span class="cost-value" id="calcLegal">$0 COP</span>
                 </div>
                 <div class="cost-row">
-                    <span class="cost-label">Honorarios del notario (0.5% promedio):</span>
-                    <span class="cost-value" id="calcHonorarios">$0 COP</span>
-                </div>
-                <div class="cost-row">
-                    <span class="cost-label">Certificado de tradición y libertad:</span>
-                    <span class="cost-value" id="calcCertificado">$150.000 COP</span>
+                    <span class="cost-label">Avalúo catastral / certificados:</span>
+                    <span class="cost-value" id="calcCert">$0 COP</span>
                 </div>
                 <div class="cost-row total">
                     <span class="cost-label">TOTAL APROXIMADO GASTOS:</span>
                     <span class="cost-value" id="calcTotal">$0 COP</span>
                 </div>
-                <div class="calculator-note">*Porcentajes según tarifas vigentes en Bogotá. Retención en la fuente aplica para personas naturales con venta > $685M (2.5%). Sin incluir comisiones inmobiliarias (0% P2P).</div>
+                <div class="calculator-note">*Porcentajes estimados según tarifas vigentes en Bogotá. El impuesto de registro puede variar según el municipio. Valor sin incluir comisiones inmobiliarias (0% P2P).</div>
             </div>
             
             <div class="divider"></div>
@@ -1032,9 +1028,6 @@
             if (i === currentImageIndex) thumb.classList.add('active-thumb');
             else thumb.classList.remove('active-thumb');
         });
-        // Scroll automático al thumb activo
-        const activeThumb = document.querySelector('.thumb.active-thumb');
-        if (activeThumb) activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
     
     function nextImage() { setMainImage((currentImageIndex + 1) % imagesList.length); }
@@ -1059,22 +1052,20 @@
     nextLight.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); updateLightboxImage(); });
     mainImg.addEventListener('click', openLightbox);
     
-    // Calculadora de gastos (SIN GASTOS NOTARIALES)
+    // Calculadora de gastos notariales
     const PROPERTY_PRICE = 2340000000;
     function updateCostCalculator() {
-        const beneficencia = PROPERTY_PRICE * 0.01;
-        const registroAdicional = PROPERTY_PRICE * 0.0067;
-        const retencion = PROPERTY_PRICE * 0.025;
-        const honorarios = PROPERTY_PRICE * 0.005;
-        const certificado = 150000;
-        const total = beneficencia + registroAdicional + retencion + honorarios + certificado;
+        const registro = PROPERTY_PRICE * 0.01;
+        const notaria = PROPERTY_PRICE * 0.003;
+        const legalFijo = 980000;
+        const certFijo = 350000;
+        const total = registro + notaria + legalFijo + certFijo;
         const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
         document.getElementById('calcPrice').innerText = formatter.format(PROPERTY_PRICE);
-        document.getElementById('calcBeneficencia').innerText = formatter.format(beneficencia);
-        document.getElementById('calcRegistroAdicional').innerText = formatter.format(registroAdicional);
-        document.getElementById('calcRetencion').innerText = formatter.format(retencion);
-        document.getElementById('calcHonorarios').innerText = formatter.format(honorarios);
-        document.getElementById('calcCertificado').innerText = formatter.format(certificado);
+        document.getElementById('calcRegistro').innerText = formatter.format(registro);
+        document.getElementById('calcNotaria').innerText = formatter.format(notaria);
+        document.getElementById('calcLegal').innerText = formatter.format(legalFijo);
+        document.getElementById('calcCert').innerText = formatter.format(certFijo);
         document.getElementById('calcTotal').innerText = formatter.format(total);
     }
     updateCostCalculator();
