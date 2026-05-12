@@ -435,51 +435,6 @@
             background: #2c2c2c;
         }
         
-        /* Calculadora de gastos notariales */
-        .cost-calculator {
-            margin: 1rem 0 1rem 0;
-            border: 1px solid #eaeaea;
-            background: #fefef7;
-            padding: 1rem;
-        }
-        .cost-calculator h4 {
-            font-size: 0.8rem;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-            font-weight: 700;
-            text-align: center;
-        }
-        .cost-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.4rem 0;
-            border-bottom: 1px dashed #e0e0e0;
-            font-size: 0.75rem;
-        }
-        .cost-row.total {
-            border-top: 2px solid #000;
-            border-bottom: none;
-            margin-top: 0.8rem;
-            padding-top: 0.8rem;
-            font-weight: 700;
-            font-size: 0.85rem;
-        }
-        .cost-label {
-            font-weight: 500;
-            color: #2c2c2c;
-        }
-        .cost-value {
-            font-family: monospace;
-            font-weight: 600;
-        }
-        .calculator-note {
-            font-size: 0.6rem;
-            color: #6c6c6c;
-            text-align: center;
-            margin-top: 0.8rem;
-        }
-        
         .footer-detail {
             margin-top: 2rem;
             font-size: 0.6rem;
@@ -790,36 +745,6 @@
                 <button class="map-button" id="openDirectionsBtn">🔑 ABRIR RUTA EN GOOGLE MAPS</button>
             </div>
             
-            <!-- CALCULADORA DE GASTOS NOTARIALES (Colombia) -->
-            <div class="cost-calculator" id="costCalculator">
-                <h4>📋 ESTIMACIÓN DE GASTOS DE COMPRA (Colombia)</h4>
-                <div class="cost-row">
-                    <span class="cost-label">Precio del inmueble:</span>
-                    <span class="cost-value" id="calcPrice">$2.340.000.000 COP</span>
-                </div>
-                <div class="cost-row">
-                    <span class="cost-label">Impuesto de registro (1%):</span>
-                    <span class="cost-value" id="calcRegistro">$0 COP</span>
-                </div>
-                <div class="cost-row">
-                    <span class="cost-label">Derechos de notaría (~0.3%):</span>
-                    <span class="cost-value" id="calcNotaria">$0 COP</span>
-                </div>
-                <div class="cost-row">
-                    <span class="cost-label">Estudio de títulos y gastos legales:</span>
-                    <span class="cost-value" id="calcLegal">$0 COP</span>
-                </div>
-                <div class="cost-row">
-                    <span class="cost-label">Avalúo catastral / certificados:</span>
-                    <span class="cost-value" id="calcCert">$0 COP</span>
-                </div>
-                <div class="cost-row total">
-                    <span class="cost-label">TOTAL APROXIMADO GASTOS:</span>
-                    <span class="cost-value" id="calcTotal">$0 COP</span>
-                </div>
-                <div class="calculator-note">*Porcentajes estimados según tarifas vigentes en Bogotá. El impuesto de registro puede variar según el municipio. Valor sin incluir comisiones inmobiliarias (0% P2P).</div>
-            </div>
-            
             <div class="divider"></div>
             <div class="tagline" style="text-align:right; letter-spacing:1px;">ID: QRP2P-2412 · disponible inmediato</div>
         </div>
@@ -1051,24 +976,6 @@
     prevLight.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); updateLightboxImage(); });
     nextLight.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); updateLightboxImage(); });
     mainImg.addEventListener('click', openLightbox);
-    
-    // Calculadora de gastos notariales
-    const PROPERTY_PRICE = 2340000000;
-    function updateCostCalculator() {
-        const registro = PROPERTY_PRICE * 0.01;
-        const notaria = PROPERTY_PRICE * 0.003;
-        const legalFijo = 980000;
-        const certFijo = 350000;
-        const total = registro + notaria + legalFijo + certFijo;
-        const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
-        document.getElementById('calcPrice').innerText = formatter.format(PROPERTY_PRICE);
-        document.getElementById('calcRegistro').innerText = formatter.format(registro);
-        document.getElementById('calcNotaria').innerText = formatter.format(notaria);
-        document.getElementById('calcLegal').innerText = formatter.format(legalFijo);
-        document.getElementById('calcCert').innerText = formatter.format(certFijo);
-        document.getElementById('calcTotal').innerText = formatter.format(total);
-    }
-    updateCostCalculator();
     
     // Google Maps Ruta
     const DIRECTIONS_URL = `https://www.google.com/maps/dir/?api=1&destination=4.676243,-74.040186&travelmode=driving`;
