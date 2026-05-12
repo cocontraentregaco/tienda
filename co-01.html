@@ -410,6 +410,28 @@
             border-top: 1px solid #eaeaea;
             color: #4a4a4a;
         }
+        .map-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #000000;
+            color: #ffffff;
+            border: none;
+            padding: 0.6rem 1rem;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+            margin-top: 0;
+            border-top: 1px solid #eaeaea;
+        }
+        .map-button:hover {
+            background: #2c2c2c;
+        }
         
         .footer-detail {
             margin-top: 2rem;
@@ -709,7 +731,7 @@
                 <iframe id="youtubeIframe" src="https://www.youtube.com/embed/W0LHTWG-UmQ" title="Video tour propiedad" frameborder="0" allowfullscreen loading="lazy"></iframe>
             </div>
             
-            <!-- MAPA DE GOOGLE MAPS - UBICACIÓN DEL INMUEBLE -->
+            <!-- MAPA DE GOOGLE MAPS - UBICACIÓN DEL INMUEBLE CON BOTÓN DE RUTA -->
             <div class="map-wrapper">
                 <iframe 
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.571490576322!2d-74.04018568463168!3d4.6762430965891855!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f9b4b063b8f1d%3A0x8b7b6f3b2b3b7b6f!2sChic%C3%B3%2C%20Bogot%C3%A1!5e0!3m2!1ses!2sco!4v1617182793846!5m2!1ses!2sco" 
@@ -718,6 +740,7 @@
                     referrerpolicy="no-referrer-when-downgrade">
                 </iframe>
                 <div class="map-caption">📍 Ubicación: Altos del Chicó, Bogotá D.C., Colombia</div>
+                <button class="map-button" id="openDirectionsBtn">🔑 ABRIR RUTA EN GOOGLE MAPS</button>
             </div>
             
             <div class="divider"></div>
@@ -731,7 +754,7 @@
     </div>
 </div>
 
-<!-- MODAL AGENDAR VISITA -->
+<!-- MODAL AGENDAR VISITA (con campo agente opcional) -->
 <div id="scheduleModal" class="modal">
     <div class="modal-content">
         <span class="close-modal" id="closeScheduleModal">&times;</span>
@@ -763,6 +786,9 @@
                 <option value="16:00">04:00 PM</option>
             </select>
             
+            <label>CÓDIGO DE AGENTE (opcional)</label>
+            <input type="text" id="scheduleAgentCode" placeholder="Ej: AG-1234">
+            
             <label>MENSAJE (opcional)</label>
             <textarea id="scheduleMessage" rows="3" placeholder="Comentarios adicionales..."></textarea>
             
@@ -774,7 +800,7 @@
     </div>
 </div>
 
-<!-- MODAL HACER OFERTA - PRECIO FIJO, SIN CAMPO MONTO DE OFERTA -->
+<!-- MODAL HACER OFERTA - PRECIO FIJO, SIN MONTO, CON CAMPO AGENTE -->
 <div id="offerModal" class="modal">
     <div class="modal-content">
         <span class="close-modal" id="closeOfferModal">&times;</span>
@@ -795,8 +821,6 @@
             <label>PRECIO DE LA PROPIEDAD (FIJO) *</label>
             <input type="text" id="propertyPrice" class="fixed-price" value="$2.340.000.000 COP" readonly disabled>
             
-            <!-- eliminado: campo MONTO DE OFERTA (ya que precio es fijo) -->
-            
             <label>FORMA DE PAGO *</label>
             <div class="radio-group" id="paymentMethodGroup">
                 <label><input type="radio" name="paymentMethod" value="Contado"> Contado</label>
@@ -813,6 +837,9 @@
                 <label>MONTO INICIAL (COP)</label>
                 <input type="number" id="initialAmount" placeholder="Monto de inicial o cuota inicial" step="1000000">
             </div>
+            
+            <label>CÓDIGO DE AGENTE (opcional)</label>
+            <input type="text" id="offerAgentCode" placeholder="Ej: AG-1234">
             
             <label>MENSAJE (opcional)</label>
             <textarea id="offerMessage" rows="3" placeholder="Detalles adicionales de tu oferta..."></textarea>
@@ -836,7 +863,7 @@
 </div>
 
 <script>
-    // Bloqueos de copiar/pegar
+    // Bloqueos de copiar/pegar (mantener igual)
     (function() {
         const blockEvents = ['copy', 'cut', 'paste', 'contextmenu', 'dragstart', 'selectstart'];
         blockEvents.forEach(eventType => {
@@ -870,19 +897,28 @@
     
     // Mostrar/ocultar opciones de crédito
     const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
-    const creditOptions = document.getElementById('creditOptions');
+    const creditOptionsDiv = document.getElementById('creditOptions');
     
     function toggleCreditOptions() {
         const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
         if (selectedPayment && selectedPayment.value === 'Crédito') {
-            creditOptions.style.display = 'block';
+            creditOptionsDiv.style.display = 'block';
         } else {
-            creditOptions.style.display = 'none';
+            creditOptionsDiv.style.display = 'none';
         }
     }
     
     paymentRadios.forEach(radio => {
         radio.addEventListener('change', toggleCreditOptions);
+    });
+    
+    // Coordenadas exactas del inmueble (Altos del Chicó, Bogotá)
+    const PROPERTY_LAT = 4.676243;
+    const PROPERTY_LNG = -74.040186;
+    const DIRECTIONS_URL = `https://www.google.com/maps/dir/?api=1&destination=${PROPERTY_LAT},${PROPERTY_LNG}&travelmode=driving`;
+    
+    document.getElementById('openDirectionsBtn').addEventListener('click', () => {
+        window.open(DIRECTIONS_URL, '_blank');
     });
     
     // Galería de imágenes
@@ -967,7 +1003,7 @@
         offerModal.style.display = 'none';
         document.body.style.overflow = '';
         document.getElementById('offerForm').reset();
-        creditOptions.style.display = 'none';
+        creditOptionsDiv.style.display = 'none';
         document.querySelectorAll('input[name="paymentMethod"]').forEach(r => r.checked = false);
         document.querySelectorAll('input[name="creditType"]').forEach(r => r.checked = false);
     }
@@ -982,7 +1018,7 @@
         if (e.target === offerModal) closeOfferModal();
     });
     
-    // Enviar Agendar Visita a WhatsApp
+    // Enviar Agendar Visita a WhatsApp (con código de agente opcional)
     document.getElementById('sendScheduleBtn').addEventListener('click', () => {
         const docType = document.getElementById('scheduleDocType').value.trim();
         const docNumber = document.getElementById('scheduleDocNumber').value.trim();
@@ -990,6 +1026,7 @@
         const telefono = document.getElementById('schedulePhone').value.trim();
         const fecha = document.getElementById('scheduleDate').value;
         const hora = document.getElementById('scheduleTime').value;
+        const agentCode = document.getElementById('scheduleAgentCode').value.trim();
         const mensaje = document.getElementById('scheduleMessage').value.trim();
         
         if (!docType || !docNumber || !nombre || !telefono || !fecha || !hora) {
@@ -998,22 +1035,23 @@
         }
         
         const propiedad = "Residencia Altos del Chicó - Bogotá - $2.340.000.000 COP";
-        const texto = `*SOLICITUD DE VISITA - QRP2P*\n\n` +
-                      `*Propiedad:* ${propiedad}\n` +
-                      `*Tipo Documento:* ${docType}\n` +
-                      `*Número Documento:* ${docNumber}\n` +
-                      `*Nombre:* ${nombre}\n` +
-                      `*Teléfono:* ${telefono}\n` +
-                      `*Fecha:* ${fecha}\n` +
-                      `*Hora:* ${hora}\n` +
-                      `*Mensaje:* ${mensaje || 'Sin comentarios adicionales'}`;
+        let texto = `*SOLICITUD DE VISITA - QRP2P*\n\n` +
+                    `*Propiedad:* ${propiedad}\n` +
+                    `*Tipo Documento:* ${docType}\n` +
+                    `*Número Documento:* ${docNumber}\n` +
+                    `*Nombre:* ${nombre}\n` +
+                    `*Teléfono:* ${telefono}\n` +
+                    `*Fecha:* ${fecha}\n` +
+                    `*Hora:* ${hora}\n`;
+        if (agentCode) texto += `*Código de agente:* ${agentCode}\n`;
+        texto += `*Mensaje:* ${mensaje || 'Sin comentarios adicionales'}`;
         
         const url = `https://wa.me/573001234567?text=${encodeURIComponent(texto)}`;
         window.open(url, '_blank');
         closeScheduleModal();
     });
     
-    // Enviar Oferta a WhatsApp (sin monto de oferta, precio fijo)
+    // Enviar Oferta a WhatsApp (sin monto, precio fijo, con agente)
     document.getElementById('sendOfferBtn').addEventListener('click', () => {
         const docType = document.getElementById('offerDocType').value.trim();
         const docNumber = document.getElementById('offerDocNumber').value.trim();
@@ -1022,6 +1060,7 @@
         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
         const creditType = document.querySelector('input[name="creditType"]:checked');
         const initialAmount = document.getElementById('initialAmount').value.trim();
+        const agentCode = document.getElementById('offerAgentCode').value.trim();
         const mensaje = document.getElementById('offerMessage').value.trim();
         
         if (!docType || !docNumber || !nombre || !telefono || !paymentMethod) {
@@ -1045,7 +1084,7 @@
                 texto += `*Monto inicial:* $${parseInt(initialAmount).toLocaleString('es-CO')} COP\n`;
             }
         }
-        
+        if (agentCode) texto += `*Código de agente:* ${agentCode}\n`;
         texto += `*Mensaje:* ${mensaje || 'Sin comentarios adicionales'}`;
         
         const url = `https://wa.me/573001234567?text=${encodeURIComponent(texto)}`;
