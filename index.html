@@ -3,36 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <meta name="description" content="QRP2P Real Estate: El mercado inmobiliario P2P más elegante y minimalista. Busca y selecciona tu país para acceder a la plataforma de compra, venta e inversión en bienes raíces entre pares. Colombia o Estados Unidos.">
-    <meta name="keywords" content="QRP2P, Real Estate, bienes raíces, marketplace P2P, Colombia, Estados Unidos, compra venta inmuebles, inversión, propiedades, peer-to-peer">
+    <meta name="description" content="QRP2P Real Estate: El mercado inmobiliario P2P más elegante y minimalista. Compra, vende e invierte en bienes raíces en Colombia y Estados Unidos.">
+    <meta name="keywords" content="QRP2P, Real Estate, bienes raíces, marketplace P2P, Colombia, Estados Unidos, USA, compra venta inmuebles, inversión, propiedades, peer-to-peer">
     <meta name="author" content="QRP2P Real Estate">
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="QRP2P">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192.png">
     <title>QRP2P | REAL ESTATE</title>
+    
     <!-- Open Graph -->
     <meta property="og:title" content="QRP2P Real Estate — Marketplace P2P">
     <meta property="og:description" content="Busca rápidamente tu país y accede al mercado inmobiliario descentralizado. Colombia o Estados Unidos.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://qrp2p.com">
+    <meta property="og:image" content="/icon-512.png">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="QRP2P Real Estate">
+    <meta name="twitter:description" content="Mercado inmobiliario P2P en Colombia y Estados Unidos">
+    <meta name="twitter:image" content="/icon-512.png">
+    
     <style>
         /* -------------------------------
            RESET y estilos globales
-           Blanco y negro puro + Baskerville
-           Buscador profesional con diseño mejorado
-           REAL ESTATE VERSION
-           CON BLOQUEO DE ZOOM, SELECCIÓN, COPIAR/PEGAR
+           PWA Professional - Listo para Stores
+           Con Estados Unidos incluido
         ------------------------------- */
         
-        /* Bloquear selección de texto en toda la página */
         * {
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
-        /* Excepción: permitir selección en el input del buscador */
         input, textarea, [contenteditable="true"] {
             -webkit-user-select: text;
             -moz-user-select: text;
@@ -66,7 +80,7 @@
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             width: 100%;
             margin: 0 auto;
             text-align: center;
@@ -155,7 +169,7 @@
             font-weight: 350;
         }
 
-        /* ---------- BUSCADOR PROFESIONAL - DISEÑO MEJORADO ---------- */
+        /* ---------- BUSCADOR PROFESIONAL ---------- */
         .search-section {
             max-width: 480px;
             width: 100%;
@@ -180,6 +194,10 @@
             pointer-events: none;
             font-weight: 400;
             z-index: 2;
+        }
+
+        .search-icon::before {
+            content: "🔍";
         }
 
         .search-input {
@@ -238,23 +256,19 @@
             font-style: italic;
         }
 
-        /* selector de países — grid con transiciones suaves */
+        /* selector de países — grid responsivo */
         .country-selector {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
             margin: 2rem 0 2.5rem;
             transition: all 0.2s;
         }
 
         .country-card {
-            flex: 1;
-            min-width: 240px;
-            max-width: 280px;
             background: #ffffff;
             border: 1px solid #e0e0e0;
-            padding: 2rem 1rem;
+            padding: 2rem 1.5rem;
             transition: all 0.2s ease;
             cursor: pointer;
             text-align: center;
@@ -273,10 +287,16 @@
             border-color: #000000;
             background-color: #fafafa;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
         .country-card:active {
             transform: translateY(1px);
+        }
+
+        .country-flag {
+            font-size: 3rem;
+            margin-bottom: 1rem;
         }
 
         .country-name {
@@ -298,6 +318,13 @@
             letter-spacing: 1px;
         }
 
+        .country-domain {
+            font-size: 0.7rem;
+            color: #8a8a8a;
+            margin-top: 0.5rem;
+            font-family: monospace;
+        }
+
         .divider {
             width: 40px;
             height: 1px;
@@ -315,6 +342,44 @@
             margin-top: 1rem;
         }
 
+        /* Banner de instalación PWA */
+        .install-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #000000;
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 40px;
+            display: none;
+            align-items: center;
+            gap: 16px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-family: 'Libre Baskerville', serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .install-banner:hover {
+            background: #1a1a1a;
+            transform: translateX(-50%) translateY(-2px);
+        }
+
+        .install-banner button {
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
         .footer {
             margin-top: 3rem;
             font-size: 0.7rem;
@@ -328,7 +393,24 @@
             margin-bottom: 0.2rem;
         }
 
-        @media (max-width: 650px) {
+        /* Loading spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 2px solid #f0f0f0;
+            border-top: 2px solid #000000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
             body {
                 padding: 1.5rem;
             }
@@ -349,13 +431,8 @@
                 font-size: 1.4rem;
             }
             .country-selector {
+                grid-template-columns: 1fr;
                 gap: 1rem;
-                flex-direction: column;
-                align-items: center;
-            }
-            .country-card {
-                width: 100%;
-                max-width: 280px;
             }
             .search-section {
                 max-width: 360px;
@@ -365,15 +442,11 @@
                 padding: 0.8rem 2.8rem 0.8rem 2.5rem;
                 font-size: 0.88rem;
             }
-            .search-icon {
-                left: 12px;
-                font-size: 0.9rem;
-            }
-        }
-
-        @media (max-width: 450px) {
-            .search-section {
-                max-width: 300px;
+            .install-banner {
+                width: 90%;
+                text-align: center;
+                flex-direction: column;
+                padding: 12px;
             }
         }
 
@@ -392,7 +465,6 @@
 <body>
 
 <div class="container">
-    <!-- Selector de idioma: ES y EN -->
     <div class="language-bar">
         <button class="lang-btn active" id="lang-es" data-lang="es">ES</button>
         <button class="lang-btn" id="lang-en" data-lang="en">EN</button>
@@ -400,7 +472,7 @@
 
     <div class="brand">
         <span class="logo">QRP2P.COM</span>
-        <div class="tagline" data-i18n="tagline">real estate </div>
+        <div class="tagline" data-i18n="tagline">real estate</div>
     </div>
 
     <div class="hero">
@@ -409,35 +481,37 @@
         <p data-i18n="subtitle">Compra, vende e invierte en bienes raíces directamente entre propietarios. Elige tu región.</p>
     </div>
 
-    <!-- BUSCADOR PROFESIONAL - DISEÑO MEJORADO -->
     <div class="search-section">
         <div class="search-input-wrapper">
             <span class="search-icon"></span>
-            <input type="text" id="countrySearch" class="search-input" placeholder="Buscar país..." autocomplete="off" spellcheck="false">
+            <input type="text" id="countrySearch" class="search-input" placeholder="Buscar país..." autocomplete="off" spellcheck="false" aria-label="Buscar país">
             <button id="clearSearch" class="search-clear" aria-label="Limpiar búsqueda">✕</button>
         </div>
         <div id="resultsCount" class="results-count"></div>
     </div>
 
-    <!-- Contenedor de países: dinámico con JS -->
     <div id="countriesContainer" class="country-selector"></div>
 
     <div class="footer">
         <p data-i18n="footer_copyright">© QRP2P.COM — Mercado inmobiliario entre pares</p>
         <p data-i18n="footer_tagline">propiedades directas · sin intermediarios · inversión inteligente</p>
+        <p style="margin-top: 0.5rem; font-size: 0.65rem;">v2.0.0</p>
     </div>
+</div>
+
+<div id="installBanner" class="install-banner">
+    <span data-i18n="install_text">📱 Instalar QRP2P App</span>
+    <button id="installBtn" data-i18n="install_btn">Instalar</button>
 </div>
 
 <script>
     // --------------------------------------------------------------
-    // 1. BLOQUEO ADICIONAL DE COPY/PASTE/CUT Y EVENTOS DE TECLADO
+    // 1. BLOQUEO DE INTERACCIONES
     // --------------------------------------------------------------
     (function() {
-        // Bloquear eventos de copiar, cortar y pegar en toda la página
         const blockEvents = ['copy', 'cut', 'paste', 'contextmenu', 'dragstart', 'selectstart'];
         blockEvents.forEach(eventType => {
             document.addEventListener(eventType, function(e) {
-                // Permitir excepciones solo dentro del input de búsqueda
                 const isSearchInput = e.target.id === 'countrySearch' || e.target.closest('#countrySearch');
                 if (!isSearchInput) {
                     e.preventDefault();
@@ -448,87 +522,72 @@
             });
         });
         
-        // Bloquear atajos de teclado para copiar/pegar/cortar
         document.addEventListener('keydown', function(e) {
             const isSearchInputFocused = document.activeElement && document.activeElement.id === 'countrySearch';
-            if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'x')) {
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'x' || e.key === 'a')) {
                 if (!isSearchInputFocused) {
                     e.preventDefault();
-                    e.stopPropagation();
-                    return false;
-                }
-            }
-            if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
-                if (!isSearchInputFocused) {
-                    e.preventDefault();
-                    e.stopPropagation();
                     return false;
                 }
             }
         });
         
-        // Deshabilitar zoom por teclado (Ctrl + + / Ctrl + -)
-        document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
-                e.preventDefault();
-                return false;
-            }
-        });
-        
-        // Prevenir gesto de pellizco (pinch zoom)
         let lastTouchEnd = 0;
         document.addEventListener('touchstart', function(e) {
-            if (e.touches.length > 1) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-        
-        document.addEventListener('touchmove', function(e) {
-            if (e.touches.length > 1) {
-                e.preventDefault();
-            }
+            if (e.touches.length > 1) e.preventDefault();
         }, { passive: false });
         
         document.addEventListener('touchend', function(e) {
             const now = Date.now();
-            if (now - lastTouchEnd <= 300) {
-                e.preventDefault();
-            }
+            if (now - lastTouchEnd <= 300) e.preventDefault();
             lastTouchEnd = now;
         }, false);
     })();
 
     // --------------------------------------------------------------
-    // 2. DATOS DE PAÍSES
+    // 2. DATOS DE PAÍSES (AHORA CON USA INCLUIDO)
     // --------------------------------------------------------------
     const countriesData = [
         {
             id: 'colombia',
             url: 'https://qrp2p.com/co',
+            flag: '🇨🇴',
             nameKey: 'colombia_name',
             subKey: 'colombia_sub',
-            searchTerms: ['colombia', 'colombie', 'columbia', 'col', 'co', 'colombiano', 'colombiana', 'kolumbien', 'kolumbia', 'bogota', 'medellin', 'cartagena', 'inmuebles colombia', 'real estate colombia']
+            domain: 'co.qrp2p.com',
+            searchTerms: ['colombia', 'colombie', 'columbia', 'col', 'co', 'colombiano', 'bogota', 'medellin', 'cali', 'cartagena', 'barranquilla']
+        },
+        {
+            id: 'usa',
+            url: 'https://qrp2p.com/us',
+            flag: '🇺🇸',
+            nameKey: 'usa_name',
+            subKey: 'usa_sub',
+            domain: 'us.qrp2p.com',
+            searchTerms: ['usa', 'united states', 'estados unidos', 'eeuu', 'america', 'us', 'ee.uu.', 'north america', 'new york', 'miami', 'california', 'texas', 'florida', 'los angeles', 'chicago']
         }
     ];
 
     // --------------------------------------------------------------
-    // 3. TRADUCCIONES
+    // 3. TRADUCCIONES COMPLETAS
     // --------------------------------------------------------------
     const translations = {
         es: {
-            tagline: "Inmobiliaria",
+            tagline: "Inmobiliaria · mercado P2P",
             title: "SELECCIONAR PAÍS<br>",
             subtitle: "Compra, vende e invierte en bienes raíces directamente entre propietarios. De manera segura y sencilla. Elige tu región.",
             colombia_name: "Colombia",
-            colombia_sub: "QRP2P DE COLOMBIA",
-            usa_name: "United States",
-            usa_sub: "QRP2P OF UNITED STATES",
+            colombia_sub: "QRP2P REAL ESTATE COLOMBIA",
+            usa_name: "Estados Unidos",
+            usa_sub: "QRP2P REAL ESTATE USA",
             footer_copyright: "© QRP2P.COM — mercado inmobiliario entre pares",
             footer_tagline: "Propiedades Directas · Sin Intermediarios · Transacciones Aseguradas",
-            no_results: "No se encontraron países. Intenta con otro término como 'Colombia' o 'USA'."
+            no_results: "No se encontraron países. Prueba con 'Colombia' o 'Estados Unidos'.",
+            install_text: "📱 Instalar QRP2P App",
+            install_btn: "Instalar"
         },
         en: {
-            tagline: "real estate · peer‑to‑peer",
+            tagline: "real estate · peer‑to‑peer marketplace",
             title: "Select your country<br>to enter the real estate marketplace",
             subtitle: "Buy, sell and invest in real estate directly between owners. No excessive commissions. Choose your region.",
             colombia_name: "Colombia",
@@ -537,13 +596,19 @@
             usa_sub: "QRP2P REAL ESTATE UNITED STATES",
             footer_copyright: "© QRP2P Real Estate — peer‑to‑peer real estate marketplace",
             footer_tagline: "direct properties · no intermediaries · smart investing",
-            no_results: "No countries found. Try another term like 'Colombia' or 'USA'."
+            no_results: "No countries found. Try 'Colombia' or 'United States'.",
+            install_text: "📱 Install QRP2P App",
+            install_btn: "Install"
         }
     };
 
     let currentLang = 'es';
     let currentFilter = '';
+    let deferredPrompt = null;
 
+    // --------------------------------------------------------------
+    // 4. FUNCIONES UTILITARIAS
+    // --------------------------------------------------------------
     function normalizeString(str) {
         return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^\w\s]/g, '');
     }
@@ -556,6 +621,19 @@
         return normalizeString(combined);
     }
 
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // --------------------------------------------------------------
+    // 5. RENDERIZADO DE PAÍSES
+    // --------------------------------------------------------------
     function renderCountries() {
         const container = document.getElementById('countriesContainer');
         if (!container) return;
@@ -570,22 +648,23 @@
             const matches = filterNorm === '' || searchableText.includes(filterNorm);
             if (matches) visibleCount++;
             
-            const countryName = langData[country.nameKey] || (country.id === 'colombia' ? 'Colombia' : 'United States');
-            const countrySub = langData[country.subKey] || (country.id === 'colombia' ? 'QRP2P REAL ESTATE COLOMBIA' : 'QRP2P REAL ESTATE UNITED STATES');
+            const countryName = langData[country.nameKey];
+            const countrySub = langData[country.subKey];
             const displayStyle = matches ? '' : 'hidden-card';
             
             html += `
                 <a href="${country.url}" class="country-card ${displayStyle}" target="_self" rel="noopener noreferrer" data-country-id="${country.id}">
+                    <div class="country-flag">${country.flag}</div>
                     <div class="country-name">${escapeHtml(countryName)}</div>
                     <div class="country-sub">${escapeHtml(countrySub)}</div>
                     <div class="divider" style="margin: 0.8rem auto; width: 30px;"></div>
-                    <div class="country-sub" style="font-size: 0.7rem; border: none;">${country.id === 'colombia' ? 'co.qrp2p.com' : 'us.qrp2p.com'}</div>
+                    <div class="country-domain">${country.domain}</div>
                 </a>
             `;
         });
         
         if (visibleCount === 0 && currentFilter !== '') {
-            html += `<div class="no-results">${escapeHtml(langData.no_results || 'No se encontraron países.')}</div>`;
+            html += `<div class="no-results">${escapeHtml(langData.no_results)}</div>`;
         }
         
         container.innerHTML = html;
@@ -607,17 +686,10 @@
             clearBtn.style.display = currentFilter !== '' ? 'block' : 'none';
         }
     }
-    
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-    
+
+    // --------------------------------------------------------------
+    // 6. IDIOMAS
+    // --------------------------------------------------------------
     function setLanguage(lang) {
         if (!translations[lang]) return;
         currentLang = lang;
@@ -643,7 +715,10 @@
         document.documentElement.lang = lang === 'es' ? 'es' : 'en';
         localStorage.setItem('qrp2p_lang', lang);
     }
-    
+
+    // --------------------------------------------------------------
+    // 7. BÚSQUEDA
+    // --------------------------------------------------------------
     let debounceTimer;
     function onSearchInput(value) {
         clearTimeout(debounceTimer);
@@ -652,7 +727,7 @@
             renderCountries();
         }, 180);
     }
-    
+
     function initSearch() {
         const searchInput = document.getElementById('countrySearch');
         const clearBtn = document.getElementById('clearSearch');
@@ -670,52 +745,78 @@
             });
         }
     }
-    
+
+    // --------------------------------------------------------------
+    // 8. PWA INSTALLATION
+    // --------------------------------------------------------------
+    function initPWAInstall() {
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installBanner = document.getElementById('installBanner');
+            if (installBanner) installBanner.style.display = 'flex';
+        });
+
+        const installBtn = document.getElementById('installBtn');
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        console.log('PWA instalada');
+                        const installBanner = document.getElementById('installBanner');
+                        if (installBanner) installBanner.style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                }
+            });
+        }
+    }
+
+    // --------------------------------------------------------------
+    // 9. REGISTRO DE SERVICE WORKER
+    // --------------------------------------------------------------
+    function registerServiceWorker() {
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registrado:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Error al registrar Service Worker:', error);
+                    });
+            });
+        }
+    }
+
+    // --------------------------------------------------------------
+    // 10. INICIALIZACIÓN
+    // --------------------------------------------------------------
     function loadInitialLanguage() {
         const savedLang = localStorage.getItem('qrp2p_lang');
         if (savedLang && (savedLang === 'es' || savedLang === 'en')) {
             setLanguage(savedLang);
         } else {
             const browserLang = navigator.language || '';
-            if (browserLang.startsWith('es')) {
-                setLanguage('es');
-            } else {
-                setLanguage('es');
-            }
+            setLanguage(browserLang.startsWith('es') ? 'es' : 'en');
         }
     }
-    
-    function enhanceSearchShortcuts() {
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                const searchBox = document.getElementById('countrySearch');
-                if (searchBox) searchBox.focus();
-            }
-            if (e.key === 'Escape') {
-                const searchInput = document.getElementById('countrySearch');
-                if (searchInput && document.activeElement === searchInput) {
-                    searchInput.value = '';
-                    onSearchInput('');
-                } else if (searchInput && searchInput.value !== '') {
-                    searchInput.value = '';
-                    onSearchInput('');
-                }
-            }
-        });
-    }
-    
+
     function bindLanguageEvents() {
         document.getElementById('lang-es').addEventListener('click', () => setLanguage('es'));
         document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
     }
-    
+
     window.addEventListener('DOMContentLoaded', () => {
         initSearch();
         bindLanguageEvents();
         loadInitialLanguage();
-        enhanceSearchShortcuts();
         renderCountries();
+        initPWAInstall();
+        registerServiceWorker();
+        
         const searchInputPlace = document.getElementById('countrySearch');
         if (searchInputPlace) {
             searchInputPlace.placeholder = currentLang === 'es' ? 'Buscar país...' : 'Search country...';
