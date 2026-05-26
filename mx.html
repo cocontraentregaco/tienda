@@ -1,977 +1,817 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
-  <title>QRP2P MÉXICO S.A. DE C.V. | INMOBILIARIA | REAL ESTATE</title>
-  <meta name="description" content="Encuentra los mejores inmuebles verificados en México. Venta y renta de apartamentos, casas y oficinas. ¡Agenda tu visita!">
-  <meta name="keywords" content="REAL ESTATE MÉXICO">
-  <meta name="author" content="QRP2P Inmobiliaria">
-  <meta name="robots" content="index, follow">
-  <meta name="theme-color" content="#000000">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22QRP2P%20Real%20Estate%20M%C3%A9xico%22,%22short_name%22:%22QRP2P%20M%C3%A9xico%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22theme_color%22:%22%23000000%22,%22background_color%22:%22%23ffffff%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/1036/1036221.png%22,%22sizes%22:%22192x192%22,%22type%22:%22image/png%22}]}">
-  <meta property="og:title" content="QRP2P | REAL ESTATE MÉXICO">
-  <meta property="og:description" content="MÉXICO REAL ESTATE PLATFORM">
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    body {
-      font-family: 'Libre Baskerville', serif;
-      background-color: #ffffff;
-      color: #111111;
-      line-height: 1.5;
-      font-size: 16px;
-      overflow: hidden;
-      position: fixed;
-      width: 100%;
-      height: 100%;
-    }
-    #contenedor-mapa { 
-      width: 100%;
-      height: 100vh;
-      display: flex; 
-      flex-direction: column; 
-      position: relative;
-      overflow: hidden;
-    }
-    #barra-superior { 
-      display: flex; 
-      gap: 0.8rem; 
-      padding: 0.8rem; 
-      background: #ffffff;
-      width: 100%;
-      z-index: 1000;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      border-bottom: 1px solid #eaeaea;
-      flex-shrink: 0;
-    }
-    .contenedor-buscador {
-      position: relative;
-      flex: 1;
-      max-width: 400px;
-    }
-    #buscador { 
-      width: 100%;
-      padding: 0.6rem 1.2rem; 
-      border: 1.5px solid #e0e0e0; 
-      border-radius: 50px; 
-      font-size: 16px;
-      font-family: 'Libre Baskerville', serif;
-      transition: all 0.3s ease;
-      background: #ffffff;
-      user-select: text;
-    }
-    #buscador:focus {
-      outline: none;
-      border-color: #000000;
-    }
-    .btn-mapa { 
-      background: #000000;
-      color: #ffffff;
-      padding: 0.6rem 1.2rem; 
-      border-radius: 40px; 
-      text-decoration: none;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      white-space: nowrap;
-      display: flex;
-      gap: 5px;
-      font-family: 'Libre Baskerville', serif;
-      transition: all 0.2s ease;
-    }
-    .btn-mapa:hover { background: #333333; }
-    .btn-centrar { background-color: #000000; }
-    .btn-registro { background-color: #25D366; color: #000000; }
-    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
-    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
-    .map-type-btn {
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 40px;
-      cursor: pointer;
-      background: transparent;
-      font-family: 'Libre Baskerville', serif;
-      font-weight: 600;
-    }
-    .map-type-btn.active { background: #000000; color: white; }
-    .lang-selector {
-      display: flex;
-      gap: 0.3rem;
-      margin-left: 0.5rem;
-    }
-    .lang-btn {
-      background: transparent;
-      border: 1px solid #ccc;
-      border-radius: 20px;
-      padding: 0.4rem 0.8rem;
-      cursor: pointer;
-      font-family: 'Libre Baskerville', serif;
-      font-weight: 600;
-      font-size: 0.8rem;
-    }
-    .lang-btn.active {
-      background: #000000;
-      color: white;
-      border-color: #000000;
-    }
-    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
-    .leaflet-control-zoom { display: none !important; }
-    .sugerencias-busqueda {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      border-radius: 0 0 20px 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      z-index: 1000;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
-    }
-    .sugerencia-item {
-      padding: 12px 15px;
-      cursor: pointer;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .sugerencia-item:hover { background-color: #f5f5f5; }
-    .sugerencia-texto { flex: 1; }
-    .sugerencia-boton {
-      margin-left: 10px;
-      padding: 6px 12px;
-      background-color: #000000;
-      color: white;
-      border: none;
-      border-radius: 20px;
-      cursor: pointer;
-    }
-    .cargando {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(0,0,0,.3);
-      border-radius: 50%;
-      border-top-color: #000;
-      animation: spin 1s ease-in-out infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-    .inmueble-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
-    .popup-video-container { width: 100%; height: 200px; background-color: #000; position: relative; }
-    .popup-video-container iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="description" content="18MLS Real Estate: El MLS inmobiliario más grande del mundo. Compra, vende e invierte en bienes raíces en 196 países.">
+    <meta name="keywords" content="18MLS, Real Estate, bienes raíces, MLS, marketplace P2P, global, compra venta inmuebles, inversión, propiedades, peer-to-peer, internacional, MLS inmobiliario, México, CDMX, Guadalajara, Monterrey">
+    <meta name="author" content="18MLS Real Estate">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="18MLS">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <title>18MLS | México - Estados y Ciudades</title>
     
-    .popup-product-card {
-      background: #ffffff;
-      border-radius: 20px;
-      overflow: hidden;
-      width: 360px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    .popup-product-image-container { 
-      position: relative; 
-      width: 100%; 
-      height: 200px; 
-      overflow: hidden; 
-      background-color: #f0f0f0; 
-      cursor: pointer;
-    }
-    .popup-product-image { 
-      width: 100%; 
-      height: 100%; 
-      object-fit: cover; 
-      transition: transform 0.2s;
-    }
-    .popup-image-nav { 
-      position: absolute; 
-      top: 50%; 
-      width: 100%; 
-      display: flex; 
-      justify-content: space-between; 
-      padding: 0 8px; 
-      transform: translateY(-50%); 
-      z-index: 10; 
-    }
-    .popup-nav-btn { 
-      background-color: rgba(0, 0, 0, 0.6); 
-      color: white; 
-      border: none; 
-      width: 30px; 
-      height: 30px; 
-      border-radius: 50%; 
-      cursor: pointer; 
-      font-size: 14px; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-    }
-    .popup-nav-btn:hover { background-color: rgba(0, 0, 0, 0.8); }
-    .popup-image-counter { 
-      position: absolute; 
-      bottom: 8px; 
-      right: 8px; 
-      background-color: rgba(0, 0, 0, 0.65); 
-      color: white; 
-      padding: 2px 8px; 
-      border-radius: 20px; 
-      font-size: 0.7rem; 
-      z-index: 10; 
-    }
-    .popup-product-info { padding: 0.8rem; }
-    .popup-product-title { font-size: 0.9rem; margin-bottom: 0.4rem; font-weight: 700; line-height: 1.3; cursor: pointer; color: #000; text-decoration: none; }
-    .popup-product-title:hover { text-decoration: underline; }
-    .precio-line { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; }
-    .popup-product-price { font-size: 1.1rem; font-weight: 800; color: #000000; }
-    .enlaces-secundarios { display: flex; gap: 0.8rem; font-size: 0.75rem; }
-    .enlace-info { color: #000000; text-decoration: none; font-weight: 600; cursor: pointer; display: flex; gap: 4px; }
-    .enlace-mapa { color: #000000; text-decoration: none; font-size: 1rem; cursor: pointer; }
-    .popup-product-details { margin-bottom: 0.6rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .popup-product-details span { background-color: #f5f5f5; padding: 0.2rem 0.6rem; border-radius: 30px; font-size: 0.7rem; }
-    .popup-product-actions { display: flex; gap: 0.5rem; margin-top: 0.3rem; }
-    .popup-add-to-cart, .popup-buy-now { padding: 0.5rem; border: none; border-radius: 10px; cursor: pointer; font-family: 'Libre Baskerville', serif; font-size: 0.7rem; font-weight: 600; flex: 1; display: flex; justify-content: center; align-items: center; gap: 0.3rem; transition: all 0.2s ease; }
-    .popup-add-to-cart { background-color: #000000; color: #ffffff; }
-    .popup-buy-now { background-color: #f0f0f0; color: #000000; border: 1px solid #ddd; }
-    .gm-style .gm-style-iw-c { border-radius: 20px !important; padding: 0 !important; max-width: 380px !important; }
-    .gm-style .gm-style-iw-d { overflow: auto !important; max-height: none !important; padding: 0 !important; }
-    .gm-style-iw-tc { display: none; }
+    <meta property="og:title" content="18MLS Real Estate — México">
+    <meta property="og:description" content="Selecciona tu estado o ciudad en México y accede al MLS inmobiliario más grande del mundo.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://18mls.com/mx">
+    <meta property="og:image" content="/icon-512.png">
     
-    .lightbox-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.95);
-      z-index: 10000;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-    .lightbox-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .lightbox-img {
-      max-width: 90vw;
-      max-height: 85vh;
-      object-fit: contain;
-      border-radius: 8px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-    .lightbox-close {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      font-size: 40px;
-      color: white;
-      cursor: pointer;
-      background: none;
-      border: none;
-      z-index: 10001;
-      font-weight: bold;
-    }
-    .lightbox-nav {
-      position: absolute;
-      top: 50%;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 20px;
-      transform: translateY(-50%);
-      z-index: 10001;
-    }
-    .lightbox-nav-btn {
-      background-color: rgba(0,0,0,0.6);
-      color: white;
-      font-size: 30px;
-      border: none;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-    }
-    .lightbox-nav-btn:hover {
-      background-color: rgba(0,0,0,0.9);
-    }
-    .lightbox-counter {
-      position: absolute;
-      bottom: 20px;
-      left: 0;
-      right: 0;
-      text-align: center;
-      color: white;
-      background: rgba(0,0,0,0.6);
-      padding: 5px 12px;
-      width: fit-content;
-      margin: 0 auto;
-      border-radius: 30px;
-      font-size: 14px;
-      font-family: monospace;
-      z-index: 10001;
-    }
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="18MLS Real Estate - México">
+    <meta name="twitter:description" content="Encuentra propiedades en los principales estados y ciudades de México">
+    <meta name="twitter:image" content="/icon-512.png">
+    
+    <style>
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        input, textarea, [contenteditable="true"] {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+        
+        body {
+            background-color: #ffffff;
+            color: #000000;
+            font-family: 'Libre Baskerville', 'Times New Roman', Georgia, 'Baskerville', serif;
+            font-weight: 400;
+            line-height: 1.4;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            -webkit-touch-callout: none;
+            overflow-x: hidden;
+        }
+        
+        html {
+            touch-action: pan-x pan-y;
+            overflow-x: hidden;
+        }
+        
+        img, a, button {
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            text-align: center;
+            overflow-x: hidden;
+        }
 
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.85);
-      z-index: 2000;
-      justify-content: center;
-      align-items: center;
-      overflow-y: auto;
-      padding: 1rem;
-    }
-    .modal-container {
-      max-width: 580px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      border-radius: 28px;
-      background: white;
-      box-shadow: 0 20px 35px rgba(0,0,0,0.3);
-    }
-    .close-modal {
-      position: sticky;
-      top: 0;
-      right: 0;
-      display: flex;
-      justify-content: flex-end;
-      padding: 0.8rem 1rem;
-      background: white;
-      border-bottom: 1px solid #eee;
-      z-index: 10;
-    }
-    .close-modal button {
-      background: #f0f0f0;
-      border: none;
-      font-size: 1.4rem;
-      cursor: pointer;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-    }
-    .form-panel {
-      padding: 1.2rem 1.5rem;
-    }
-    .step-title {
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    label {
-      display: block;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      margin-bottom: 0.3rem;
-      color: #333;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 0.7rem 0.9rem;
-      font-size: 15px !important;
-      border: 1.5px solid #e0e0e0;
-      border-radius: 16px;
-      font-family: inherit;
-      user-select: text;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #000000;
-    }
-    .inline-checkbox {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      margin: 0.8rem 0;
-    }
-    .inline-checkbox input { width: 1rem; height: 1rem; margin: 0; }
-    .inline-checkbox label { margin: 0; text-transform: none; font-size: 0.8rem; }
-    .terms-link { color: #000; text-decoration: underline; cursor: pointer; font-weight: 600; }
-    .calendar-card {
-      border: 1.5px solid #eaeaea;
-      border-radius: 20px;
-      padding: 0.8rem;
-      margin: 1rem 0;
-    }
-    .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
-    .month-year { font-weight: 700; font-size: 1rem; }
-    .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: 600; font-size: 0.65rem; margin-bottom: 0.5rem; color: #888; }
-    .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
-    .day-cell { padding: 0.5rem 0; font-size: 0.8rem; border-radius: 50px; cursor: pointer; background: #fff; }
-    .day-cell.selected { background: #000000; color: white; }
-    .day-cell.available:hover { background: #f0f0f0; }
-    .day-cell.other-month { opacity: 0.3; cursor: default; }
-    .day-cell.disabled { opacity: 0.3; cursor: not-allowed; background: #f5f5f5; }
-    .horarios-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; max-height: 140px; overflow-y: auto; padding: 0.5rem; background: #f9f9f9; border-radius: 16px; }
-    .horario-badge { display: inline-block; padding: 0.4rem 0.9rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 0.75rem; cursor: pointer; background: white; font-weight: 500; }
-    .horario-badge.selected { background: #000; color: white; border-color: #000; }
-    .btn-submit { width: 100%; padding: 0.8rem; font-size: 0.9rem; font-weight: 700; background: #000000; color: white; border: none; border-radius: 50px; cursor: pointer; margin-top: 1rem; }
-    .section { background: #ffffff; border-radius: 20px; padding: 1rem; margin-bottom: 1rem; border: 1px solid #eaeaea; }
-    .section-title { font-size: 1rem; font-weight: 700; border-left: 4px solid #000000; padding-left: 0.8rem; margin-bottom: 1rem; }
-    .property-info { background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%); border-radius: 18px; padding: 0.8rem 1rem; margin-bottom: 1rem; }
-    .property-info h4 { font-size: 1rem; margin-bottom: 0.3rem; }
-    .terms-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 3000; justify-content: center; align-items: center; padding: 1rem; }
-    .terms-modal-content { background: white; max-width: 450px; width: 100%; border-radius: 28px; padding: 1.5rem; max-height: 70vh; overflow-y: auto; }
-    .servicios-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 2500; justify-content: center; align-items: center; }
-    .servicios-container { background: white; border-radius: 28px; width: 90%; max-width: 480px; max-height: 80vh; overflow-y: auto; padding: 1.2rem; }
-    .servicios-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eaeaea; padding-bottom: 0.6rem; margin-bottom: 1rem; }
-    .servicios-botones { display: flex; flex-direction: column; gap: 0.7rem; }
-    .servicio-btn { background: #000000; color: white; border: none; padding: 0.8rem; border-radius: 50px; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-align: center; font-family: 'Libre Baskerville', serif; }
-    .info-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); z-index: 2600; justify-content: center; align-items: center; }
-    .info-container { background: white; border-radius: 28px; width: 90%; max-width: 500px; max-height: 70vh; overflow-y: auto; padding: 1.5rem; }
-    .fixed-price-field {
-      background-color: #f9f9f9;
-      border: 1px solid #e0e0e0;
-      border-radius: 16px;
-      padding: 0.7rem 0.9rem;
-      font-weight: 700;
-      color: #111;
-      font-size: 1rem;
-    }
-    .radio-group,
-    .financing-option {
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      margin: 0.8rem 0 1rem;
-    }
-    .radio-group label,
-    .financing-option label {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      font-weight: normal;
-      text-transform: none;
-      font-size: 0.85rem;
-      cursor: pointer;
-      margin-bottom: 0;
-    }
-    .radio-group input[type="radio"],
-    .financing-option input[type="radio"] {
-      width: 1.1rem;
-      height: 1.1rem;
-      margin: 0;
-      flex-shrink: 0;
-      accent-color: #000000;
-    }
-    .inline-checkbox input[type="checkbox"] {
-      width: 1.1rem;
-      height: 1.1rem;
-      margin: 0;
-      flex-shrink: 0;
-      accent-color: #000000;
-    }
-    .row-2cols {
-      display: flex;
-      gap: 1rem;
-    }
-    .row-2cols .form-group {
-      flex: 1;
-    }
-    @media (max-width: 680px) {
-      .modal-container { max-width: 95%; }
-      .form-panel { padding: 1rem; }
-      .popup-product-card { width: 300px; }
-      .popup-product-image-container { height: 170px; }
-      .btn-mapa { padding: 0.5rem 0.8rem; font-size: 0.8rem; }
-      .row-2cols { flex-direction: column; gap: 0; }
-    }
-  </style>
+        .back-link {
+            position: absolute;
+            top: 1.8rem;
+            left: 2rem;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 0.85rem;
+            color: #3a3a3a;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s ease;
+            z-index: 10;
+        }
+
+        .back-link:hover {
+            color: #000000;
+        }
+
+        .language-bar {
+            position: absolute;
+            top: 1.8rem;
+            right: 2rem;
+            display: flex;
+            gap: 0.75rem;
+            z-index: 10;
+        }
+
+        .lang-btn {
+            background: none;
+            border: none;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: #3a3a3a;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .lang-btn.active {
+            color: #000000;
+            font-weight: 700;
+            border-bottom: 1.5px solid #000000;
+        }
+
+        .lang-btn:hover:not(.active) {
+            color: #000000;
+            background-color: #f5f5f5;
+        }
+
+        .brand {
+            margin-bottom: 2rem;
+            margin-top: 0.5rem;
+        }
+
+        .logo {
+            font-size: 2.8rem;
+            letter-spacing: -0.02em;
+            font-weight: 700;
+            text-transform: lowercase;
+            color: #000000;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            display: inline-block;
+            padding-bottom: 0.2rem;
+        }
+
+        .tagline {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-top: 1rem;
+            color: #3a3a3a;
+            font-weight: 400;
+        }
+
+        .hero {
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 1.8rem;
+            font-weight: 400;
+            line-height: 1.3;
+            margin-bottom: 0.75rem;
+            color: #000000;
+            letter-spacing: -0.3px;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            color: #2c2c2c;
+            max-width: 580px;
+            margin: 0 auto;
+            font-weight: 350;
+        }
+
+        .search-section {
+            max-width: 480px;
+            width: 100%;
+            margin: 1.8rem auto 2rem;
+            position: relative;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            color: #8a8a8a;
+            pointer-events: none;
+            font-weight: 400;
+            z-index: 2;
+        }
+
+        .search-icon::before {
+            content: "🔍";
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.9rem 3rem 0.9rem 2.8rem;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 0.95rem;
+            background: #ffffff;
+            border: 1.5px solid #e0e0e0;
+            color: #000000;
+            border-radius: 0px;
+            transition: all 0.25s ease;
+            outline: none;
+            letter-spacing: -0.2px;
+            box-shadow: none;
+        }
+
+        .search-input:focus {
+            border-color: #000000;
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.05);
+        }
+
+        .search-input::placeholder {
+            color: #b0b0b0;
+            font-weight: 300;
+            font-style: italic;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #9a9a9a;
+            padding: 0 6px;
+            display: none;
+            font-family: monospace;
+            z-index: 2;
+            transition: color 0.2s;
+        }
+
+        .search-clear:hover {
+            color: #000000;
+        }
+
+        .results-count {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 0.65rem;
+            color: #5a5a5a;
+            letter-spacing: 0.3px;
+            font-style: italic;
+        }
+
+        .state-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0 2.5rem;
+            transition: all 0.2s;
+        }
+
+        .state-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            padding: 2rem 1.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            color: #000000;
+            display: block;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .state-card.hidden-card {
+            display: none;
+        }
+
+        .state-card:hover {
+            border-color: #000000;
+            background-color: #fafafa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .state-card:active {
+            transform: translateY(1px);
+        }
+
+        .state-flag {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .state-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .city-list {
+            font-size: 0.75rem;
+            color: #4a4a4a;
+            margin-top: 0.8rem;
+            line-height: 1.4;
+            border-top: 1px solid #efefef;
+            padding-top: 0.8rem;
+        }
+
+        .city-badge {
+            display: inline-block;
+            background: #f5f5f5;
+            padding: 0.2rem 0.5rem;
+            margin: 0.2rem;
+            border-radius: 0;
+            font-size: 0.7rem;
+            color: #2c2c2c;
+        }
+
+        .state-domain {
+            font-size: 0.7rem;
+            color: #8a8a8a;
+            margin-top: 0.5rem;
+            font-family: monospace;
+        }
+
+        .divider {
+            width: 40px;
+            height: 1px;
+            background: #d4d4d4;
+            margin: 1rem auto;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6c6c6c;
+            font-style: italic;
+            font-size: 0.9rem;
+            border-top: 1px solid #f0f0f0;
+            margin-top: 1rem;
+        }
+
+        .footer {
+            margin-top: 3rem;
+            font-size: 0.7rem;
+            color: #6c6c6c;
+            letter-spacing: 0.5px;
+            border-top: 1px solid #ececec;
+            padding-top: 2rem;
+        }
+
+        .footer p {
+            margin-bottom: 0.2rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1.5rem;
+            }
+            .back-link {
+                position: relative;
+                top: 0;
+                left: 0;
+                justify-content: center;
+                margin-bottom: 1rem;
+                display: inline-flex;
+            }
+            .language-bar {
+                position: relative;
+                top: 0;
+                right: 0;
+                justify-content: center;
+                margin-bottom: 1rem;
+            }
+            .logo {
+                font-size: 2rem;
+            }
+            .hero h1 {
+                font-size: 1.4rem;
+            }
+            .state-name {
+                font-size: 1.3rem;
+            }
+            .state-selector {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .search-section {
+                max-width: 360px;
+                margin: 1.2rem auto;
+            }
+            .search-input {
+                padding: 0.8rem 2.8rem 0.8rem 2.5rem;
+                font-size: 0.88rem;
+            }
+        }
+
+        .state-card:focus-visible {
+            outline: 2px solid #000000;
+            outline-offset: 4px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+    </style>
 </head>
 <body>
-  <div id="contenedor-mapa">
-    <div id="barra-superior">
-      <div class="botones-izquierda">
-        <div class="contenedor-buscador">
-          <input type="search" id="buscador" placeholder="Buscar inmuebles en México..." enterkeyhint="search">
-          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
-        </div>
-        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">CENTRAR</span></button>
-        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-key"></i><span id="servicios-text">SERVICIOS</span></button>
-      </div>
-      <div class="botones-derecha">
-        <button class="map-type-btn active" id="map-btn"><span id="map-text">Mapa</span></button>
-        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Satélite</span></button>
-        <div class="lang-selector">
-          <button class="lang-btn active" data-lang="es">ES</button>
-          <button class="lang-btn" data-lang="en">EN</button>
-        </div>
-      </div>
-    </div>
-    <div id="mapa"></div>
-  </div>
-  <div id="visitaModal" class="modal-overlay"><div class="modal-container"><div class="close-modal"><button class="close-visita-modal">&times;</button></div><div id="visitaFormContainer" class="form-panel"></div></div></div>
-  <div id="ofertaModal" class="modal-overlay"><div class="modal-container"><div class="close-modal"><button class="close-oferta-modal">&times;</button></div><div id="ofertaFormContainer" class="form-panel"></div></div></div>
-  <div id="termsModal" class="terms-modal"><div class="terms-modal-content"><h3 id="terms-title">Términos y Condiciones</h3><p id="terms-text">Al agendar aceptas recibir información del inmueble.</p><button class="close-terms" id="closeTermsBtn">Aceptar</button></div></div>
-  <div id="serviciosModal" class="servicios-modal"><div class="servicios-container"><div class="servicios-header"><h2 id="servicios-modal-title">SERVICIOS</h2><button class="close-servicios" id="closeServiciosBtn">&times;</button></div><div id="paisesContainer" class="servicios-botones"></div><div id="serviciosPorPais" style="display:none;"><div id="serviciosLista" class="servicios-botones"></div><button id="volverPaises" class="servicio-btn" style="background:#333;">← Volver</button></div></div></div>
-  <div id="infoModal" class="info-modal"><div class="info-container"><div class="servicios-header"><h2>Información del inmueble</h2><button id="closeInfoModalBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button></div><div id="infoContent"></div></div></div>
-  
-  <div id="lightbox" class="lightbox-overlay">
-    <button class="lightbox-close">&times;</button>
-    <div class="lightbox-container">
-      <img class="lightbox-img" src="" alt="Vista ampliada">
-    </div>
-    <div class="lightbox-nav">
-      <button class="lightbox-nav-btn lightbox-prev"><i class="fas fa-chevron-left"></i></button>
-      <button class="lightbox-nav-btn lightbox-next"><i class="fas fa-chevron-right"></i></button>
-    </div>
-    <div class="lightbox-counter"></div>
-  </div>
 
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-  <script>
-    const WHATSAPP_NUMBER = "573041146297";
-    let currentLang = 'es';
+<div class="container">
+    <a href="/" class="back-link" data-i18n="back_link">← Volver a países</a>
     
-    const paisesServicios = {
-      "México": { agentes: "/agentes-mx", rentas: "/rentas-mx", ventas: "/ventas-mx", hipotecas: "/hipotecas-mx", construccion: "/construccion-mx", credito: "/credito-mx", inversion: "/inversion-mx", avaluos: "/avaluos-mx" }
-    };
-    
-    function getCurrencyForCoordinates(lat, lng) {
-      if (lat >= 14.5 && lat <= 32.7 && lng >= -117.0 && lng <= -86.7) return "MXN";
-      return "MXN";
-    }
-    
-    function formatPriceWithCurrency(price, currency) {
-      if(price === 0) return "Consultar";
-      const formatter = new Intl.NumberFormat(currentLang === 'es' ? 'es-MX' : 'en-US', { style: 'currency', currency: currency, minimumFractionDigits: 0, maximumFractionDigits: 0 });
-      return formatter.format(price);
-    }
-    
-    const properties = [
-      { id: "CDMX01", price: 4500000, priceRent: 0, category: "venta", m2: 95, cuartos: 3, baños: 2, latlng: [19.4326, -99.1332], currency: "MXN", title_es: "APARTAMENTO DE LUJO EN VENTA EN POLANCO, CDMX", title_en: "LUXURY APARTMENT FOR SALE IN POLANCO, MEXICO CITY", description_es: "ID: CDMX01 | DIRECCIÓN: Polanco, Ciudad de México", description_en: "ID: CDMX01 | ADDRESS: Polanco, Mexico City", media: ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400", "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400", "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400", {type:"video", videoId:"dQw4w9WgXcQ"}], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=19.4326,-99.1332", detailUrl: "https://qrp2p.com/mx-cdmx01" },
-      { id: "CDMX02", price: 3200000, priceRent: 0, category: "venta", m2: 80, cuartos: 2, baños: 2, latlng: [19.3986, -99.1704], currency: "MXN", title_es: "APARTAMENTO EN VENTA EN LA CONDESA, CDMX", title_en: "APARTMENT FOR SALE IN LA CONDESA, MEXICO CITY", description_es: "ID: CDMX02 | DIRECCIÓN: La Condesa, Ciudad de México", description_en: "ID: CDMX02 | ADDRESS: La Condesa, Mexico City", media: ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400", "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400", "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=19.3986,-99.1704", detailUrl: "https://qrp2p.com/mx-cdmx02" },
-      { id: "GDL01", price: 2800000, priceRent: 0, category: "venta", m2: 110, cuartos: 3, baños: 2, latlng: [20.6597, -103.3496], currency: "MXN", title_es: "CASA EN VENTA EN ANDARES, GUADALAJARA", title_en: "HOUSE FOR SALE IN ANDARES, GUADALAJARA", description_es: "ID: GDL01 | DIRECCIÓN: Andares, Guadalajara", description_en: "ID: GDL01 | ADDRESS: Andares, Guadalajara", media: ["https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=400", "https://images.unsplash.com/photo-1595364394061-1a46e70d67e9?w=400", "https://images.unsplash.com/photo-1575517111478-7f6afd0973db?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=20.6597,-103.3496", detailUrl: "https://qrp2p.com/mx-gdl01" },
-      { id: "MTY01", price: 3500000, priceRent: 0, category: "venta", m2: 120, cuartos: 3, baños: 3, latlng: [25.6866, -100.3161], currency: "MXN", title_es: "APARTAMENTO DE LUJO EN VENTA EN SAN PEDRO, MONTERREY", title_en: "LUXURY APARTMENT FOR SALE IN SAN PEDRO, MONTERREY", description_es: "ID: MTY01 | DIRECCIÓN: San Pedro Garza García, Monterrey", description_en: "ID: MTY01 | ADDRESS: San Pedro Garza García, Monterrey", media: ["https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400", "https://images.unsplash.com/photo-1514924013411-2837f6974aed?w=400", "https://images.unsplash.com/photo-1494522855154-9297ac14b55f?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=25.6866,-100.3161", detailUrl: "https://qrp2p.com/mx-mty01" },
-      { id: "QRO01", price: 2200000, priceRent: 0, category: "venta", m2: 100, cuartos: 3, baños: 2, latlng: [20.5888, -100.3899], currency: "MXN", title_es: "CASA EN VENTA EN JURIQUILLA, QUERÉTARO", title_en: "HOUSE FOR SALE IN JURIQUILLA, QUERETARO", description_es: "ID: QRO01 | DIRECCIÓN: Juriquilla, Querétaro", description_en: "ID: QRO01 | ADDRESS: Juriquilla, Queretaro", media: ["https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400", "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=20.5888,-100.3899", detailUrl: "https://qrp2p.com/mx-qro01" },
-      { id: "CUN01", price: 4200000, priceRent: 0, category: "venta", m2: 130, cuartos: 3, baños: 3, latlng: [21.1619, -86.8515], currency: "MXN", title_es: "APARTAMENTO FRENTE AL MAR EN VENTA EN CANCÚN", title_en: "OCEANFRONT APARTMENT FOR SALE IN CANCUN", description_es: "ID: CUN01 | DIRECCIÓN: Zona Hotelera, Cancún", description_en: "ID: CUN01 | ADDRESS: Hotel Zone, Cancun", media: ["https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=400", "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=21.1619,-86.8515", detailUrl: "https://qrp2p.com/mx-cun01" },
-      { id: "PUE01", price: 1800000, priceRent: 0, category: "venta", m2: 90, cuartos: 3, baños: 2, latlng: [19.0413, -98.2062], currency: "MXN", title_es: "APARTAMENTO EN VENTA EN CHOLULA, PUEBLA", title_en: "APARTMENT FOR SALE IN CHOLULA, PUEBLA", description_es: "ID: PUE01 | DIRECCIÓN: San Andrés Cholula, Puebla", description_en: "ID: PUE01 | ADDRESS: San Andrés Cholula, Puebla", media: ["https://images.unsplash.com/photo-1598387993441-a364fae11f7c?w=400", "https://images.unsplash.com/photo-1615880484746-a134be9a6ecf?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=19.0413,-98.2062", detailUrl: "https://qrp2p.com/mx-pue01" },
-      { id: "MER01", price: 2600000, priceRent: 0, category: "venta", m2: 110, cuartos: 3, baños: 2, latlng: [20.9674, -89.6237], currency: "MXN", title_es: "CASA CON PISCINA EN VENTA EN MÉRIDA", title_en: "HOUSE WITH POOL FOR SALE IN MERIDA", description_es: "ID: MER01 | DIRECCIÓN: Norte de Mérida, Yucatán", description_en: "ID: MER01 | ADDRESS: North Merida, Yucatan", media: ["https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400", "https://images.unsplash.com/photo-1484688493527-670f98f9b195?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=20.9674,-89.6237", detailUrl: "https://qrp2p.com/mx-mer01" },
-      { id: "TOL01", price: 1500000, priceRent: 0, category: "venta", m2: 85, cuartos: 2, baños: 2, latlng: [19.2826, -99.6557], currency: "MXN", title_es: "APARTAMENTO EN VENTA EN TOLUCA", title_en: "APARTMENT FOR SALE IN TOLUCA", description_es: "ID: TOL01 | DIRECCIÓN: Metepec, Toluca", description_en: "ID: TOL01 | ADDRESS: Metepec, Toluca", media: ["https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=400", "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=19.2826,-99.6557", detailUrl: "https://qrp2p.com/mx-tol01" },
-      { id: "TIJ01", price: 3100000, priceRent: 0, category: "venta", m2: 105, cuartos: 3, baños: 2, latlng: [32.5149, -117.0382], currency: "MXN", title_es: "APARTAMENTO CON VISTAS EN VENTA EN TIJUANA", title_en: "APARTMENT WITH VIEWS FOR SALE IN TIJUANA", description_es: "ID: TIJ01 | DIRECCIÓN: Zona Río, Tijuana", description_en: "ID: TIJ01 | ADDRESS: Zona Río, Tijuana", media: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400", "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=32.5149,-117.0382", detailUrl: "https://qrp2p.com/mx-tij01" }
+    <div class="language-bar">
+        <button class="lang-btn active" id="lang-es" data-lang="es">ES</button>
+        <button class="lang-btn" id="lang-en" data-lang="en">EN</button>
+    </div>
+
+    <div class="brand">
+        <span class="logo">18MLS.COM</span>
+        <div class="tagline" data-i18n="tagline">México · El MLS inmobiliario más grande del mundo</div>
+    </div>
+
+    <div class="hero">
+        <h1 data-i18n="title">SELECCIONA TU ESTADO</h1>
+        <div class="divider"></div>
+        <p data-i18n="subtitle">Encuentra propiedades en los principales estados y ciudades de México. Compra, vende e invierte directamente entre propietarios.</p>
+    </div>
+
+    <div class="search-section">
+        <div class="search-input-wrapper">
+            <span class="search-icon"></span>
+            <input type="text" id="stateSearch" class="search-input" placeholder="Buscar estado o ciudad..." autocomplete="off" spellcheck="false" aria-label="Buscar estado o ciudad">
+            <button id="clearSearch" class="search-clear" aria-label="Limpiar búsqueda">✕</button>
+        </div>
+        <div id="resultsCount" class="results-count"></div>
+    </div>
+
+    <div id="statesContainer" class="state-selector"></div>
+
+    <div class="footer">
+        <p data-i18n="footer_copyright">© 18MLS.COM — El MLS inmobiliario más grande del mundo</p>
+        <p data-i18n="footer_tagline">Propiedades Directas · Sin Intermediarios · Transacciones Aseguradas</p>
+        <p style="margin-top: 0.5rem; font-size: 0.65rem;">México v1.0</p>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // 1. BLOQUEO DE INTERACCIONES
+    // --------------------------------------------------------------
+    (function() {
+        const blockEvents = ['copy', 'cut', 'paste', 'contextmenu', 'dragstart', 'selectstart'];
+        blockEvents.forEach(eventType => {
+            document.addEventListener(eventType, function(e) {
+                const isSearchInput = e.target.id === 'stateSearch' || e.target.closest('#stateSearch');
+                if (!isSearchInput) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+                return true;
+            });
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            const isSearchInputFocused = document.activeElement && document.activeElement.id === 'stateSearch';
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'x' || e.key === 'a')) {
+                if (!isSearchInputFocused) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        });
+        
+        let lastTouchEnd = 0;
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+        
+        document.addEventListener('touchend', function(e) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) e.preventDefault();
+            lastTouchEnd = now;
+        }, false);
+    })();
+
+    // --------------------------------------------------------------
+    // 2. DATOS DE ESTADOS Y CIUDADES DE MÉXICO (32 ENTIDADES)
+    // TODOS LOS EMOJIS SON LA BANDERA DE MÉXICO 🇲🇽
+    // --------------------------------------------------------------
+    const statesData = [
+        { id: 'aguascalientes', slug: 'aguascalientes', flag: '🇲🇽', nameKey: 'aguascalientes_name', subKey: 'aguascalientes_sub', state: 'Aguascalientes', capital: 'Aguascalientes', cities: ['Aguascalientes', 'Jesús María', 'Calvillo', 'Rincón de Romos'], urlPath: 'aguascalientes', searchTerms: ['aguascalientes', 'ags', 'hidrocalido'] },
+        { id: 'bajacalifornia', slug: 'bajacalifornia', flag: '🇲🇽', nameKey: 'bajacalifornia_name', subKey: 'bajacalifornia_sub', state: 'Baja California', capital: 'Mexicali', cities: ['Mexicali', 'Tijuana', 'Ensenada', 'Tecate', 'Rosarito', 'San Felipe'], urlPath: 'bajacalifornia', searchTerms: ['baja california', 'mexicali', 'tijuana', 'ensenada', 'bc'] },
+        { id: 'bajacaliforniasur', slug: 'bajacaliforniasur', flag: '🇲🇽', nameKey: 'bajacaliforniasur_name', subKey: 'bajacaliforniasur_sub', state: 'Baja California Sur', capital: 'La Paz', cities: ['La Paz', 'Cabo San Lucas', 'San José del Cabo', 'Todos Santos', 'Loreto'], urlPath: 'bajacaliforniasur', searchTerms: ['baja california sur', 'la paz', 'cabo san lucas', 'bcs', 'los cabos'] },
+        { id: 'campeche', slug: 'campeche', flag: '🇲🇽', nameKey: 'campeche_name', subKey: 'campeche_sub', state: 'Campeche', capital: 'Campeche', cities: ['Campeche', 'Ciudad del Carmen', 'Champotón', 'Escárcega'], urlPath: 'campeche', searchTerms: ['campeche', 'cam', 'ciudad del carmen'] },
+        { id: 'coahuila', slug: 'coahuila', flag: '🇲🇽', nameKey: 'coahuila_name', subKey: 'coahuila_sub', state: 'Coahuila', capital: 'Saltillo', cities: ['Saltillo', 'Torreón', 'Monclova', 'Piedras Negras', 'Acuña', 'Ramos Arizpe'], urlPath: 'coahuila', searchTerms: ['coahuila', 'saltillo', 'torreon', 'monclova'] },
+        { id: 'colima', slug: 'colima', flag: '🇲🇽', nameKey: 'colima_name', subKey: 'colima_sub', state: 'Colima', capital: 'Colima', cities: ['Colima', 'Manzanillo', 'Tecomán', 'Villa de Álvarez'], urlPath: 'colima', searchTerms: ['colima', 'manzanillo', 'tecoman'] },
+        { id: 'chiapas', slug: 'chiapas', flag: '🇲🇽', nameKey: 'chiapas_name', subKey: 'chiapas_sub', state: 'Chiapas', capital: 'Tuxtla Gutiérrez', cities: ['Tuxtla Gutiérrez', 'San Cristóbal de las Casas', 'Tapachula', 'Comitán', 'Palenque'], urlPath: 'chiapas', searchTerms: ['chiapas', 'tuxtla', 'san cristobal', 'tapachula', 'palenque'] },
+        { id: 'chihuahua', slug: 'chihuahua', flag: '🇲🇽', nameKey: 'chihuahua_name', subKey: 'chihuahua_sub', state: 'Chihuahua', capital: 'Chihuahua', cities: ['Chihuahua', 'Juárez', 'Delicias', 'Cuauhtémoc', 'Parral', 'Nuevo Casas Grandes'], urlPath: 'chihuahua', searchTerms: ['chihuahua', 'juarez', 'chihuahua capital', 'delicias'] },
+        { id: 'cdmx', slug: 'cdmx', flag: '🇲🇽', nameKey: 'cdmx_name', subKey: 'cdmx_sub', state: 'Ciudad de México', capital: 'CDMX', cities: ['Álvaro Obregón', 'Azcapotzalco', 'Benito Juárez', 'Coyoacán', 'Cuajimalpa', 'Cuauhtémoc', 'Gustavo A. Madero', 'Iztacalco', 'Iztapalapa', 'Magdalena Contreras', 'Miguel Hidalgo', 'Milpa Alta', 'Tláhuac', 'Tlalpan', 'Venustiano Carranza', 'Xochimilco'], urlPath: 'cdmx', searchTerms: ['cdmx', 'ciudad de mexico', 'mexico city', 'distrito federal', 'df'] },
+        { id: 'durango', slug: 'durango', flag: '🇲🇽', nameKey: 'durango_name', subKey: 'durango_sub', state: 'Durango', capital: 'Durango', cities: ['Durango', 'Gómez Palacio', 'Lerdo', 'Santiago Papasquiaro'], urlPath: 'durango', searchTerms: ['durango', 'gomez palacio', 'lerdo'] },
+        { id: 'guanajuato', slug: 'guanajuato', flag: '🇲🇽', nameKey: 'guanajuato_name', subKey: 'guanajuato_sub', state: 'Guanajuato', capital: 'Guanajuato', cities: ['León', 'Irapuato', 'Celaya', 'Guanajuato', 'Silao', 'Salamanca', 'San Miguel de Allende', 'Dolores Hidalgo'], urlPath: 'guanajuato', searchTerms: ['guanajuato', 'leon', 'irapuato', 'celaya', 'san miguel de allende'] },
+        { id: 'guerrero', slug: 'guerrero', flag: '🇲🇽', nameKey: 'guerrero_name', subKey: 'guerrero_sub', state: 'Guerrero', capital: 'Chilpancingo', cities: ['Acapulco', 'Chilpancingo', 'Iguala', 'Taxco', 'Zihuatanejo'], urlPath: 'guerrero', searchTerms: ['guerrero', 'acapulco', 'chilpancingo', 'iguala', 'taxco', 'zihuatanejo'] },
+        { id: 'hidalgo', slug: 'hidalgo', flag: '🇲🇽', nameKey: 'hidalgo_name', subKey: 'hidalgo_sub', state: 'Hidalgo', capital: 'Pachuca', cities: ['Pachuca', 'Mineral del Monte', 'Tula', 'Huejutla', 'Actopan'], urlPath: 'hidalgo', searchTerms: ['hidalgo', 'pachuca', 'tula', 'real del monte'] },
+        { id: 'jalisco', slug: 'jalisco', flag: '🇲🇽', nameKey: 'jalisco_name', subKey: 'jalisco_sub', state: 'Jalisco', capital: 'Guadalajara', cities: ['Guadalajara', 'Zapopan', 'Tlaquepaque', 'Tonalá', 'Puerto Vallarta', 'Lagos de Moreno', 'Ciudad Guzmán', 'Autlán'], urlPath: 'jalisco', searchTerms: ['jalisco', 'guadalajara', 'zapopan', 'puerto vallarta', 'gdl', 'tlaquepaque'] },
+        { id: 'mexicoestado', slug: 'estadodemexico', flag: '🇲🇽', nameKey: 'mexicoestado_name', subKey: 'mexicoestado_sub', state: 'Estado de México', capital: 'Toluca', cities: ['Ecatepec', 'Nezahualcóyotl', 'Naucalpan', 'Toluca', 'Tlalnepantla', 'Chimalhuacán', 'Atizapán', 'Cuautitlán Izcalli', 'Metepec', 'Huixquilucan'], urlPath: 'estadodemexico', searchTerms: ['estado de mexico', 'edomex', 'toluca', 'ecatepec', 'nezahualcoyotl', 'naucalpan'] },
+        { id: 'michoacan', slug: 'michoacan', flag: '🇲🇽', nameKey: 'michoacan_name', subKey: 'michoacan_sub', state: 'Michoacán', capital: 'Morelia', cities: ['Morelia', 'Uruapan', 'Lázaro Cárdenas', 'Zamora', 'Pátzcuaro', 'Zitácuaro'], urlPath: 'michoacan', searchTerms: ['michoacan', 'morelia', 'uruapan', 'patzcuaro', 'lazaro cardenas'] },
+        { id: 'morelos', slug: 'morelos', flag: '🇲🇽', nameKey: 'morelos_name', subKey: 'morelos_sub', state: 'Morelos', capital: 'Cuernavaca', cities: ['Cuernavaca', 'Jiutepec', 'Temixco', 'Cuautla', 'Yautepec'], urlPath: 'morelos', searchTerms: ['morelos', 'cuernavaca', 'cuautla', 'jiutepec'] },
+        { id: 'nayarit', slug: 'nayarit', flag: '🇲🇽', nameKey: 'nayarit_name', subKey: 'nayarit_sub', state: 'Nayarit', capital: 'Tepic', cities: ['Tepic', 'Riviera Nayarit', 'Nuevo Vallarta', 'Compostela', 'Jala'], urlPath: 'nayarit', searchTerms: ['nayarit', 'tepic', 'nuevo vallarta', 'riviera nayarit'] },
+        { id: 'nuevoleon', slug: 'nuevoleon', flag: '🇲🇽', nameKey: 'nuevoleon_name', subKey: 'nuevoleon_sub', state: 'Nuevo León', capital: 'Monterrey', cities: ['Monterrey', 'San Pedro Garza García', 'San Nicolás', 'Apodaca', 'Guadalupe', 'Santa Catarina', 'Escobedo'], urlPath: 'nuevoleon', searchTerms: ['nuevo leon', 'monterrey', 'san pedro', 'apodaca', 'mtty'] },
+        { id: 'oaxaca', slug: 'oaxaca', flag: '🇲🇽', nameKey: 'oaxaca_name', subKey: 'oaxaca_sub', state: 'Oaxaca', capital: 'Oaxaca', cities: ['Oaxaca', 'Puerto Escondido', 'Huatulco', 'Salina Cruz', 'Tehuantepec', 'Juchitán'], urlPath: 'oaxaca', searchTerms: ['oaxaca', 'puerto escondido', 'huatulco', 'tehuantepec'] },
+        { id: 'puebla', slug: 'puebla', flag: '🇲🇽', nameKey: 'puebla_name', subKey: 'puebla_sub', state: 'Puebla', capital: 'Puebla', cities: ['Puebla', 'Cholula', 'Atlixco', 'Tehuacán', 'San Andrés Cholula', 'San Pedro Cholula'], urlPath: 'puebla', searchTerms: ['puebla', 'cholula', 'tehuacan', 'atlixco', 'angelopolis'] },
+        { id: 'queretaro', slug: 'queretaro', flag: '🇲🇽', nameKey: 'queretaro_name', subKey: 'queretaro_sub', state: 'Querétaro', capital: 'Querétaro', cities: ['Querétaro', 'San Juan del Río', 'Corregidora', 'El Marqués', 'Tequisquiapan'], urlPath: 'queretaro', searchTerms: ['queretaro', 'queretaro capital', 'san juan del rio', 'qro'] },
+        { id: 'quintanaroo', slug: 'quintanaroo', flag: '🇲🇽', nameKey: 'quintanaroo_name', subKey: 'quintanaroo_sub', state: 'Quintana Roo', capital: 'Chetumal', cities: ['Cancún', 'Playa del Carmen', 'Tulum', 'Cozumel', 'Chetumal', 'Bacalar'], urlPath: 'quintanaroo', searchTerms: ['quintana roo', 'cancun', 'playa del carmen', 'tulum', 'cozumel', 'chetumal'] },
+        { id: 'sanluispotosi', slug: 'sanluispotosi', flag: '🇲🇽', nameKey: 'sanluispotosi_name', subKey: 'sanluispotosi_sub', state: 'San Luis Potosí', capital: 'San Luis Potosí', cities: ['San Luis Potosí', 'Soledad', 'Ciudad Valles', 'Matehuala', 'Rioverde'], urlPath: 'sanluispotosi', searchTerms: ['san luis potosi', 'slp', 'ciudad valles', 'matehuala'] },
+        { id: 'sinaloa', slug: 'sinaloa', flag: '🇲🇽', nameKey: 'sinaloa_name', subKey: 'sinaloa_sub', state: 'Sinaloa', capital: 'Culiacán', cities: ['Culiacán', 'Mazatlán', 'Los Mochis', 'Guasave', 'El Fuerte'], urlPath: 'sinaloa', searchTerms: ['sinaloa', 'culiacan', 'mazatlan', 'los mochis'] },
+        { id: 'sonora', slug: 'sonora', flag: '🇲🇽', nameKey: 'sonora_name', subKey: 'sonora_sub', state: 'Sonora', capital: 'Hermosillo', cities: ['Hermosillo', 'Ciudad Obregón', 'Nogales', 'San Luis Río Colorado', 'Puerto Peñasco'], urlPath: 'sonora', searchTerms: ['sonora', 'hermosillo', 'ciudad obregon', 'nogales', 'puerto penasco'] },
+        { id: 'tabasco', slug: 'tabasco', flag: '🇲🇽', nameKey: 'tabasco_name', subKey: 'tabasco_sub', state: 'Tabasco', capital: 'Villahermosa', cities: ['Villahermosa', 'Cárdenas', 'Comalcalco', 'Paraíso', 'Tenosique'], urlPath: 'tabasco', searchTerms: ['tabasco', 'villahermosa', 'cardenas', 'comalcalco'] },
+        { id: 'tamaulipas', slug: 'tamaulipas', flag: '🇲🇽', nameKey: 'tamaulipas_name', subKey: 'tamaulipas_sub', state: 'Tamaulipas', capital: 'Ciudad Victoria', cities: ['Reynosa', 'Matamoros', 'Nuevo Laredo', 'Ciudad Victoria', 'Tampico', 'Madero'], urlPath: 'tamaulipas', searchTerms: ['tamaulipas', 'reynosa', 'matamoros', 'nuevo laredo', 'tampico', 'cd victoria'] },
+        { id: 'tlaxcala', slug: 'tlaxcala', flag: '🇲🇽', nameKey: 'tlaxcala_name', subKey: 'tlaxcala_sub', state: 'Tlaxcala', capital: 'Tlaxcala', cities: ['Tlaxcala', 'Apizaco', 'Huamantla', 'Chiautempan', 'Zacatelco'], urlPath: 'tlaxcala', searchTerms: ['tlaxcala', 'apizaco', 'huamantla', 'tlaxcala capital'] },
+        { id: 'veracruz', slug: 'veracruz', flag: '🇲🇽', nameKey: 'veracruz_name', subKey: 'veracruz_sub', state: 'Veracruz', capital: 'Xalapa', cities: ['Veracruz', 'Xalapa', 'Coatzacoalcos', 'Córdoba', 'Orizaba', 'Poza Rica', 'Boca del Río'], urlPath: 'veracruz', searchTerms: ['veracruz', 'xalapa', 'jalapa', 'coatza', 'coatzacoalcos', 'boca del rio', 'cordoba', 'orizaba'] },
+        { id: 'yucatan', slug: 'yucatan', flag: '🇲🇽', nameKey: 'yucatan_name', subKey: 'yucatan_sub', state: 'Yucatán', capital: 'Mérida', cities: ['Mérida', 'Valladolid', 'Tizimín', 'Progreso', 'Kanasín', 'Umán'], urlPath: 'yucatan', searchTerms: ['yucatan', 'merida', 'valladolid', 'progreso', 'chichen itza'] },
+        { id: 'zacatecas', slug: 'zacatecas', flag: '🇲🇽', nameKey: 'zacatecas_name', subKey: 'zacatecas_sub', state: 'Zacatecas', capital: 'Zacatecas', cities: ['Zacatecas', 'Fresnillo', 'Jerez', 'Guadalupe', 'Sombrerete'], urlPath: 'zacatecas', searchTerms: ['zacatecas', 'fresnillo', 'jerez', 'zacatecas capital'] }
     ];
-    
-    properties.forEach(p => { if(!p.currency) p.currency = getCurrencyForCoordinates(p.latlng[0], p.latlng[1]); });
-    
-    const translations = { 
-      es: { buscar_placeholder: "Buscar inmuebles en México...", centrar: "CENTRAR", servicios: "SERVICIOS", mapa: "Mapa", satelite: "Satélite", servicios_titulo: "SERVICIOS", agentes: "AGENTES", rentas: "RENTAS", ventas: "VENTAS", hipotecas: "HIPOTECAS", construccion: "CONSTRUCCIÓN", credito: "CRÉDITO", inversion: "INVERSIÓN", avaluos: "AVALÚOS", visita_title: "📅 Agendar visita", oferta_title: "📩 Enviar oferta", nombre_label: "NOMBRE COMPLETO *", telefono_label: "TELÉFONO *", email_label: "CORREO", codigo_agente_label: "CÓDIGO DE AGENTE (opcional)", comentarios_label: "COMENTARIOS", terms_check: "Acepto ", terms_link: "términos", submit_visita: "📩 Agendar por WhatsApp", submit_oferta: "📩 Enviar oferta", visit_btn: "Visita", offer_btn_venta: "Ofertar inmueble", offer_btn_arriendo: "Iniciar renta", info_btn: "Info", select_date: "📅 Selecciona una fecha", monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'], weekdays: ['L', 'M', 'M', 'J', 'V', 'S', 'D'], pago_contado: "Contado", pago_credito: "Enganche + Crédito", precio_fijo: "PRECIO TOTAL (FIJO)", valor_inicial: "VALOR DEL ENGANCHE (mínimo 30%)", opciones_financiacion: "OPCIÓN DE FINANCIACIÓN", cesantias: "Ahorros", credito_preaprobado: "Ya cuento con crédito pre aprobado", solicitar_credito: "Solicitar crédito hipotecario con las mejores tasas", tipo_id: "TIPO DE IDENTIFICACIÓN *", numero_id: "NÚMERO DE IDENTIFICACIÓN *" },
-      en: { buscar_placeholder: "Search properties in Mexico...", centrar: "CENTER", servicios: "SERVICES", mapa: "Map", satelite: "Satellite", servicios_titulo: "SERVICES", agentes: "AGENTS", rentas: "RENTALS", ventas: "SALES", hipotecas: "MORTGAGES", construccion: "CONSTRUCTION", credito: "CREDIT", inversion: "INVESTMENT", avaluos: "APPRAISALS", visita_title: "📅 Schedule visit", oferta_title: "📩 Send offer", nombre_label: "FULL NAME *", telefono_label: "PHONE *", email_label: "EMAIL", codigo_agente_label: "AGENT CODE (optional)", comentarios_label: "COMMENTS", terms_check: "I accept ", terms_link: "terms", submit_visita: "📩 Schedule via WhatsApp", submit_oferta: "📩 Send offer", visit_btn: "Visit", offer_btn_venta: "Make offer", offer_btn_arriendo: "Start rental", info_btn: "Info", select_date: "📅 Select a date", monthNames: ['January','February','March','April','May','June','July','August','September','October','November','December'], weekdays: ['M', 'T', 'W', 'T', 'F', 'S', 'S'], pago_contado: "Cash payment", pago_credito: "Down payment + Credit", precio_fijo: "TOTAL PRICE (FIXED)", valor_inicial: "DOWN PAYMENT (min 30%)", opciones_financiacion: "FINANCING OPTION", cesantias: "Savings", credito_preaprobado: "Pre-approved credit", solicitar_credito: "Request best mortgage rates", tipo_id: "ID TYPE *", numero_id: "ID NUMBER *" }
+
+    // --------------------------------------------------------------
+    // 3. TRADUCCIONES (ESPAÑOL E INGLÉS)
+    // --------------------------------------------------------------
+    const translations = {
+        es: {
+            back_link: "← Volver a países",
+            tagline: "México · El MLS inmobiliario más grande del mundo",
+            title: "SELECCIONA TU ESTADO",
+            subtitle: "Encuentra propiedades en los principales estados y ciudades de México. Compra, vende e invierte directamente entre propietarios.",
+            aguascalientes_name: "Aguascalientes", aguascalientes_sub: "Corazón del Bajío",
+            bajacalifornia_name: "Baja California", bajacalifornia_sub: "Norte del país",
+            bajacaliforniasur_name: "Baja California Sur", bajacaliforniasur_sub: "Perla del Mar de Cortés",
+            campeche_name: "Campeche", campeche_sub: "Ciudad amurallada",
+            coahuila_name: "Coahuila", coahuila_sub: "Cuna del Carbonero",
+            colima_name: "Colima", colima_sub: "Pequeño gigante",
+            chiapas_name: "Chiapas", chiapas_sub: "Rincón de la naturaleza",
+            chihuahua_name: "Chihuahua", chihuahua_sub: "Grandeza del norte",
+            cdmx_name: "Ciudad de México", cdmx_sub: "Capital del país",
+            durango_name: "Durango", durango_sub: "Tierra del cine",
+            guanajuato_name: "Guanajuato", guanajuato_sub: "Cuna de la independencia",
+            guerrero_name: "Guerrero", guerrero_sub: "Sol y playa",
+            hidalgo_name: "Hidalgo", hidalgo_sub: "Cuna del fútbol",
+            jalisco_name: "Jalisco", jalisco_sub: "Tierra del tequila y mariachi",
+            mexicoestado_name: "Estado de México", mexicoestado_sub: "Corazón del país",
+            michoacan_name: "Michoacán", michoacan_sub: "Alma de México",
+            morelos_name: "Morelos", morelos_sub: "Tierra de primavera eterna",
+            nayarit_name: "Nayarit", nayarit_sub: "Paraíso del Pacífico",
+            nuevoleon_name: "Nuevo León", nuevoleon_sub: "Industria y desarrollo",
+            oaxaca_name: "Oaxaca", oaxaca_sub: "Tierra de la guelaguetza",
+            puebla_name: "Puebla", puebla_sub: "Angeles y tradición",
+            queretaro_name: "Querétaro", queretaro_sub: "Historia y modernidad",
+            quintanaroo_name: "Quintana Roo", quintanaroo_sub: "Caribe mexicano",
+            sanluispotosi_name: "San Luis Potosí", sanluispotosi_sub: "Bosques y desierto",
+            sinaloa_name: "Sinaloa", sinaloa_sub: "Brisa del Pacífico",
+            sonora_name: "Sonora", sonora_sub: "Desierto y mar",
+            tabasco_name: "Tabasco", tabasco_sub: "Paraíso tropical",
+            tamaulipas_name: "Tamaulipas", tamaulipas_sub: "Frontera norte",
+            tlaxcala_name: "Tlaxcala", tlaxcala_sub: "Cuna de la nación",
+            veracruz_name: "Veracruz", veracruz_sub: "Puerto histórico",
+            yucatan_name: "Yucatán", yucatan_sub: "Tierra del henequén",
+            zacatecas_name: "Zacatecas", zacatecas_sub: "Rosa de los vientos",
+            footer_copyright: "© 18MLS.COM — El MLS inmobiliario más grande del mundo",
+            footer_tagline: "Propiedades Directas · Sin Intermediarios · Transacciones Aseguradas",
+            no_results: "No se encontraron estados o ciudades. Prueba con otro término de búsqueda."
+        },
+        en: {
+            back_link: "← Back to countries",
+            tagline: "Mexico · The largest real estate MLS in the world",
+            title: "SELECT YOUR STATE",
+            subtitle: "Find properties in Mexico's main states and cities. Buy, sell and invest directly between owners.",
+            aguascalientes_name: "Aguascalientes", aguascalientes_sub: "Heart of the Bajío",
+            bajacalifornia_name: "Baja California", bajacalifornia_sub: "Northern border",
+            bajacaliforniasur_name: "Baja California Sur", bajacaliforniasur_sub: "Pearl of the Sea of Cortez",
+            campeche_name: "Campeche", campeche_sub: "Walled city",
+            coahuila_name: "Coahuila", coahuila_sub: "Coal region",
+            colima_name: "Colima", colima_sub: "Little giant",
+            chiapas_name: "Chiapas", chiapas_sub: "Nature's corner",
+            chihuahua_name: "Chihuahua", chihuahua_sub: "Northern greatness",
+            cdmx_name: "Mexico City", cdmx_sub: "Country's capital",
+            durango_name: "Durango", durango_sub: "Film land",
+            guanajuato_name: "Guanajuato", guanajuato_sub: "Independence cradle",
+            guerrero_name: "Guerrero", guerrero_sub: "Sun and beach",
+            hidalgo_name: "Hidalgo", hidalgo_sub: "Football cradle",
+            jalisco_name: "Jalisco", jalisco_sub: "Tequila and mariachi land",
+            mexicoestado_name: "State of Mexico", mexicoestado_sub: "Heart of the country",
+            michoacan_name: "Michoacán", michoacan_sub: "Soul of Mexico",
+            morelos_name: "Morelos", morelos_sub: "Eternal spring land",
+            nayarit_name: "Nayarit", nayarit_sub: "Pacific paradise",
+            nuevoleon_name: "Nuevo León", nuevoleon_sub: "Industry and development",
+            oaxaca_name: "Oaxaca", oaxaca_sub: "Guelaguetza land",
+            puebla_name: "Puebla", puebla_sub: "Angels and tradition",
+            queretaro_name: "Querétaro", queretaro_sub: "History and modernity",
+            quintanaroo_name: "Quintana Roo", quintanaroo_sub: "Mexican Caribbean",
+            sanluispotosi_name: "San Luis Potosí", sanluispotosi_sub: "Forests and desert",
+            sinaloa_name: "Sinaloa", sinaloa_sub: "Pacific breeze",
+            sonora_name: "Sonora", sonora_sub: "Desert and sea",
+            tabasco_name: "Tabasco", tabasco_sub: "Tropical paradise",
+            tamaulipas_name: "Tamaulipas", tamaulipas_sub: "Northern border",
+            tlaxcala_name: "Tlaxcala", tlaxcala_sub: "Nation's cradle",
+            veracruz_name: "Veracruz", veracruz_sub: "Historic port",
+            yucatan_name: "Yucatán", yucatan_sub: "Henequen land",
+            zacatecas_name: "Zacatecas", zacatecas_sub: "Wind rose",
+            footer_copyright: "© 18MLS.COM — The largest real estate MLS in the world",
+            footer_tagline: "direct properties · no intermediaries · smart investing",
+            no_results: "No states or cities found. Try another search term."
+        }
     };
-    
-    let mapa, userMarker, marcadoresOriginales = [], buscadorTimeout, googleMapsLayer, googleSatelliteLayer, currentLayer, currentProperty = null, selectedDate = null, selectedHorario = null, currentYear = new Date().getFullYear(), currentMonth = new Date().getMonth(), today = new Date(); today.setHours(0,0,0,0);
-    const allHorarios = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00'];
-    let currentIndices = {};
-    
-    let currentLightboxImages = [];
-    let currentLightboxIndex = 0;
-    const lightboxEl = document.getElementById('lightbox');
-    const lightboxImg = lightboxEl.querySelector('.lightbox-img');
-    const lightboxCounter = lightboxEl.querySelector('.lightbox-counter');
-    
-    function openLightbox(images, startIndex) {
-      if(!images || images.length === 0) return;
-      currentLightboxImages = images.filter(img => typeof img === 'string');
-      currentLightboxIndex = startIndex;
-      updateLightbox();
-      lightboxEl.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
+
+    // --------------------------------------------------------------
+    // 4. LÓGICA DE RENDER Y BÚSQUEDA
+    // --------------------------------------------------------------
+    let currentLang = 'es';
+    let currentFilter = '';
+
+    function normalizeString(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^\w\s]/g, '');
     }
-    
-    function updateLightbox() {
-      if(currentLightboxImages.length > 0) {
-        lightboxImg.src = currentLightboxImages[currentLightboxIndex];
-        lightboxCounter.textContent = `${currentLightboxIndex+1} / ${currentLightboxImages.length}`;
-      }
+
+    function getSearchableTextForState(state, langData) {
+        const stateName = langData[state.nameKey] || state.state;
+        const stateSub = langData[state.subKey] || '';
+        const baseTerms = state.searchTerms || [];
+        const citiesText = state.cities.join(' ');
+        let combined = `${stateName} ${stateSub} ${citiesText} ${state.state} ${state.capital} ${baseTerms.join(' ')}`.toLowerCase();
+        return normalizeString(combined);
     }
-    
-    function nextLightbox() {
-      if(currentLightboxImages.length === 0) return;
-      currentLightboxIndex = (currentLightboxIndex + 1) % currentLightboxImages.length;
-      updateLightbox();
+
+    function formatCityList(cities) {
+        if (!cities || cities.length === 0) return '';
+        const maxCities = 5;
+        const visibleCities = cities.slice(0, maxCities);
+        const hasMore = cities.length > maxCities;
+        let html = '<div class="city-list">';
+        visibleCities.forEach(city => {
+            html += `<span class="city-badge">${escapeHtml(city)}</span>`;
+        });
+        if (hasMore) {
+            html += `<span class="city-badge">+${cities.length - maxCities} más</span>`;
+        }
+        html += '</div>';
+        return html;
     }
-    
-    function prevLightbox() {
-      if(currentLightboxImages.length === 0) return;
-      currentLightboxIndex = (currentLightboxIndex - 1 + currentLightboxImages.length) % currentLightboxImages.length;
-      updateLightbox();
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
     }
-    
-    function closeLightbox() {
-      lightboxEl.style.display = 'none';
-      document.body.style.overflow = '';
-    }
-    
-    function t(key) { return translations[currentLang][key] || key; }
-    function formatPriceForProp(prop, isRent = false) { let value = isRent ? prop.priceRent : prop.price; if(value === 0) return "Consultar"; return formatPriceWithCurrency(value, prop.currency); }
-    
-    function redirigirInmueble(property) {
-        if(property && property.detailUrl) {
-            window.location.href = property.detailUrl;
+
+    function renderStates() {
+        const container = document.getElementById('statesContainer');
+        if (!container) return;
+        const langData = translations[currentLang];
+        const filterNorm = normalizeString(currentFilter);
+        
+        let html = '';
+        let visibleCount = 0;
+        
+        statesData.forEach(state => {
+            const searchableText = getSearchableTextForState(state, langData);
+            const matches = filterNorm === '' || searchableText.includes(filterNorm);
+            if (matches) visibleCount++;
+            
+            const stateName = langData[state.nameKey] || state.state;
+            const stateSub = langData[state.subKey] || state.capital;
+            const displayStyle = matches ? '' : 'hidden-card';
+            
+            // URL con ruta: https://18mls.com/jalisco (slug)
+            const fullUrl = `https://18mls.com/${state.urlPath}`;
+            
+            html += `
+                <a href="${fullUrl}" class="state-card ${displayStyle}" target="_self" rel="noopener noreferrer" data-state-id="${state.id}">
+                    <div class="state-flag">${state.flag}</div>
+                    <div class="state-name">${escapeHtml(stateName)}</div>
+                    <div class="city-list" style="font-size:0.75rem; color:#4a4a4a; margin-top:0.5rem;">${escapeHtml(state.capital)}</div>
+                    ${formatCityList(state.cities)}
+                    <div class="divider" style="margin: 0.8rem auto; width: 30px;"></div>
+                    <div class="state-domain">${fullUrl}</div>
+                </a>
+            `;
+        });
+        
+        if (visibleCount === 0 && currentFilter !== '') {
+            html += `<div class="no-results">${escapeHtml(langData.no_results)}</div>`;
+        }
+        
+        container.innerHTML = html;
+        
+        const resultsSpan = document.getElementById('resultsCount');
+        if (resultsSpan) {
+            if (currentFilter === '') {
+                resultsSpan.innerHTML = '';
+            } else {
+                const resultText = currentLang === 'es' 
+                    ? `${visibleCount} resultado${visibleCount !== 1 ? 's' : ''} encontrado${visibleCount !== 1 ? 's' : ''}`
+                    : `${visibleCount} result${visibleCount !== 1 ? 's' : ''} found`;
+                resultsSpan.innerHTML = resultText;
+            }
+        }
+        
+        const clearBtn = document.getElementById('clearSearch');
+        if (clearBtn) {
+            clearBtn.style.display = currentFilter !== '' ? 'block' : 'none';
         }
     }
 
-    function abrirInfoModal(property) {
-      let title = currentLang === 'es' ? property.title_es : property.title_en;
-      let desc = currentLang === 'es' ? property.description_es : property.description_en;
-      let price = property.category==='venta' ? formatPriceForProp(property) : formatPriceForProp(property, true);
-      let html = `<div style="margin-bottom:1rem;"><strong>🔑 ${title}</strong></div><div>📍 ${desc}</div><div>💰 ${price}</div><div>📐 ${property.m2} m² | 🛏️ ${property.cuartos} | 🛁 ${property.baños}</div><div>📞 Contacto: <a href="${property.infoUrl}" target="_blank">WhatsApp</a></div><div>🗺️ <a href="${property.mapsUrl}" target="_blank">Ver ubicación</a></div>`;
-      document.getElementById('infoContent').innerHTML = html;
-      document.getElementById('infoModal').style.display = 'flex';
-    }
-    
-    function generarPopupHTML(property){ 
-      const title = currentLang === 'es' ? property.title_es : property.title_en;
-      const description = currentLang === 'es' ? property.description_es : property.description_en;
-      const displayPrice = property.category==='venta' ? formatPriceForProp(property) : formatPriceForProp(property, true);
-      const actionText = property.category==='venta'?t('offer_btn_venta'):t('offer_btn_arriendo'); 
-      const actionIcon = property.category==='venta'?'fa-hand-holding-usd':'fa-key'; 
-      if(currentIndices[property.id]===undefined) currentIndices[property.id]=0; 
-      const idx=currentIndices[property.id]; const media=property.media[idx]; 
-      let mediaHtml=''; 
-      if(typeof media==='string') mediaHtml=`<img src="${media}" alt="${title}" class="popup-product-image" data-fullscreen="${media}">`; 
-      else if(media.type==='video') mediaHtml=`<div class="popup-video-container"><iframe src="https://www.youtube.com/embed/${media.videoId}?autoplay=0" frameborder="0" allowfullscreen></iframe></div>`; 
-      return `<div class="popup-product-card" data-id="${property.id}">
-                <div class="popup-product-image-container" id="popup-img-container-${property.id}">
-                  ${mediaHtml}
-                  <div class="popup-image-nav">
-                    <button class="popup-nav-btn popup-prev-btn" data-id="${property.id}"><i class="fas fa-chevron-left"></i></button>
-                    <button class="popup-nav-btn popup-next-btn" data-id="${property.id}"><i class="fas fa-chevron-right"></i></button>
-                  </div>
-                  <div class="popup-image-counter">${idx+1}/${property.media.length}</div>
-                </div>
-                <div class="popup-product-info">
-                  <h3 class="popup-product-title" data-id="${property.id}">${title}</h3>
-                  <div class="precio-line">
-                    <span class="popup-product-price">${displayPrice}</span>
-                    <div class="enlaces-secundarios">
-                      <span class="enlace-info" data-id="${property.id}"><i class="fas fa-key"></i> ${t('info_btn')}</span>
-                      <a href="${property.mapsUrl}" target="_blank" class="enlace-mapa"><i class="fas fa-location-dot"></i></a>
-                    </div>
-                  </div>
-                  <div class="popup-product-details">
-                    <span><i class="fas fa-arrows-alt"></i> ${property.m2} m²</span>
-                    <span><i class="fas fa-bed"></i> ${property.cuartos} ${currentLang==='es'?'hab':'beds'}</span>
-                    <span><i class="fas fa-bath"></i> ${property.baños} ${currentLang==='es'?'baños':'baths'}</span>
-                  </div>
-                  <p style="font-size:0.7rem; margin-bottom:0.6rem;">${description}</p>
-                  <div class="popup-product-actions">
-                    <button class="popup-add-to-cart" data-id="${property.id}"><i class="fas fa-calendar-check"></i> ${t('visit_btn')}</button>
-                    <button class="popup-buy-now" data-id="${property.id}"><i class="${actionIcon}"></i> ${actionText}</button>
-                  </div>
-                </div>
-              </div>`; 
-    }
-    
-    function attachLightboxToImage(container, property) {
-      const img = container.querySelector('.popup-product-image');
-      if(img) {
-        img.style.cursor = 'pointer';
-        img.addEventListener('click', (e) => {
-          e.stopPropagation();
-          redirigirInmueble(property);
+    function setLanguage(lang) {
+        if (!translations[lang]) return;
+        currentLang = lang;
+        const elements = document.querySelectorAll('[data-i18n]');
+        elements.forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[lang][key] !== undefined) {
+                if (key === 'title') {
+                    el.innerHTML = translations[lang][key];
+                } else {
+                    el.innerText = translations[lang][key];
+                }
+            }
         });
-      }
-    }
-    
-    function refreshAllPopups() { 
-      marcadoresOriginales.forEach(marker => { 
-        let prop = marker.datosInmueble; 
-        let newPopup = generarPopupHTML(prop); 
-        marker.bindPopup(newPopup, {maxWidth:380, className:'custom-popup'}); 
-      }); 
-    }
-    
-    function updateUILanguage() {
-      document.getElementById('buscador').placeholder = t('buscar_placeholder');
-      document.getElementById('centrar-text').innerText = t('centrar');
-      document.getElementById('servicios-text').innerText = t('servicios');
-      document.getElementById('map-text').innerText = t('mapa');
-      document.getElementById('satellite-text').innerText = t('satelite');
-      document.getElementById('servicios-modal-title').innerText = t('servicios_titulo');
-      refreshAllPopups();
-    }
-    
-    function initMap(){ 
-      mapa=L.map('mapa',{center:[23.6345, -102.5528],zoom:5,zoomControl:false}); 
-      googleMapsLayer=L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{maxZoom:20,subdomains:['mt0','mt1','mt2','mt3']}); 
-      googleSatelliteLayer=L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{maxZoom:20,subdomains:['mt0','mt1','mt2','mt3']}); 
-      currentLayer=googleMapsLayer; currentLayer.addTo(mapa); 
-      let clusters=L.markerClusterGroup({iconCreateFunction:cluster=>L.divIcon({html:`<div>${cluster.getChildCount()}</div>`,className:'cluster-marcadores',iconSize:[40,40]})}); 
-      let icono=L.divIcon({className:'inmueble-marker',html:'🔑',iconSize:[32,32],popupAnchor:[0,-16]}); 
-      properties.forEach(prop=>{ 
-        let popup=generarPopupHTML(prop); 
-        let marker=L.marker(prop.latlng,{icon:icono}).bindPopup(popup,{maxWidth:380,className:'custom-popup'}); 
-        marker.datosInmueble=prop; 
-        marker.datosBusqueda=`${prop.title_es} ${prop.title_en} ${prop.description_es} ${prop.description_en}`.toLowerCase(); 
-        marcadoresOriginales.push(marker); 
-        marker.on('popupopen',()=>{ 
-          setTimeout(()=>{ 
-            let node=document.querySelector('.custom-popup'); 
-            if(node){ 
-              let prev=node.querySelector(`.popup-prev-btn[data-id="${prop.id}"]`), next=node.querySelector(`.popup-next-btn[data-id="${prop.id}"]`); 
-              if(prev) prev.addEventListener('click',(e)=>{e.stopPropagation(); let idx=(currentIndices[prop.id]-1+prop.media.length)%prop.media.length; updateMediaInPopup(prop.id,idx);}); 
-              if(next) next.addEventListener('click',(e)=>{e.stopPropagation(); let idx=(currentIndices[prop.id]+1)%prop.media.length; updateMediaInPopup(prop.id,idx);}); 
-              
-              let titleElement = node.querySelector(`.popup-product-title[data-id="${prop.id}"]`);
-              if(titleElement) {
-                titleElement.addEventListener('click', (e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  redirigirInmueble(prop);
-                });
-              }
-
-              let infoSpan=node.querySelector(`.enlace-info[data-id="${prop.id}"]`); 
-              if(infoSpan) infoSpan.addEventListener('click',(e)=>{e.preventDefault(); abrirInfoModal(prop); mapa.closePopup();}); 
-              let visaBtn=node.querySelector(`.popup-add-to-cart[data-id="${prop.id}"]`), offerBtn=node.querySelector(`.popup-buy-now[data-id="${prop.id}"]`); 
-              if(visaBtn) visaBtn.addEventListener('click',(e)=>{e.preventDefault(); openVisitaModal(prop); mapa.closePopup();}); 
-              if(offerBtn) offerBtn.addEventListener('click',(e)=>{e.preventDefault(); openOfertaModal(prop); mapa.closePopup();}); 
-              const containerImg = node.querySelector(`#popup-img-container-${prop.id}`);
-              if(containerImg) attachLightboxToImage(containerImg, prop);
-            } 
-          },100); 
-        }); 
-        clusters.addLayer(marker); 
-      }); 
-      mapa.addLayer(clusters); 
-    }
-    
-    function updateMediaInPopup(propertyId, newIndex) { 
-      let property=properties.find(p=>p.id===propertyId); 
-      if(!property) return; 
-      let popupNode=document.querySelector('.custom-popup'); 
-      if(!popupNode) return; 
-      let container=popupNode.querySelector(`#popup-img-container-${propertyId}`); 
-      if(!container) return; 
-      let mediaItem=property.media[newIndex]; 
-      let navDiv=container.querySelector('.popup-image-nav'); 
-      let counterDiv=container.querySelector('.popup-image-counter'); 
-      let existing=container.querySelector('.popup-product-image, .popup-video-container'); 
-      if(existing) existing.remove(); 
-      if(typeof mediaItem === 'string'){ 
-        let img=document.createElement('img'); 
-        img.src=mediaItem; 
-        img.alt=property.title_es; 
-        img.className='popup-product-image'; 
-        img.style.cursor='pointer';
-        img.addEventListener('click', (e) => {
-          e.stopPropagation();
-          redirigirInmueble(property);
-        });
-        container.insertBefore(img, navDiv); 
-      } else if(mediaItem.type==='video'){ 
-        let videoDiv=document.createElement('div'); 
-        videoDiv.className='popup-video-container'; 
-        videoDiv.innerHTML=`<iframe src="https://www.youtube.com/embed/${mediaItem.videoId}?autoplay=0" frameborder="0" allowfullscreen></iframe>`; 
-        container.insertBefore(videoDiv, navDiv); 
-      } 
-      if(counterDiv) counterDiv.textContent=`${newIndex+1}/${property.media.length}`; 
-      currentIndices[propertyId]=newIndex; 
-    }
-    
-    function abrirServiciosModal() {
-      let paisesContainer = document.getElementById('paisesContainer');
-      let serviciosDiv = document.getElementById('serviciosPorPais');
-      paisesContainer.innerHTML = '';
-      for(let pais in paisesServicios) {
-        let btn = document.createElement('button');
-        btn.className = 'servicio-btn';
-        btn.innerText = pais;
-        btn.addEventListener('click', () => mostrarServiciosPais(pais));
-        paisesContainer.appendChild(btn);
-      }
-      serviciosDiv.style.display = 'none';
-      paisesContainer.style.display = 'flex';
-      document.getElementById('serviciosModal').style.display = 'flex';
-    }
-    
-    function mostrarServiciosPais(pais) {
-      let servicios = paisesServicios[pais];
-      let serviciosLista = document.getElementById('serviciosLista');
-      serviciosLista.innerHTML = '';
-      let serviciosMap = { agentes: "AGENTES", rentas: "RENTAS", ventas: "VENTAS", hipotecas: "HIPOTECAS", construccion: "CONSTRUCCIÓN", credito: "CRÉDITO", inversion: "INVERSIÓN", avaluos: "AVALÚOS" };
-      for(let [key, url] of Object.entries(servicios)) {
-        let btn = document.createElement('button');
-        btn.className = 'servicio-btn';
-        btn.innerText = t(key) || serviciosMap[key];
-        btn.addEventListener('click', () => { window.open(url, '_blank'); });
-        serviciosLista.appendChild(btn);
-      }
-      document.getElementById('paisesContainer').style.display = 'none';
-      document.getElementById('serviciosPorPais').style.display = 'flex';
-    }
-    
-    function volverPaises() {
-      document.getElementById('paisesContainer').style.display = 'flex';
-      document.getElementById('serviciosPorPais').style.display = 'none';
-    }
-    
-    function centrarMapaRapido() {
-      if (navigator.geolocation) {
-        const btn = document.getElementById('centrar-btn');
-        const originalHtml = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span id="centrar-text">OBTENIENDO...</span>';
-        navigator.geolocation.getCurrentPosition(
-          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'es' ? 'Tu ubicación actual' : 'Your current location'); mapa.setView([latitude, longitude], 16); btn.innerHTML = originalHtml; },
-          err => { console.warn(err); btn.innerHTML = originalHtml; mapa.setView([23.6345, -102.5528], 5); alert(currentLang === 'es' ? 'No se pudo obtener tu ubicación.' : 'Could not get your location.'); },
-          { enableHighAccuracy: true, timeout: 7000, maximumAge: 0 }
-        );
-      } else { mapa.setView([23.6345, -102.5528], 5); }
-    }
-    
-    function openVisitaModal(property){ 
-      currentProperty=property; selectedDate=null; selectedHorario=null; currentYear=new Date().getFullYear(); currentMonth=new Date().getMonth(); 
-      let modal=document.getElementById('visitaModal'), container=document.getElementById('visitaFormContainer'); 
-      let title = currentLang === 'es' ? property.title_es : property.title_en;
-      let desc = currentLang === 'es' ? property.description_es : property.description_en;
-      container.innerHTML=`<div class="property-info"><h4>🔑 ${title}</h4><p>${property.m2} m² · ${property.cuartos} ${currentLang==='es'?'hab':'beds'} · ${property.baños} ${currentLang==='es'?'baños':'baths'}</p><p>${desc}</p></div><div class="step-title">${t('visita_title')}</div><div class="form-group"><label>${t('nombre_label')}</label><input type="text" id="visitaNombre" placeholder="${currentLang==='es'?'Ej: Juan Pérez':'Ex: John Doe'}"></div><div class="row-2cols"><div class="form-group"><label>${t('tipo_id')}</label><input type="text" id="visitaTipoId" placeholder="${currentLang==='es'?'Ej: CURP, Pasaporte...':'Ex: ID Card, Passport...'}"></div><div class="form-group"><label>${t('numero_id')}</label><input type="text" id="visitaNumeroId" placeholder="${currentLang==='es'?'Ej: 12345678':'Ex: 12345678'}"></div></div><div class="form-group"><label>${t('telefono_label')}</label><input type="tel" id="visitaTelefono" placeholder="5512345678"></div><div class="form-group"><label>${t('email_label')}</label><input type="email" id="visitaEmail"></div><div class="form-group"><label>${t('codigo_agente_label')}</label><input type="text" id="visitaCodigoAgente" placeholder="${currentLang==='es'?'Ej: AGENTE123':'Ex: AGENT123'}"></div><div class="inline-checkbox"><input type="checkbox" id="visitaTerms"><label>${t('terms_check')}<span class="terms-link" id="visitaTermsLink">${t('terms_link')}</span></label></div><div class="calendar-card"><div class="calendar-nav"><button class="popup-nav-btn" id="prevMonthBtn" style="background:#000;"><i class="fas fa-chevron-left"></i></button><div class="month-year"></div><button class="popup-nav-btn" id="nextMonthBtn" style="background:#000;"><i class="fas fa-chevron-right"></i></button></div><div class="weekdays"></div><div class="days-grid"></div></div><div class="form-group"><label>${currentLang==='es'?'HORARIO':'SCHEDULE'}</label><div class="horarios-list"></div></div><button class="btn-submit" id="submitVisita">${t('submit_visita')}</button>`; 
-      let calendarDiv=container.querySelector('.calendar-card'); let prev=container.querySelector('#prevMonthBtn'), next=container.querySelector('#nextMonthBtn'), horariosDiv=container.querySelector('.horarios-list'); 
-      renderCalendar(calendarDiv); if(horariosDiv) renderHorarios(horariosDiv); 
-      if(prev) prev.addEventListener('click',()=>{ currentMonth--; if(currentMonth<0){currentMonth=11; currentYear--;} renderCalendar(calendarDiv); selectedDate=null; selectedHorario=null; if(horariosDiv) renderHorarios(horariosDiv); }); 
-      if(next) next.addEventListener('click',()=>{ currentMonth++; if(currentMonth>11){currentMonth=0; currentYear++;} renderCalendar(calendarDiv); selectedDate=null; selectedHorario=null; if(horariosDiv) renderHorarios(horariosDiv); }); 
-      document.getElementById('visitaTermsLink')?.addEventListener('click',showTermsModal); 
-      document.getElementById('submitVisita').addEventListener('click',()=>{ 
-        let nombre=document.getElementById('visitaNombre').value.trim(), telefono=document.getElementById('visitaTelefono').value.trim(), email=document.getElementById('visitaEmail').value.trim(), codigoAgente=document.getElementById('visitaCodigoAgente').value.trim(), termsChecked=document.getElementById('visitaTerms').checked;
-        let tipoId = document.getElementById('visitaTipoId')?.value.trim() || '';
-        let numeroId = document.getElementById('visitaNumeroId')?.value.trim() || '';
-        if(!nombre||!telefono){alert(currentLang==='es'?'Completa nombre y teléfono':'Complete name and phone'); return;} 
-        if(!tipoId || !numeroId){alert(currentLang==='es'?'Completa tipo y número de identificación':'Complete ID type and number'); return;}
-        if(!termsChecked){alert(currentLang==='es'?'Acepta términos':'Accept terms'); return;} 
-        if(!selectedDate){alert(currentLang==='es'?'Selecciona fecha':'Select date'); return;} 
-        if(!selectedHorario){alert(currentLang==='es'?'Selecciona horario':'Select time'); return;} 
-        let fecha=new Date(selectedDate).toLocaleDateString(currentLang==='es'?'es-MX':'en-US'); 
-        let msg=`VISITA: ${title}\nNombre: ${nombre}\nIdentificación: ${tipoId} ${numeroId}\nTeléfono: ${telefono}\nEmail: ${email||'No'}\nFecha: ${fecha} Horario: ${selectedHorario}\n${codigoAgente ? `Código Agente: ${codigoAgente}` : ''}`; 
-        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); 
-        modal.style.display='none'; 
-      }); 
-      modal.style.display='flex'; 
-    }
-    
-    function openOfertaModal(property){ 
-      currentProperty=property; 
-      let modal=document.getElementById('ofertaModal'), container=document.getElementById('ofertaFormContainer'); 
-      let title = currentLang === 'es' ? property.title_es : property.title_en;
-      let desc = currentLang === 'es' ? property.description_es : property.description_en;
-      let displayPrice = property.category==='venta' ? formatPriceForProp(property) : formatPriceForProp(property, true);
-      let basePriceNum = property.category==='venta' ? property.price : 0;
-      let minInitialPercent = 0.3;
-      let defaultInitial = Math.floor(basePriceNum * minInitialPercent);
-      
-      let formHtml = `<div class="property-info"><h4>🔑 ${title}</h4><p>${property.m2} m² · ${property.cuartos} ${currentLang==='es'?'hab':'beds'} · ${property.baños} ${currentLang==='es'?'baños':'baths'}</p><p>${desc}</p></div><div class="step-title">${t('oferta_title')}</div>`;
-      formHtml += `<div class="form-group"><label>${t('precio_fijo')}</label><div class="fixed-price-field"><strong>${displayPrice}</strong></div></div>`;
-      if(property.category === 'venta' && property.price > 0) {
-        formHtml += `<div class="form-group"><label>MÉTODO DE PAGO</label><div class="radio-group" id="paymentMethodGroup"><label><input type="radio" name="paymentMethod" value="contado" checked> ${t('pago_contado')}</label><label><input type="radio" name="paymentMethod" value="credito"> ${t('pago_credito')}</label></div></div>`;
-        formHtml += `<div id="creditSection" style="display:none;"><div class="form-group"><label>${t('valor_inicial')}</label><input type="number" id="initialAmount" step="100000" value="${defaultInitial}" min="${defaultInitial}" max="${basePriceNum}"><small style="color:#555;">Mínimo: ${formatPriceWithCurrency(defaultInitial, property.currency)} (30%)</small></div><div class="form-group"><label>${t('opciones_financiacion')}</label><div class="financing-option"><label><input type="radio" name="financingOption" value="${t('cesantias')}"> ${t('cesantias')}</label><label><input type="radio" name="financingOption" value="${t('credito_preaprobado')}"> ${t('credito_preaprobado')}</label><label><input type="radio" name="financingOption" value="${t('solicitar_credito')}"> ${t('solicitar_credito')}</label></div></div></div>`;
-      }
-      formHtml += `<div class="form-group"><label>${t('nombre_label')}</label><input type="text" id="ofertaNombre" placeholder="${currentLang==='es'?'Ej: Juan Pérez':'Ex: John Doe'}"></div>`;
-      formHtml += `<div class="row-2cols"><div class="form-group"><label>${t('tipo_id')}</label><input type="text" id="ofertaTipoId" placeholder="${currentLang==='es'?'Ej: CURP, Pasaporte...':'Ex: ID Card, Passport...'}"></div><div class="form-group"><label>${t('numero_id')}</label><input type="text" id="ofertaNumeroId" placeholder="${currentLang==='es'?'Ej: 12345678':'Ex: 12345678'}"></div></div>`;
-      formHtml += `<div class="form-group"><label>${t('telefono_label')}</label><input type="tel" id="ofertaTelefono" placeholder="5512345678"></div><div class="form-group"><label>${t('email_label')}</label><input type="email" id="ofertaEmail"></div><div class="form-group"><label>${t('codigo_agente_label')}</label><input type="text" id="ofertaCodigoAgente" placeholder="${currentLang==='es'?'Ej: AGENTE123':'Ex: AGENT123'}"></div><div class="form-group"><label>${t('comentarios_label')}</label><textarea rows="2" id="ofertaComentarios" placeholder="${currentLang==='es'?'Ej: Requiero financiación...':'Ex: I need financing...'}"></textarea></div><button class="btn-submit" id="submitOferta">${t('submit_oferta')}</button>`;
-      container.innerHTML = formHtml;
-      
-      if(property.category === 'venta' && property.price > 0) {
-        let radios = document.querySelectorAll('#paymentMethodGroup input');
-        let creditDiv = document.getElementById('creditSection');
-        let initialInput = document.getElementById('initialAmount');
-        function toggleCredit() { let selected = document.querySelector('input[name="paymentMethod"]:checked').value; creditDiv.style.display = selected === 'credito' ? 'block' : 'none'; }
-        radios.forEach(r => r.addEventListener('change', toggleCredit));
-        toggleCredit();
-        if(initialInput) initialInput.addEventListener('change', function() { let val = parseFloat(this.value); if(isNaN(val)) this.value = defaultInitial; else if(val < defaultInitial) { alert(`Enganche mínimo: ${formatPriceWithCurrency(defaultInitial, property.currency)}`); this.value = defaultInitial; } else if(val > basePriceNum) { alert(`No puede exceder el precio total`); this.value = basePriceNum; } });
-      }
-      document.getElementById('submitOferta').addEventListener('click',()=>{ 
-        let nombre=document.getElementById('ofertaNombre').value.trim(), tel=document.getElementById('ofertaTelefono').value.trim(), email=document.getElementById('ofertaEmail').value.trim(), coment=document.getElementById('ofertaComentarios').value.trim(), codigoAgente=document.getElementById('ofertaCodigoAgente').value.trim(); 
-        let tipoId = document.getElementById('ofertaTipoId')?.value.trim() || '';
-        let numeroId = document.getElementById('ofertaNumeroId')?.value.trim() || '';
-        if(!nombre||!tel){alert(currentLang==='es'?'Completa datos básicos (nombre y teléfono)':'Complete basic data (name and phone)'); return;} 
-        if(!tipoId || !numeroId){alert(currentLang==='es'?'Completa tipo y número de identificación':'Complete ID type and number'); return;}
-        let paymentDetails = "";
-        if(property.category === 'venta' && property.price > 0) {
-          let method = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'contado';
-          if(method === 'contado') paymentDetails = `\nMétodo: ${t('pago_contado')} - Total: ${displayPrice}`;
-          else {
-            let initialVal = document.getElementById('initialAmount')?.value || defaultInitial;
-            let selectedFin = document.querySelector('input[name="financingOption"]:checked')?.value || '';
-            if(!selectedFin) { alert(currentLang==='es'?'Selecciona opción de financiación':'Select financing option'); return; }
-            paymentDetails = `\nMétodo: ${t('pago_credito')}\nEnganche: ${formatPriceWithCurrency(parseInt(initialVal), property.currency)}\nFinanciación: ${selectedFin}`;
-          }
+        const searchInput = document.getElementById('stateSearch');
+        if (searchInput) {
+            searchInput.placeholder = currentLang === 'es' ? 'Buscar estado o ciudad...' : 'Search state or city...';
         }
-        let msg = `OFERTA: ${title}\nNombre: ${nombre}\nIdentificación: ${tipoId} ${numeroId}\nTeléfono: ${tel}\nEmail: ${email}\nComentarios: ${coment||(currentLang==='es'?'Sin comentarios':'No comments')}\n${codigoAgente ? `Código Agente: ${codigoAgente}` : ''}${paymentDetails}`; 
-        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); 
-        modal.style.display='none'; 
-      }); 
-      modal.style.display='flex'; 
+        renderStates();
+        
+        document.getElementById('lang-es').classList.toggle('active', lang === 'es');
+        document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+        document.documentElement.lang = lang === 'es' ? 'es' : 'en';
+        localStorage.setItem('18mls_lang_mexico', lang);
     }
-    
-    function renderCalendar(container) { let days=getDaysForMonth(currentYear,currentMonth); let monthSpan=container.querySelector('.month-year'); if(monthSpan) monthSpan.innerText=`${getMonthName(currentMonth)} ${currentYear}`; let daysGrid=container.querySelector('.days-grid'); if(!daysGrid) return; daysGrid.innerHTML=''; let weekdays = getWeekdays(); let weekdayHeaders = container.querySelector('.weekdays'); if(weekdayHeaders) { weekdayHeaders.innerHTML = weekdays.map(d => `<span>${d}</span>`).join(''); } days.forEach(cell=>{ let div=document.createElement('div'); let className='day-cell'; if(!cell.currentMonth) className+=' other-month'; if(!cell.isSelectable) className+=' disabled'; else className+=' available'; div.className=className; div.innerText=cell.day; if(cell.isSelectable){ div.addEventListener('click',(function(dateStr){ return function(){ document.querySelectorAll('#visitaFormContainer .day-cell').forEach(el=>el.classList.remove('selected')); div.classList.add('selected'); selectedDate=dateStr; let horariosContainer=document.querySelector('#visitaFormContainer .horarios-list'); if(horariosContainer) renderHorarios(horariosContainer); }; })(cell.dateStr)); if(selectedDate===cell.dateStr) div.classList.add('selected'); } daysGrid.appendChild(div); }); }
-    function renderHorarios(horariosContainer) { if(!horariosContainer) return; if(!selectedDate){ horariosContainer.innerHTML=`<div style="padding:0.6rem; text-align:center;">📅 ${t('select_date')}</div>`; return; } horariosContainer.innerHTML=''; allHorarios.forEach(slot=>{ let badge=document.createElement('span'); badge.className='horario-badge'; badge.innerText=slot; if(selectedHorario===slot) badge.classList.add('selected'); badge.addEventListener('click',()=>{ document.querySelectorAll('#visitaFormContainer .horario-badge').forEach(b=>b.classList.remove('selected')); badge.classList.add('selected'); selectedHorario=slot; }); horariosContainer.appendChild(badge); }); }
-    function getMonthName(month) { return t('monthNames')[month]; }
-    function getWeekdays() { return t('weekdays'); }
-    function getDaysForMonth(year, month) { const firstDay = new Date(year, month, 1); let startWeekday = firstDay.getDay(); let offset = (startWeekday === 0 ? 6 : startWeekday - 1); const daysInMonth = new Date(year, month+1, 0).getDate(), prevMonthDays = new Date(year, month, 0).getDate(); let days = []; for(let i=0;i<offset;i++){ let dayNum = prevMonthDays - offset + i + 1, prevMonth=month-1, prevYear=year; if(prevMonth<0){prevMonth=11; prevYear--;} let dateStr=`${prevYear}-${String(prevMonth+1).padStart(2,'0')}-${String(dayNum).padStart(2,'0')}`; days.push({day:dayNum, isSelectable:!isDateInPast(dateStr), dateStr, currentMonth:false}); } for(let d=1;d<=daysInMonth;d++){ let dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; days.push({day:d, isSelectable:!isDateInPast(dateStr), dateStr, currentMonth:true}); } let remaining=42-days.length; for(let i=1;i<=remaining;i++){ let nextMonth=month+1, nextYear=year; if(nextMonth>11){nextMonth=0; nextYear++;} let dateStr=`${nextYear}-${String(nextMonth+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`; days.push({day:i, isSelectable:!isDateInPast(dateStr), dateStr, currentMonth:false}); } return days; }
-    function isDateInPast(dateStr) { let date = new Date(dateStr); date.setHours(0,0,0,0); return date < today; }
-    function showTermsModal() { document.getElementById('termsModal').style.display='flex'; }
-    function closeTermsModal() { document.getElementById('termsModal').style.display='none'; }
-    
-    document.addEventListener('DOMContentLoaded',()=>{ 
-      initMap(); updateUILanguage();
-      document.getElementById('centrar-btn').addEventListener('click',centrarMapaRapido);
-      document.getElementById('servicios-btn').addEventListener('click',abrirServiciosModal);
-      document.getElementById('map-btn').addEventListener('click',()=>{ mapa.removeLayer(currentLayer); currentLayer=googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
-      document.getElementById('satellite-btn').addEventListener('click',()=>{ mapa.removeLayer(currentLayer); currentLayer=googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
-      document.getElementById('closeServiciosBtn').addEventListener('click',()=>document.getElementById('serviciosModal').style.display='none');
-      document.getElementById('volverPaises').addEventListener('click',volverPaises);
-      document.getElementById('closeInfoModalBtn').addEventListener('click',()=>document.getElementById('infoModal').style.display='none');
-      window.addEventListener('click',(e)=>{if(e.target===document.getElementById('serviciosModal')) document.getElementById('serviciosModal').style.display='none'; if(e.target===document.getElementById('infoModal')) document.getElementById('infoModal').style.display='none';});
-      document.querySelectorAll('.lang-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); refreshAllPopups(); document.getElementById('buscador').value = ''; document.getElementById('sugerencias-busqueda').style.display = 'none'; }); });
-      let inputBuscar=document.getElementById('buscador'); inputBuscar.addEventListener('input',(e)=>{ clearTimeout(buscadorTimeout); let term=e.target.value.trim(); let sugDiv=document.getElementById('sugerencias-busqueda'); if(term.length<2){ sugDiv.style.display='none'; return; } sugDiv.innerHTML=`<div class="sugerencia-item">🔍 Buscando...</div>`; sugDiv.style.display='block'; buscadorTimeout=setTimeout(()=>buscarInmuebles(term),300); }); inputBuscar.addEventListener('keydown',(e)=>{if(e.key==='Enter'){ e.preventDefault(); let term=inputBuscar.value.trim(); if(term) buscarInmuebles(term); }}); document.addEventListener('click',(e)=>{ if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display='none'; }); document.querySelectorAll('.close-visita-modal, .close-oferta-modal').forEach(btn=>{btn.addEventListener('click',()=>{document.getElementById('visitaModal').style.display='none'; document.getElementById('ofertaModal').style.display='none';});}); window.addEventListener('click',(e)=>{ if(e.target===document.getElementById('visitaModal')) document.getElementById('visitaModal').style.display='none'; if(e.target===document.getElementById('ofertaModal')) document.getElementById('ofertaModal').style.display='none'; if(e.target===document.getElementById('termsModal')) closeTermsModal(); }); document.getElementById('closeTermsBtn').addEventListener('click',closeTermsModal);
-      
-      document.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
-      document.querySelector('.lightbox-prev').addEventListener('click', prevLightbox);
-      document.querySelector('.lightbox-next').addEventListener('click', nextLightbox);
-      lightboxEl.addEventListener('click', (e) => { if(e.target === lightboxEl) closeLightbox(); });
+
+    let debounceTimer;
+    function onSearchInput(value) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            currentFilter = value;
+            renderStates();
+        }, 180);
+    }
+
+    function initSearch() {
+        const searchInput = document.getElementById('stateSearch');
+        const clearBtn = document.getElementById('clearSearch');
+        if (!searchInput) return;
+        
+        searchInput.addEventListener('input', (e) => {
+            onSearchInput(e.target.value);
+        });
+        
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                onSearchInput('');
+                searchInput.focus();
+            });
+        }
+    }
+
+    function loadInitialLanguage() {
+        const savedLang = localStorage.getItem('18mls_lang_mexico');
+        if (savedLang && (savedLang === 'es' || savedLang === 'en')) {
+            setLanguage(savedLang);
+        } else {
+            const browserLang = navigator.language || '';
+            setLanguage(browserLang.startsWith('es') ? 'es' : 'en');
+        }
+    }
+
+    function bindLanguageEvents() {
+        document.getElementById('lang-es').addEventListener('click', () => setLanguage('es'));
+        document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        initSearch();
+        bindLanguageEvents();
+        loadInitialLanguage();
+        renderStates();
+        
+        const searchInputPlace = document.getElementById('stateSearch');
+        if (searchInputPlace) {
+            searchInputPlace.placeholder = currentLang === 'es' ? 'Buscar estado o ciudad...' : 'Search state or city...';
+        }
     });
-    
-    function buscarInmuebles(q){ let term=q.toLowerCase(); let resultados=marcadoresOriginales.filter(m=>m.datosBusqueda.includes(term)); let sugerenciasDiv=document.getElementById('sugerencias-busqueda'); if(resultados.length){ sugerenciasDiv.innerHTML=''; resultados.forEach(m=>{ let title = currentLang === 'es' ? m.datosInmueble.title_es : m.datosInmueble.title_en; let desc = currentLang === 'es' ? m.datosInmueble.description_es : m.datosInmueble.description_en; let item=document.createElement('div'); item.className='sugerencia-item'; item.innerHTML=`<div class="sugerencia-texto"><strong>🔑 ${title}</strong><br><small>${desc}</small></div><button class="sugerencia-boton" data-id="${m.datosInmueble.id}">${currentLang==='es'?'Ver':'View'}</button>`; let btn=item.querySelector('.sugerencia-boton'); btn.addEventListener('click',(e)=>{ e.stopPropagation(); redirigirInmueble(m.datosInmueble); }); item.addEventListener('click',()=>{ redirigirInmueble(m.datosInmueble); }); sugerenciasDiv.appendChild(item); }); } else { sugerenciasDiv.innerHTML=`<div class="sugerencia-item">❌ No se encontraron inmuebles verificados en México</div>`; } }
-    
-    if('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(console.log);
-      if(!navigator.serviceWorker.controller) {
-        navigator.serviceWorker.register('data:application/javascript,'+encodeURIComponent(`self.addEventListener('fetch', (e) => { e.respondWith(fetch(e.request).catch(() => new Response('QRP2P Real Estate México - Modo offline'))); });`));
-      }
-    }
-  </script>
+</script>
 </body>
 </html>
