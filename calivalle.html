@@ -44,7 +44,6 @@
     .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
     
-    /* Popup de Negocio Verificado */
     .popup-business-card {
       background: #ffffff;
       border-radius: 24px;
@@ -128,7 +127,6 @@
     }
     .btn-view-store:hover { background: #333333; transform: scale(0.98); }
     
-    /* Modal de Servicios QRP2P Colombia */
     .servicio-modal {
       display: none;
       position: fixed;
@@ -159,8 +157,9 @@
       margin-bottom: 1.2rem;
     }
     .servicios-header h2 {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       letter-spacing: 1px;
+      font-weight: 700;
     }
     .servicios-botones {
       display: flex;
@@ -192,20 +191,23 @@
     .zero-badge {
       background: #25D366;
       color: #000;
-      font-size: 0.6rem;
-      padding: 0.2rem 0.6rem;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
       border-radius: 20px;
       margin-left: 0.5rem;
       font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
     }
     
-    .cali-badge {
-      background: #ff6b35;
-      color: white;
-      font-size: 0.6rem;
-      padding: 0.2rem 0.6rem;
-      border-radius: 20px;
-      margin-left: 0.5rem;
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
     }
     
     @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
@@ -238,9 +240,10 @@
   <div id="servicioModal" class="servicio-modal">
     <div class="servicio-container">
       <div class="servicios-header">
-        <h2 id="servicio-modal-title">SERVICIOS QRP2P <span class="cali-badge">CALI - VALLE</span> <span class="zero-badge">0% COMISIONES</span></h2>
+        <h2 id="servicio-modal-title">SERVICIOS QRP2P <span class="zero-badge">0% COMISIONES</span></h2>
         <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
       </div>
+      <div class="sub-header" id="subHeaderText">CALI - VALLE</div>
       <div id="listaServicios" class="servicios-botones"></div>
     </div>
   </div>
@@ -251,71 +254,60 @@
     let currentLang = 'es';
     let mapa, userMarker, marcadoresOriginales = [], currentLayer;
     
-    // ============================================================
     // SERVICIOS QRP2P COLOMBIA (7 servicios)
-    // ============================================================
     const serviciosQRP2P = [
       { 
         id: "plan-anual", 
-        name_es: "📋 REGISTRAR PLAN ANUAL", 
-        name_en: "📋 REGISTER ANNUAL PLAN", 
+        name_es: "REGISTRAR PLAN ANUAL", 
+        name_en: "REGISTER ANNUAL PLAN", 
         icon: "fa-calendar-alt",
-        url: "https://qrp2p.com/plan-anual-colombia",
-        description: "Registro anual en QRP2P · 0% comisiones de por vida"
+        url: "https://qrp2p.com/plan-anual-colombia"
       },
       { 
         id: "administracion", 
-        name_es: "🏢 ADMINISTRACIÓN MENSUAL", 
-        name_en: "🏢 MONTHLY ADMINISTRATION", 
+        name_es: "ADMINISTRACIÓN MENSUAL", 
+        name_en: "MONTHLY ADMINISTRATION", 
         icon: "fa-building",
-        url: "https://qrp2p.com/administracion-colombia",
-        description: "Gestión administrativa mensual para tu negocio"
+        url: "https://qrp2p.com/administracion-colombia"
       },
       { 
         id: "marketing", 
-        name_es: "📢 MARKETING MENSUAL", 
-        name_en: "📢 MONTHLY MARKETING", 
+        name_es: "MARKETING MENSUAL", 
+        name_en: "MONTHLY MARKETING", 
         icon: "fa-chart-line",
-        url: "https://qrp2p.com/marketing-colombia",
-        description: "Estrategias de marketing digital mensuales"
+        url: "https://qrp2p.com/marketing-colombia"
       },
       { 
         id: "logistica", 
-        name_es: "🚚 LOGÍSTICA", 
-        name_en: "🚚 LOGISTICS", 
+        name_es: "LOGÍSTICA", 
+        name_en: "LOGISTICS", 
         icon: "fa-truck",
-        url: "https://qrp2p.com/logistica-colombia",
-        description: "Soluciones logísticas integrales"
+        url: "https://qrp2p.com/logistica-colombia"
       },
       { 
         id: "finanzas", 
-        name_es: "💰 FINANZAS", 
-        name_en: "💰 FINANCE", 
+        name_es: "FINANZAS", 
+        name_en: "FINANCE", 
         icon: "fa-coins",
-        url: "https://qrp2p.com/finanzas-colombia",
-        description: "Asesoría y gestión financiera"
+        url: "https://qrp2p.com/finanzas-colombia"
       },
       { 
         id: "contabilidad", 
-        name_es: "📊 CONTABILIDAD MENSUAL", 
-        name_en: "📊 MONTHLY ACCOUNTING", 
+        name_es: "CONTABILIDAD MENSUAL", 
+        name_en: "MONTHLY ACCOUNTING", 
         icon: "fa-calculator",
-        url: "https://qrp2p.com/contabilidad-colombia",
-        description: "Servicios contables mensuales"
+        url: "https://qrp2p.com/contabilidad-colombia"
       },
       { 
         id: "academia", 
-        name_es: "🎓 ACADEMIA QRP2P", 
-        name_en: "🎓 QRP2P ACADEMY", 
+        name_es: "ACADEMIA QRP2P", 
+        name_en: "QRP2P ACADEMY", 
         icon: "fa-graduation-cap",
-        url: "https://qrp2p.com/academia",
-        description: "Capacitación y formación empresarial"
+        url: "https://qrp2p.com/academia"
       }
     ];
     
-    // ============================================================
     // NEGOCIOS VERIFICADOS - CALI Y VALLE DEL CAUCA
-    // ============================================================
     const verifiedBusinesses = [
       { 
         id: "CALI01", 
@@ -412,22 +404,6 @@
         email: "ventas@tecnocali.com", 
         website: "https://tecnocali.com", 
         whatsapp: "573001234575" 
-      },
-      { 
-        id: "CALI05", 
-        name_es: "MODA Y TEXTILES CALI", 
-        name_en: "CALI FASHION & TEXTILES", 
-        category_es: "Textiles - Moda", 
-        category_en: "Textiles - Fashion", 
-        latlng: [3.4242, -76.5463],
-        address_es: "Calle 9 # 40-50, Barrio San Fernando, Cali", 
-        address_en: "Calle 9 # 40-50, San Fernando Neighborhood, Cali", 
-        description_es: "Distribución de telas, insumos textiles y confección para la industria de la moda.", 
-        description_en: "Distribution of fabrics, textile supplies and clothing for the fashion industry.", 
-        phone: "+573001234576", 
-        email: "ventas@modacali.com", 
-        website: "https://modacali.com", 
-        whatsapp: "573001234576" 
       }
     ];
     
@@ -438,9 +414,8 @@
         servicios: "SERVICIOS QRP2P", 
         mapa: "Mapa", 
         satelite: "Satélite", 
-        titulo_servicios: "SERVICIOS QRP2P",
         view_store: "VER TIENDA",
-        zero_badge: "0% COMISIONES"
+        sub_header: "CALI - VALLE"
       },
       en: { 
         buscar_placeholder: "Search businesses in Cali and Valle del Cauca...", 
@@ -448,9 +423,8 @@
         servicios: "QRP2P SERVICES", 
         mapa: "Map", 
         satelite: "Satellite", 
-        titulo_servicios: "QRP2P SERVICES",
         view_store: "VIEW STORE",
-        zero_badge: "0% COMMISSION"
+        sub_header: "CALI - VALLE"
       }
     };
     
@@ -475,7 +449,6 @@
       const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
       const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
       
-      // Centrar en Cali - Valle del Cauca
       mapa = L.map('mapa', { center: [3.4516, -76.5320], zoom: 11, zoomControl: false });
       currentLayer = googleMapsLayer;
       currentLayer.addTo(mapa);
@@ -497,7 +470,6 @@
       mapa.googleSatelliteLayer = googleSatelliteLayer;
     }
     
-    // Mostrar servicios de QRP2P Colombia
     function mostrarServiciosQRP2P() {
       let container = document.getElementById('listaServicios');
       container.innerHTML = '';
@@ -512,7 +484,7 @@
         });
         container.appendChild(btn);
       });
-      document.getElementById('servicio-modal-title').innerHTML = `${t('titulo_servicios')} <span class="cali-badge">CALI - VALLE</span> <span class="zero-badge">${t('zero_badge')}</span>`;
+      document.getElementById('subHeaderText').innerText = t('sub_header');
       document.getElementById('servicioModal').style.display = 'flex';
     }
     
@@ -533,6 +505,7 @@
       document.getElementById('servicios-text').innerText = t('servicios');
       document.getElementById('map-text').innerText = t('mapa');
       document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
       marcadoresOriginales.forEach(marker => { marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); });
     }
     
@@ -552,7 +525,6 @@
         btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); }); 
       });
       
-      // Búsqueda de negocios
       let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
       inputBuscar.addEventListener('input', (e) => { 
         clearTimeout(buscadorTimeout); 
