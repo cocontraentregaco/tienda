@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>QRP2P PUERTO INÍRIDA - GUAINÍA | NEGOCIOS VERIFICADOS | MARKETPLACE P2P | 0% COMISIONES</title>
+  <meta name="description" content="QRP2P Puerto Inírida - Guainía. Marketplace directo entre comprador y vendedor verificado. Encuentra negocios, propiedades y servicios en Puerto Inírida y todo Guainía. 0% comisiones de por vida.">
+  <meta name="keywords" content="QRP2P, Puerto Inírida, Guainía, Colombia, marketplace, comprador, vendedor, verificado, 0% comisiones, negocios, propiedades, amazonia, cerros de mavecure">
+  <meta name="author" content="QRP2P">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#000000">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Libre Baskerville', serif; background-color: #ffffff; color: #111111; line-height: 1.5; font-size: 16px; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    #contenedor-mapa { width: 100%; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #ffffff; width: 100%; z-index: 1000; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #eaeaea; flex-shrink: 0; }
+    .contenedor-buscador { position: relative; flex: 1; max-width: 400px; }
+    #buscador { width: 100%; padding: 0.6rem 1.2rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 16px; font-family: 'Libre Baskerville', serif; transition: all 0.3s ease; background: #ffffff; user-select: text; }
+    #buscador:focus { outline: none; border-color: #000000; }
+    .btn-mapa { background: #000000; color: #ffffff; padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; display: flex; gap: 5px; font-family: 'Libre Baskerville', serif; transition: all 0.2s ease; }
+    .btn-mapa:hover { background: #333333; }
+    .btn-centrar { background-color: #000000; }
+    .btn-registro { background-color: #25D366; color: #000000; }
+    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
+    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
+    .map-type-btn { padding: 0.5rem 1rem; border: none; border-radius: 40px; cursor: pointer; background: transparent; font-family: 'Libre Baskerville', serif; font-weight: 600; }
+    .map-type-btn.active { background: #000000; color: white; }
+    .lang-selector { display: flex; gap: 0.3rem; margin-left: 0.5rem; }
+    .lang-btn { background: transparent; border: 1px solid #ccc; border-radius: 20px; padding: 0.4rem 0.8rem; cursor: pointer; font-family: 'Libre Baskerville', serif; font-weight: 600; font-size: 0.8rem; }
+    .lang-btn.active { background: #000000; color: white; border-color: #000000; }
+    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
+    .leaflet-control-zoom { display: none !important; }
+    .sugerencias-busqueda { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; display: none; }
+    .sugerencia-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .sugerencia-item:hover { background-color: #f5f5f5; }
+    .sugerencia-texto { flex: 1; }
+    .sugerencia-boton { margin-left: 10px; padding: 6px 12px; background-color: #000000; color: white; border: none; border-radius: 20px; cursor: pointer; }
+    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
+    
+    .popup-business-card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      width: 340px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .popup-business-header {
+      background: #000000;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .popup-business-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .popup-business-category {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+    }
+    .popup-business-info {
+      padding: 1rem;
+    }
+    .popup-business-description {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .popup-business-address {
+      font-size: 0.7rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .popup-business-address i {
+      margin-top: 0.2rem;
+      color: #000;
+    }
+    .popup-business-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 0.8rem;
+    }
+    .contact-link {
+      font-size: 0.7rem;
+      background: #f5f5f5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .contact-link i { font-size: 0.7rem; }
+    .btn-view-store {
+      display: block;
+      background: #000000;
+      color: white;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .btn-view-store:hover { background: #333333; transform: scale(0.98); }
+    
+    .servicio-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+    .servicio-container {
+      background: white;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .servicios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .servicios-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn i {
+      font-size: 1.1rem;
+    }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
+    
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
+  </style>
+</head>
+<body>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="botones-izquierda">
+        <div class="contenedor-buscador">
+          <input type="search" id="buscador" placeholder="Buscar negocios en Puerto Inírida y Guainía..." enterkeyhint="search">
+          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+        </div>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">CENTRAR</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">SERVICIOS QRP2P</span></button>
+      </div>
+      <div class="botones-derecha">
+        <button class="map-type-btn active" id="map-btn"><span id="map-text">Mapa</span></button>
+        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Satélite</span></button>
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="es">ES</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+      </div>
+    </div>
+    <div id="mapa"></div>
+  </div>
+
+  <!-- Modal de Servicios QRP2P Colombia -->
+  <div id="servicioModal" class="servicio-modal">
+    <div class="servicio-container">
+      <div class="servicios-header">
+        <h2 id="servicio-modal-title">SERVICIOS QRP2P <span class="zero-badge">0% COMISIONES</span></h2>
+        <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sub-header" id="subHeaderText">PUERTO INÍRIDA - GUAINÍA</div>
+      <div id="listaServicios" class="servicios-botones"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    let currentLang = 'es';
+    let mapa, userMarker, marcadoresOriginales = [], currentLayer;
+    
+    // SERVICIOS QRP2P COLOMBIA (7 servicios)
+    const serviciosQRP2P = [
+      { 
+        id: "plan-anual", 
+        name_es: "REGISTRAR PLAN ANUAL", 
+        name_en: "REGISTER ANNUAL PLAN", 
+        icon: "fa-calendar-alt",
+        url: "https://qrp2p.com/plan-anual-colombia"
+      },
+      { 
+        id: "administracion", 
+        name_es: "ADMINISTRACIÓN MENSUAL", 
+        name_en: "MONTHLY ADMINISTRATION", 
+        icon: "fa-building",
+        url: "https://qrp2p.com/administracion-colombia"
+      },
+      { 
+        id: "marketing", 
+        name_es: "MARKETING MENSUAL", 
+        name_en: "MONTHLY MARKETING", 
+        icon: "fa-chart-line",
+        url: "https://qrp2p.com/marketing-colombia"
+      },
+      { 
+        id: "logistica", 
+        name_es: "LOGÍSTICA", 
+        name_en: "LOGISTICS", 
+        icon: "fa-truck",
+        url: "https://qrp2p.com/logistica-colombia"
+      },
+      { 
+        id: "finanzas", 
+        name_es: "FINANZAS", 
+        name_en: "FINANCE", 
+        icon: "fa-coins",
+        url: "https://qrp2p.com/finanzas-colombia"
+      },
+      { 
+        id: "contabilidad", 
+        name_es: "CONTABILIDAD MENSUAL", 
+        name_en: "MONTHLY ACCOUNTING", 
+        icon: "fa-calculator",
+        url: "https://qrp2p.com/contabilidad-colombia"
+      },
+      { 
+        id: "academia", 
+        name_es: "ACADEMIA QRP2P", 
+        name_en: "QRP2P ACADEMY", 
+        icon: "fa-graduation-cap",
+        url: "https://qrp2p.com/academia"
+      }
+    ];
+    
+    // NEGOCIOS VERIFICADOS - PUERTO INÍRIDA Y GUAINÍA
+    const verifiedBusinesses = [
+      { 
+        id: "INÍ01", 
+        name_es: "DISTRIBUIDORA INÍRIDA", 
+        name_en: "INÍRIDA DISTRIBUTOR", 
+        category_es: "Distribuidora Mayorista", 
+        category_en: "Wholesale Distributor", 
+        latlng: [3.8650, -67.9240],
+        address_es: "Calle 9 # 6-25, Centro, Puerto Inírida", 
+        address_en: "Calle 9 # 6-25, Downtown, Puerto Inírida", 
+        description_es: "Distribución de alimentos, bebidas y productos de primera necesidad en Puerto Inírida y todo Guainía.", 
+        description_en: "Distribution of food, beverages and essential products in Puerto Inírida and all of Guainía.", 
+        phone: "+573211234567", 
+        email: "ventas@distribuidorainirida.com", 
+        website: "https://distribuidorainirida.com", 
+        whatsapp: "573211234567" 
+      },
+      { 
+        id: "INÍ02", 
+        name_es: "INMOBILIARIA INÍRIDA P2P", 
+        name_en: "INÍRIDA P2P REAL ESTATE", 
+        category_es: "Bienes Raíces", 
+        category_en: "Real Estate", 
+        latlng: [3.8610, -67.9200],
+        address_es: "Carrera 5 # 10-18, Barrio La Esperanza, Puerto Inírida", 
+        address_en: "Carrera 5 # 10-18, La Esperanza Neighborhood, Puerto Inírida", 
+        description_es: "Compra y venta de propiedades directo entre propietarios en Puerto Inírida y todo Guainía. 0% comisiones. Verificación garantizada.", 
+        description_en: "Buy and sell properties directly between owners in Puerto Inírida and all of Guainía. 0% commission. Verified guarantee.", 
+        phone: "+573211234568", 
+        email: "contacto@inmobiliariainiridap2p.com", 
+        website: "https://qrp2p.com/co/puerto-inirida", 
+        whatsapp: "573211234568" 
+      },
+      { 
+        id: "GUA01", 
+        name_es: "TURISMO GUAINÍA P2P", 
+        name_en: "GUAINÍA P2P TOURISM", 
+        category_es: "Agencia de Viajes", 
+        category_en: "Travel Agency", 
+        latlng: [3.8580, -67.9260],
+        address_es: "Calle 8 # 4-15, Centro, Puerto Inírida", 
+        address_en: "Calle 8 # 4-15, Downtown, Puerto Inírida", 
+        description_es: "Experiencias en los Cerros de Mavecure, río Inírida, comunidades indígenas y más. Reservas directas sin comisiones.", 
+        description_en: "Experiences in Mavecure Hills, Inírida River, indigenous communities and more. Direct bookings without commissions.", 
+        phone: "+573211234569", 
+        email: "info@turismoguainiap2p.com", 
+        website: "https://turismoguainia.com", 
+        whatsapp: "573211234569" 
+      },
+      { 
+        id: "GUA02", 
+        name_es: "ARTESANÍAS INDÍGENAS GUAINÍA", 
+        name_en: "GUAINÍA INDIGENOUS HANDICRAFTS", 
+        category_es: "Artesanías", 
+        category_en: "Handicrafts", 
+        latlng: [3.8690, -67.9300],
+        address_es: "Malecón Turístico Local 8, Puerto Inírida", 
+        address_en: "Tourist Boardwalk Stall 8, Puerto Inírida", 
+        description_es: "Venta directa de artesanías auténticas de comunidades indígenas Curripaco, Puinave y Piapoco. Envíos a todo Colombia.", 
+        description_en: "Direct sale of authentic handicrafts from Curripaco, Puinave and Piapoco indigenous communities. Shipping throughout Colombia.", 
+        phone: "+573211234570", 
+        email: "artesanias@guainia.com", 
+        website: "https://artesaniasguainia.com", 
+        whatsapp: "573211234570" 
+      },
+      { 
+        id: "GUA03", 
+        name_es: "ORO Y MINERALES DEL GUAINÍA", 
+        name_en: "GUAINÍA GOLD & MINERALS", 
+        category_es: "Minería", 
+        category_en: "Mining", 
+        latlng: [3.8820, -67.9400],
+        address_es: "Centro Minero Los Pioneros, Puerto Inírida", 
+        address_en: "Los Pioneros Mining Center, Puerto Inírida", 
+        description_es: "Venta directa de oro, coltán y minerales. Compra y venta entre mineros y compradores verificados. 0% comisiones.", 
+        description_en: "Direct sale of gold, coltan and minerals. Purchase and sale between miners and verified buyers. 0% commission.", 
+        phone: "+573211234571", 
+        email: "mineria@guainiaoro.com", 
+        website: "https://orodeguainia.com", 
+        whatsapp: "573211234571" 
+      },
+      { 
+        id: "INÍ03", 
+        name_es: "TRANSPORTE FLUVIAL DEL GUAINÍA", 
+        name_en: "GUAINÍA RIVER TRANSPORT", 
+        category_es: "Transporte", 
+        category_en: "Transport", 
+        latlng: [3.8550, -67.9320],
+        address_es: "Puerto Principal, Orilla del río Inírida", 
+        address_en: "Main Port, Inírida River Bank", 
+        description_es: "Transporte de carga y pasajeros por los ríos Inírida, Guaviare y Atabapo a todo el departamento.", 
+        description_en: "Cargo and passenger transport along the Inírida, Guaviare and Atabapo rivers throughout the department.", 
+        phone: "+573211234572", 
+        email: "transporte@guainiaflu.com", 
+        website: "https://transportefluvialguainia.com", 
+        whatsapp: "573211234572" 
+      },
+      { 
+        id: "GUA04", 
+        name_es: "PESCADOS DEL RÍO INÍRIDA", 
+        name_en: "INÍRIDA RIVER SEAFOOD", 
+        category_es: "Productos Frescos", 
+        category_en: "Fresh Products", 
+        latlng: [3.8630, -67.9280],
+        address_es: "Mercado Público Local 12, Puerto Inírida", 
+        address_en: "Public Market Stall 12, Puerto Inírida", 
+        description_es: "Pescado fresco del río Inírida: cachama, dorado, bagre y más. Directo del pescador al comprador.", 
+        description_en: "Fresh fish from Inírida River: cachama, dorado, catfish and more. Direct from fisherman to buyer.", 
+        phone: "+573211234573", 
+        email: "pescados@iniridafresco.com", 
+        website: "https://pescadosinirida.com", 
+        whatsapp: "573211234573" 
+      }
+    ];
+    
+    const translations = { 
+      es: { 
+        buscar_placeholder: "Buscar negocios en Puerto Inírida y Guainía...", 
+        centrar: "CENTRAR", 
+        servicios: "SERVICIOS QRP2P", 
+        mapa: "Mapa", 
+        satelite: "Satélite", 
+        view_store: "VER TIENDA",
+        sub_header: "PUERTO INÍRIDA - GUAINÍA"
+      },
+      en: { 
+        buscar_placeholder: "Search businesses in Puerto Inírida and Guainía...", 
+        centrar: "CENTER", 
+        servicios: "QRP2P SERVICES", 
+        mapa: "Map", 
+        satelite: "Satellite", 
+        view_store: "VIEW STORE",
+        sub_header: "PUERTO INÍRIDA - GUAINÍA"
+      }
+    };
+    
+    function t(key) { return translations[currentLang][key] || key; }
+    
+    function generarPopupHTML(business) { 
+      const name = currentLang === 'es' ? business.name_es : business.name_en;
+      const category = currentLang === 'es' ? business.category_es : business.category_en;
+      const description = currentLang === 'es' ? business.description_es : business.description_en;
+      const address = currentLang === 'es' ? business.address_es : business.address_en;
+      const storeText = t('view_store');
+      const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
+      let contactButtons = '';
+      if(business.website) contactButtons += `<a href="${business.website}" target="_blank" class="contact-link"><i class="fas fa-globe"></i> Web</a>`;
+      if(business.whatsapp) contactButtons += `<a href="https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>`;
+      if(business.phone) contactButtons += `<a href="tel:${business.phone}" class="contact-link"><i class="fas fa-phone"></i> Call</a>`;
+      if(business.email) contactButtons += `<a href="mailto:${business.email}" class="contact-link"><i class="fas fa-envelope"></i> Email</a>`;
+      return `<div class="popup-business-card"><div class="popup-business-header"><h3>⚡ ${name}</h3><span class="popup-business-category">${category}</span></div><div class="popup-business-info"><div class="popup-business-description">${description}</div><div class="popup-business-address"><i class="fas fa-map-pin"></i> ${address}</div><div class="popup-business-contact">${contactButtons}</div><a href="${websiteUrl}" target="_blank" class="btn-view-store"><i class="fas fa-store"></i> ${storeText}</a></div></div>`; 
+    }
+    
+    function initMap() { 
+      const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      
+      mapa = L.map('mapa', { center: [3.8650, -67.9240], zoom: 12, zoomControl: false });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      
+      let clusters = L.markerClusterGroup({ iconCreateFunction: cluster => L.divIcon({ html: `<div>${cluster.getChildCount()}</div>`, className: 'cluster-marcadores', iconSize: [40,40] }) }); 
+      let icono = L.divIcon({ className: 'negocio-marker', html: '⚡', iconSize: [32,32], popupAnchor: [0,-16] }); 
+      
+      verifiedBusinesses.forEach(business => { 
+        let popup = generarPopupHTML(business); 
+        let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
+        marker.datosNegocio = business; 
+        marker.datosBusqueda = `${business.name_es} ${business.name_en} ${business.category_es} ${business.category_en} ${business.description_es} ${business.description_en}`.toLowerCase(); 
+        marcadoresOriginales.push(marker); 
+        clusters.addLayer(marker); 
+      }); 
+      mapa.addLayer(clusters); 
+      
+      mapa.googleMapsLayer = googleMapsLayer;
+      mapa.googleSatelliteLayer = googleSatelliteLayer;
+    }
+    
+    function mostrarServiciosQRP2P() {
+      let container = document.getElementById('listaServicios');
+      container.innerHTML = '';
+      serviciosQRP2P.forEach(servicio => {
+        let btn = document.createElement('button');
+        btn.className = 'servicio-item-btn';
+        let name = currentLang === 'es' ? servicio.name_es : servicio.name_en;
+        btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${name}`;
+        btn.addEventListener('click', () => {
+          window.open(servicio.url, '_blank');
+          document.getElementById('servicioModal').style.display = 'none';
+        });
+        container.appendChild(btn);
+      });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      document.getElementById('servicioModal').style.display = 'flex';
+    }
+    
+    function centrarMapaRapido() {
+      if (navigator.geolocation) {
+        const btn = document.getElementById('centrar-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>OBTENIENDO...</span>';
+        navigator.geolocation.getCurrentPosition(
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'es' ? 'Tu ubicación actual' : 'Your current location'); mapa.setView([latitude, longitude], 14); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([3.8650, -67.9240], 12); alert(currentLang === 'es' ? 'No se pudo obtener tu ubicación. Mostrando Puerto Inírida.' : 'Could not get your location. Showing Puerto Inírida.'); }
+        );
+      } else { mapa.setView([3.8650, -67.9240], 12); }
+    }
+    
+    function updateUILanguage() {
+      document.getElementById('buscador').placeholder = t('buscar_placeholder');
+      document.getElementById('centrar-text').innerText = t('centrar');
+      document.getElementById('servicios-text').innerText = t('servicios');
+      document.getElementById('map-text').innerText = t('mapa');
+      document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      marcadoresOriginales.forEach(marker => { marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => { 
+      initMap(); updateUILanguage();
+      
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      
+      document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
+      
+      document.querySelectorAll('.lang-btn').forEach(btn => { 
+        btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); }); 
+      });
+      
+      let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 Buscando...</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name = currentLang === 'es' ? m.datosNegocio.name_es : m.datosNegocio.name_en; 
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${currentLang==='es'?'Ver':'View'}</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 14); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ No se encontraron resultados en Puerto Inírida - Guainía</div>`; 
+        }, 300); 
+      }); 
+      document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
+    });
+  </script>
+</body>
+</html>
