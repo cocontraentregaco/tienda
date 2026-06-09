@@ -2,758 +2,569 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>QRP2P - Vendedores Verificados en Neiva (Huila)</title>
-  <style>
-    :root {
-      --primary-color: #1a1a1a;
-      --secondary-color: #333;
-      --accent-color: #0066cc;
-      --text-color: #333;
-      --light-text: #fff;
-      --bg-light: #f8f8f8;
-      --border-radius: 8px;
-      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      --transition: all 0.3s ease;
-    }
-    
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-    }
-    
-    body { 
-      font-family: 'Roboto', sans-serif; 
-      color: var(--text-color); 
-      line-height: 1.6; 
-      touch-action: manipulation;
-      overflow-x: hidden;
-    }
-    
-    #contenedor-mapa { 
-      height: 100vh; 
-      display: flex; 
-      flex-direction: column; 
-      position: relative;
-    }
-    
-    #barra-superior { 
-      display: flex; 
-      gap: 0.8rem; 
-      padding: 0.8rem; 
-      background: var(--bg-light); 
-      width: 100%;
-      z-index: 1000;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    
-    .contenedor-buscador {
-      position: relative;
-      flex: 1;
-      max-width: 500px;
-    }
-    
-    #buscador { 
-      width: 100%;
-      padding: 0.6rem 1.2rem; 
-      border: 1px solid #ddd; 
-      border-radius: 24px; 
-      appearance: none; 
-      font-size: 16px;
-      transition: var(--transition);
-    }
-    
-    #buscador:focus {
-      outline: none;
-      border-color: var(--accent-color);
-      box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
-    }
-    
-    .btn { 
-      background: #000000;
-      color: #ffffff;
-      padding: 0.6rem 1.2rem; 
-      border-radius: 24px; 
-      text-decoration: none;
-      font-weight: 500;
-      transition: var(--transition);
-      border: none;
-      cursor: pointer;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      border: 1px solid #333;
-      font-family: inherit;
-    }
-    
-    .btn:hover {
-      background: #333333;
-      transform: translateY(-1px);
-    }
-    
-    .btn-centrar {
-      background-color: #000000;
-      color: #ffffff;
-    }
-    
-    .btn-registro {
-      background-color: #000000;
-      color: #ffffff;
-    }
-    
-    .botones-secundarios {
-      display: flex;
-      gap: 0.8rem;
-      justify-content: center;
-    }
-    
-    #mapa { 
-      flex: 1; 
-      background: #f0f0f0; 
-      width: 100%;
-    }
-    
-    .notificacion-alerta {
-      position: fixed;
-      bottom: 80px;
-      right: 20px;
-      background: #ff6b6b;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 12px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      z-index: 2000;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      animation: slideInRight 0.3s ease;
-      max-width: 280px;
-    }
-    
-    .notificacion-alerta button {
-      background: white;
-      color: #ff6b6b;
-      border: none;
-      padding: 4px 12px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 0.75rem;
-    }
-    
-    @keyframes slideInRight {
-      from {
-        opacity: 0;
-        transform: translateX(50px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-    
-    .cluster-marcadores { 
-      background: rgba(40,40,40,0.7); 
-      border-radius: 50%; 
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
-    
-    .popup-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 10px;
-    }
-    
-    .popup-button-row {
-      display: flex;
-      gap: 8px;
-      justify-content: space-between;
-    }
-    
-    .vendedor-imagen {
-      width: 100%;
-      height: 150px;
-      background-size: cover;
-      background-position: center;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-    
-    .vendedor-detalle {
-      font-size: 0.85rem;
-      margin: 5px 0;
-    }
-    
-    .vendedor-detalle strong {
-      color: #0066cc;
-    }
-    
-    .sugerencias-busqueda {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      border-radius: 0 0 8px 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      z-index: 1000;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
-    }
-    
-    .sugerencia-item {
-      padding: 10px 15px;
-      cursor: pointer;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .sugerencia-item:hover {
-      background-color: #f5f5f5;
-    }
-    
-    .sugerencia-texto {
-      flex: 1;
-    }
-    
-    .sugerencia-boton {
-      margin-left: 10px;
-      padding: 5px 10px;
-      background-color: #000000;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-    
-    .cargando {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(0,0,0,.3);
-      border-radius: 50%;
-      border-top-color: #000;
-      animation: spin 1s ease-in-out infinite;
-    }
-    
-    .gm-style .gm-style-iw-c {
-      border-radius: 8px;
-      padding: 10px;
-      max-width: 320px !important;
-    }
-    
-    .gm-style .gm-style-iw-d {
-      overflow: auto !important;
-      max-height: 400px !important;
-    }
-    
-    .map-type-selector {
-      position: absolute;
-      bottom: 20px;
-      left: 10px;
-      z-index: 1000;
-      background: white;
-      padding: 8px 12px;
-      border-radius: 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      display: flex;
-      gap: 10px;
-    }
-    
-    .map-type-btn {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      background: #f1f1f1;
-      transition: background 0.3s;
-    }
-    
-    .map-type-btn.active {
-      background: #0066cc;
-      color: white;
-    }
-    
-    /* Estilo personalizado para el marcador con emoji */
-    .verified-marker {
-      background: transparent;
-      border: none;
-      font-size: 28px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    
-    @media (max-width: 768px) { 
-      #barra-superior { 
-        flex-direction: column; 
-        gap: 0.6rem;
-      }
-      
-      .botones-secundarios {
-        flex-direction: column;
-        gap: 0.6rem;
-      }
-      
-      .popup-button-row {
-        flex-direction: column;
-      }
-      
-      .sugerencia-item {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      
-      .sugerencia-boton {
-        margin-left: 0;
-        margin-top: 5px;
-        align-self: flex-end;
-      }
-      
-      .map-type-selector {
-        bottom: 10px;
-        left: 5px;
-        flex-direction: column;
-        gap: 5px;
-      }
-      
-      .notificacion-alerta {
-        bottom: 70px;
-        right: 10px;
-        left: 10px;
-        max-width: none;
-        font-size: 0.75rem;
-      }
-      
-      .verified-marker {
-        font-size: 24px;
-      }
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>QRP2P NEIVA - HUILA | NEGOCIOS VERIFICADOS | MARKETPLACE P2P | 0% COMISIONES</title>
+  <meta name="description" content="QRP2P Neiva - Huila. Marketplace directo entre comprador y vendedor verificado. Encuentra negocios, propiedades y servicios en Neiva y todo el Huila. 0% comisiones de por vida.">
+  <meta name="keywords" content="QRP2P, Neiva, Huila, Colombia, marketplace, comprador, vendedor, verificado, 0% comisiones, negocios, propiedades, bambuco">
+  <meta name="author" content="QRP2P">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#000000">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Libre Baskerville', serif; background-color: #ffffff; color: #111111; line-height: 1.5; font-size: 16px; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    #contenedor-mapa { width: 100%; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #ffffff; width: 100%; z-index: 1000; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #eaeaea; flex-shrink: 0; }
+    .contenedor-buscador { position: relative; flex: 1; max-width: 400px; }
+    #buscador { width: 100%; padding: 0.6rem 1.2rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 16px; font-family: 'Libre Baskerville', serif; transition: all 0.3s ease; background: #ffffff; user-select: text; }
+    #buscador:focus { outline: none; border-color: #000000; }
+    .btn-mapa { background: #000000; color: #ffffff; padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; display: flex; gap: 5px; font-family: 'Libre Baskerville', serif; transition: all 0.2s ease; }
+    .btn-mapa:hover { background: #333333; }
+    .btn-centrar { background-color: #000000; }
+    .btn-registro { background-color: #25D366; color: #000000; }
+    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
+    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
+    .map-type-btn { padding: 0.5rem 1rem; border: none; border-radius: 40px; cursor: pointer; background: transparent; font-family: 'Libre Baskerville', serif; font-weight: 600; }
+    .map-type-btn.active { background: #000000; color: white; }
+    .lang-selector { display: flex; gap: 0.3rem; margin-left: 0.5rem; }
+    .lang-btn { background: transparent; border: 1px solid #ccc; border-radius: 20px; padding: 0.4rem 0.8rem; cursor: pointer; font-family: 'Libre Baskerville', serif; font-weight: 600; font-size: 0.8rem; }
+    .lang-btn.active { background: #000000; color: white; border-color: #000000; }
+    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
+    .leaflet-control-zoom { display: none !important; }
+    .sugerencias-busqueda { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; display: none; }
+    .sugerencia-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .sugerencia-item:hover { background-color: #f5f5f5; }
+    .sugerencia-texto { flex: 1; }
+    .sugerencia-boton { margin-left: 10px; padding: 6px 12px; background-color: #000000; color: white; border: none; border-radius: 20px; cursor: pointer; }
+    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
+    
+    .popup-business-card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      width: 340px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .popup-business-header {
+      background: #000000;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .popup-business-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .popup-business-category {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+    }
+    .popup-business-info {
+      padding: 1rem;
+    }
+    .popup-business-description {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .popup-business-address {
+      font-size: 0.7rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .popup-business-address i {
+      margin-top: 0.2rem;
+      color: #000;
+    }
+    .popup-business-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 0.8rem;
+    }
+    .contact-link {
+      font-size: 0.7rem;
+      background: #f5f5f5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .contact-link i { font-size: 0.7rem; }
+    .btn-view-store {
+      display: block;
+      background: #000000;
+      color: white;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .btn-view-store:hover { background: #333333; transform: scale(0.98); }
+    
+    .servicio-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+    .servicio-container {
+      background: white;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .servicios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .servicios-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn i {
+      font-size: 1.1rem;
+    }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
+    
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
+  </style>
 </head>
 <body>
   <div id="contenedor-mapa">
     <div id="barra-superior">
-      <div class="contenedor-buscador">
-        <input type="search" id="buscador" placeholder="Buscar vendedor verificado en Neiva (Huila)..." enterkeyhint="search">
-        <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+      <div class="botones-izquierda">
+        <div class="contenedor-buscador">
+          <input type="search" id="buscador" placeholder="Buscar negocios en Neiva y Huila..." enterkeyhint="search">
+          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+        </div>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">CENTRAR</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">SERVICIOS QRP2P</span></button>
       </div>
-      <div class="botones-secundarios">
-        <button class="btn btn-centrar" id="centrar-btn">Centrar mi ubicación</button>
-        <button class="btn btn-registro" id="registro-btn">📝 Registrarse como vendedor</button>
+      <div class="botones-derecha">
+        <button class="map-type-btn active" id="map-btn"><span id="map-text">Mapa</span></button>
+        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Satélite</span></button>
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="es">ES</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
       </div>
     </div>
     <div id="mapa"></div>
-    <div class="map-type-selector">
-      <button class="map-type-btn active" id="map-btn">Mapa</button>
-      <button class="map-type-btn" id="satellite-btn">Satélite</button>
+  </div>
+
+  <!-- Modal de Servicios QRP2P Colombia -->
+  <div id="servicioModal" class="servicio-modal">
+    <div class="servicio-container">
+      <div class="servicios-header">
+        <h2 id="servicio-modal-title">SERVICIOS QRP2P <span class="zero-badge">0% COMISIONES</span></h2>
+        <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sub-header" id="subHeaderText">NEIVA - HUILA</div>
+      <div id="listaServicios" class="servicios-botones"></div>
     </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
   <script>
-    // Variables globales
-    let mapa;
-    let userMarker;
-    let marcadoresOriginales = [];
-    let buscadorTimeout;
-    let googleMapsLayer;
-    let googleSatelliteLayer;
-    let currentLayer;
-    let notificacionActual = null;
-
-    // DATOS DE VENDEDORES VERIFICADOS QRP2P EN NEIVA (HUILA)
-    const VENDEDORES = [
+    let currentLang = 'es';
+    let mapa, userMarker, marcadoresOriginales = [], currentLayer;
+    
+    // SERVICIOS QRP2P COLOMBIA (7 servicios)
+    const serviciosQRP2P = [
       { 
-        "id": "vendedor-centro",
-        "nombre": "Carlos López", 
-        "direccion": "Carrera 5 # 8-25, Centro, Neiva", 
-        "latlng": [2.9275, -75.2819], 
-        "telefono": "+573102345678",
-        "url": "https://qrp2p.com/colombia/vendedor/carlos-lopez",
-        "imagen": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
-        "verificado": true,
-        "tiempo_operando": "2 años",
-        "calificacion": "4.8"
+        id: "plan-anual", 
+        name_es: "REGISTRAR PLAN ANUAL", 
+        name_en: "REGISTER ANNUAL PLAN", 
+        icon: "fa-calendar-alt",
+        url: "https://qrp2p.com/plan-anual-colombia"
       },
       { 
-        "id": "vendedor-las-camelias",
-        "nombre": "María Fernández", 
-        "direccion": "Calle 12 # 10-30, Las Camelias, Neiva", 
-        "latlng": [2.9350, -75.2900], 
-        "telefono": "+573104567890",
-        "url": "https://qrp2p.com/colombia/vendedor/maria-fernandez",
-        "imagen": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=300&fit=crop",
-        "verificado": true,
-        "tiempo_operando": "1.5 años",
-        "calificacion": "4.9"
+        id: "administracion", 
+        name_es: "ADMINISTRACIÓN MENSUAL", 
+        name_en: "MONTHLY ADMINISTRATION", 
+        icon: "fa-building",
+        url: "https://qrp2p.com/administracion-colombia"
       },
       { 
-        "id": "vendedor-san-martin",
-        "nombre": "Andrés Martínez", 
-        "direccion": "Carrera 8 # 15-18, San Martín, Neiva", 
-        "latlng": [2.9200, -75.2750], 
-        "telefono": "+573108765432",
-        "url": "https://qrp2p.com/colombia/vendedor/andres-martinez",
-        "imagen": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=300&fit=crop",
-        "verificado": true,
-        "tiempo_operando": "3 años",
-        "calificacion": "5.0"
+        id: "marketing", 
+        name_es: "MARKETING MENSUAL", 
+        name_en: "MONTHLY MARKETING", 
+        icon: "fa-chart-line",
+        url: "https://qrp2p.com/marketing-colombia"
       },
       { 
-        "id": "vendedor-el-jardín",
-        "nombre": "Laura Gómez", 
-        "direccion": "Calle 18 # 6-40, El Jardín, Neiva", 
-        "latlng": [2.9400, -75.2850], 
-        "telefono": "+573102345679",
-        "url": "https://qrp2p.com/colombia/vendedor/laura-gomez",
-        "imagen": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=300&fit=crop",
-        "verificado": true,
-        "tiempo_operando": "2.5 años",
-        "calificacion": "4.7"
+        id: "logistica", 
+        name_es: "LOGÍSTICA", 
+        name_en: "LOGISTICS", 
+        icon: "fa-truck",
+        url: "https://qrp2p.com/logistica-colombia"
       },
       { 
-        "id": "vendedor-altico",
-        "nombre": "Javier Rodríguez", 
-        "direccion": "Carrera 12 # 20-25, Altico, Neiva", 
-        "latlng": [2.9150, -75.2950], 
-        "telefono": "+573104567891",
-        "url": "https://qrp2p.com/colombia/vendedor/javier-rodriguez",
-        "imagen": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=300&fit=crop",
-        "verificado": true,
-        "tiempo_operando": "4 años",
-        "calificacion": "4.9"
+        id: "finanzas", 
+        name_es: "FINANZAS", 
+        name_en: "FINANCE", 
+        icon: "fa-coins",
+        url: "https://qrp2p.com/finanzas-colombia"
       },
       { 
-        "id": "vendedor-la-casona",
-        "nombre": "Sofía Herrera", 
-        "direccion": "Calle 25 # 8-15, La Casona, Neiva", 
-        "latlng": [2.9450, -75.2800], 
-        "telefono": "+573108765433",
-        "url": "https://qrp2p.com/colombia/vendedor/sofia-herrera",
-        "imagen": "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=400&h=300&fit=crop",
-        "verificado": true,
-        "tiempo_operando": "1 año",
-        "calificacion": "4.6"
+        id: "contabilidad", 
+        name_es: "CONTABILIDAD MENSUAL", 
+        name_en: "MONTHLY ACCOUNTING", 
+        icon: "fa-calculator",
+        url: "https://qrp2p.com/contabilidad-colombia"
       },
       { 
-        "id": "vendedor-los-colores",
-        "nombre": "Diego Castillo", 
-        "direccion": "Carrera 15 # 10-20, Los Colores, Neiva", 
-        "latlng": [2.9300, -75.2980], 
-        "telefono": "+573102345680",
-        "url": "https://qrp2p.com/colombia/vendedor/diego-castillo",
-        "imagen": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=300&fit=crop",
-        "verificado": true,
-        "tiempo_operando": "2 años",
-        "calificacion": "4.8"
-      },
-      { 
-        "id": "vendedor-san-fernando",
-        "nombre": "Valentina Ríos", 
-        "direccion": "Calle 30 # 12-18, San Fernando, Neiva", 
-        "latlng": [2.9500, -75.2880], 
-        "telefono": "+573104567892",
-        "url": "https://qrp2p.com/colombia/vendedor/valentina-rios",
-        "imagen": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=300&fit=crop",
-        "verificado": true,
-        "tiempo_operando": "3.5 años",
-        "calificacion": "5.0"
+        id: "academia", 
+        name_es: "ACADEMIA QRP2P", 
+        name_en: "QRP2P ACADEMY", 
+        icon: "fa-graduation-cap",
+        url: "https://qrp2p.com/academia"
       }
     ];
-
-    // Límites de Neiva (Huila)
-    const LIMITES_NEIVA = {
-      minLat: 2.9000,
-      maxLat: 2.9700,
-      minLng: -75.3200,
-      maxLng: -75.2600
+    
+    // NEGOCIOS VERIFICADOS - NEIVA Y HUILA
+    const verifiedBusinesses = [
+      { 
+        id: "NEI01", 
+        name_es: "DISTRIBUIDORA NEIVA CENTRO", 
+        name_en: "NEIVA CENTER DISTRIBUTOR", 
+        category_es: "Distribuidora Mayorista", 
+        category_en: "Wholesale Distributor", 
+        latlng: [2.9274, -75.2876],
+        address_es: "Calle 8 # 5-30, Centro, Neiva", 
+        address_en: "Calle 8 # 5-30, Downtown, Neiva", 
+        description_es: "Distribución de alimentos, bebidas y productos de primera necesidad en Neiva y todo el Huila.", 
+        description_en: "Distribution of food, beverages and essential products in Neiva and all of Huila.", 
+        phone: "+573214567890", 
+        email: "ventas@distribuidoraneiva.com", 
+        website: "https://distribuidoraneiva.com", 
+        whatsapp: "573214567890" 
+      },
+      { 
+        id: "NEI02", 
+        name_es: "INMOBILIARIA NEIVA P2P", 
+        name_en: "NEIVA P2P REAL ESTATE", 
+        category_es: "Bienes Raíces", 
+        category_en: "Real Estate", 
+        latlng: [2.9320, -75.2810],
+        address_es: "Carrera 6 # 12-25, Barrio Las Granjas, Neiva", 
+        address_en: "Carrera 6 # 12-25, Las Granjas Neighborhood, Neiva", 
+        description_es: "Compra y venta de propiedades directo entre propietarios en Neiva, Pitalito y todo el Huila. 0% comisiones. Verificación garantizada.", 
+        description_en: "Buy and sell properties directly between owners in Neiva, Pitalito and all of Huila. 0% commission. Verified guarantee.", 
+        phone: "+573214567891", 
+        email: "contacto@inmobiliarianeivap2p.com", 
+        website: "https://qrp2p.com/co/neiva", 
+        whatsapp: "573214567891" 
+      },
+      { 
+        id: "HUI01", 
+        name_es: "CAFETALERA DEL HUILA", 
+        name_en: "HUILA COFFEE", 
+        category_es: "Café Especial", 
+        category_en: "Specialty Coffee", 
+        latlng: [2.9850, -75.3200],
+        address_es: "Finca La Esperanza, Vía a Tello, Neiva", 
+        address_en: "La Esperanza Farm, Tello Road, Neiva", 
+        description_es: "Venta directa de café especial, café orgánico y derivados. Exportación y envíos a toda Colombia. 0% comisiones.", 
+        description_en: "Direct sale of specialty coffee, organic coffee and derivatives. Export and shipping throughout Colombia. 0% commission.", 
+        phone: "+573214567892", 
+        email: "cafe@cafeterahuila.com", 
+        website: "https://cafedelhuila.com", 
+        whatsapp: "573214567892" 
+      },
+      { 
+        id: "HUI02", 
+        name_es: "ARROZ DEL HUILA", 
+        name_en: "HUILA RICE", 
+        category_es: "Agroindustria", 
+        category_en: "Agribusiness", 
+        latlng: [2.8800, -75.2500],
+        address_es: "Km 3 Vía a Palermo, Zona Industrial, Neiva", 
+        address_en: "Km 3 Palermo Road, Industrial Zone, Neiva", 
+        description_es: "Venta directa de arroz, derivados y productos agroindustriales. Precios de productor. 0% comisiones.", 
+        description_en: "Direct sale of rice, derivatives and agroindustrial products. Producer prices. 0% commission.", 
+        phone: "+573214567893", 
+        email: "ventas@arrozdelhuila.com", 
+        website: "https://arrozhulia.com", 
+        whatsapp: "573214567893" 
+      },
+      { 
+        id: "NEI03", 
+        name_es: "TURISMO HUILA P2P", 
+        name_en: "HUILA P2P TOURISM", 
+        category_es: "Agencia de Viajes", 
+        category_en: "Travel Agency", 
+        latlng: [2.9350, -75.2900],
+        address_es: "Calle 12 # 4-15, Centro, Neiva", 
+        address_en: "Calle 12 # 4-15, Downtown, Neiva", 
+        description_es: "Experiencias en el Desierto de la Tatacoa, San Agustín, Tierradentro y más. Reservas directas sin comisiones.", 
+        description_en: "Experiences in Tatacoa Desert, San Agustín, Tierradentro and more. Direct bookings without commissions.", 
+        phone: "+573214567894", 
+        email: "info@turismohuilap2p.com", 
+        website: "https://turismohuila.com", 
+        whatsapp: "573214567894" 
+      },
+      { 
+        id: "HUI03", 
+        name_es: "PESCADOS Y MARISCOS DEL MAGDALENA", 
+        name_en: "MAGDALENA RIVER SEAFOOD", 
+        category_es: "Productos Frescos", 
+        category_en: "Fresh Products", 
+        latlng: [2.9100, -75.3100],
+        address_es: "Mercado Público Local 20, Neiva", 
+        address_en: "Public Market Stall 20, Neiva", 
+        description_es: "Pescado fresco del río Magdalena: bocachico, nicuro, capaz y más. Directo del pescador al comprador.", 
+        description_en: "Fresh fish from Magdalena River: bocachico, nicuro, capable and more. Direct from fisherman to buyer.", 
+        phone: "+573214567895", 
+        email: "pescados@magdalenafresco.com", 
+        website: "https://pescadoshuila.com", 
+        whatsapp: "573214567895" 
+      },
+      { 
+        id: "NEI04", 
+        name_es: "CONSTRUCCIONES Y MATERIALES HUILA", 
+        name_en: "HUILA CONSTRUCTION MATERIALS", 
+        category_es: "Construcción", 
+        category_en: "Construction", 
+        latlng: [2.9450, -75.2850],
+        address_es: "Carrera 25 # 15-40, Barrio La Gaviota, Neiva", 
+        address_en: "Carrera 25 # 15-40, La Gaviota Neighborhood, Neiva", 
+        description_es: "Venta directa de materiales de construcción, ferretería y acabados. Despachos a todo el Huila. 0% comisiones.", 
+        description_en: "Direct sale of construction materials, hardware and finishes. Shipments throughout Huila. 0% commission.", 
+        phone: "+573214567896", 
+        email: "ventas@construccioneshuila.com", 
+        website: "https://materialeshuila.com", 
+        whatsapp: "573214567896" 
+      }
+    ];
+    
+    const translations = { 
+      es: { 
+        buscar_placeholder: "Buscar negocios en Neiva y Huila...", 
+        centrar: "CENTRAR", 
+        servicios: "SERVICIOS QRP2P", 
+        mapa: "Mapa", 
+        satelite: "Satélite", 
+        view_store: "VER TIENDA",
+        sub_header: "NEIVA - HUILA"
+      },
+      en: { 
+        buscar_placeholder: "Search businesses in Neiva and Huila...", 
+        centrar: "CENTER", 
+        servicios: "QRP2P SERVICES", 
+        mapa: "Map", 
+        satelite: "Satellite", 
+        view_store: "VIEW STORE",
+        sub_header: "NEIVA - HUILA"
+      }
     };
-
-    function estaEnNeiva(lat, lng) {
-      return (lat >= LIMITES_NEIVA.minLat && lat <= LIMITES_NEIVA.maxLat &&
-              lng >= LIMITES_NEIVA.minLng && lng <= LIMITES_NEIVA.maxLng);
+    
+    function t(key) { return translations[currentLang][key] || key; }
+    
+    function generarPopupHTML(business) { 
+      const name = currentLang === 'es' ? business.name_es : business.name_en;
+      const category = currentLang === 'es' ? business.category_es : business.category_en;
+      const description = currentLang === 'es' ? business.description_es : business.description_en;
+      const address = currentLang === 'es' ? business.address_es : business.address_en;
+      const storeText = t('view_store');
+      const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
+      let contactButtons = '';
+      if(business.website) contactButtons += `<a href="${business.website}" target="_blank" class="contact-link"><i class="fas fa-globe"></i> Web</a>`;
+      if(business.whatsapp) contactButtons += `<a href="https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>`;
+      if(business.phone) contactButtons += `<a href="tel:${business.phone}" class="contact-link"><i class="fas fa-phone"></i> Call</a>`;
+      if(business.email) contactButtons += `<a href="mailto:${business.email}" class="contact-link"><i class="fas fa-envelope"></i> Email</a>`;
+      return `<div class="popup-business-card"><div class="popup-business-header"><h3>⚡ ${name}</h3><span class="popup-business-category">${category}</span></div><div class="popup-business-info"><div class="popup-business-description">${description}</div><div class="popup-business-address"><i class="fas fa-map-pin"></i> ${address}</div><div class="popup-business-contact">${contactButtons}</div><a href="${websiteUrl}" target="_blank" class="btn-view-store"><i class="fas fa-store"></i> ${storeText}</a></div></div>`; 
     }
-
-    function mostrarNotificacion(mensaje, tipo = 'warning') {
-      if (notificacionActual) {
-        notificacionActual.remove();
-      }
-      const notificacion = document.createElement('div');
-      notificacion.className = 'notificacion-alerta';
-      notificacion.style.background = tipo === 'warning' ? '#ff6b6b' : '#4caf50';
-      notificacion.innerHTML = `
-        <span>${mensaje}</span>
-        <button onclick="this.parentElement.remove()">✕</button>
-      `;
-      document.body.appendChild(notificacion);
-      notificacionActual = notificacion;
-      setTimeout(() => {
-        if (notificacionActual === notificacion) {
-          notificacion.remove();
-          notificacionActual = null;
-        }
-      }, 5000);
-    }
-
-    function abrirWhatsApp(telefono, nombre, direccion, tiempo_operando, calificacion) {
-      const numeroLimpio = telefono.replace(/\D/g, '');
-      const mensaje = `Hola, me interesa contactar al vendedor verificado:\n\n⚡️ Nombre: ${nombre}\n📍 Dirección: ${direccion}\n⏱️ Tiempo operando: ${tiempo_operando}\n⭐️ Calificación: ${calificacion}\n\n¿Podría darme más información sobre sus servicios? ¡Gracias!`;
-      window.open(`https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`, '_blank');
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      initializeMap();
-      document.getElementById('centrar-btn').addEventListener('click', centrarMapa);
-      document.getElementById('registro-btn').addEventListener('click', function() {
-        window.open('https://qrp2p.com/registro-vendedor', '_blank');
-      });
-      document.getElementById('map-btn').addEventListener('click', switchToMapView);
-      document.getElementById('satellite-btn').addEventListener('click', switchToSatelliteView);
+    
+    function initMap() { 
+      const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
       
-      const searchInput = document.getElementById('buscador');
-      searchInput.addEventListener('input', handleSearchInput);
-      searchInput.addEventListener('keydown', handleSearchKeydown);
-      
-      document.addEventListener('click', function(e) {
-        if (!e.target.closest('.contenedor-buscador')) {
-          document.getElementById('sugerencias-busqueda').style.display = 'none';
-        }
-      });
-    });
-
-    function initializeMap() {
-      mapa = L.map('mapa', { center: [2.9275, -75.2819], zoom: 13, zoomControl: false });
-      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
-
-      googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-        maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-      });
-      googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-        maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-      });
+      mapa = L.map('mapa', { center: [2.9274, -75.2876], zoom: 12, zoomControl: false });
       currentLayer = googleMapsLayer;
       currentLayer.addTo(mapa);
-      setTimeout(() => mapa.invalidateSize(), 100);
-
-      const clusters = L.markerClusterGroup({
-        iconCreateFunction: cluster => L.divIcon({
-          html: `<div>${cluster.getChildCount()}</div>`,
-          className: 'cluster-marcadores',
-          iconSize: [40, 40]
-        }),
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        zoomToBoundsOnClick: true
-      });
-
-      // Crear un ícono personalizado con el emoji ⚡️
-      const verifiedIcon = L.divIcon({
-        className: 'verified-marker',
-        html: '⚡️',
-        iconSize: [32, 32],
-        popupAnchor: [0, -16]
-      });
-
-      VENDEDORES.forEach(vendedor => {
-        const marcador = L.marker(vendedor.latlng, {
-          icon: verifiedIcon
-        }).bindPopup(`
-          <div style="min-width:280px; max-width:320px;">
-            <div class="vendedor-imagen" style="background-image: url('${vendedor.imagen}'); background-size: cover; background-position: center;"></div>
-            <h3 style="margin:5px 0;color:#0066cc">⚡️ ${vendedor.nombre}</h3>
-            <p style="margin:5px 0;font-size:0.85rem">📍 ${vendedor.direccion}</p>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin:8px 0;">
-              <div class="vendedor-detalle"><strong>⭐️ Calificación:</strong> ${vendedor.calificacion}/5.0</div>
-              <div class="vendedor-detalle"><strong>⏱️ Operando:</strong> ${vendedor.tiempo_operando}</div>
-              <div class="vendedor-detalle"><strong>✅ Estado:</strong> Verificado</div>
-              <div class="vendedor-detalle"><strong>📞 Teléfono:</strong> ${vendedor.telefono}</div>
-            </div>
-            <div class="popup-buttons">
-              <div class="popup-button-row">
-                <button onclick="abrirWhatsApp('${vendedor.telefono}', '${vendedor.nombre}', '${vendedor.direccion}', '${vendedor.tiempo_operando}', '${vendedor.calificacion}')" style="background:#25D366;color:white;border:none;padding:10px;border-radius:8px;cursor:pointer;width:100%;font-weight:bold;">
-                  💬 WhatsApp - Contactar vendedor
-                </button>
-              </div>
-              <div class="popup-button-row" style="gap:8px;margin-top:5px;">
-                <button onclick="window.open('${vendedor.url}', '_blank')" style="background:#000000;color:white;border:none;padding:8px;border-radius:8px;cursor:pointer;flex:1;">🔍 Ver página del vendedor</button>
-                <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${vendedor.latlng[0]},${vendedor.latlng[1]}', '_blank')" style="background:#0066cc;color:white;border:none;padding:8px;border-radius:8px;cursor:pointer;flex:1;">🗺️ Cómo llegar</button>
-              </div>
-            </div>
-          </div>
-        `);
-        marcador.datosVendedor = vendedor;
-        marcador.datosBusqueda = `${vendedor.nombre} ${vendedor.direccion}`.toLowerCase();
-        marcadoresOriginales.push(marcador);
-      });
-
-      clusters.addLayers(marcadoresOriginales);
-      mapa.addLayer(clusters);
       
-      if(marcadoresOriginales.length > 0) {
-        mapa.fitBounds(clusters.getBounds().pad(0.3));
-      }
+      let clusters = L.markerClusterGroup({ iconCreateFunction: cluster => L.divIcon({ html: `<div>${cluster.getChildCount()}</div>`, className: 'cluster-marcadores', iconSize: [40,40] }) }); 
+      let icono = L.divIcon({ className: 'negocio-marker', html: '⚡', iconSize: [32,32], popupAnchor: [0,-16] }); 
       
-      obtenerUbicacionUsuario();
-    }
-
-    function switchToMapView() {
-      mapa.removeLayer(currentLayer);
-      currentLayer = googleMapsLayer;
-      currentLayer.addTo(mapa);
-      document.getElementById('map-btn').classList.add('active');
-      document.getElementById('satellite-btn').classList.remove('active');
-    }
-
-    function switchToSatelliteView() {
-      mapa.removeLayer(currentLayer);
-      currentLayer = googleSatelliteLayer;
-      currentLayer.addTo(mapa);
-      document.getElementById('satellite-btn').classList.add('active');
-      document.getElementById('map-btn').classList.remove('active');
-    }
-
-    function handleSearchInput(e) {
-      clearTimeout(buscadorTimeout);
-      const termino = e.target.value.trim();
-      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
-      if (termino.length < 2) {
-        sugerenciasContainer.style.display = 'none';
-        return;
-      }
-      sugerenciasContainer.innerHTML = '<div class="sugerencia-item">🔍 Buscando vendedores verificados en Neiva (Huila)... <span class="cargando"></span></div>';
-      sugerenciasContainer.style.display = 'block';
-      buscadorTimeout = setTimeout(() => buscarVendedores(termino), 300);
-    }
-
-    function buscarVendedores(consulta) {
-      const sugerenciasContainer = document.getElementById('sugerencias-busqueda');
-      const termino = consulta.toLowerCase();
-      const resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(termino));
+      verifiedBusinesses.forEach(business => { 
+        let popup = generarPopupHTML(business); 
+        let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
+        marker.datosNegocio = business; 
+        marker.datosBusqueda = `${business.name_es} ${business.name_en} ${business.category_es} ${business.category_en} ${business.description_es} ${business.description_en}`.toLowerCase(); 
+        marcadoresOriginales.push(marker); 
+        clusters.addLayer(marker); 
+      }); 
+      mapa.addLayer(clusters); 
       
-      if (resultados.length > 0) {
-        sugerenciasContainer.innerHTML = '';
-        resultados.forEach(marcador => {
-          const vendedor = marcador.datosVendedor;
-          const item = document.createElement('div');
-          item.className = 'sugerencia-item';
-          item.innerHTML = `
-            <div class="sugerencia-texto">
-              <strong>⚡️ ${vendedor.nombre}</strong><br>
-              <small>📍 ${vendedor.direccion}</small><br>
-              <small>⭐️ ${vendedor.calificacion} | ⏱️ ${vendedor.tiempo_operando}</small>
-            </div>
-            <button class="sugerencia-boton" data-id="${vendedor.id}">Ver vendedor</button>
-          `;
-          const boton = item.querySelector('.sugerencia-boton');
-          boton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            mapa.setView(marcador.getLatLng(), 16);
-            marcador.openPopup();
-            document.getElementById('buscador').value = vendedor.nombre;
-            sugerenciasContainer.style.display = 'none';
-          });
-          item.addEventListener('click', () => {
-            mapa.setView(marcador.getLatLng(), 16);
-            marcador.openPopup();
-            document.getElementById('buscador').value = vendedor.nombre;
-            sugerenciasContainer.style.display = 'none';
-          });
-          sugerenciasContainer.appendChild(item);
+      mapa.googleMapsLayer = googleMapsLayer;
+      mapa.googleSatelliteLayer = googleSatelliteLayer;
+    }
+    
+    function mostrarServiciosQRP2P() {
+      let container = document.getElementById('listaServicios');
+      container.innerHTML = '';
+      serviciosQRP2P.forEach(servicio => {
+        let btn = document.createElement('button');
+        btn.className = 'servicio-item-btn';
+        let name = currentLang === 'es' ? servicio.name_es : servicio.name_en;
+        btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${name}`;
+        btn.addEventListener('click', () => {
+          window.open(servicio.url, '_blank');
+          document.getElementById('servicioModal').style.display = 'none';
         });
-      } else {
-        sugerenciasContainer.innerHTML = '<div class="sugerencia-item">❌ No se encontraron vendedores verificados para: ' + consulta + '<br><small>📍 Prueba con: Centro, Las Camelias, San Martín, El Jardín, Altico, La Casona, Los Colores, San Fernando</small></div>';
-      }
+        container.appendChild(btn);
+      });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      document.getElementById('servicioModal').style.display = 'flex';
     }
-
-    function handleSearchKeydown(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const termino = document.getElementById('buscador').value.trim();
-        if (termino) buscarVendedores(termino);
-      }
-    }
-
-    function centrarMapa() {
-      if (userMarker) {
-        const lat = userMarker.getLatLng().lat;
-        const lng = userMarker.getLatLng().lng;
-        if (estaEnNeiva(lat, lng)) {
-          mapa.setView(userMarker.getLatLng(), 15);
-          userMarker.openPopup();
-        } else {
-          mostrarNotificacion("Estás fuera del área de Neiva (Huila). Mostrando centro de la ciudad.");
-          mapa.setView([2.9275, -75.2819], 13);
-        }
-      } else {
-        obtenerUbicacionUsuario();
-      }
-    }
-
-    function obtenerUbicacionUsuario() {
+    
+    function centrarMapaRapido() {
       if (navigator.geolocation) {
+        const btn = document.getElementById('centrar-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>OBTENIENDO...</span>';
         navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            if (userMarker) mapa.removeLayer(userMarker);
-            if (estaEnNeiva(latitude, longitude)) {
-              userMarker = L.marker([latitude, longitude], {
-                icon: L.divIcon({
-                  className: 'verified-marker',
-                  html: '📍',
-                  iconSize: [24, 24]
-                })
-              }).addTo(mapa).bindPopup('📍 Tu ubicación en Neiva');
-              mapa.setView([latitude, longitude], 14);
-              userMarker.openPopup();
-            } else {
-              mostrarNotificacion("Servicio exclusivo para Neiva (Huila). Estás fuera del área de cobertura.");
-              mapa.setView([2.9275, -75.2819], 13);
-              userMarker = L.marker([latitude, longitude], {
-                icon: L.divIcon({
-                  className: 'verified-marker',
-                  html: '⚠️',
-                  iconSize: [24, 24]
-                })
-              }).addTo(mapa).bindPopup('⚠️ Fuera de Neiva (Huila)');
-            }
-          },
-          (error) => {
-            console.log(`Error: ${error.message}`);
-            mapa.setView([2.9275, -75.2819], 13);
-          },
-          { enableHighAccuracy: true }
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'es' ? 'Tu ubicación actual' : 'Your current location'); mapa.setView([latitude, longitude], 14); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([2.9274, -75.2876], 12); alert(currentLang === 'es' ? 'No se pudo obtener tu ubicación. Mostrando Neiva.' : 'Could not get your location. Showing Neiva.'); }
         );
-      } else {
-        mapa.setView([2.9275, -75.2819], 13);
-      }
+      } else { mapa.setView([2.9274, -75.2876], 12); }
     }
+    
+    function updateUILanguage() {
+      document.getElementById('buscador').placeholder = t('buscar_placeholder');
+      document.getElementById('centrar-text').innerText = t('centrar');
+      document.getElementById('servicios-text').innerText = t('servicios');
+      document.getElementById('map-text').innerText = t('mapa');
+      document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      marcadoresOriginales.forEach(marker => { marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => { 
+      initMap(); updateUILanguage();
+      
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      
+      document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
+      
+      document.querySelectorAll('.lang-btn').forEach(btn => { 
+        btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); }); 
+      });
+      
+      let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 Buscando...</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name = currentLang === 'es' ? m.datosNegocio.name_es : m.datosNegocio.name_en; 
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${currentLang==='es'?'Ver':'View'}</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 14); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ No se encontraron resultados en Neiva - Huila</div>`; 
+        }, 300); 
+      }); 
+      document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
+    });
   </script>
 </body>
 </html>
