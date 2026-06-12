@@ -211,7 +211,7 @@
             pointer-events: none;
         }
         
-        /* Zoom Overlay - SOLO al hacer clic en la imagen */
+        /* Zoom Overlay */
         .zoom-overlay {
             position: fixed;
             top: 0;
@@ -274,7 +274,7 @@
             opacity: 0.8;
         }
         
-        /* Flechas de navegación - SOLO cambian la imagen, NO abren zoom */
+        /* Flechas de navegación */
         .nav-arrow {
             position: absolute;
             top: 50%;
@@ -336,7 +336,7 @@
             line-height: 1.6;
         }
         
-        /* TikTok Video - va al final */
+        /* TikTok Video */
         .tiktok-video {
             margin: 1rem 0;
             border-radius: 8px;
@@ -364,7 +364,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.8rem;
-            margin-top: 1rem;
+            width: 100%;
         }
         
         .buy-button:hover {
@@ -374,8 +374,8 @@
         
         /* Características adicionales */
         .product-features {
-            margin-top: 1rem;
-            padding-top: 1rem;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
             border-top: 1px solid var(--color-gris-medio);
         }
         
@@ -406,7 +406,7 @@
             background-color: var(--color-gris-claro);
             padding: 1rem;
             border-radius: 8px;
-            margin-top: 1rem;
+            margin-top: 0.5rem;
         }
         
         .shipping-info p {
@@ -855,6 +855,12 @@
                 <div class="product-installments">Opción de pago a 6 cuotas de $22.458 con 0% interés</div>
             </div>
             
+            <!-- BOTÓN DE COMPRAR - VA DE PRIMERO -->
+            <button class="buy-button" id="buyNowBtn">
+                <i class="fas fa-shopping-bag"></i>
+                Comprar Ahora
+            </button>
+            
             <!-- Descripción -->
             <div class="product-description" itemprop="description">
                 <p>Omnilife F Plus es un suplemento nutricional de alta calidad diseñado para apoyar el bienestar general y la nutrición celular. Fórmula avanzada que ayuda a mantener los niveles óptimos de energía y vitalidad.</p>
@@ -875,11 +881,11 @@
             <!-- Información de envío -->
             <div class="shipping-info">
                 <p><i class="fas fa-truck"></i> <strong>QRP2P Logística</strong> - Entrega inmediata</p>
-                <p><i class="fab fa-whatsapp"></i> Tu pedido será confirmado por WhatsApp</p>
+                <p><i class="fab fa-whatsapp"></i> Confirmamos tu pedido por WhatsApp con los detalles de envío, costos aplicables o envío gratis según el vendedor</p>
                 <p><i class="fas fa-map-marker-alt"></i> Envíos a todo Colombia</p>
             </div>
             
-            <!-- TikTok Video - VA AL FINAL (después de características y envío, antes del botón) -->
+            <!-- TikTok Video - VA DE ÚLTIMO -->
             <div class="tiktok-video">
                 <iframe src="https://www.tiktok.com/embed/v2/1234567890123456789" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -887,12 +893,6 @@
                         loading="lazy"
                         title="Video de TikTok - Omnilife F Plus"></iframe>
             </div>
-            
-            <!-- Botón de compra -->
-            <button class="buy-button" id="buyNowBtn">
-                <i class="fas fa-shopping-bag"></i>
-                Comprar Ahora
-            </button>
         </div>
     </div>
 </div>
@@ -938,7 +938,7 @@
                 <input type="radio" id="shipping-priority" name="shipping" class="shipping-radio" checked>
                 <div class="shipping-info-detail">
                     <span class="shipping-name"><i class="fas fa-shipping-fast"></i> QRP2P Logística</span>
-                    <span class="shipping-description">Tu pedido será confirmado por WhatsApp y ahí recibes los detalles y diferentes costos de envío si aplica y/o envío gratis dependiendo el vendedor</span>
+                    <span class="shipping-description">Confirmamos tu pedido por WhatsApp con los detalles de envío, costos aplicables o envío gratis según el vendedor</span>
                 </div>
                 <span class="shipping-price shipping-free">Entrega inmediata</span>
             </div>
@@ -974,7 +974,7 @@
     </div>
 </div>
 
-<!-- Zoom Overlay - SOLO aparece al hacer clic en la imagen -->
+<!-- Zoom Overlay -->
 <div class="zoom-overlay" id="zoomOverlay">
     <button class="close-zoom" id="closeZoom">&times;</button>
     <img class="zoom-image" id="zoomImage" src="" alt="Zoom de imagen">
@@ -1012,7 +1012,7 @@
 </footer>
 
 <script>
-    // Datos del producto con múltiples imágenes reales
+    // Datos del producto con múltiples imágenes
     const product = {
         id: 143,
         title: "OMNILIFE F PLUS",
@@ -1086,7 +1086,7 @@
         });
     }
     
-    // LAS FLECHAS SOLO CAMBIAN LA IMAGEN - NO ABREN ZOOM
+    // Flechas: solo cambian la imagen
     function nextImage(e) {
         e.stopPropagation();
         currentImageIndex = (currentImageIndex + 1) % product.images.length;
@@ -1099,9 +1099,8 @@
         updateMainImage();
     }
     
-    // ZOOM SOLO AL HACER CLIC EN LA IMAGEN (no en las flechas)
+    // Zoom: solo al hacer clic en la imagen (no en las flechas)
     function openZoom(e) {
-        // Evitar que se abra el zoom si se hizo clic en las flechas
         if (e.target === prevBtn || e.target === nextBtn || prevBtn.contains(e.target) || nextBtn.contains(e.target)) {
             return;
         }
@@ -1113,7 +1112,7 @@
         zoomOverlay.classList.remove('active');
     }
     
-    // Agregar al carrito
+    // Agregar al carrito (compra directa)
     function addToCart() {
         cart = [{
             id: product.id,
