@@ -198,6 +198,52 @@
             font-size: 0.9rem;
         }
         
+        /* Sección de rastreo */
+        .tracking-section {
+            background: var(--color-gris-claro);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border: 1px solid var(--color-gris-medio);
+        }
+        
+        .tracking-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        
+        .tracking-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+        
+        .tracking-form .form-group {
+            flex: 3;
+            min-width: 200px;
+        }
+        
+        .tracking-form button {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .tracking-result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: var(--color-blanco);
+            border-radius: 15px;
+            border: 1px solid var(--color-gris-medio);
+            display: none;
+        }
+        
+        .tracking-result.show {
+            display: block;
+        }
+        
         .calculator-card {
             background: var(--color-gris-claro);
             border-radius: 20px;
@@ -246,7 +292,6 @@
             border-color: var(--color-negro);
         }
         
-        /* Campos de dimensiones en línea */
         .dimensions-group {
             display: flex;
             flex-wrap: wrap;
@@ -540,6 +585,8 @@
             .carrier-logos { gap: 0.8rem; }
             .carrier-logos span { font-size: 0.7rem; }
             .testimonial-section { padding: 1.5rem; }
+            .tracking-form { flex-direction: column; }
+            .tracking-form button { width: 100%; }
         }
         
         @media (max-width: 480px) {
@@ -578,50 +625,43 @@
             <span><i class="fas fa-rocket"></i> Flash Courier</span>
         </div>
 
+        <!-- SECCIÓN DE RASTREO DE GUÍAS (NUEVA) -->
+        <div class="tracking-section">
+            <div class="tracking-title">
+                <i class="fas fa-search"></i> Rastrear guía
+            </div>
+            <div class="tracking-form">
+                <div class="form-group">
+                    <label><i class="fas fa-barcode"></i> Número de guía</label>
+                    <input type="text" id="guiaRastreo" placeholder="Ej: QRP2P-1734567890-123">
+                </div>
+                <button id="btnRastrear" class="btn-primary">
+                    <i class="fas fa-search"></i> RASTREAR
+                </button>
+            </div>
+            <div id="trackingResult" class="tracking-result">
+                <div id="trackingInfo"></div>
+            </div>
+        </div>
+
         <!-- Calculadora de envíos -->
         <div class="calculator-card">
             <h2 style="text-align: center; margin-bottom: 1.5rem;">Cotizador de envíos en tiempo real</h2>
             
             <div class="form-row">
                 <div class="form-group">
-                    <label><i class="fas fa-map-marker-alt"></i> Ciudad origen</label>
-                    <select id="origenCiudad">
-                        <option value="Bogotá">Bogotá</option>
-                        <option value="Medellín">Medellín</option>
-                        <option value="Cali">Cali</option>
-                        <option value="Barranquilla">Barranquilla</option>
-                        <option value="Cartagena">Cartagena</option>
-                        <option value="Bucaramanga">Bucaramanga</option>
-                        <option value="Pereira">Pereira</option>
-                        <option value="Manizales">Manizales</option>
-                        <option value="Cúcuta">Cúcuta</option>
-                        <option value="Ibagué">Ibagué</option>
-                        <option value="Villavicencio">Villavicencio</option>
-                        <option value="Santa Marta">Santa Marta</option>
-                    </select>
+                    <label><i class="fas fa-map-marker-alt"></i> Ciudad origen *</label>
+                    <input type="text" id="origenCiudad" placeholder="Ej: Bogotá, Medellín, Cali" value="Bogotá">
                 </div>
                 <div class="form-group">
-                    <label><i class="fas fa-map-pin"></i> Ciudad destino</label>
-                    <select id="destinoCiudad">
-                        <option value="Medellín">Medellín</option>
-                        <option value="Bogotá">Bogotá</option>
-                        <option value="Cali">Cali</option>
-                        <option value="Barranquilla">Barranquilla</option>
-                        <option value="Cartagena">Cartagena</option>
-                        <option value="Bucaramanga">Bucaramanga</option>
-                        <option value="Pereira">Pereira</option>
-                        <option value="Manizales">Manizales</option>
-                        <option value="Cúcuta">Cúcuta</option>
-                        <option value="Ibagué">Ibagué</option>
-                        <option value="Villavicencio">Villavicencio</option>
-                        <option value="Santa Marta">Santa Marta</option>
-                    </select>
+                    <label><i class="fas fa-map-pin"></i> Ciudad destino *</label>
+                    <input type="text" id="destinoCiudad" placeholder="Ej: Bogotá, Medellín, Cali" value="Medellín">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label><i class="fas fa-weight-hanging"></i> Peso (kg)</label>
+                    <label><i class="fas fa-weight-hanging"></i> Peso (kg) *</label>
                     <input type="number" id="peso" step="0.1" min="0.1" value="1.0" placeholder="Ej: 1.5">
                 </div>
                 <div class="form-group">
@@ -650,14 +690,7 @@
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-box-open"></i> Tipo de contenido</label>
-                    <select id="tipoContenido">
-                        <option value="Documentos">Documentos</option>
-                        <option value="Mercancía general">Mercancía general</option>
-                        <option value="Electrónicos">Electrónicos</option>
-                        <option value="Ropa">Ropa</option>
-                        <option value="Alimentos">Alimentos</option>
-                        <option value="Medicamentos">Medicamentos</option>
-                    </select>
+                    <input type="text" id="tipoContenido" placeholder="Ej: Documentos, Mercancía, Electrónicos" value="Mercancía general">
                 </div>
             </div>
 
@@ -775,7 +808,7 @@
             </div>
             <div class="faq-item">
                 <h4>¿Puedo rastrear mis envíos?</h4>
-                <p>Sí. Cada guía generada tiene un número de seguimiento que puedes monitorear desde el panel de QRP2P.</p>
+                <p>Sí. Cada guía generada tiene un número de seguimiento que puedes monitorear desde el panel de QRP2P. También puedes usar el rastreador de esta página.</p>
             </div>
         </div>
     </div>
@@ -891,7 +924,7 @@
             const valorDeclarado = parseFloat(document.getElementById('valorDeclarado').value) || 0;
 
             if (!origen || !destino || isNaN(peso) || isNaN(largo) || isNaN(ancho) || isNaN(alto)) {
-                alert('Por favor completa todos los campos');
+                alert('Por favor completa todos los campos obligatorios (*)');
                 return;
             }
 
@@ -908,10 +941,74 @@
             }, 1500);
         }
 
+        // Función para rastrear guía
+        function rastrearGuia() {
+            const numeroGuia = document.getElementById('guiaRastreo').value.trim();
+            
+            if (!numeroGuia) {
+                alert('Por favor ingresa un número de guía');
+                return;
+            }
+            
+            // Simular estados de rastreo
+            const estados = [
+                "📦 En bodega de origen",
+                "🚚 En tránsito",
+                "📍 Llegó a centro de distribución regional",
+                "🛵 En ruta de entrega",
+                "✅ Entregado al destinatario"
+            ];
+            
+            const fechas = [
+                new Date().toLocaleDateString('es-CO'),
+                new Date(Date.now() - 86400000).toLocaleDateString('es-CO'),
+                new Date(Date.now() - 172800000).toLocaleDateString('es-CO'),
+                new Date(Date.now() - 259200000).toLocaleDateString('es-CO'),
+                new Date(Date.now() - 345600000).toLocaleDateString('es-CO')
+            ];
+            
+            // Determinar estado aleatorio (simulado)
+            const estadoIndex = Math.floor(Math.random() * 5);
+            
+            let html = `
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <i class="fas fa-barcode" style="font-size: 2rem;"></i>
+                    <h3>Guía: ${numeroGuia}</h3>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+            `;
+            
+            for (let i = 0; i <= estadoIndex; i++) {
+                html += `
+                    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.5rem; border-left: 3px solid ${i === estadoIndex ? '#000000' : '#cccccc'}; background: ${i === estadoIndex ? '#f5f5f5' : 'transparent'};">
+                        <i class="fas ${i === estadoIndex ? 'fa-circle' : 'fa-check-circle'}" style="color: ${i === estadoIndex ? '#000000' : '#888888'};"></i>
+                        <div>
+                            <strong>${estados[i]}</strong><br>
+                            <small>${fechas[i]}</small>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += `</div>`;
+            
+            document.getElementById('trackingInfo').innerHTML = html;
+            document.getElementById('trackingResult').classList.add('show');
+        }
+
         document.getElementById('btnCotizar').addEventListener('click', function() {
             selectedCarrier = null;
             document.getElementById('shippingForm').classList.remove('show');
             cotizarEnvio();
+        });
+
+        document.getElementById('btnRastrear').addEventListener('click', rastrearGuia);
+        
+        // Permitir Enter en el campo de guía
+        document.getElementById('guiaRastreo').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                rastrearGuia();
+            }
         });
 
         document.getElementById('btnGenerarGuia').addEventListener('click', function() {
@@ -968,7 +1065,15 @@ Instrucciones: ${instrucciones || 'Ninguna'}
             const urlWhatsApp = `https://wa.me/${remitenteTelefono}?text=${mensajeCodificado}`;
             
             window.open(urlWhatsApp, '_blank');
-            alert(`✅ ¡Guía generada exitosamente!\n\nNúmero de guía: ${numeroGuia}\nTransportadora: ${selectedCarrier.nombre}\n\nSe ha enviado la información a tu WhatsApp.`);
+            alert(`✅ ¡Guía generada exitosamente!\n\nNúmero de guía: ${numeroGuia}\nTransportadora: ${selectedCarrier.nombre}\n\nSe ha enviado la información a tu WhatsApp.\n\nTambién puedes rastrear tu guía usando el campo de búsqueda arriba.`);
+            
+            // Limpiar campos del formulario de guía
+            document.getElementById('remitenteNombre').value = '';
+            document.getElementById('remitenteTelefono').value = '';
+            document.getElementById('destinatarioNombre').value = '';
+            document.getElementById('destinatarioTelefono').value = '';
+            document.getElementById('direccionEntrega').value = '';
+            document.getElementById('instrucciones').value = '';
         });
     </script>
 </body>
