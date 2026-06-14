@@ -3,341 +3,131 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
-  <title>QRP2P CHILE S.A. | INMOBILIARIA | REAL ESTATE</title>
-  <meta name="description" content="Encuentra los mejores inmuebles verificados en Chile. Venta y arriendo de apartamentos, casas y oficinas. ¡Agenda tu visita!">
-  <meta name="keywords" content="REAL ESTATE CHILE">
-  <meta name="author" content="QRP2P Inmobiliaria">
+  <title>QRP2P CHILE | NEGOCIOS VERIFICADOS | MARKETPLACE P2P | 0% COMISIONES</title>
+  <meta name="description" content="QRP2P Chile. Marketplace directo entre comprador y vendedor verificado en todo el país. Encuentra negocios, propiedades y servicios en Chile. 0% comisiones de por vida.">
+  <meta name="keywords" content="QRP2P, Chile, marketplace, comprador, vendedor, verificado, 0% comisiones, negocios, propiedades, Santiago, Valparaíso, Concepción">
+  <meta name="author" content="QRP2P">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#000000">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22QRP2P%20Real%20Estate%20Chile%22,%22short_name%22:%22QRP2P%20Chile%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22theme_color%22:%22%23000000%22,%22background_color%22:%22%23ffffff%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/1036/1036221.png%22,%22sizes%22:%22192x192%22,%22type%22:%22image/png%22}]}">
-  <meta property="og:title" content="QRP2P | REAL ESTATE CHILE">
-  <meta property="og:description" content="CHILE REAL ESTATE PLATFORM">
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    body {
-      font-family: 'Libre Baskerville', serif;
-      background-color: #ffffff;
-      color: #111111;
-      line-height: 1.5;
-      font-size: 16px;
-      overflow: hidden;
-      position: fixed;
-      width: 100%;
-      height: 100%;
-    }
-    #contenedor-mapa { 
-      width: 100%;
-      height: 100vh;
-      display: flex; 
-      flex-direction: column; 
-      position: relative;
-      overflow: hidden;
-    }
-    #barra-superior { 
-      display: flex; 
-      gap: 0.8rem; 
-      padding: 0.8rem; 
-      background: #ffffff;
-      width: 100%;
-      z-index: 1000;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      border-bottom: 1px solid #eaeaea;
-      flex-shrink: 0;
-    }
-    .contenedor-buscador {
-      position: relative;
-      flex: 1;
-      max-width: 400px;
-    }
-    #buscador { 
-      width: 100%;
-      padding: 0.6rem 1.2rem; 
-      border: 1.5px solid #e0e0e0; 
-      border-radius: 50px; 
-      font-size: 16px;
-      font-family: 'Libre Baskerville', serif;
-      transition: all 0.3s ease;
-      background: #ffffff;
-      user-select: text;
-    }
-    #buscador:focus {
-      outline: none;
-      border-color: #000000;
-    }
-    .btn-mapa { 
-      background: #000000;
-      color: #ffffff;
-      padding: 0.6rem 1.2rem; 
-      border-radius: 40px; 
-      text-decoration: none;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      white-space: nowrap;
-      display: flex;
-      gap: 5px;
-      font-family: 'Libre Baskerville', serif;
-      transition: all 0.2s ease;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Libre Baskerville', serif; background-color: #ffffff; color: #111111; line-height: 1.5; font-size: 16px; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    #contenedor-mapa { width: 100%; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #ffffff; width: 100%; z-index: 1000; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #eaeaea; flex-shrink: 0; }
+    .contenedor-buscador { position: relative; flex: 1; max-width: 400px; }
+    #buscador { width: 100%; padding: 0.6rem 1.2rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 16px; font-family: 'Libre Baskerville', serif; transition: all 0.3s ease; background: #ffffff; user-select: text; }
+    #buscador:focus { outline: none; border-color: #000000; }
+    .btn-mapa { background: #000000; color: #ffffff; padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; display: flex; gap: 5px; font-family: 'Libre Baskerville', serif; transition: all 0.2s ease; }
     .btn-mapa:hover { background: #333333; }
     .btn-centrar { background-color: #000000; }
     .btn-registro { background-color: #25D366; color: #000000; }
     .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
     .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
-    .map-type-btn {
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 40px;
-      cursor: pointer;
-      background: transparent;
-      font-family: 'Libre Baskerville', serif;
-      font-weight: 600;
-    }
+    .map-type-btn { padding: 0.5rem 1rem; border: none; border-radius: 40px; cursor: pointer; background: transparent; font-family: 'Libre Baskerville', serif; font-weight: 600; }
     .map-type-btn.active { background: #000000; color: white; }
-    .lang-selector {
-      display: flex;
-      gap: 0.3rem;
-      margin-left: 0.5rem;
-    }
-    .lang-btn {
-      background: transparent;
-      border: 1px solid #ccc;
-      border-radius: 20px;
-      padding: 0.4rem 0.8rem;
-      cursor: pointer;
-      font-family: 'Libre Baskerville', serif;
-      font-weight: 600;
-      font-size: 0.8rem;
-    }
-    .lang-btn.active {
-      background: #000000;
-      color: white;
-      border-color: #000000;
-    }
+    .lang-selector { display: flex; gap: 0.3rem; margin-left: 0.5rem; }
+    .lang-btn { background: transparent; border: 1px solid #ccc; border-radius: 20px; padding: 0.4rem 0.8rem; cursor: pointer; font-family: 'Libre Baskerville', serif; font-weight: 600; font-size: 0.8rem; }
+    .lang-btn.active { background: #000000; color: white; border-color: #000000; }
     #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
     .leaflet-control-zoom { display: none !important; }
-    .sugerencias-busqueda {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      border-radius: 0 0 20px 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      z-index: 1000;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
-    }
-    .sugerencia-item {
-      padding: 12px 15px;
-      cursor: pointer;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .sugerencias-busqueda { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; display: none; }
+    .sugerencia-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
     .sugerencia-item:hover { background-color: #f5f5f5; }
     .sugerencia-texto { flex: 1; }
-    .sugerencia-boton {
-      margin-left: 10px;
-      padding: 6px 12px;
-      background-color: #000000;
-      color: white;
-      border: none;
-      border-radius: 20px;
-      cursor: pointer;
-    }
-    .cargando {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(0,0,0,.3);
-      border-radius: 50%;
-      border-top-color: #000;
-      animation: spin 1s ease-in-out infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .sugerencia-boton { margin-left: 10px; padding: 6px 12px; background-color: #000000; color: white; border: none; border-radius: 20px; cursor: pointer; }
     .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-    .inmueble-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
-    .popup-video-container { width: 100%; height: 200px; background-color: #000; position: relative; }
-    .popup-video-container iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; }
     
-    .popup-product-card {
+    .popup-business-card {
       background: #ffffff;
-      border-radius: 20px;
+      border-radius: 24px;
       overflow: hidden;
-      width: 360px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 340px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
-    .popup-product-image-container { 
-      position: relative; 
-      width: 100%; 
-      height: 200px; 
-      overflow: hidden; 
-      background-color: #f0f0f0; 
-      cursor: pointer;
-    }
-    .popup-product-image { 
-      width: 100%; 
-      height: 100%; 
-      object-fit: cover; 
-      transition: transform 0.2s;
-    }
-    .popup-image-nav { 
-      position: absolute; 
-      top: 50%; 
-      width: 100%; 
-      display: flex; 
-      justify-content: space-between; 
-      padding: 0 8px; 
-      transform: translateY(-50%); 
-      z-index: 10; 
-    }
-    .popup-nav-btn { 
-      background-color: rgba(0, 0, 0, 0.6); 
-      color: white; 
-      border: none; 
-      width: 30px; 
-      height: 30px; 
-      border-radius: 50%; 
-      cursor: pointer; 
-      font-size: 14px; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-    }
-    .popup-nav-btn:hover { background-color: rgba(0, 0, 0, 0.8); }
-    .popup-image-counter { 
-      position: absolute; 
-      bottom: 8px; 
-      right: 8px; 
-      background-color: rgba(0, 0, 0, 0.65); 
-      color: white; 
-      padding: 2px 8px; 
-      border-radius: 20px; 
-      font-size: 0.7rem; 
-      z-index: 10; 
-    }
-    .popup-product-info { padding: 0.8rem; }
-    .popup-product-title { font-size: 0.9rem; margin-bottom: 0.4rem; font-weight: 700; line-height: 1.3; cursor: pointer; color: #000; text-decoration: none; }
-    .popup-product-title:hover { text-decoration: underline; }
-    .precio-line { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; }
-    .popup-product-price { font-size: 1.1rem; font-weight: 800; color: #000000; }
-    .enlaces-secundarios { display: flex; gap: 0.8rem; font-size: 0.75rem; }
-    .enlace-info { color: #000000; text-decoration: none; font-weight: 600; cursor: pointer; display: flex; gap: 4px; }
-    .enlace-mapa { color: #000000; text-decoration: none; font-size: 1rem; cursor: pointer; }
-    .popup-product-details { margin-bottom: 0.6rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .popup-product-details span { background-color: #f5f5f5; padding: 0.2rem 0.6rem; border-radius: 30px; font-size: 0.7rem; }
-    .popup-product-actions { display: flex; gap: 0.5rem; margin-top: 0.3rem; }
-    .popup-add-to-cart, .popup-buy-now { padding: 0.5rem; border: none; border-radius: 10px; cursor: pointer; font-family: 'Libre Baskerville', serif; font-size: 0.7rem; font-weight: 600; flex: 1; display: flex; justify-content: center; align-items: center; gap: 0.3rem; transition: all 0.2s ease; }
-    .popup-add-to-cart { background-color: #000000; color: #ffffff; }
-    .popup-buy-now { background-color: #f0f0f0; color: #000000; border: 1px solid #ddd; }
-    .gm-style .gm-style-iw-c { border-radius: 20px !important; padding: 0 !important; max-width: 380px !important; }
-    .gm-style .gm-style-iw-d { overflow: auto !important; max-height: none !important; padding: 0 !important; }
-    .gm-style-iw-tc { display: none; }
-    
-    .lightbox-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.95);
-      z-index: 10000;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-    .lightbox-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .lightbox-img {
-      max-width: 90vw;
-      max-height: 85vh;
-      object-fit: contain;
-      border-radius: 8px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-    .lightbox-close {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      font-size: 40px;
+    .popup-business-header {
+      background: #000000;
       color: white;
-      cursor: pointer;
-      background: none;
-      border: none;
-      z-index: 10001;
-      font-weight: bold;
-    }
-    .lightbox-nav {
-      position: absolute;
-      top: 50%;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 20px;
-      transform: translateY(-50%);
-      z-index: 10001;
-    }
-    .lightbox-nav-btn {
-      background-color: rgba(0,0,0,0.6);
-      color: white;
-      font-size: 30px;
-      border: none;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-    }
-    .lightbox-nav-btn:hover {
-      background-color: rgba(0,0,0,0.9);
-    }
-    .lightbox-counter {
-      position: absolute;
-      bottom: 20px;
-      left: 0;
-      right: 0;
+      padding: 1rem;
       text-align: center;
-      color: white;
-      background: rgba(0,0,0,0.6);
-      padding: 5px 12px;
-      width: fit-content;
-      margin: 0 auto;
-      border-radius: 30px;
-      font-size: 14px;
-      font-family: monospace;
-      z-index: 10001;
     }
-
-    .modal-overlay {
+    .popup-business-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .popup-business-category {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+    }
+    .popup-business-info {
+      padding: 1rem;
+    }
+    .popup-business-description {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .popup-business-address {
+      font-size: 0.7rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .popup-business-address i {
+      margin-top: 0.2rem;
+      color: #000;
+    }
+    .popup-business-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 0.8rem;
+    }
+    .contact-link {
+      font-size: 0.7rem;
+      background: #f5f5f5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .contact-link i { font-size: 0.7rem; }
+    .btn-view-store {
+      display: block;
+      background: #000000;
+      color: white;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .btn-view-store:hover { background: #333333; transform: scale(0.98); }
+    
+    .servicio-modal {
       display: none;
       position: fixed;
       top: 0;
@@ -345,171 +135,82 @@
       width: 100%;
       height: 100%;
       background-color: rgba(0, 0, 0, 0.85);
-      z-index: 2000;
+      z-index: 2500;
       justify-content: center;
       align-items: center;
-      overflow-y: auto;
-      padding: 1rem;
     }
-    .modal-container {
-      max-width: 580px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
+    .servicio-container {
+      background: white;
       border-radius: 28px;
-      background: white;
-      box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
     }
-    .close-modal {
-      position: sticky;
-      top: 0;
-      right: 0;
+    .servicios-header {
       display: flex;
-      justify-content: flex-end;
-      padding: 0.8rem 1rem;
-      background: white;
-      border-bottom: 1px solid #eee;
-      z-index: 10;
-    }
-    .close-modal button {
-      background: #f0f0f0;
-      border: none;
-      font-size: 1.4rem;
-      cursor: pointer;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-    }
-    .form-panel {
-      padding: 1.2rem 1.5rem;
-    }
-    .step-title {
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    label {
-      display: block;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      margin-bottom: 0.3rem;
-      color: #333;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 0.7rem 0.9rem;
-      font-size: 15px !important;
-      border: 1.5px solid #e0e0e0;
-      border-radius: 16px;
-      font-family: inherit;
-      user-select: text;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #000000;
-    }
-    .inline-checkbox {
-      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 0.6rem;
-      margin: 0.8rem 0;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
     }
-    .inline-checkbox input { width: 1rem; height: 1rem; margin: 0; }
-    .inline-checkbox label { margin: 0; text-transform: none; font-size: 0.8rem; }
-    .terms-link { color: #000; text-decoration: underline; cursor: pointer; font-weight: 600; }
-    .calendar-card {
-      border: 1.5px solid #eaeaea;
-      border-radius: 20px;
-      padding: 0.8rem;
-      margin: 1rem 0;
-    }
-    .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
-    .month-year { font-weight: 700; font-size: 1rem; }
-    .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: 600; font-size: 0.65rem; margin-bottom: 0.5rem; color: #888; }
-    .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
-    .day-cell { padding: 0.5rem 0; font-size: 0.8rem; border-radius: 50px; cursor: pointer; background: #fff; }
-    .day-cell.selected { background: #000000; color: white; }
-    .day-cell.available:hover { background: #f0f0f0; }
-    .day-cell.other-month { opacity: 0.3; cursor: default; }
-    .day-cell.disabled { opacity: 0.3; cursor: not-allowed; background: #f5f5f5; }
-    .horarios-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; max-height: 140px; overflow-y: auto; padding: 0.5rem; background: #f9f9f9; border-radius: 16px; }
-    .horario-badge { display: inline-block; padding: 0.4rem 0.9rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 0.75rem; cursor: pointer; background: white; font-weight: 500; }
-    .horario-badge.selected { background: #000; color: white; border-color: #000; }
-    .btn-submit { width: 100%; padding: 0.8rem; font-size: 0.9rem; font-weight: 700; background: #000000; color: white; border: none; border-radius: 50px; cursor: pointer; margin-top: 1rem; }
-    .section { background: #ffffff; border-radius: 20px; padding: 1rem; margin-bottom: 1rem; border: 1px solid #eaeaea; }
-    .section-title { font-size: 1rem; font-weight: 700; border-left: 4px solid #000000; padding-left: 0.8rem; margin-bottom: 1rem; }
-    .property-info { background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%); border-radius: 18px; padding: 0.8rem 1rem; margin-bottom: 1rem; }
-    .property-info h4 { font-size: 1rem; margin-bottom: 0.3rem; }
-    .terms-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 3000; justify-content: center; align-items: center; padding: 1rem; }
-    .terms-modal-content { background: white; max-width: 450px; width: 100%; border-radius: 28px; padding: 1.5rem; max-height: 70vh; overflow-y: auto; }
-    .servicios-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 2500; justify-content: center; align-items: center; }
-    .servicios-container { background: white; border-radius: 28px; width: 90%; max-width: 480px; max-height: 80vh; overflow-y: auto; padding: 1.2rem; }
-    .servicios-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eaeaea; padding-bottom: 0.6rem; margin-bottom: 1rem; }
-    .servicios-botones { display: flex; flex-direction: column; gap: 0.7rem; }
-    .servicio-btn { background: #000000; color: white; border: none; padding: 0.8rem; border-radius: 50px; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-align: center; font-family: 'Libre Baskerville', serif; }
-    .info-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); z-index: 2600; justify-content: center; align-items: center; }
-    .info-container { background: white; border-radius: 28px; width: 90%; max-width: 500px; max-height: 70vh; overflow-y: auto; padding: 1.5rem; }
-    .fixed-price-field {
-      background-color: #f9f9f9;
-      border: 1px solid #e0e0e0;
-      border-radius: 16px;
-      padding: 0.7rem 0.9rem;
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
       font-weight: 700;
-      color: #111;
-      font-size: 1rem;
     }
-    .radio-group,
-    .financing-option {
+    .servicios-botones {
       display: flex;
       flex-direction: column;
       gap: 0.8rem;
-      margin: 0.8rem 0 1rem;
     }
-    .radio-group label,
-    .financing-option label {
+    .servicio-item-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.2s;
       display: flex;
       align-items: center;
-      gap: 0.7rem;
-      font-weight: normal;
-      text-transform: none;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn i {
+      font-size: 1.1rem;
+    }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
+    
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
       font-size: 0.85rem;
-      cursor: pointer;
-      margin-bottom: 0;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
     }
-    .radio-group input[type="radio"],
-    .financing-option input[type="radio"] {
-      width: 1.1rem;
-      height: 1.1rem;
-      margin: 0;
-      flex-shrink: 0;
-      accent-color: #000000;
-    }
-    .inline-checkbox input[type="checkbox"] {
-      width: 1.1rem;
-      height: 1.1rem;
-      margin: 0;
-      flex-shrink: 0;
-      accent-color: #000000;
-    }
-    .row-2cols {
-      display: flex;
-      gap: 1rem;
-    }
-    .row-2cols .form-group {
-      flex: 1;
-    }
-    @media (max-width: 680px) {
-      .modal-container { max-width: 95%; }
-      .form-panel { padding: 1rem; }
-      .popup-product-card { width: 300px; }
-      .popup-product-image-container { height: 170px; }
-      .btn-mapa { padding: 0.5rem 0.8rem; font-size: 0.8rem; }
-      .row-2cols { flex-direction: column; gap: 0; }
-    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
   </style>
 </head>
 <body>
@@ -517,11 +218,11 @@
     <div id="barra-superior">
       <div class="botones-izquierda">
         <div class="contenedor-buscador">
-          <input type="search" id="buscador" placeholder="Buscar inmuebles en Chile..." enterkeyhint="search">
+          <input type="search" id="buscador" placeholder="Buscar negocios en Chile..." enterkeyhint="search">
           <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
         </div>
         <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">CENTRAR</span></button>
-        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-key"></i><span id="servicios-text">SERVICIOS</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">SERVICIOS QRP2P</span></button>
       </div>
       <div class="botones-derecha">
         <button class="map-type-btn active" id="map-btn"><span id="map-text">Mapa</span></button>
@@ -534,186 +235,365 @@
     </div>
     <div id="mapa"></div>
   </div>
-  <div id="visitaModal" class="modal-overlay"><div class="modal-container"><div class="close-modal"><button class="close-visita-modal">&times;</button></div><div id="visitaFormContainer" class="form-panel"></div></div></div>
-  <div id="ofertaModal" class="modal-overlay"><div class="modal-container"><div class="close-modal"><button class="close-oferta-modal">&times;</button></div><div id="ofertaFormContainer" class="form-panel"></div></div></div>
-  <div id="termsModal" class="terms-modal"><div class="terms-modal-content"><h3 id="terms-title">Términos y Condiciones</h3><p id="terms-text">Al agendar aceptas recibir información del inmueble.</p><button class="close-terms" id="closeTermsBtn">Aceptar</button></div></div>
-  <div id="serviciosModal" class="servicios-modal"><div class="servicios-container"><div class="servicios-header"><h2 id="servicios-modal-title">SERVICIOS</h2><button class="close-servicios" id="closeServiciosBtn">&times;</button></div><div id="paisesContainer" class="servicios-botones"></div><div id="serviciosPorPais" style="display:none;"><div id="serviciosLista" class="servicios-botones"></div><button id="volverPaises" class="servicio-btn" style="background:#333;">← Volver</button></div></div></div>
-  <div id="infoModal" class="info-modal"><div class="info-container"><div class="servicios-header"><h2>Información del inmueble</h2><button id="closeInfoModalBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button></div><div id="infoContent"></div></div></div>
-  
-  <div id="lightbox" class="lightbox-overlay">
-    <button class="lightbox-close">&times;</button>
-    <div class="lightbox-container">
-      <img class="lightbox-img" src="" alt="Vista ampliada">
+
+  <!-- Modal de Servicios QRP2P Chile -->
+  <div id="servicioModal" class="servicio-modal">
+    <div class="servicio-container">
+      <div class="servicios-header">
+        <h2 id="servicio-modal-title">SERVICIOS QRP2P <span class="zero-badge">0% COMISIONES</span></h2>
+        <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sub-header" id="subHeaderText">CHILE</div>
+      <div id="listaServicios" class="servicios-botones"></div>
     </div>
-    <div class="lightbox-nav">
-      <button class="lightbox-nav-btn lightbox-prev"><i class="fas fa-chevron-left"></i></button>
-      <button class="lightbox-nav-btn lightbox-next"><i class="fas fa-chevron-right"></i></button>
-    </div>
-    <div class="lightbox-counter"></div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
   <script>
-    const WHATSAPP_NUMBER = "573041146297";
     let currentLang = 'es';
+    let mapa, userMarker, marcadoresOriginales = [], currentLayer;
     
-    const paisesServicios = {
-      "Chile": { agentes: "/agentes-cl", rentas: "/arriendos-cl", ventas: "/ventas-cl", hipotecas: "/hipotecas-cl", construccion: "/construccion-cl", credito: "/credito-cl", inversion: "/inversion-cl", avaluos: "/avaluos-cl" }
-    };
-    
-    function getCurrencyForCoordinates(lat, lng) {
-      if (lat >= -56.0 && lat <= -17.0 && lng >= -76.0 && lng <= -66.0) return "CLP";
-      return "CLP";
-    }
-    
-    function formatPriceWithCurrency(price, currency) {
-      if(price === 0) return "Consultar";
-      const formatter = new Intl.NumberFormat(currentLang === 'es' ? 'es-CL' : 'en-US', { style: 'currency', currency: currency, minimumFractionDigits: 0, maximumFractionDigits: 0 });
-      return formatter.format(price);
-    }
-    
-    const properties = [
-      { id: "SCL01", price: 250000000, priceRent: 0, category: "venta", m2: 85, cuartos: 3, baños: 2, latlng: [-33.4489, -70.6693], currency: "CLP", title_es: "APARTAMENTO DE LUJO EN VENTA EN PROVIDENCIA, SANTIAGO", title_en: "LUXURY APARTMENT FOR SALE IN PROVIDENCIA, SANTIAGO", description_es: "ID: SCL01 | DIRECCIÓN: Providencia, Santiago", description_en: "ID: SCL01 | ADDRESS: Providencia, Santiago", media: ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400", "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400", "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400", {type:"video", videoId:"dQw4w9WgXcQ"}], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=-33.4489,-70.6693", detailUrl: "https://qrp2p.com/cl-scl01" },
-      { id: "SCL02", price: 180000000, priceRent: 0, category: "venta", m2: 70, cuartos: 2, baños: 2, latlng: [-33.4378, -70.6505], currency: "CLP", title_es: "APARTAMENTO EN VENTA EN LAS CONDES, SANTIAGO", title_en: "APARTMENT FOR SALE IN LAS CONDES, SANTIAGO", description_es: "ID: SCL02 | DIRECCIÓN: Las Condes, Santiago", description_en: "ID: SCL02 | ADDRESS: Las Condes, Santiago", media: ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400", "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400", "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=-33.4378,-70.6505", detailUrl: "https://qrp2p.com/cl-scl02" },
-      { id: "VAL01", price: 120000000, priceRent: 0, category: "venta", m2: 90, cuartos: 3, baños: 2, latlng: [-33.0472, -71.6127], currency: "CLP", title_es: "CASA EN VENTA EN VIÑA DEL MAR, VALPARAÍSO", title_en: "HOUSE FOR SALE IN VIÑA DEL MAR, VALPARAÍSO", description_es: "ID: VAL01 | DIRECCIÓN: Viña del Mar, Valparaíso", description_en: "ID: VAL01 | ADDRESS: Viña del Mar, Valparaíso", media: ["https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=400", "https://images.unsplash.com/photo-1595364394061-1a46e70d67e9?w=400", "https://images.unsplash.com/photo-1575517111478-7f6afd0973db?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=-33.0472,-71.6127", detailUrl: "https://qrp2p.com/cl-val01" },
-      { id: "CON01", price: 95000000, priceRent: 0, category: "venta", m2: 75, cuartos: 2, baños: 2, latlng: [-36.8270, -73.0503], currency: "CLP", title_es: "APARTAMENTO EN VENTA EN CONCEPCIÓN", title_en: "APARTMENT FOR SALE IN CONCEPCIÓN", description_es: "ID: CON01 | DIRECCIÓN: Concepción centro", description_en: "ID: CON01 | ADDRESS: Downtown Concepción", media: ["https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400", "https://images.unsplash.com/photo-1514924013411-2837f6974aed?w=400", "https://images.unsplash.com/photo-1494522855154-9297ac14b55f?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=-36.8270,-73.0503", detailUrl: "https://qrp2p.com/cl-con01" },
-      { id: "ANT01", price: 210000000, priceRent: 0, category: "venta", m2: 110, cuartos: 3, baños: 3, latlng: [-23.6509, -70.3965], currency: "CLP", title_es: "APARTAMENTO CON VISTAS AL MAR EN VENTA EN ANTOFAGASTA", title_en: "OCEAN VIEW APARTMENT FOR SALE IN ANTOFAGASTA", description_es: "ID: ANT01 | DIRECCIÓN: Antofagasta, Costa", description_en: "ID: ANT01 | ADDRESS: Antofagasta Coast", media: ["https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400", "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=-23.6509,-70.3965", detailUrl: "https://qrp2p.com/cl-ant01" },
-      { id: "LA01", price: 85000000, priceRent: 0, category: "venta", m2: 65, cuartos: 2, baños: 1, latlng: [-36.6201, -72.1313], currency: "CLP", title_es: "APARTAMENTO EN VENTA EN CHILLÁN", title_en: "APARTMENT FOR SALE IN CHILLÁN", description_es: "ID: LA01 | DIRECCIÓN: Chillán centro", description_en: "ID: LA01 | ADDRESS: Downtown Chillán", media: ["https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=400", "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=-36.6201,-72.1313", detailUrl: "https://qrp2p.com/cl-la01" },
-      { id: "TEM01", price: 110000000, priceRent: 0, category: "venta", m2: 80, cuartos: 3, baños: 2, latlng: [-38.7359, -72.5904], currency: "CLP", title_es: "CASA EN VENTA EN TEMUCO", title_en: "HOUSE FOR SALE IN TEMUCO", description_es: "ID: TEM01 | DIRECCIÓN: Temuco centro", description_en: "ID: TEM01 | ADDRESS: Downtown Temuco", media: ["https://images.unsplash.com/photo-1598387993441-a364fae11f7c?w=400", "https://images.unsplash.com/photo-1615880484746-a134be9a6ecf?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=-38.7359,-72.5904", detailUrl: "https://qrp2p.com/cl-tem01" },
-      { id: "PTO01", price: 155000000, priceRent: 0, category: "venta", m2: 95, cuartos: 3, baños: 2, latlng: [-41.4698, -72.9417], currency: "CLP", title_es: "APARTAMENTO EN VENTA EN PUERTO MONTT", title_en: "APARTMENT FOR SALE IN PUERTO MONTT", description_es: "ID: PTO01 | DIRECCIÓN: Puerto Montt centro", description_en: "ID: PTO01 | ADDRESS: Downtown Puerto Montt", media: ["https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400", "https://images.unsplash.com/photo-1484688493527-670f98f9b195?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=-41.4698,-72.9417", detailUrl: "https://qrp2p.com/cl-pto01" },
-      { id: "RAN01", price: 72000000, priceRent: 0, category: "venta", m2: 60, cuartos: 2, baños: 1, latlng: [-34.1704, -70.7448], currency: "CLP", title_es: "APARTAMENTO ECONÓMICO EN VENTA EN RANCAGUA", title_en: "AFFORDABLE APARTMENT FOR SALE IN RANCAGUA", description_es: "ID: RAN01 | DIRECCIÓN: Rancahua centro", description_en: "ID: RAN01 | ADDRESS: Downtown Rancagua", media: ["https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=400", "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=-34.1704,-70.7448", detailUrl: "https://qrp2p.com/cl-ran01" },
-      { id: "COQ01", price: 135000000, priceRent: 0, category: "venta", m2: 80, cuartos: 2, baños: 2, latlng: [-29.9533, -71.3394], currency: "CLP", title_es: "APARTAMENTO CERCA DE LA PLAYA EN VENTA EN LA SERENA", title_en: "APARTMENT NEAR THE BEACH FOR SALE IN LA SERENA", description_es: "ID: COQ01 | DIRECCIÓN: La Serena centro", description_en: "ID: COQ01 | ADDRESS: Downtown La Serena", media: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400", "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400"], infoUrl: "https://wa.me/573041146297", mapsUrl: "https://maps.google.com/?q=-29.9533,-71.3394", detailUrl: "https://qrp2p.com/cl-coq01" }
+    // SERVICIOS QRP2P CHILE (7 servicios)
+    const serviciosQRP2P = [
+      { 
+        id: "plan-anual", 
+        name_es: "REGISTRAR PLAN ANUAL", 
+        name_en: "REGISTER ANNUAL PLAN", 
+        icon: "fa-calendar-alt",
+        url: "https://qrp2p.com/plan-anual-chile"
+      },
+      { 
+        id: "administracion", 
+        name_es: "ADMINISTRACIÓN MENSUAL", 
+        name_en: "MONTHLY ADMINISTRATION", 
+        icon: "fa-building",
+        url: "https://qrp2p.com/administracion-chile"
+      },
+      { 
+        id: "marketing", 
+        name_es: "MARKETING MENSUAL", 
+        name_en: "MONTHLY MARKETING", 
+        icon: "fa-chart-line",
+        url: "https://qrp2p.com/marketing-chile"
+      },
+      { 
+        id: "logistica", 
+        name_es: "LOGÍSTICA", 
+        name_en: "LOGISTICS", 
+        icon: "fa-truck",
+        url: "https://qrp2p.com/logistica-chile"
+      },
+      { 
+        id: "finanzas", 
+        name_es: "FINANZAS", 
+        name_en: "FINANCE", 
+        icon: "fa-coins",
+        url: "https://qrp2p.com/finanzas-chile"
+      },
+      { 
+        id: "contabilidad", 
+        name_es: "CONTABILIDAD MENSUAL", 
+        name_en: "MONTHLY ACCOUNTING", 
+        icon: "fa-calculator",
+        url: "https://qrp2p.com/contabilidad-chile"
+      },
+      { 
+        id: "academia", 
+        name_es: "ACADEMIA QRP2P", 
+        name_en: "QRP2P ACADEMY", 
+        icon: "fa-graduation-cap",
+        url: "https://qrp2p.com/academia"
+      }
     ];
     
-    properties.forEach(p => { if(!p.currency) p.currency = getCurrencyForCoordinates(p.latlng[0], p.latlng[1]); });
+    // NEGOCIOS VERIFICADOS - CHILE (12 negocios en principales ciudades)
+    const verifiedBusinesses = [
+      { 
+        id: "STG01", 
+        name_es: "DISTRIBUIDORA SANTIAGO CENTRO", 
+        name_en: "SANTIAGO CENTER DISTRIBUTOR", 
+        category_es: "Distribuidora Mayorista", 
+        category_en: "Wholesale Distributor", 
+        latlng: [-33.4489, -70.6693],
+        address_es: "Av. Libertador Bernardo O'Higgins 1234, Santiago Centro", 
+        address_en: "Av. Libertador Bernardo O'Higgins 1234, Santiago Centro", 
+        description_es: "Distribución de alimentos, bebidas y productos para el hogar en toda la Región Metropolitana.", 
+        description_en: "Distribution of food, beverages and household products throughout the Metropolitan Region.", 
+        phone: "+56912345678", 
+        email: "ventas@distribuidorasantiago.cl", 
+        website: "https://distribuidorasantiago.cl", 
+        whatsapp: "56912345678" 
+      },
+      { 
+        id: "STG02", 
+        name_es: "INMOBILIARIA CHILE P2P", 
+        name_en: "CHILE P2P REAL ESTATE", 
+        category_es: "Bienes Raíces", 
+        category_en: "Real Estate", 
+        latlng: [-33.4372, -70.6506],
+        address_es: "Av. Providencia 1500, Providencia, Santiago", 
+        address_en: "Av. Providencia 1500, Providencia, Santiago", 
+        description_es: "Compra y venta de propiedades directo entre propietarios en Chile. 0% comisiones. Verificación garantizada.", 
+        description_en: "Buy and sell properties directly between owners in Chile. 0% commission. Verified guarantee.", 
+        phone: "+56912345679", 
+        email: "contacto@inmobiliariachile.cl", 
+        website: "https://qrp2p.com/cl", 
+        whatsapp: "56912345679" 
+      },
+      { 
+        id: "VAL01", 
+        name_es: "DISTRIBUIDORA VALPARAÍSO", 
+        name_en: "VALPARAÍSO DISTRIBUTOR", 
+        category_es: "Distribuidora Mayorista", 
+        category_en: "Wholesale Distributor", 
+        latlng: [-33.0472, -71.6127],
+        address_es: "Av. Pedro Montt 2345, Valparaíso", 
+        address_en: "Av. Pedro Montt 2345, Valparaíso", 
+        description_es: "Distribución de productos del mar, vinos y especialidades de la V Región.", 
+        description_en: "Distribution of seafood, wines and specialties from the V Region.", 
+        phone: "+56912345680", 
+        email: "ventas@distribuidoravalpo.cl", 
+        website: "https://distribuidoravalpo.cl", 
+        whatsapp: "56912345680" 
+      },
+      { 
+        id: "CON01", 
+        name_es: "MEGADISTRIBUIDORA CONCEPCIÓN", 
+        name_en: "CONCEPCIÓN MEGADISTRIBUTOR", 
+        category_es: "Distribuidora Mayorista", 
+        category_en: "Wholesale Distributor", 
+        latlng: [-36.8270, -73.0503],
+        address_es: "Av. Paicaví 5678, Concepción", 
+        address_en: "Av. Paicaví 5678, Concepción", 
+        description_es: "Distribución de abarrotes, víveres y productos de primera necesidad en la Región del Biobío.", 
+        description_en: "Distribution of groceries, food and essential products in the Biobío Region.", 
+        phone: "+56912345681", 
+        email: "ventas@distribuidoraconce.cl", 
+        website: "https://distribuidoraconce.cl", 
+        whatsapp: "56912345681" 
+      },
+      { 
+        id: "VIÑ01", 
+        name_es: "AGRÍCOLA VIÑA DEL MAR", 
+        name_en: "VIÑA DEL MAR AGRICULTURAL", 
+        category_es: "Agroindustria", 
+        category_en: "Agribusiness", 
+        latlng: [-33.0245, -71.5518],
+        address_es: "Av. Libertad 890, Viña del Mar", 
+        address_en: "Av. Libertad 890, Viña del Mar", 
+        description_es: "Distribución de insumos agrícolas, fertilizantes y semillas para la zona central.", 
+        description_en: "Distribution of agricultural inputs, fertilizers and seeds for the central zone.", 
+        phone: "+56912345682", 
+        email: "ventas@agricolavinia.cl", 
+        website: "https://agricolavinia.cl", 
+        whatsapp: "56912345682" 
+      },
+      { 
+        id: "ANT01", 
+        name_es: "DISTRIBUIDORA ANTOFAGASTA", 
+        name_en: "ANTOFAGASTA DISTRIBUTOR", 
+        category_es: "Distribuidora Mayorista", 
+        category_en: "Wholesale Distributor", 
+        latlng: [-23.6509, -70.3975],
+        address_es: "Av. Balmaceda 3456, Antofagasta", 
+        address_en: "Av. Balmaceda 3456, Antofagasta", 
+        description_es: "Distribución de insumos mineros y productos industriales para la Segunda Región.", 
+        description_en: "Distribution of mining supplies and industrial products for the Second Region.", 
+        phone: "+56912345683", 
+        email: "ventas@distribuidoraantofa.cl", 
+        website: "https://distribuidoraantofa.cl", 
+        whatsapp: "56912345683" 
+      },
+      { 
+        id: "LA01", 
+        name_es: "LOGÍSTICA LA SERENA", 
+        name_en: "LA SERENA LOGISTICS", 
+        category_es: "Logística y Transporte", 
+        category_en: "Logistics & Transport", 
+        latlng: [-29.9027, -71.2519],
+        address_es: "Av. Francisco de Aguirre 2345, La Serena", 
+        address_en: "Av. Francisco de Aguirre 2345, La Serena", 
+        description_es: "Soluciones logísticas y distribución puerta a puerta en la Cuarta Región.", 
+        description_en: "Logistics solutions and door-to-door distribution in the Fourth Region.", 
+        phone: "+56912345684", 
+        email: "logistica@laserena.cl", 
+        website: "https://laserenalogistics.cl", 
+        whatsapp: "56912345684" 
+      },
+      { 
+        id: "TEM01", 
+        name_es: "TECNOLOGÍA TEMUCO", 
+        name_en: "TEMUCO TECH", 
+        category_es: "Tecnología", 
+        category_en: "Technology", 
+        latlng: [-38.7359, -72.5904],
+        address_es: "Av. Alemania 1234, Temuco", 
+        address_en: "Av. Alemania 1234, Temuco", 
+        description_es: "Distribución de equipos de cómputo, impresoras y suministros de oficina en la Araucanía.", 
+        description_en: "Distribution of computers, printers and office supplies in Araucanía.", 
+        phone: "+56912345685", 
+        email: "ventas@tecnologiatemuco.cl", 
+        website: "https://tecnologiatemuco.cl", 
+        whatsapp: "56912345685" 
+      },
+      { 
+        id: "PUN01", 
+        name_es: "INVERSIONES PUNTA ARENAS", 
+        name_en: "PUNTA ARENAS INVESTMENTS", 
+        category_es: "Finanzas e Inversiones", 
+        category_en: "Finance & Investments", 
+        latlng: [-53.1638, -70.9171],
+        address_es: "Av. Colón 567, Punta Arenas", 
+        address_en: "Av. Colón 567, Punta Arenas", 
+        description_es: "Asesoría financiera y préstamos P2P para emprendedores de la Región de Magallanes.", 
+        description_en: "Financial advisory and P2P loans for entrepreneurs in the Magallanes Region.", 
+        phone: "+56912345686", 
+        email: "contacto@inversionespunta.cl", 
+        website: "https://inversionespunta.cl", 
+        whatsapp: "56912345686" 
+      },
+      { 
+        id: "RAN01", 
+        name_es: "CONSTRUCCIONES RANCAGUA", 
+        name_en: "RANCAGUA CONSTRUCTIONS", 
+        category_es: "Construcción", 
+        category_en: "Construction", 
+        latlng: [-34.1703, -70.7406],
+        address_es: "Av. Libertador Bernardo O'Higgins 789, Rancagua", 
+        address_en: "Av. Libertador Bernardo O'Higgins 789, Rancagua", 
+        description_es: "Materiales de construcción y herramientas para proyectos en la Región de O'Higgins.", 
+        description_en: "Construction materials and tools for projects in the O'Higgins Region.", 
+        phone: "+56912345687", 
+        email: "ventas@construccionesrancagua.cl", 
+        website: "https://construccionesrancagua.cl", 
+        whatsapp: "56912345687" 
+      },
+      { 
+        id: "CAL01", 
+        name_es: "AUTOPARTES CALAMA", 
+        name_en: "CALAMA AUTO PARTS", 
+        category_es: "Autopartes", 
+        category_en: "Auto Parts", 
+        latlng: [-22.4560, -68.9271],
+        address_es: "Av. Balmaceda 987, Calama", 
+        address_en: "Av. Balmaceda 987, Calama", 
+        description_es: "Distribución de repuestos y accesorios para vehículos en el norte minero.", 
+        description_en: "Distribution of spare parts and accessories for vehicles in the mining north.", 
+        phone: "+56912345688", 
+        email: "ventas@autopartescalama.cl", 
+        website: "https://autopartescalama.cl", 
+        whatsapp: "56912345688" 
+      },
+      { 
+        id: "COQ01", 
+        name_es: "MODA Y TEXTILES COQUIMBO", 
+        name_en: "COQUIMBO FASHION & TEXTILES", 
+        category_es: "Textiles", 
+        category_en: "Textiles", 
+        latlng: [-29.9533, -71.3395],
+        address_es: "Av. Costanera 456, Coquimbo", 
+        address_en: "Av. Costanera 456, Coquimbo", 
+        description_es: "Distribución de telas, insumos textiles y confección para la zona costera.", 
+        description_en: "Distribution of fabrics, textile supplies and clothing for the coastal zone.", 
+        phone: "+56912345689", 
+        email: "ventas@textilescoquimbo.cl", 
+        website: "https://textilescoquimbo.cl", 
+        whatsapp: "56912345689" 
+      }
+    ];
     
     const translations = { 
-      es: { buscar_placeholder: "Buscar inmuebles en Chile...", centrar: "CENTRAR", servicios: "SERVICIOS", mapa: "Mapa", satelite: "Satélite", servicios_titulo: "SERVICIOS", agentes: "AGENTES", rentas: "ARRIENDOS", ventas: "VENTAS", hipotecas: "HIPOTECAS", construccion: "CONSTRUCCIÓN", credito: "CRÉDITO", inversion: "INVERSIÓN", avaluos: "AVALÚOS", visita_title: "📅 Agendar visita", oferta_title: "📩 Enviar oferta", nombre_label: "NOMBRE COMPLETO *", telefono_label: "TELÉFONO *", email_label: "CORREO", codigo_agente_label: "CÓDIGO DE AGENTE (opcional)", comentarios_label: "COMENTARIOS", terms_check: "Acepto ", terms_link: "términos", submit_visita: "📩 Agendar por WhatsApp", submit_oferta: "📩 Enviar oferta", visit_btn: "Visita", offer_btn_venta: "Ofertar inmueble", offer_btn_arriendo: "Iniciar arriendo", info_btn: "Info", select_date: "📅 Selecciona una fecha", monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'], weekdays: ['L', 'M', 'M', 'J', 'V', 'S', 'D'], pago_contado: "Contado", pago_credito: "Pie + Crédito", precio_fijo: "PRECIO TOTAL (FIJO)", valor_inicial: "VALOR DEL PIE (mínimo 20%)", opciones_financiacion: "OPCIÓN DE FINANCIACIÓN", cesantias: "Cesantías", credito_preaprobado: "Ya cuento con crédito pre aprobado", solicitar_credito: "Solicitar crédito hipotecario con las mejores tasas", tipo_id: "TIPO DE IDENTIFICACIÓN *", numero_id: "NÚMERO DE IDENTIFICACIÓN *" },
-      en: { buscar_placeholder: "Search properties in Chile...", centrar: "CENTER", servicios: "SERVICES", mapa: "Map", satelite: "Satellite", servicios_titulo: "SERVICES", agentes: "AGENTS", rentas: "RENTALS", ventas: "SALES", hipotecas: "MORTGAGES", construccion: "CONSTRUCTION", credito: "CREDIT", inversion: "INVESTMENT", avaluos: "APPRAISALS", visita_title: "📅 Schedule visit", oferta_title: "📩 Send offer", nombre_label: "FULL NAME *", telefono_label: "PHONE *", email_label: "EMAIL", codigo_agente_label: "AGENT CODE (optional)", comentarios_label: "COMMENTS", terms_check: "I accept ", terms_link: "terms", submit_visita: "📩 Schedule via WhatsApp", submit_oferta: "📩 Send offer", visit_btn: "Visit", offer_btn_venta: "Make offer", offer_btn_arriendo: "Start rental", info_btn: "Info", select_date: "📅 Select a date", monthNames: ['January','February','March','April','May','June','July','August','September','October','November','December'], weekdays: ['M', 'T', 'W', 'T', 'F', 'S', 'S'], pago_contado: "Cash payment", pago_credito: "Down payment + Credit", precio_fijo: "TOTAL PRICE (FIXED)", valor_inicial: "DOWN PAYMENT (min 20%)", opciones_financiacion: "FINANCING OPTION", cesantias: "Severance funds", credito_preaprobado: "Pre-approved credit", solicitar_credito: "Request best mortgage rates", tipo_id: "ID TYPE *", numero_id: "ID NUMBER *" }
+      es: { 
+        buscar_placeholder: "Buscar negocios en todo Chile...", 
+        centrar: "CENTRAR", 
+        servicios: "SERVICIOS QRP2P", 
+        mapa: "Mapa", 
+        satelite: "Satélite", 
+        view_store: "VER TIENDA",
+        sub_header: "CHILE"
+      },
+      en: { 
+        buscar_placeholder: "Search businesses across Chile...", 
+        centrar: "CENTER", 
+        servicios: "QRP2P SERVICES", 
+        mapa: "Map", 
+        satelite: "Satellite", 
+        view_store: "VIEW STORE",
+        sub_header: "CHILE"
+      }
     };
     
-    let mapa, userMarker, marcadoresOriginales = [], buscadorTimeout, googleMapsLayer, googleSatelliteLayer, currentLayer, currentProperty = null, selectedDate = null, selectedHorario = null, currentYear = new Date().getFullYear(), currentMonth = new Date().getMonth(), today = new Date(); today.setHours(0,0,0,0);
-    const allHorarios = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00'];
-    let currentIndices = {};
-    
-    let currentLightboxImages = [];
-    let currentLightboxIndex = 0;
-    const lightboxEl = document.getElementById('lightbox');
-    const lightboxImg = lightboxEl.querySelector('.lightbox-img');
-    const lightboxCounter = lightboxEl.querySelector('.lightbox-counter');
-    
-    function openLightbox(images, startIndex) {
-      if(!images || images.length === 0) return;
-      currentLightboxImages = images.filter(img => typeof img === 'string');
-      currentLightboxIndex = startIndex;
-      updateLightbox();
-      lightboxEl.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
-    
-    function updateLightbox() {
-      if(currentLightboxImages.length > 0) {
-        lightboxImg.src = currentLightboxImages[currentLightboxIndex];
-        lightboxCounter.textContent = `${currentLightboxIndex+1} / ${currentLightboxImages.length}`;
-      }
-    }
-    
-    function nextLightbox() {
-      if(currentLightboxImages.length === 0) return;
-      currentLightboxIndex = (currentLightboxIndex + 1) % currentLightboxImages.length;
-      updateLightbox();
-    }
-    
-    function prevLightbox() {
-      if(currentLightboxImages.length === 0) return;
-      currentLightboxIndex = (currentLightboxIndex - 1 + currentLightboxImages.length) % currentLightboxImages.length;
-      updateLightbox();
-    }
-    
-    function closeLightbox() {
-      lightboxEl.style.display = 'none';
-      document.body.style.overflow = '';
-    }
-    
     function t(key) { return translations[currentLang][key] || key; }
-    function formatPriceForProp(prop, isRent = false) { let value = isRent ? prop.priceRent : prop.price; if(value === 0) return "Consultar"; return formatPriceWithCurrency(value, prop.currency); }
     
-    function redirigirInmueble(property) {
-        if(property && property.detailUrl) {
-            window.location.href = property.detailUrl;
-        }
-    }
-
-    function abrirInfoModal(property) {
-      let title = currentLang === 'es' ? property.title_es : property.title_en;
-      let desc = currentLang === 'es' ? property.description_es : property.description_en;
-      let price = property.category==='venta' ? formatPriceForProp(property) : formatPriceForProp(property, true);
-      let html = `<div style="margin-bottom:1rem;"><strong>🔑 ${title}</strong></div><div>📍 ${desc}</div><div>💰 ${price}</div><div>📐 ${property.m2} m² | 🛏️ ${property.cuartos} | 🛁 ${property.baños}</div><div>📞 Contacto: <a href="${property.infoUrl}" target="_blank">WhatsApp</a></div><div>🗺️ <a href="${property.mapsUrl}" target="_blank">Ver ubicación</a></div>`;
-      document.getElementById('infoContent').innerHTML = html;
-      document.getElementById('infoModal').style.display = 'flex';
-    }
-    
-    function generarPopupHTML(property){ 
-      const title = currentLang === 'es' ? property.title_es : property.title_en;
-      const description = currentLang === 'es' ? property.description_es : property.description_en;
-      const displayPrice = property.category==='venta' ? formatPriceForProp(property) : formatPriceForProp(property, true);
-      const actionText = property.category==='venta'?t('offer_btn_venta'):t('offer_btn_arriendo'); 
-      const actionIcon = property.category==='venta'?'fa-hand-holding-usd':'fa-key'; 
-      if(currentIndices[property.id]===undefined) currentIndices[property.id]=0; 
-      const idx=currentIndices[property.id]; const media=property.media[idx]; 
-      let mediaHtml=''; 
-      if(typeof media==='string') mediaHtml=`<img src="${media}" alt="${title}" class="popup-product-image" data-fullscreen="${media}">`; 
-      else if(media.type==='video') mediaHtml=`<div class="popup-video-container"><iframe src="https://www.youtube.com/embed/${media.videoId}?autoplay=0" frameborder="0" allowfullscreen></iframe></div>`; 
-      return `<div class="popup-product-card" data-id="${property.id}">
-                <div class="popup-product-image-container" id="popup-img-container-${property.id}">
-                  ${mediaHtml}
-                  <div class="popup-image-nav">
-                    <button class="popup-nav-btn popup-prev-btn" data-id="${property.id}"><i class="fas fa-chevron-left"></i></button>
-                    <button class="popup-nav-btn popup-next-btn" data-id="${property.id}"><i class="fas fa-chevron-right"></i></button>
-                  </div>
-                  <div class="popup-image-counter">${idx+1}/${property.media.length}</div>
-                </div>
-                <div class="popup-product-info">
-                  <h3 class="popup-product-title" data-id="${property.id}">${title}</h3>
-                  <div class="precio-line">
-                    <span class="popup-product-price">${displayPrice}</span>
-                    <div class="enlaces-secundarios">
-                      <span class="enlace-info" data-id="${property.id}"><i class="fas fa-key"></i> ${t('info_btn')}</span>
-                      <a href="${property.mapsUrl}" target="_blank" class="enlace-mapa"><i class="fas fa-location-dot"></i></a>
-                    </div>
-                  </div>
-                  <div class="popup-product-details">
-                    <span><i class="fas fa-arrows-alt"></i> ${property.m2} m²</span>
-                    <span><i class="fas fa-bed"></i> ${property.cuartos} ${currentLang==='es'?'hab':'beds'}</span>
-                    <span><i class="fas fa-bath"></i> ${property.baños} ${currentLang==='es'?'baños':'baths'}</span>
-                  </div>
-                  <p style="font-size:0.7rem; margin-bottom:0.6rem;">${description}</p>
-                  <div class="popup-product-actions">
-                    <button class="popup-add-to-cart" data-id="${property.id}"><i class="fas fa-calendar-check"></i> ${t('visit_btn')}</button>
-                    <button class="popup-buy-now" data-id="${property.id}"><i class="${actionIcon}"></i> ${actionText}</button>
-                  </div>
-                </div>
-              </div>`; 
+    function generarPopupHTML(business) { 
+      const name = currentLang === 'es' ? business.name_es : business.name_en;
+      const category = currentLang === 'es' ? business.category_es : business.category_en;
+      const description = currentLang === 'es' ? business.description_es : business.description_en;
+      const address = currentLang === 'es' ? business.address_es : business.address_en;
+      const storeText = t('view_store');
+      const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
+      let contactButtons = '';
+      if(business.website) contactButtons += `<a href="${business.website}" target="_blank" class="contact-link"><i class="fas fa-globe"></i> Web</a>`;
+      if(business.whatsapp) contactButtons += `<a href="https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>`;
+      if(business.phone) contactButtons += `<a href="tel:${business.phone}" class="contact-link"><i class="fas fa-phone"></i> Call</a>`;
+      if(business.email) contactButtons += `<a href="mailto:${business.email}" class="contact-link"><i class="fas fa-envelope"></i> Email</a>`;
+      return `<div class="popup-business-card"><div class="popup-business-header"><h3>⚡ ${name}</h3><span class="popup-business-category">${category}</span></div><div class="popup-business-info"><div class="popup-business-description">${description}</div><div class="popup-business-address"><i class="fas fa-map-pin"></i> ${address}</div><div class="popup-business-contact">${contactButtons}</div><a href="${websiteUrl}" target="_blank" class="btn-view-store"><i class="fas fa-store"></i> ${storeText}</a></div></div>`; 
     }
     
-    function attachLightboxToImage(container, property) {
-      const img = container.querySelector('.popup-product-image');
-      if(img) {
-        img.style.cursor = 'pointer';
-        img.addEventListener('click', (e) => {
-          e.stopPropagation();
-          redirigirInmueble(property);
-        });
-      }
-    }
-    
-    function refreshAllPopups() { 
-      marcadoresOriginales.forEach(marker => { 
-        let prop = marker.datosInmueble; 
-        let newPopup = generarPopupHTML(prop); 
-        marker.bindPopup(newPopup, {maxWidth:380, className:'custom-popup'}); 
+    function initMap() { 
+      const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      
+      // Centro geográfico de Chile (Santiago)
+      mapa = L.map('mapa', { center: [-33.4489, -70.6693], zoom: 6, zoomControl: false });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      
+      let clusters = L.markerClusterGroup({ iconCreateFunction: cluster => L.divIcon({ html: `<div>${cluster.getChildCount()}</div>`, className: 'cluster-marcadores', iconSize: [40,40] }) }); 
+      let icono = L.divIcon({ className: 'negocio-marker', html: '⚡', iconSize: [32,32], popupAnchor: [0,-16] }); 
+      
+      verifiedBusinesses.forEach(business => { 
+        let popup = generarPopupHTML(business); 
+        let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
+        marker.datosNegocio = business; 
+        marker.datosBusqueda = `${business.name_es} ${business.name_en} ${business.category_es} ${business.category_en} ${business.description_es} ${business.description_en}`.toLowerCase(); 
+        marcadoresOriginales.push(marker); 
+        clusters.addLayer(marker); 
       }); 
+      mapa.addLayer(clusters); 
+      
+      mapa.googleMapsLayer = googleMapsLayer;
+      mapa.googleSatelliteLayer = googleSatelliteLayer;
+    }
+    
+    function mostrarServiciosQRP2P() {
+      let container = document.getElementById('listaServicios');
+      container.innerHTML = '';
+      serviciosQRP2P.forEach(servicio => {
+        let btn = document.createElement('button');
+        btn.className = 'servicio-item-btn';
+        let name = currentLang === 'es' ? servicio.name_es : servicio.name_en;
+        btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${name}`;
+        btn.addEventListener('click', () => {
+          window.open(servicio.url, '_blank');
+          document.getElementById('servicioModal').style.display = 'none';
+        });
+        container.appendChild(btn);
+      });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      document.getElementById('servicioModal').style.display = 'flex';
+    }
+    
+    function centrarMapaRapido() {
+      if (navigator.geolocation) {
+        const btn = document.getElementById('centrar-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>OBTENIENDO...</span>';
+        navigator.geolocation.getCurrentPosition(
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'es' ? 'Tu ubicación actual' : 'Your current location'); mapa.setView([latitude, longitude], 12); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([-33.4489, -70.6693], 6); alert(currentLang === 'es' ? 'No se pudo obtener tu ubicación. Mostrando Chile.' : 'Could not get your location. Showing Chile.'); }
+        );
+      } else { mapa.setView([-33.4489, -70.6693], 6); }
     }
     
     function updateUILanguage() {
@@ -722,256 +602,50 @@
       document.getElementById('servicios-text').innerText = t('servicios');
       document.getElementById('map-text').innerText = t('mapa');
       document.getElementById('satellite-text').innerText = t('satelite');
-      document.getElementById('servicios-modal-title').innerText = t('servicios_titulo');
-      refreshAllPopups();
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      marcadoresOriginales.forEach(marker => { marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); });
     }
     
-    function initMap(){ 
-      mapa=L.map('mapa',{center:[-33.4489, -70.6693],zoom:12,zoomControl:false}); 
-      googleMapsLayer=L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{maxZoom:20,subdomains:['mt0','mt1','mt2','mt3']}); 
-      googleSatelliteLayer=L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{maxZoom:20,subdomains:['mt0','mt1','mt2','mt3']}); 
-      currentLayer=googleMapsLayer; currentLayer.addTo(mapa); 
-      let clusters=L.markerClusterGroup({iconCreateFunction:cluster=>L.divIcon({html:`<div>${cluster.getChildCount()}</div>`,className:'cluster-marcadores',iconSize:[40,40]})}); 
-      let icono=L.divIcon({className:'inmueble-marker',html:'🔑',iconSize:[32,32],popupAnchor:[0,-16]}); 
-      properties.forEach(prop=>{ 
-        let popup=generarPopupHTML(prop); 
-        let marker=L.marker(prop.latlng,{icon:icono}).bindPopup(popup,{maxWidth:380,className:'custom-popup'}); 
-        marker.datosInmueble=prop; 
-        marker.datosBusqueda=`${prop.title_es} ${prop.title_en} ${prop.description_es} ${prop.description_en}`.toLowerCase(); 
-        marcadoresOriginales.push(marker); 
-        marker.on('popupopen',()=>{ 
-          setTimeout(()=>{ 
-            let node=document.querySelector('.custom-popup'); 
-            if(node){ 
-              let prev=node.querySelector(`.popup-prev-btn[data-id="${prop.id}"]`), next=node.querySelector(`.popup-next-btn[data-id="${prop.id}"]`); 
-              if(prev) prev.addEventListener('click',(e)=>{e.stopPropagation(); let idx=(currentIndices[prop.id]-1+prop.media.length)%prop.media.length; updateMediaInPopup(prop.id,idx);}); 
-              if(next) next.addEventListener('click',(e)=>{e.stopPropagation(); let idx=(currentIndices[prop.id]+1)%prop.media.length; updateMediaInPopup(prop.id,idx);}); 
-              
-              let titleElement = node.querySelector(`.popup-product-title[data-id="${prop.id}"]`);
-              if(titleElement) {
-                titleElement.addEventListener('click', (e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  redirigirInmueble(prop);
-                });
-              }
-
-              let infoSpan=node.querySelector(`.enlace-info[data-id="${prop.id}"]`); 
-              if(infoSpan) infoSpan.addEventListener('click',(e)=>{e.preventDefault(); abrirInfoModal(prop); mapa.closePopup();}); 
-              let visaBtn=node.querySelector(`.popup-add-to-cart[data-id="${prop.id}"]`), offerBtn=node.querySelector(`.popup-buy-now[data-id="${prop.id}"]`); 
-              if(visaBtn) visaBtn.addEventListener('click',(e)=>{e.preventDefault(); openVisitaModal(prop); mapa.closePopup();}); 
-              if(offerBtn) offerBtn.addEventListener('click',(e)=>{e.preventDefault(); openOfertaModal(prop); mapa.closePopup();}); 
-              const containerImg = node.querySelector(`#popup-img-container-${prop.id}`);
-              if(containerImg) attachLightboxToImage(containerImg, prop);
-            } 
-          },100); 
-        }); 
-        clusters.addLayer(marker); 
-      }); 
-      mapa.addLayer(clusters); 
-    }
-    
-    function updateMediaInPopup(propertyId, newIndex) { 
-      let property=properties.find(p=>p.id===propertyId); 
-      if(!property) return; 
-      let popupNode=document.querySelector('.custom-popup'); 
-      if(!popupNode) return; 
-      let container=popupNode.querySelector(`#popup-img-container-${propertyId}`); 
-      if(!container) return; 
-      let mediaItem=property.media[newIndex]; 
-      let navDiv=container.querySelector('.popup-image-nav'); 
-      let counterDiv=container.querySelector('.popup-image-counter'); 
-      let existing=container.querySelector('.popup-product-image, .popup-video-container'); 
-      if(existing) existing.remove(); 
-      if(typeof mediaItem === 'string'){ 
-        let img=document.createElement('img'); 
-        img.src=mediaItem; 
-        img.alt=property.title_es; 
-        img.className='popup-product-image'; 
-        img.style.cursor='pointer';
-        img.addEventListener('click', (e) => {
-          e.stopPropagation();
-          redirigirInmueble(property);
-        });
-        container.insertBefore(img, navDiv); 
-      } else if(mediaItem.type==='video'){ 
-        let videoDiv=document.createElement('div'); 
-        videoDiv.className='popup-video-container'; 
-        videoDiv.innerHTML=`<iframe src="https://www.youtube.com/embed/${mediaItem.videoId}?autoplay=0" frameborder="0" allowfullscreen></iframe>`; 
-        container.insertBefore(videoDiv, navDiv); 
-      } 
-      if(counterDiv) counterDiv.textContent=`${newIndex+1}/${property.media.length}`; 
-      currentIndices[propertyId]=newIndex; 
-    }
-    
-    function abrirServiciosModal() {
-      let paisesContainer = document.getElementById('paisesContainer');
-      let serviciosDiv = document.getElementById('serviciosPorPais');
-      paisesContainer.innerHTML = '';
-      for(let pais in paisesServicios) {
-        let btn = document.createElement('button');
-        btn.className = 'servicio-btn';
-        btn.innerText = pais;
-        btn.addEventListener('click', () => mostrarServiciosPais(pais));
-        paisesContainer.appendChild(btn);
-      }
-      serviciosDiv.style.display = 'none';
-      paisesContainer.style.display = 'flex';
-      document.getElementById('serviciosModal').style.display = 'flex';
-    }
-    
-    function mostrarServiciosPais(pais) {
-      let servicios = paisesServicios[pais];
-      let serviciosLista = document.getElementById('serviciosLista');
-      serviciosLista.innerHTML = '';
-      let serviciosMap = { agentes: "AGENTES", rentas: "ARRIENDOS", ventas: "VENTAS", hipotecas: "HIPOTECAS", construccion: "CONSTRUCCIÓN", credito: "CRÉDITO", inversion: "INVERSIÓN", avaluos: "AVALÚOS" };
-      for(let [key, url] of Object.entries(servicios)) {
-        let btn = document.createElement('button');
-        btn.className = 'servicio-btn';
-        btn.innerText = t(key) || serviciosMap[key];
-        btn.addEventListener('click', () => { window.open(url, '_blank'); });
-        serviciosLista.appendChild(btn);
-      }
-      document.getElementById('paisesContainer').style.display = 'none';
-      document.getElementById('serviciosPorPais').style.display = 'flex';
-    }
-    
-    function volverPaises() {
-      document.getElementById('paisesContainer').style.display = 'flex';
-      document.getElementById('serviciosPorPais').style.display = 'none';
-    }
-    
-    function centrarMapaRapido() {
-      if (navigator.geolocation) {
-        const btn = document.getElementById('centrar-btn');
-        const originalHtml = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span id="centrar-text">OBTENIENDO...</span>';
-        navigator.geolocation.getCurrentPosition(
-          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'es' ? 'Tu ubicación actual' : 'Your current location'); mapa.setView([latitude, longitude], 16); btn.innerHTML = originalHtml; },
-          err => { console.warn(err); btn.innerHTML = originalHtml; mapa.setView([-33.4489, -70.6693], 12); alert(currentLang === 'es' ? 'No se pudo obtener tu ubicación.' : 'Could not get your location.'); },
-          { enableHighAccuracy: true, timeout: 7000, maximumAge: 0 }
-        );
-      } else { mapa.setView([-33.4489, -70.6693], 12); }
-    }
-    
-    function openVisitaModal(property){ 
-      currentProperty=property; selectedDate=null; selectedHorario=null; currentYear=new Date().getFullYear(); currentMonth=new Date().getMonth(); 
-      let modal=document.getElementById('visitaModal'), container=document.getElementById('visitaFormContainer'); 
-      let title = currentLang === 'es' ? property.title_es : property.title_en;
-      let desc = currentLang === 'es' ? property.description_es : property.description_en;
-      container.innerHTML=`<div class="property-info"><h4>🔑 ${title}</h4><p>${property.m2} m² · ${property.cuartos} ${currentLang==='es'?'hab':'beds'} · ${property.baños} ${currentLang==='es'?'baños':'baths'}</p><p>${desc}</p></div><div class="step-title">${t('visita_title')}</div><div class="form-group"><label>${t('nombre_label')}</label><input type="text" id="visitaNombre" placeholder="${currentLang==='es'?'Ej: Juan Pérez':'Ex: John Doe'}"></div><div class="row-2cols"><div class="form-group"><label>${t('tipo_id')}</label><input type="text" id="visitaTipoId" placeholder="${currentLang==='es'?'Ej: RUT, Pasaporte...':'Ex: ID Card, Passport...'}"></div><div class="form-group"><label>${t('numero_id')}</label><input type="text" id="visitaNumeroId" placeholder="${currentLang==='es'?'Ej: 12345678-9':'Ex: 12345678-9'}"></div></div><div class="form-group"><label>${t('telefono_label')}</label><input type="tel" id="visitaTelefono" placeholder="912345678"></div><div class="form-group"><label>${t('email_label')}</label><input type="email" id="visitaEmail"></div><div class="form-group"><label>${t('codigo_agente_label')}</label><input type="text" id="visitaCodigoAgente" placeholder="${currentLang==='es'?'Ej: AGENTE123':'Ex: AGENT123'}"></div><div class="inline-checkbox"><input type="checkbox" id="visitaTerms"><label>${t('terms_check')}<span class="terms-link" id="visitaTermsLink">${t('terms_link')}</span></label></div><div class="calendar-card"><div class="calendar-nav"><button class="popup-nav-btn" id="prevMonthBtn" style="background:#000;"><i class="fas fa-chevron-left"></i></button><div class="month-year"></div><button class="popup-nav-btn" id="nextMonthBtn" style="background:#000;"><i class="fas fa-chevron-right"></i></button></div><div class="weekdays"></div><div class="days-grid"></div></div><div class="form-group"><label>${currentLang==='es'?'HORARIO':'SCHEDULE'}</label><div class="horarios-list"></div></div><button class="btn-submit" id="submitVisita">${t('submit_visita')}</button>`; 
-      let calendarDiv=container.querySelector('.calendar-card'); let prev=container.querySelector('#prevMonthBtn'), next=container.querySelector('#nextMonthBtn'), horariosDiv=container.querySelector('.horarios-list'); 
-      renderCalendar(calendarDiv); if(horariosDiv) renderHorarios(horariosDiv); 
-      if(prev) prev.addEventListener('click',()=>{ currentMonth--; if(currentMonth<0){currentMonth=11; currentYear--;} renderCalendar(calendarDiv); selectedDate=null; selectedHorario=null; if(horariosDiv) renderHorarios(horariosDiv); }); 
-      if(next) next.addEventListener('click',()=>{ currentMonth++; if(currentMonth>11){currentMonth=0; currentYear++;} renderCalendar(calendarDiv); selectedDate=null; selectedHorario=null; if(horariosDiv) renderHorarios(horariosDiv); }); 
-      document.getElementById('visitaTermsLink')?.addEventListener('click',showTermsModal); 
-      document.getElementById('submitVisita').addEventListener('click',()=>{ 
-        let nombre=document.getElementById('visitaNombre').value.trim(), telefono=document.getElementById('visitaTelefono').value.trim(), email=document.getElementById('visitaEmail').value.trim(), codigoAgente=document.getElementById('visitaCodigoAgente').value.trim(), termsChecked=document.getElementById('visitaTerms').checked;
-        let tipoId = document.getElementById('visitaTipoId')?.value.trim() || '';
-        let numeroId = document.getElementById('visitaNumeroId')?.value.trim() || '';
-        if(!nombre||!telefono){alert(currentLang==='es'?'Completa nombre y teléfono':'Complete name and phone'); return;} 
-        if(!tipoId || !numeroId){alert(currentLang==='es'?'Completa tipo y número de identificación':'Complete ID type and number'); return;}
-        if(!termsChecked){alert(currentLang==='es'?'Acepta términos':'Accept terms'); return;} 
-        if(!selectedDate){alert(currentLang==='es'?'Selecciona fecha':'Select date'); return;} 
-        if(!selectedHorario){alert(currentLang==='es'?'Selecciona horario':'Select time'); return;} 
-        let fecha=new Date(selectedDate).toLocaleDateString(currentLang==='es'?'es-ES':'en-US'); 
-        let msg=`VISITA: ${title}\nNombre: ${nombre}\nIdentificacion: ${tipoId} ${numeroId}\nTeléfono: ${telefono}\nEmail: ${email||'No'}\nFecha: ${fecha} Horario: ${selectedHorario}\n${codigoAgente ? `Código Agente: ${codigoAgente}` : ''}`; 
-        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); 
-        modal.style.display='none'; 
-      }); 
-      modal.style.display='flex'; 
-    }
-    
-    function openOfertaModal(property){ 
-      currentProperty=property; 
-      let modal=document.getElementById('ofertaModal'), container=document.getElementById('ofertaFormContainer'); 
-      let title = currentLang === 'es' ? property.title_es : property.title_en;
-      let desc = currentLang === 'es' ? property.description_es : property.description_en;
-      let displayPrice = property.category==='venta' ? formatPriceForProp(property) : formatPriceForProp(property, true);
-      let basePriceNum = property.category==='venta' ? property.price : 0;
-      let minInitialPercent = 0.2;
-      let defaultInitial = Math.floor(basePriceNum * minInitialPercent);
-      
-      let formHtml = `<div class="property-info"><h4>🔑 ${title}</h4><p>${property.m2} m² · ${property.cuartos} ${currentLang==='es'?'hab':'beds'} · ${property.baños} ${currentLang==='es'?'baños':'baths'}</p><p>${desc}</p></div><div class="step-title">${t('oferta_title')}</div>`;
-      formHtml += `<div class="form-group"><label>${t('precio_fijo')}</label><div class="fixed-price-field"><strong>${displayPrice}</strong></div></div>`;
-      if(property.category === 'venta' && property.price > 0) {
-        formHtml += `<div class="form-group"><label>MÉTODO DE PAGO</label><div class="radio-group" id="paymentMethodGroup"><label><input type="radio" name="paymentMethod" value="contado" checked> ${t('pago_contado')}</label><label><input type="radio" name="paymentMethod" value="credito"> ${t('pago_credito')}</label></div></div>`;
-        formHtml += `<div id="creditSection" style="display:none;"><div class="form-group"><label>${t('valor_inicial')}</label><input type="number" id="initialAmount" step="1000000" value="${defaultInitial}" min="${defaultInitial}" max="${basePriceNum}"><small style="color:#555;">Mínimo: ${formatPriceWithCurrency(defaultInitial, property.currency)} (20%)</small></div><div class="form-group"><label>${t('opciones_financiacion')}</label><div class="financing-option"><label><input type="radio" name="financingOption" value="${t('cesantias')}"> ${t('cesantias')}</label><label><input type="radio" name="financingOption" value="${t('credito_preaprobado')}"> ${t('credito_preaprobado')}</label><label><input type="radio" name="financingOption" value="${t('solicitar_credito')}"> ${t('solicitar_credito')}</label></div></div></div>`;
-      }
-      formHtml += `<div class="form-group"><label>${t('nombre_label')}</label><input type="text" id="ofertaNombre" placeholder="${currentLang==='es'?'Ej: Juan Pérez':'Ex: John Doe'}"></div>`;
-      formHtml += `<div class="row-2cols"><div class="form-group"><label>${t('tipo_id')}</label><input type="text" id="ofertaTipoId" placeholder="${currentLang==='es'?'Ej: RUT, Pasaporte...':'Ex: ID Card, Passport...'}"></div><div class="form-group"><label>${t('numero_id')}</label><input type="text" id="ofertaNumeroId" placeholder="${currentLang==='es'?'Ej: 12345678-9':'Ex: 12345678-9'}"></div></div>`;
-      formHtml += `<div class="form-group"><label>${t('telefono_label')}</label><input type="tel" id="ofertaTelefono" placeholder="912345678"></div><div class="form-group"><label>${t('email_label')}</label><input type="email" id="ofertaEmail"></div><div class="form-group"><label>${t('codigo_agente_label')}</label><input type="text" id="ofertaCodigoAgente" placeholder="${currentLang==='es'?'Ej: AGENTE123':'Ex: AGENT123'}"></div><div class="form-group"><label>${t('comentarios_label')}</label><textarea rows="2" id="ofertaComentarios" placeholder="${currentLang==='es'?'Ej: Necesito financiación...':'Ex: I need financing...'}"></textarea></div><button class="btn-submit" id="submitOferta">${t('submit_oferta')}</button>`;
-      container.innerHTML = formHtml;
-      
-      if(property.category === 'venta' && property.price > 0) {
-        let radios = document.querySelectorAll('#paymentMethodGroup input');
-        let creditDiv = document.getElementById('creditSection');
-        let initialInput = document.getElementById('initialAmount');
-        function toggleCredit() { let selected = document.querySelector('input[name="paymentMethod"]:checked').value; creditDiv.style.display = selected === 'credito' ? 'block' : 'none'; }
-        radios.forEach(r => r.addEventListener('change', toggleCredit));
-        toggleCredit();
-        if(initialInput) initialInput.addEventListener('change', function() { let val = parseFloat(this.value); if(isNaN(val)) this.value = defaultInitial; else if(val < defaultInitial) { alert(`Pie mínimo: ${formatPriceWithCurrency(defaultInitial, property.currency)}`); this.value = defaultInitial; } else if(val > basePriceNum) { alert(`No puede exceder el precio total`); this.value = basePriceNum; } });
-      }
-      document.getElementById('submitOferta').addEventListener('click',()=>{ 
-        let nombre=document.getElementById('ofertaNombre').value.trim(), tel=document.getElementById('ofertaTelefono').value.trim(), email=document.getElementById('ofertaEmail').value.trim(), coment=document.getElementById('ofertaComentarios').value.trim(), codigoAgente=document.getElementById('ofertaCodigoAgente').value.trim(); 
-        let tipoId = document.getElementById('ofertaTipoId')?.value.trim() || '';
-        let numeroId = document.getElementById('ofertaNumeroId')?.value.trim() || '';
-        if(!nombre||!tel){alert(currentLang==='es'?'Completa datos básicos (nombre y teléfono)':'Complete basic data (name and phone)'); return;} 
-        if(!tipoId || !numeroId){alert(currentLang==='es'?'Completa tipo y número de identificación':'Complete ID type and number'); return;}
-        let paymentDetails = "";
-        if(property.category === 'venta' && property.price > 0) {
-          let method = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'contado';
-          if(method === 'contado') paymentDetails = `\nMétodo: ${t('pago_contado')} - Total: ${displayPrice}`;
-          else {
-            let initialVal = document.getElementById('initialAmount')?.value || defaultInitial;
-            let selectedFin = document.querySelector('input[name="financingOption"]:checked')?.value || '';
-            if(!selectedFin) { alert(currentLang==='es'?'Selecciona opción de financiación':'Select financing option'); return; }
-            paymentDetails = `\nMétodo: ${t('pago_credito')}\nPie: ${formatPriceWithCurrency(parseInt(initialVal), property.currency)}\nFinanciación: ${selectedFin}`;
-          }
-        }
-        let msg = `OFERTA: ${title}\nNombre: ${nombre}\nIdentificación: ${tipoId} ${numeroId}\nTeléfono: ${tel}\nEmail: ${email}\nComentarios: ${coment||(currentLang==='es'?'Sin comentarios':'No comments')}\n${codigoAgente ? `Código Agente: ${codigoAgente}` : ''}${paymentDetails}`; 
-        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); 
-        modal.style.display='none'; 
-      }); 
-      modal.style.display='flex'; 
-    }
-    
-    function renderCalendar(container) { let days=getDaysForMonth(currentYear,currentMonth); let monthSpan=container.querySelector('.month-year'); if(monthSpan) monthSpan.innerText=`${getMonthName(currentMonth)} ${currentYear}`; let daysGrid=container.querySelector('.days-grid'); if(!daysGrid) return; daysGrid.innerHTML=''; let weekdays = getWeekdays(); let weekdayHeaders = container.querySelector('.weekdays'); if(weekdayHeaders) { weekdayHeaders.innerHTML = weekdays.map(d => `<span>${d}</span>`).join(''); } days.forEach(cell=>{ let div=document.createElement('div'); let className='day-cell'; if(!cell.currentMonth) className+=' other-month'; if(!cell.isSelectable) className+=' disabled'; else className+=' available'; div.className=className; div.innerText=cell.day; if(cell.isSelectable){ div.addEventListener('click',(function(dateStr){ return function(){ document.querySelectorAll('#visitaFormContainer .day-cell').forEach(el=>el.classList.remove('selected')); div.classList.add('selected'); selectedDate=dateStr; let horariosContainer=document.querySelector('#visitaFormContainer .horarios-list'); if(horariosContainer) renderHorarios(horariosContainer); }; })(cell.dateStr)); if(selectedDate===cell.dateStr) div.classList.add('selected'); } daysGrid.appendChild(div); }); }
-    function renderHorarios(horariosContainer) { if(!horariosContainer) return; if(!selectedDate){ horariosContainer.innerHTML=`<div style="padding:0.6rem; text-align:center;">📅 ${t('select_date')}</div>`; return; } horariosContainer.innerHTML=''; allHorarios.forEach(slot=>{ let badge=document.createElement('span'); badge.className='horario-badge'; badge.innerText=slot; if(selectedHorario===slot) badge.classList.add('selected'); badge.addEventListener('click',()=>{ document.querySelectorAll('#visitaFormContainer .horario-badge').forEach(b=>b.classList.remove('selected')); badge.classList.add('selected'); selectedHorario=slot; }); horariosContainer.appendChild(badge); }); }
-    function getMonthName(month) { return t('monthNames')[month]; }
-    function getWeekdays() { return t('weekdays'); }
-    function getDaysForMonth(year, month) { const firstDay = new Date(year, month, 1); let startWeekday = firstDay.getDay(); let offset = (startWeekday === 0 ? 6 : startWeekday - 1); const daysInMonth = new Date(year, month+1, 0).getDate(), prevMonthDays = new Date(year, month, 0).getDate(); let days = []; for(let i=0;i<offset;i++){ let dayNum = prevMonthDays - offset + i + 1, prevMonth=month-1, prevYear=year; if(prevMonth<0){prevMonth=11; prevYear--;} let dateStr=`${prevYear}-${String(prevMonth+1).padStart(2,'0')}-${String(dayNum).padStart(2,'0')}`; days.push({day:dayNum, isSelectable:!isDateInPast(dateStr), dateStr, currentMonth:false}); } for(let d=1;d<=daysInMonth;d++){ let dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; days.push({day:d, isSelectable:!isDateInPast(dateStr), dateStr, currentMonth:true}); } let remaining=42-days.length; for(let i=1;i<=remaining;i++){ let nextMonth=month+1, nextYear=year; if(nextMonth>11){nextMonth=0; nextYear++;} let dateStr=`${nextYear}-${String(nextMonth+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`; days.push({day:i, isSelectable:!isDateInPast(dateStr), dateStr, currentMonth:false}); } return days; }
-    function isDateInPast(dateStr) { let date = new Date(dateStr); date.setHours(0,0,0,0); return date < today; }
-    function showTermsModal() { document.getElementById('termsModal').style.display='flex'; }
-    function closeTermsModal() { document.getElementById('termsModal').style.display='none'; }
-    
-    document.addEventListener('DOMContentLoaded',()=>{ 
+    document.addEventListener('DOMContentLoaded', () => { 
       initMap(); updateUILanguage();
-      document.getElementById('centrar-btn').addEventListener('click',centrarMapaRapido);
-      document.getElementById('servicios-btn').addEventListener('click',abrirServiciosModal);
-      document.getElementById('map-btn').addEventListener('click',()=>{ mapa.removeLayer(currentLayer); currentLayer=googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
-      document.getElementById('satellite-btn').addEventListener('click',()=>{ mapa.removeLayer(currentLayer); currentLayer=googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
-      document.getElementById('closeServiciosBtn').addEventListener('click',()=>document.getElementById('serviciosModal').style.display='none');
-      document.getElementById('volverPaises').addEventListener('click',volverPaises);
-      document.getElementById('closeInfoModalBtn').addEventListener('click',()=>document.getElementById('infoModal').style.display='none');
-      window.addEventListener('click',(e)=>{if(e.target===document.getElementById('serviciosModal')) document.getElementById('serviciosModal').style.display='none'; if(e.target===document.getElementById('infoModal')) document.getElementById('infoModal').style.display='none';});
-      document.querySelectorAll('.lang-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); refreshAllPopups(); document.getElementById('buscador').value = ''; document.getElementById('sugerencias-busqueda').style.display = 'none'; }); });
-      let inputBuscar=document.getElementById('buscador'); inputBuscar.addEventListener('input',(e)=>{ clearTimeout(buscadorTimeout); let term=e.target.value.trim(); let sugDiv=document.getElementById('sugerencias-busqueda'); if(term.length<2){ sugDiv.style.display='none'; return; } sugDiv.innerHTML=`<div class="sugerencia-item">🔍 Buscando...</div>`; sugDiv.style.display='block'; buscadorTimeout=setTimeout(()=>buscarInmuebles(term),300); }); inputBuscar.addEventListener('keydown',(e)=>{if(e.key==='Enter'){ e.preventDefault(); let term=inputBuscar.value.trim(); if(term) buscarInmuebles(term); }}); document.addEventListener('click',(e)=>{ if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display='none'; }); document.querySelectorAll('.close-visita-modal, .close-oferta-modal').forEach(btn=>{btn.addEventListener('click',()=>{document.getElementById('visitaModal').style.display='none'; document.getElementById('ofertaModal').style.display='none';});}); window.addEventListener('click',(e)=>{ if(e.target===document.getElementById('visitaModal')) document.getElementById('visitaModal').style.display='none'; if(e.target===document.getElementById('ofertaModal')) document.getElementById('ofertaModal').style.display='none'; if(e.target===document.getElementById('termsModal')) closeTermsModal(); }); document.getElementById('closeTermsBtn').addEventListener('click',closeTermsModal);
       
-      document.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
-      document.querySelector('.lightbox-prev').addEventListener('click', prevLightbox);
-      document.querySelector('.lightbox-next').addEventListener('click', nextLightbox);
-      lightboxEl.addEventListener('click', (e) => { if(e.target === lightboxEl) closeLightbox(); });
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      
+      document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
+      
+      document.querySelectorAll('.lang-btn').forEach(btn => { 
+        btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); }); 
+      });
+      
+      let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 Buscando...</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name = currentLang === 'es' ? m.datosNegocio.name_es : m.datosNegocio.name_en; 
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${currentLang==='es'?'Ver':'View'}</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 12); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ No se encontraron resultados en Chile</div>`; 
+        }, 300); 
+      }); 
+      document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
     });
-    
-    function buscarInmuebles(q){ let term=q.toLowerCase(); let resultados=marcadoresOriginales.filter(m=>m.datosBusqueda.includes(term)); let sugerenciasDiv=document.getElementById('sugerencias-busqueda'); if(resultados.length){ sugerenciasDiv.innerHTML=''; resultados.forEach(m=>{ let title = currentLang === 'es' ? m.datosInmueble.title_es : m.datosInmueble.title_en; let desc = currentLang === 'es' ? m.datosInmueble.description_es : m.datosInmueble.description_en; let item=document.createElement('div'); item.className='sugerencia-item'; item.innerHTML=`<div class="sugerencia-texto"><strong>🔑 ${title}</strong><br><small>${desc}</small></div><button class="sugerencia-boton" data-id="${m.datosInmueble.id}">${currentLang==='es'?'Ver':'View'}</button>`; let btn=item.querySelector('.sugerencia-boton'); btn.addEventListener('click',(e)=>{ e.stopPropagation(); redirigirInmueble(m.datosInmueble); }); item.addEventListener('click',()=>{ redirigirInmueble(m.datosInmueble); }); sugerenciasDiv.appendChild(item); }); } else { sugerenciasDiv.innerHTML=`<div class="sugerencia-item">❌ No se encontraron inmuebles verificados en Chile</div>`; } }
-    
-    if('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(console.log);
-      if(!navigator.serviceWorker.controller) {
-        navigator.serviceWorker.register('data:application/javascript,'+encodeURIComponent(`self.addEventListener('fetch', (e) => { e.respondWith(fetch(e.request).catch(() => new Response('QRP2P Real Estate Chile - Modo offline'))); });`));
-      }
-    }
   </script>
 </body>
 </html>
