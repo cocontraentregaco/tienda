@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
-  <title>QRP2P.COM | NEGOCIOS VERIFICADOS | MARKETPLACE P2P</title>
-  <meta name="description" content="Global decentralized P2P marketplace. Find verified businesses, zero commission forever. QRP2P.COM">
-  <meta name="keywords" content="NEGOCIOS VERIFICADOS, P2P, MARKETPLACE, 0% COMISION">
+  <title>QRP2P ANDORRA | NEGOCIS VERIFICATS | MARKETPLACE P2P | 0% COMISSIONS</title>
+  <meta name="description" content="QRP2P Andorra. Marketplace directe entre comprador i venedor verificat a tot Andorra. Troba negocis, propietats i serveis. 0% comissions de per vida.">
+  <meta name="keywords" content="QRP2P, Andorra, marketplace, comprador, venedor, verificat, 0% comissions, negocis, propietats, Andorra la Vella, Escaldes">
   <meta name="author" content="QRP2P">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#000000">
@@ -44,7 +44,6 @@
     .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
     
-    /* Popup de Negocio Verificado */
     .popup-business-card {
       background: #ffffff;
       border-radius: 24px;
@@ -128,8 +127,7 @@
     }
     .btn-view-store:hover { background: #333333; transform: scale(0.98); }
     
-    /* Modales de Servicios */
-    .pais-modal, .servicio-modal {
+    .servicio-modal {
       display: none;
       position: fixed;
       top: 0;
@@ -141,33 +139,38 @@
       justify-content: center;
       align-items: center;
     }
-    .pais-container, .servicio-container {
+    .servicio-container {
       background: white;
       border-radius: 28px;
       width: 90%;
-      max-width: 480px;
-      max-height: 80vh;
+      max-width: 500px;
+      max-height: 85vh;
       overflow-y: auto;
-      padding: 1.2rem;
+      padding: 1.5rem;
     }
     .servicios-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #eaeaea;
-      padding-bottom: 0.6rem;
-      margin-bottom: 1rem;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      font-weight: 700;
     }
     .servicios-botones {
       display: flex;
       flex-direction: column;
-      gap: 0.7rem;
+      gap: 0.8rem;
     }
-    .pais-btn, .servicio-item-btn {
+    .servicio-item-btn {
       background: #000000;
       color: white;
       border: none;
-      padding: 0.8rem;
+      padding: 1rem;
       border-radius: 50px;
       font-size: 0.9rem;
       font-weight: 600;
@@ -175,30 +178,39 @@
       text-align: center;
       font-family: 'Libre Baskerville', serif;
       transition: all 0.2s;
-    }
-    .pais-btn:hover, .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
-    .info-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.85);
-      z-index: 2600;
-      justify-content: center;
+      display: flex;
       align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
     }
-    .info-container {
-      background: white;
-      border-radius: 28px;
-      width: 90%;
-      max-width: 500px;
-      max-height: 70vh;
-      overflow-y: auto;
-      padding: 1.5rem;
+    .servicio-item-btn i {
+      font-size: 1.1rem;
     }
-    @media (max-width: 680px) { .popup-business-card { width: 280px; } }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
+    
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
   </style>
 </head>
 <body>
@@ -206,173 +218,384 @@
     <div id="barra-superior">
       <div class="botones-izquierda">
         <div class="contenedor-buscador">
-          <input type="search" id="buscador" placeholder="Search verified businesses..." enterkeyhint="search">
+          <input type="search" id="buscador" placeholder="Cerca negocis a Andorra..." enterkeyhint="search">
           <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
         </div>
-        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">CENTER</span></button>
-        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">SERVICES</span></button>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">CENTRAR</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">SERVEIS QRP2P</span></button>
       </div>
       <div class="botones-derecha">
-        <button class="map-type-btn active" id="map-btn"><span id="map-text">Map</span></button>
-        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Satellite</span></button>
+        <button class="map-type-btn active" id="map-btn"><span id="map-text">Mapa</span></button>
+        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Satèl·lit</span></button>
         <div class="lang-selector">
+          <button class="lang-btn active" data-lang="ca">CA</button>
           <button class="lang-btn" data-lang="es">ES</button>
-          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="en">EN</button>
         </div>
       </div>
     </div>
     <div id="mapa"></div>
   </div>
 
-  <!-- Modal de Selección de País (PRIMERO) -->
-  <div id="paisModal" class="pais-modal">
-    <div class="pais-container">
-      <div class="servicios-header">
-        <h2 id="pais-modal-title">SELECCIONAR PAÍS</h2>
-        <button id="closePaisBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
-      </div>
-      <div id="listaPaises" class="servicios-botones"></div>
-    </div>
-  </div>
-
-  <!-- Modal de Selección de Servicio (SEGUNDO) -->
+  <!-- Modal de Serveis QRP2P Andorra -->
   <div id="servicioModal" class="servicio-modal">
     <div class="servicio-container">
       <div class="servicios-header">
-        <h2 id="servicio-modal-title">SELECCIONAR SERVICIO</h2>
+        <h2 id="servicio-modal-title">SERVEIS QRP2P <span class="zero-badge">0% COMISSIONS</span></h2>
         <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
       </div>
+      <div class="sub-header" id="subHeaderText">ANDORRA</div>
       <div id="listaServicios" class="servicios-botones"></div>
-      <button id="volverPaisesBtn" class="servicio-item-btn" style="background:#555; margin-top:1rem;">← Volver a Países</button>
-    </div>
-  </div>
-  
-  <div id="infoModal" class="info-modal">
-    <div class="info-container">
-      <div class="servicios-header">
-        <h2>Business Information</h2>
-        <button id="closeInfoModalBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
-      </div>
-      <div id="infoContent"></div>
     </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
   <script>
-    const WHATSAPP_NUMBER = "573041146297";
-    let currentLang = 'en';
-    let paisSeleccionado = null;
+    let currentLang = 'ca';
     let mapa, userMarker, marcadoresOriginales = [], currentLayer;
     
-    // PAÍSES DISPONIBLES (se pueden agregar más)
-    const paisesDisponibles = [
-      { id: "colombia", name_en: "Colombia", name_es: "Colombia", code: "CO" },
-      { id: "usa", name_en: "United States", name_es: "Estados Unidos", code: "US" }
-    ];
-    
-    // SERVICIOS (6 servicios)
-    const serviciosLista = [
-      { id: "plan-anual", name_en: "ANNUAL PLAN", name_es: "PLAN ANUAL", icon: "fa-calendar-alt" },
-      { id: "administracion", name_en: "ADMINISTRATION", name_es: "ADMINISTRACIÓN", icon: "fa-building" },
-      { id: "marketing", name_en: "MARKETING", name_es: "MARKETING", icon: "fa-chart-line" },
-      { id: "logistica", name_en: "LOGISTICS", name_es: "LOGÍSTICA", icon: "fa-truck" },
-      { id: "finanzas", name_en: "FINANCE", name_es: "FINANZAS", icon: "fa-coins" },
-      { id: "dropshipping", name_en: "DROPSHIPPING", name_es: "DROPSHIPPING", icon: "fa-boxes" }
-    ];
-    
-    // URLs de redirección para cada servicio y país
-    const urlsRedireccion = {
-      "plan-anual": {
-        "colombia": "https://qrp2p.com/plan-anual-co",
-        "usa": "https://qrp2p.com/annual-plan-us"
+    // SERVEIS QRP2P (7 serveis)
+    const serviciosQRP2P = [
+      { 
+        id: "plan-anual", 
+        name_ca: "REGISTRAR PLA ANUAL", 
+        name_es: "REGISTRAR PLAN ANUAL",
+        name_en: "REGISTER ANNUAL PLAN", 
+        icon: "fa-calendar-alt",
+        url: "https://qrp2p.com/plan-anual-andorra"
       },
-      "administracion": {
-        "colombia": "https://qrp2p.com/administracion-co",
-        "usa": "https://qrp2p.com/management-us"
+      { 
+        id: "administracion", 
+        name_ca: "ADMINISTRACIÓ MENSUAL", 
+        name_es: "ADMINISTRACIÓN MENSUAL",
+        name_en: "MONTHLY ADMINISTRATION", 
+        icon: "fa-building",
+        url: "https://qrp2p.com/administracion-andorra"
       },
-      "marketing": {
-        "colombia": "https://qrp2p.com/marketing-co",
-        "usa": "https://qrp2p.com/marketing-us"
+      { 
+        id: "marketing", 
+        name_ca: "MÀRQUETING MENSUAL", 
+        name_es: "MARKETING MENSUAL",
+        name_en: "MONTHLY MARKETING", 
+        icon: "fa-chart-line",
+        url: "https://qrp2p.com/marketing-andorra"
       },
-      "logistica": {
-        "colombia": "https://qrp2p.com/logistica-co",
-        "usa": "https://qrp2p.com/logistic-us"
+      { 
+        id: "logistica", 
+        name_ca: "LOGÍSTICA", 
+        name_es: "LOGÍSTICA",
+        name_en: "LOGISTICS", 
+        icon: "fa-truck",
+        url: "https://qrp2p.com/logistica-andorra"
       },
-      "finanzas": {
-        "colombia": "https://qrp2p.com/finanzas-co",
-        "usa": "https://qrp2p.com/finance-us"
+      { 
+        id: "finanzas", 
+        name_ca: "FINANCES", 
+        name_es: "FINANZAS",
+        name_en: "FINANCE", 
+        icon: "fa-coins",
+        url: "https://qrp2p.com/finances-andorra"
       },
-      "dropshipping": {
-        "colombia": "https://www.facebook.com/share/g/1F5fZbknEt/?mibextid=wwXIfr",
-        "usa": "https://qrp2p.com/dropshipping/usa"
+      { 
+        id: "contabilidad", 
+        name_ca: "COMPTABILITAT MENSUAL", 
+        name_es: "CONTABILIDAD MENSUAL",
+        name_en: "MONTHLY ACCOUNTING", 
+        icon: "fa-calculator",
+        url: "https://qrp2p.com/comptabilitat-andorra"
+      },
+      { 
+        id: "academia", 
+        name_ca: "ACADÈMIA QRP2P", 
+        name_es: "ACADEMIA QRP2P",
+        name_en: "QRP2P ACADEMY", 
+        icon: "fa-graduation-cap",
+        url: "https://qrp2p.com/academy"
       }
-    };
+    ];
     
-    // NEGOCIOS VERIFICADOS - SOLO COLOMBIA (2 en Bogotá, 1 en Cali)
+    // NEGOCIS VERIFICATS - ANDORRA (12 negocis a les 7 parròquies)
     const verifiedBusinesses = [
       { 
-        id: "WSC01", 
-        name_es: "WSC DISTRIBUIDORA", 
-        name_en: "WSC DISTRIBUIDORA", 
-        category_es: "Distribuidora Mayorista", 
+        id: "AND01", 
+        name_ca: "DISTRIBUIDORA ANDORRA LA VELLA", 
+        name_es: "DISTRIBUIDORA ANDORRA LA VELLA",
+        name_en: "ANDORRA LA VELLA DISTRIBUTOR", 
+        category_ca: "Distribució Majorista", 
+        category_es: "Distribuidora Mayorista",
         category_en: "Wholesale Distributor", 
-        latlng: [4.6097, -74.0817],
-        address_es: "San Victorino, Centro, Bogotá", 
-        address_en: "San Victorino, Downtown, Bogotá", 
-        description_es: "Distribuidora mayorista con los mejores precios en abarrotes, víveres y productos de consumo masivo.", 
-        description_en: "Wholesale distributor with the best prices in groceries, food and consumer products.", 
-        phone: "+573001234567", 
-        email: "ventas@wscdistribuidora.com", 
-        website: "https://wscdistribuidora.com", 
-        whatsapp: "573001234567" 
+        latlng: [42.5078, 1.5211],
+        address_ca: "Av. Meritxell, 23, Andorra la Vella", 
+        address_es: "Av. Meritxell, 23, Andorra la Vella",
+        address_en: "Av. Meritxell, 23, Andorra la Vella", 
+        description_ca: "Distribució d'aliments, begudes i productes per a la llar a tot Andorra.", 
+        description_es: "Distribución de alimentos, bebidas y productos para el hogar en toda Andorra.",
+        description_en: "Distribution of food, beverages and household products throughout Andorra.", 
+        phone: "+376123456", 
+        email: "info@distribuidora.ad", 
+        website: "https://distribuidora.ad", 
+        whatsapp: "376123456" 
       },
       { 
-        id: "BIZ05", 
-        name_es: "DISTRIBUIDORA LA 80", 
-        name_en: "DISTRIBUIDORA LA 80", 
-        category_es: "Distribuidora Mayorista", 
-        category_en: "Wholesale Distributor", 
-        latlng: [4.6877, -74.1040],
-        address_es: "Calle 80 # 77-25, Bogotá", 
-        address_en: "Calle 80 # 77-25, Bogotá", 
-        description_es: "Distribución de productos de aseo, limpieza y hogar. Precios de fábrica y entrega inmediata.", 
-        description_en: "Distribution of cleaning and home products. Factory prices and immediate delivery.", 
-        phone: "+573001234568", 
-        email: "ventas@distribuidoral80.com", 
-        website: "https://distribuidoral80.com", 
-        whatsapp: "573001234568" 
+        id: "AND02", 
+        name_ca: "IMMOBILIÀRIA ANDORRA P2P", 
+        name_es: "INMOBILIARIA ANDORRA P2P",
+        name_en: "ANDORRA P2P REAL ESTATE", 
+        category_ca: "Béns Arrels", 
+        category_es: "Bienes Raíces",
+        category_en: "Real Estate", 
+        latlng: [42.5070, 1.5230],
+        address_ca: "C/ de la Vall, 5, Andorra la Vella", 
+        address_es: "C/ de la Vall, 5, Andorra la Vella",
+        address_en: "C/ de la Vall, 5, Andorra la Vella", 
+        description_ca: "Compra i venda de propietats directe entre propietaris a Andorra. 0% comissions. Verificació garantida.", 
+        description_es: "Compra y venta de propiedades directo entre propietarios en Andorra. 0% comisiones. Verificación garantizada.",
+        description_en: "Buy and sell properties directly between owners in Andorra. 0% commission. Verified guarantee.", 
+        phone: "+376123457", 
+        email: "contacte@immobiliariandorra.ad", 
+        website: "https://qrp2p.com/ad", 
+        whatsapp: "376123457" 
       },
       { 
-        id: "BIZ06", 
-        name_es: "DISTRIBUIDORA CALI CENTRO", 
-        name_en: "DISTRIBUIDORA CALI CENTRO", 
-        category_es: "Distribuidora Mayorista", 
+        id: "ESC01", 
+        name_ca: "DISTRIBUIDORA ESCALDES-ENGORDANY", 
+        name_es: "DISTRIBUIDORA ESCALDES-ENGORDANY",
+        name_en: "ESCALDES-ENGORDANY DISTRIBUTOR", 
+        category_ca: "Distribució Majorista", 
+        category_es: "Distribuidora Mayorista",
         category_en: "Wholesale Distributor", 
-        latlng: [3.4516, -76.5320],
-        address_es: "Calle 13 # 4-30, Centro, Cali", 
-        address_en: "Calle 13 # 4-30, Downtown, Cali", 
-        description_es: "Especialistas en distribución de bebidas, licores y productos gourmet en el Valle del Cauca.", 
-        description_en: "Specialists in distribution of beverages, liquors and gourmet products in Valle del Cauca.", 
-        phone: "+573001234569", 
-        email: "ventas@distribuidoracali.com", 
-        website: "https://distribuidoracali.com", 
-        whatsapp: "573001234569" 
+        latlng: [42.5098, 1.5338],
+        address_ca: "Av. Carlemany, 45, Escaldes-Engordany", 
+        address_es: "Av. Carlemany, 45, Escaldes-Engordany",
+        address_en: "Av. Carlemany, 45, Escaldes-Engordany", 
+        description_ca: "Distribució de productes de luxe, perfumeria i electrònica.", 
+        description_es: "Distribución de productos de lujo, perfumería y electrónica.",
+        description_en: "Distribution of luxury products, perfumery and electronics.", 
+        phone: "+376123458", 
+        email: "info@distribucioescaldes.ad", 
+        website: "https://distribucioescaldes.ad", 
+        whatsapp: "376123458" 
+      },
+      { 
+        id: "ENC01", 
+        name_ca: "MEGADISTRIBUIDORA ENCAMP", 
+        name_es: "MEGADISTRIBUIDORA ENCAMP",
+        name_en: "ENCAMP MEGADISTRIBUTOR", 
+        category_ca: "Distribució Majorista", 
+        category_es: "Distribuidora Mayorista",
+        category_en: "Wholesale Distributor", 
+        latlng: [42.5333, 1.5833],
+        address_ca: "Ctra. General, 12, Encamp", 
+        address_es: "Ctra. General, 12, Encamp",
+        address_en: "Ctra. General, 12, Encamp", 
+        description_ca: "Distribució d'articles esportius i material de muntanya als Pirineus.", 
+        description_es: "Distribución de artículos deportivos y material de montaña en los Pirineos.",
+        description_en: "Distribution of sports items and mountain equipment in the Pyrenees.", 
+        phone: "+376123459", 
+        email: "info@megaencamp.ad", 
+        website: "https://megaencamp.ad", 
+        whatsapp: "376123459" 
+      },
+      { 
+        id: "SAN01", 
+        name_ca: "AGRÍCOLA SANT JULIÀ", 
+        name_es: "AGRÍCOLA SANT JULIÀ",
+        name_en: "SANT JULIÀ AGRIBUSINESS", 
+        category_ca: "Agroindústria", 
+        category_es: "Agroindustria",
+        category_en: "Agribusiness", 
+        latlng: [42.4637, 1.4919],
+        address_ca: "C/ Major, 34, Sant Julià de Lòria", 
+        address_es: "C/ Major, 34, Sant Julià de Lòria",
+        address_en: "C/ Major, 34, Sant Julià de Lòria", 
+        description_ca: "Distribució d'insums agrícoles, fertilitzants i llavors a Andorra.", 
+        description_es: "Distribución de insumos agrícolas, fertilizantes y semillas en Andorra.",
+        description_en: "Distribution of agricultural inputs, fertilizers and seeds in Andorra.", 
+        phone: "+376123460", 
+        email: "info@agricolasj.ad", 
+        website: "https://agricolasj.ad", 
+        whatsapp: "376123460" 
+      },
+      { 
+        id: "LA01", 
+        name_ca: "DISTRIBUIDORA LA MASSANA", 
+        name_es: "DISTRIBUIDORA LA MASSANA",
+        name_en: "LA MASSANA DISTRIBUTOR", 
+        category_ca: "Distribució Majorista", 
+        category_es: "Distribuidora Mayorista",
+        category_en: "Wholesale Distributor", 
+        latlng: [42.5442, 1.5156],
+        address_ca: "Av. Sant Antoni, 9, La Massana", 
+        address_es: "Av. Sant Antoni, 9, La Massana",
+        address_en: "Av. Sant Antoni, 9, La Massana", 
+        description_ca: "Distribució de productes de neteja i llar a la parròquia de la Massana.", 
+        description_es: "Distribución de productos de limpieza y hogar en la parroquia de la Massana.",
+        description_en: "Distribution of cleaning and home products in La Massana parish.", 
+        phone: "+376123461", 
+        email: "info@distribuidoralamassana.ad", 
+        website: "https://distribuidoralamassana.ad", 
+        whatsapp: "376123461" 
+      },
+      { 
+        id: "ORD01", 
+        name_ca: "LOGÍSTICA ORDINO", 
+        name_es: "LOGÍSTICA ORDINO",
+        name_en: "ORDINO LOGISTICS", 
+        category_ca: "Logística i Transport", 
+        category_es: "Logística y Transporte",
+        category_en: "Logistics & Transport", 
+        latlng: [42.5556, 1.5328],
+        address_ca: "C/ Major, 21, Ordino", 
+        address_es: "C/ Major, 21, Ordino",
+        address_en: "C/ Major, 21, Ordino", 
+        description_ca: "Solucions logístiques i distribució porta a porta a tot Andorra.", 
+        description_es: "Soluciones logísticas y distribución puerta a puerta en toda Andorra.",
+        description_en: "Logistics solutions and door-to-door distribution throughout Andorra.", 
+        phone: "+376123462", 
+        email: "info@logisticaordino.ad", 
+        website: "https://logisticaordino.ad", 
+        whatsapp: "376123462" 
+      },
+      { 
+        id: "CAN01", 
+        name_ca: "TECNOLOGIA CANILLO", 
+        name_es: "TECNOLOGÍA CANILLO",
+        name_en: "CANILLO TECH", 
+        category_ca: "Tecnologia", 
+        category_es: "Tecnología",
+        category_en: "Technology", 
+        latlng: [42.5650, 1.6006],
+        address_ca: "Av. Meritxell, 32, Canillo", 
+        address_es: "Av. Meritxell, 32, Canillo",
+        address_en: "Av. Meritxell, 32, Canillo", 
+        description_ca: "Distribució d'equips informàtics, impressores i subministraments d'oficina.", 
+        description_es: "Distribución de equipos de cómputo, impresoras y suministros de oficina.",
+        description_en: "Distribution of computers, printers and office supplies.", 
+        phone: "+376123463", 
+        email: "info@tecnologiacanillo.ad", 
+        website: "https://tecnologiacanillo.ad", 
+        whatsapp: "376123463" 
+      },
+      { 
+        id: "AND03", 
+        name_ca: "INVERSIONS ANDORRA", 
+        name_es: "INVERSIONES ANDORRA",
+        name_en: "ANDORRA INVESTMENTS", 
+        category_ca: "Finances i Inversions", 
+        category_es: "Finanzas e Inversiones",
+        category_en: "Finance & Investments", 
+        latlng: [42.5050, 1.5200],
+        address_ca: "C/ Prat de la Creu, 78, Andorra la Vella", 
+        address_es: "C/ Prat de la Creu, 78, Andorra la Vella",
+        address_en: "C/ Prat de la Creu, 78, Andorra la Vella", 
+        description_ca: "Assessorament financer i préstecs P2P per a emprenedors andorrans.", 
+        description_es: "Asesoría financiera y préstamos P2P para emprendedores andorranos.",
+        description_en: "Financial advisory and P2P loans for Andorran entrepreneurs.", 
+        phone: "+376123464", 
+        email: "info@inversionsandorra.ad", 
+        website: "https://inversionsandorra.ad", 
+        whatsapp: "376123464" 
+      },
+      { 
+        id: "ESC02", 
+        name_ca: "CONSTRUCCIONS ESCALDES", 
+        name_es: "CONSTRUCCIONES ESCALDES",
+        name_en: "ESCALDES CONSTRUCTIONS", 
+        category_ca: "Construcció", 
+        category_es: "Construcción",
+        category_en: "Construction", 
+        latlng: [42.5112, 1.5375],
+        address_ca: "C/ dels Valira, 15, Escaldes-Engordany", 
+        address_es: "C/ dels Valira, 15, Escaldes-Engordany",
+        address_en: "C/ dels Valira, 15, Escaldes-Engordany", 
+        description_ca: "Materials de construcció i eines per a projectes a Andorra.", 
+        description_es: "Materiales de construcción y herramientas para proyectos en Andorra.",
+        description_en: "Construction materials and tools for projects in Andorra.", 
+        phone: "+376123465", 
+        email: "info@construccionsescaldes.ad", 
+        website: "https://construccionsescaldes.ad", 
+        whatsapp: "376123465" 
+      },
+      { 
+        id: "ENC02", 
+        name_ca: "AUTOPECES ENCAMP", 
+        name_es: "AUTOPIEZAS ENCAMP",
+        name_en: "ENCAMP AUTO PARTS", 
+        category_ca: "Autoparts", 
+        category_es: "Autopartes",
+        category_en: "Auto Parts", 
+        latlng: [42.5350, 1.5850],
+        address_ca: "Ctra. General II, 8, Encamp", 
+        address_es: "Ctra. General II, 8, Encamp",
+        address_en: "Ctra. General II, 8, Encamp", 
+        description_ca: "Distribució de recanvis i accessoris per a vehicles a Andorra.", 
+        description_es: "Distribución de repuestos y accesorios para vehículos en Andorra.",
+        description_en: "Distribution of spare parts and accessories for vehicles in Andorra.", 
+        phone: "+376123466", 
+        email: "info@autopecesencamp.ad", 
+        website: "https://autopecesencamp.ad", 
+        whatsapp: "376123466" 
+      },
+      { 
+        id: "SAN02", 
+        name_ca: "MODA I TÈXTILS SANT JULIÀ", 
+        name_es: "MODA Y TEXTILES SANT JULIÀ",
+        name_en: "SANT JULIÀ FASHION & TEXTILES", 
+        category_ca: "Tèxtils", 
+        category_es: "Textiles",
+        category_en: "Textiles", 
+        latlng: [42.4620, 1.4930],
+        address_ca: "Av. Francesc Cairat, 3, Sant Julià de Lòria", 
+        address_es: "Av. Francesc Cairat, 3, Sant Julià de Lòria",
+        address_en: "Av. Francesc Cairat, 3, Sant Julià de Lòria", 
+        description_ca: "Distribució de teixits, tèxtils i confecció a la zona sud d'Andorra.", 
+        description_es: "Distribución de telas, textiles y confección en la zona sur de Andorra.",
+        description_en: "Distribution of fabrics, textiles and clothing in southern Andorra.", 
+        phone: "+376123467", 
+        email: "info@textilsantjulia.ad", 
+        website: "https://textilsantjulia.ad", 
+        whatsapp: "376123467" 
       }
     ];
     
     const translations = { 
-      es: { buscar_placeholder: "Buscar negocios verificados en Colombia...", centrar: "CENTRAR", servicios: "SERVICIOS", mapa: "Mapa", satelite: "Satélite", seleccionar_pais: "SELECCIONAR PAÍS", seleccionar_servicio: "SELECCIONAR SERVICIO", view_store: "VER TIENDA" },
-      en: { buscar_placeholder: "Search verified businesses in Colombia...", centrar: "CENTER", servicios: "SERVICES", mapa: "Map", satelite: "Satellite", seleccionar_pais: "SELECT COUNTRY", seleccionar_servicio: "SELECT SERVICE", view_store: "VIEW STORE" }
+      ca: { 
+        buscar_placeholder: "Cerca negocis a tot Andorra...", 
+        centrar: "CENTRAR", 
+        servicios: "SERVEIS QRP2P", 
+        mapa: "Mapa", 
+        satelite: "Satèl·lit", 
+        view_store: "VEURE BOTIGA",
+        sub_header: "ANDORRA"
+      },
+      es: { 
+        buscar_placeholder: "Buscar negocios en toda Andorra...", 
+        centrar: "CENTRAR", 
+        servicios: "SERVICIOS QRP2P", 
+        mapa: "Mapa", 
+        satelite: "Satélite", 
+        view_store: "VER TIENDA",
+        sub_header: "ANDORRA"
+      },
+      en: { 
+        buscar_placeholder: "Search businesses across Andorra...", 
+        centrar: "CENTER", 
+        servicios: "QRP2P SERVICES", 
+        mapa: "Map", 
+        satelite: "Satellite", 
+        view_store: "VIEW STORE",
+        sub_header: "ANDORRA"
+      }
     };
     
     function t(key) { return translations[currentLang][key] || key; }
     
     function generarPopupHTML(business) { 
-      const name = currentLang === 'es' ? business.name_es : business.name_en;
-      const category = currentLang === 'es' ? business.category_es : business.category_en;
-      const description = currentLang === 'es' ? business.description_es : business.description_en;
-      const address = currentLang === 'es' ? business.address_es : business.address_en;
+      const name = currentLang === 'ca' ? business.name_ca : (currentLang === 'es' ? business.name_es : business.name_en);
+      const category = currentLang === 'ca' ? business.category_ca : (currentLang === 'es' ? business.category_es : business.category_en);
+      const description = currentLang === 'ca' ? business.description_ca : (currentLang === 'es' ? business.description_es : business.description_en);
+      const address = currentLang === 'ca' ? business.address_ca : (currentLang === 'es' ? business.address_es : business.address_en);
       const storeText = t('view_store');
       const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
       let contactButtons = '';
@@ -384,12 +607,11 @@
     }
     
     function initMap() { 
-      const openStreetMapLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' });
       const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
       const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
       
-      // Centrar en Colombia
-      mapa = L.map('mapa', { center: [4.5709, -74.2973], zoom: 6, zoomControl: false });
+      // Centre d'Andorra (Andorra la Vella)
+      mapa = L.map('mapa', { center: [42.5078, 1.5211], zoom: 11, zoomControl: false });
       currentLayer = googleMapsLayer;
       currentLayer.addTo(mapa);
       
@@ -400,71 +622,43 @@
         let popup = generarPopupHTML(business); 
         let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
         marker.datosNegocio = business; 
-        marker.datosBusqueda = `${business.name_es} ${business.name_en} ${business.category_es} ${business.category_en} ${business.description_es} ${business.description_en}`.toLowerCase(); 
+        marker.datosBusqueda = `${business.name_ca} ${business.name_es} ${business.name_en} ${business.category_ca} ${business.category_es} ${business.category_en} ${business.description_ca} ${business.description_es} ${business.description_en}`.toLowerCase(); 
         marcadoresOriginales.push(marker); 
         clusters.addLayer(marker); 
       }); 
       mapa.addLayer(clusters); 
       
-      // Guardar capas para cambiar entre mapa y satélite
       mapa.googleMapsLayer = googleMapsLayer;
       mapa.googleSatelliteLayer = googleSatelliteLayer;
     }
     
-    function mostrarPaises() {
-      let container = document.getElementById('listaPaises');
-      container.innerHTML = '';
-      paisesDisponibles.forEach(pais => {
-        let btn = document.createElement('button');
-        btn.className = 'pais-btn';
-        let name = currentLang === 'es' ? pais.name_es : pais.name_en;
-        btn.innerHTML = `<i class="fas fa-flag"></i> ${name}`;
-        btn.addEventListener('click', () => {
-          paisSeleccionado = pais;
-          document.getElementById('paisModal').style.display = 'none';
-          mostrarServicios();
-        });
-        container.appendChild(btn);
-      });
-      document.getElementById('paisModal').style.display = 'flex';
-    }
-    
-    function mostrarServicios() {
+    function mostrarServiciosQRP2P() {
       let container = document.getElementById('listaServicios');
       container.innerHTML = '';
-      serviciosLista.forEach(servicio => {
+      serviciosQRP2P.forEach(servicio => {
         let btn = document.createElement('button');
         btn.className = 'servicio-item-btn';
-        let name = currentLang === 'es' ? servicio.name_es : servicio.name_en;
+        let name = currentLang === 'ca' ? servicio.name_ca : (currentLang === 'es' ? servicio.name_es : servicio.name_en);
         btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${name}`;
         btn.addEventListener('click', () => {
-          let url = urlsRedireccion[servicio.id]?.[paisSeleccionado.id];
-          if(url) {
-            window.open(url, '_blank');
-          } else {
-            window.open('https://qrp2p.com', '_blank');
-          }
+          window.open(servicio.url, '_blank');
           document.getElementById('servicioModal').style.display = 'none';
         });
         container.appendChild(btn);
       });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
       document.getElementById('servicioModal').style.display = 'flex';
-    }
-    
-    function volverPaises() {
-      document.getElementById('servicioModal').style.display = 'none';
-      mostrarPaises();
     }
     
     function centrarMapaRapido() {
       if (navigator.geolocation) {
         const btn = document.getElementById('centrar-btn');
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>GETTING...</span>';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>OBTENINT...</span>';
         navigator.geolocation.getCurrentPosition(
-          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'es' ? 'Tu ubicación actual' : 'Your current location'); mapa.setView([latitude, longitude], 14); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
-          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([4.5709, -74.2973], 6); alert(currentLang === 'es' ? 'No se pudo obtener tu ubicación.' : 'Could not get your location.'); }
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'ca' ? 'La teva ubicació actual' : (currentLang === 'es' ? 'Tu ubicación actual' : 'Your current location')); mapa.setView([latitude, longitude], 13); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([42.5078, 1.5211], 11); alert(currentLang === 'ca' ? 'No s\'ha pogut obtenir la ubicació. Mostrant Andorra.' : (currentLang === 'es' ? 'No se pudo obtener tu ubicación. Mostrando Andorra.' : 'Could not get your location. Showing Andorra.')); }
         );
-      } else { mapa.setView([4.5709, -74.2973], 6); }
+      } else { mapa.setView([42.5078, 1.5211], 11); }
     }
     
     function updateUILanguage() {
@@ -473,29 +667,48 @@
       document.getElementById('servicios-text').innerText = t('servicios');
       document.getElementById('map-text').innerText = t('mapa');
       document.getElementById('satellite-text').innerText = t('satelite');
-      document.getElementById('pais-modal-title').innerText = t('seleccionar_pais');
-      document.getElementById('servicio-modal-title').innerText = t('seleccionar_servicio');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
       marcadoresOriginales.forEach(marker => { marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); });
     }
     
     document.addEventListener('DOMContentLoaded', () => { 
       initMap(); updateUILanguage();
+      
       document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
-      document.getElementById('servicios-btn').addEventListener('click', mostrarPaises);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      
       document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
       document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
-      document.getElementById('closePaisBtn').addEventListener('click', () => document.getElementById('paisModal').style.display='none');
-      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display='none');
-      document.getElementById('volverPaisesBtn').addEventListener('click', volverPaises);
-      document.getElementById('closeInfoModalBtn').addEventListener('click', () => document.getElementById('infoModal').style.display='none');
-      window.addEventListener('click', (e) => { if(e.target === document.getElementById('paisModal')) document.getElementById('paisModal').style.display='none'; if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display='none'; });
+      
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
       
       document.querySelectorAll('.lang-btn').forEach(btn => { 
         btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); }); 
       });
       
       let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
-      inputBuscar.addEventListener('input', (e) => { clearTimeout(buscadorTimeout); let term = e.target.value.trim(); let sugDiv = document.getElementById('sugerencias-busqueda'); if(term.length < 2) { sugDiv.style.display = 'none'; return; } sugDiv.innerHTML = `<div class="sugerencia-item">🔍 Searching...</div>`; sugDiv.style.display = 'block'; buscadorTimeout = setTimeout(() => { let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); sugDiv.innerHTML = ''; resultados.forEach(m => { let name = currentLang === 'es' ? m.datosNegocio.name_es : m.datosNegocio.name_en; let item = document.createElement('div'); item.className = 'sugerencia-item'; item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${currentLang==='es'?'Ver':'View'}</button>`; item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 14); sugDiv.style.display = 'none'; }); sugDiv.appendChild(item); }); if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ No results</div>`; }, 300); }); 
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 Cercant...</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name = currentLang === 'ca' ? m.datosNegocio.name_ca : (currentLang === 'es' ? m.datosNegocio.name_es : m.datosNegocio.name_en); 
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${currentLang==='ca'?'Veure':(currentLang==='es'?'Ver':'View')}</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 14); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ No s'han trobat resultats a Andorra</div>`; 
+        }, 300); 
+      }); 
       document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
     });
   </script>
