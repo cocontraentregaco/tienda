@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>QRP2P Հայաստան | Հաստատված բիզնես | P2P շուկա | 0% միջնորդավճար</title>
+  <meta name="description" content="QRP2P Հայաստան: Ուղղակի շուկա գնորդի և վաճառողի միջև ամբողջ երկրում: Գտեք բիզնես, անշարժ գույք և ծառայություններ: 0% ցմահ միջնորդավճար:">
+  <meta name="keywords" content="QRP2P, Հայաստան, Armenia, շուկա, գնորդ, վաճառող, հաստատված, 0% միջնորդավճար, բիզնես, անշարժ գույք, Երևան, Գյումրի, Վանաձոր">
+  <meta name="author" content="QRP2P">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#000000">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Libre Baskerville', serif; background-color: #ffffff; color: #111111; line-height: 1.5; font-size: 16px; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    #contenedor-mapa { width: 100%; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #ffffff; width: 100%; z-index: 1000; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #eaeaea; flex-shrink: 0; }
+    .contenedor-buscador { position: relative; flex: 1; max-width: 400px; }
+    #buscador { width: 100%; padding: 0.6rem 1.2rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 16px; font-family: 'Libre Baskerville', serif; transition: all 0.3s ease; background: #ffffff; user-select: text; }
+    #buscador:focus { outline: none; border-color: #000000; }
+    .btn-mapa { background: #000000; color: #ffffff; padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; display: flex; gap: 5px; font-family: 'Libre Baskerville', serif; transition: all 0.2s ease; }
+    .btn-mapa:hover { background: #333333; }
+    .btn-centrar { background-color: #000000; }
+    .btn-registro { background-color: #25D366; color: #000000; }
+    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
+    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
+    .map-type-btn { padding: 0.5rem 1rem; border: none; border-radius: 40px; cursor: pointer; background: transparent; font-family: 'Libre Baskerville', serif; font-weight: 600; }
+    .map-type-btn.active { background: #000000; color: white; }
+    .lang-selector { display: flex; gap: 0.3rem; margin-left: 0.5rem; }
+    .lang-btn { background: transparent; border: 1px solid #ccc; border-radius: 20px; padding: 0.4rem 0.8rem; cursor: pointer; font-family: 'Libre Baskerville', serif; font-weight: 600; font-size: 0.8rem; }
+    .lang-btn.active { background: #000000; color: white; border-color: #000000; }
+    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
+    .leaflet-control-zoom { display: none !important; }
+    .sugerencias-busqueda { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; display: none; }
+    .sugerencia-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .sugerencia-item:hover { background-color: #f5f5f5; }
+    .sugerencia-texto { flex: 1; }
+    .sugerencia-boton { margin-left: 10px; padding: 6px 12px; background-color: #000000; color: white; border: none; border-radius: 20px; cursor: pointer; }
+    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
+    
+    .popup-business-card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      width: 340px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .popup-business-header {
+      background: #000000;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .popup-business-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .popup-business-category {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+    }
+    .popup-business-info {
+      padding: 1rem;
+    }
+    .popup-business-description {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .popup-business-address {
+      font-size: 0.7rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .popup-business-address i {
+      margin-top: 0.2rem;
+      color: #000;
+    }
+    .popup-business-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 0.8rem;
+    }
+    .contact-link {
+      font-size: 0.7rem;
+      background: #f5f5f5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .contact-link i { font-size: 0.7rem; }
+    .btn-view-store {
+      display: block;
+      background: #000000;
+      color: white;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .btn-view-store:hover { background: #333333; transform: scale(0.98); }
+    
+    .servicio-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+    .servicio-container {
+      background: white;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .servicios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .servicios-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn i {
+      font-size: 1.1rem;
+    }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
+    
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
+  </style>
+</head>
+<body>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="botones-izquierda">
+        <div class="contenedor-buscador">
+          <input type="search" id="buscador" placeholder="Որոնել բիզնեսներ Հայաստանում..." enterkeyhint="search">
+          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+        </div>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">ԿԵՆՏՐՈՆԱՑՆԵԼ</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">QRP2P ԾԱՌԱՅՈՒԹՅՈՒՆՆԵՐ</span></button>
+      </div>
+      <div class="botones-derecha">
+        <button class="map-type-btn active" id="map-btn"><span id="map-text">Քարտեզ</span></button>
+        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Արբանյակ</span></button>
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="hy">ՀՅ</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="ru">RU</button>
+        </div>
+      </div>
+    </div>
+    <div id="mapa"></div>
+  </div>
+
+  <!-- QRP2P Ծառայությունների Մոդալ Հայաստան -->
+  <div id="servicioModal" class="servicio-modal">
+    <div class="servicio-container">
+      <div class="servicios-header">
+        <h2 id="servicio-modal-title">QRP2P ԾԱՌԱՅՈՒԹՅՈՒՆՆԵՐ <span class="zero-badge">0% ՄԻՋՆՈՐԴԱՎՃԱՐ</span></h2>
+        <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sub-header" id="subHeaderText">ՀԱՅԱՍՏԱՆ</div>
+      <div id="listaServicios" class="servicios-botones"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    let currentLang = 'hy';
+    let mapa, userMarker, marcadoresOriginales = [], currentLayer;
+    
+    // QRP2P ԾԱՌԱՅՈՒԹՅՈՒՆՆԵՐ (7 services)
+    const serviciosQRP2P = [
+      { 
+        id: "plan-anual", 
+        name_hy: "ԳՐԱՆՑՎԵԼ ՏԱՐԵԿԱՆ ՊԼԱՆ", 
+        name_en: "REGISTER ANNUAL PLAN",
+        name_ru: "ЗАРЕГИСТРИРОВАТЬ ГОДОВОЙ ПЛАН", 
+        icon: "fa-calendar-alt",
+        url: "https://qrp2p.com/plan-anual-armenia"
+      },
+      { 
+        id: "administracion", 
+        name_hy: "ԱՄՍԱԿԱՆ ՎԱՐՉՈՒՄ", 
+        name_en: "MONTHLY ADMINISTRATION",
+        name_ru: "ЕЖЕМЕСЯЧНОЕ УПРАВЛЕНИЕ", 
+        icon: "fa-building",
+        url: "https://qrp2p.com/administration-armenia"
+      },
+      { 
+        id: "marketing", 
+        name_hy: "ԱՄՍԱԿԱՆ ՄԱՐԿԵՏԻՆԳ", 
+        name_en: "MONTHLY MARKETING",
+        name_ru: "ЕЖЕМЕСЯЧНЫЙ МАРКЕТИНГ", 
+        icon: "fa-chart-line",
+        url: "https://qrp2p.com/marketing-armenia"
+      },
+      { 
+        id: "logistica", 
+        name_hy: "ԼՈԳԻՍՏԻԿԱ", 
+        name_en: "LOGISTICS",
+        name_ru: "ЛОГИСТИКА", 
+        icon: "fa-truck",
+        url: "https://qrp2p.com/logistics-armenia"
+      },
+      { 
+        id: "finanzas", 
+        name_hy: "ՖԻՆԱՆՍՆԵՐ", 
+        name_en: "FINANCE",
+        name_ru: "ФИНАНСЫ", 
+        icon: "fa-coins",
+        url: "https://qrp2p.com/finance-armenia"
+      },
+      { 
+        id: "contabilidad", 
+        name_hy: "ԱՄՍԱԿԱՆ ՀԱՇՎԱՊԱՀՈՒԹՅՈՒՆ", 
+        name_en: "MONTHLY ACCOUNTING",
+        name_ru: "ЕЖЕМЕСЯЧНАЯ БУХГАЛТЕРИЯ", 
+        icon: "fa-calculator",
+        url: "https://qrp2p.com/accounting-armenia"
+      },
+      { 
+        id: "academia", 
+        name_hy: "QRP2P ԱԿԱԴԵՄԻԱ", 
+        name_en: "QRP2P ACADEMY",
+        name_ru: "АКАДЕМИЯ QRP2P", 
+        icon: "fa-graduation-cap",
+        url: "https://qrp2p.com/academy"
+      }
+    ];
+    
+    // ՀԱՍՏԱՏՎԱԾ ԲԻԶՆԵՍՆԵՐ - ՀԱՅԱՍՏԱՆ (12 businesses)
+    const verifiedBusinesses = [
+      { 
+        id: "EVN01", 
+        name_hy: "ԵՐԵՎԱՆԻ ԿԵՆՏՐՈՆԱԿԱՆ ԴԻՍՏՐԻԲՅՈՒՏՈՐ", 
+        name_en: "YEREVAN CENTER DISTRIBUTOR",
+        name_ru: "ЦЕНТРАЛЬНЫЙ ДИСТРИБЬЮТОР ЕРЕВАНА", 
+        category_hy: "Մեծածախ Դիստրիբյուտոր", 
+        category_en: "Wholesale Distributor",
+        category_ru: "Оптовый Дистрибьютор", 
+        latlng: [40.1792, 44.4991],
+        address_hy: "Աբովյան փողոց 12, Երևան", 
+        address_en: "Abovyan Street 12, Yerevan",
+        address_ru: "Улица Абовяна 12, Ереван", 
+        description_hy: "Սննդամթերքի, խմիչքների և կենցաղային ապրանքների մատակարարում ամբողջ Հայաստանում:", 
+        description_en: "Distribution of food, beverages and household products throughout Armenia.",
+        description_ru: "Распределение продуктов питания, напитков и товаров для дома по всей Армении.", 
+        phone: "+37410500001", 
+        email: "info@yerevandistributor.am", 
+        website: "https://yerevandistributor.am", 
+        whatsapp: "37410500001" 
+      },
+      { 
+        id: "EVN02", 
+        name_hy: "ՀԱՅԱՍՏԱՆԻ P2P ԱՆՇԱՐԺ ԳՈՒՅՔ", 
+        name_en: "ARMENIA P2P REAL ESTATE",
+        name_ru: "НЕДВИЖИМОСТЬ АРМЕНИИ P2P", 
+        category_hy: "Անշարժ Գույք", 
+        category_en: "Real Estate",
+        category_ru: "Недвижимость", 
+        latlng: [40.1892, 44.5155],
+        address_hy: "Մաշտոցի պողոտա 34, Երևան", 
+        address_en: "Mashtots Avenue 34, Yerevan",
+        address_ru: "Проспект Маштоца 34, Ереван", 
+        description_hy: "Գնեք և վաճառեք անշարժ գույք անմիջապես սեփականատերերի միջև Հայաստանում: 0% միջնորդավճար: Հաստատված երաշխիք:", 
+        description_en: "Buy and sell properties directly between owners in Armenia. 0% commission. Verified guarantee.",
+        description_ru: "Покупайте и продавайте недвижимость напрямую между владельцами в Армении. 0% комиссии. Гарантированная проверка.", 
+        phone: "+37410500002", 
+        email: "contact@armeniap2prealty.am", 
+        website: "https://qrp2p.com/am", 
+        whatsapp: "37410500002" 
+      },
+      { 
+        id: "GYU01", 
+        name_hy: "ԳՅՈՒՄՐՈՒ ԴԻՍՏՐԻԲՅՈՒՏՈՐ", 
+        name_en: "GYUMRI DISTRIBUTOR",
+        name_ru: "ДИСТРИБЬЮТОР ГЮМРИ", 
+        category_hy: "Մեծածախ Դիստրիբյուտոր", 
+        category_en: "Wholesale Distributor",
+        category_ru: "Оптовый Дистрибьютор", 
+        latlng: [40.7925, 43.8475],
+        address_hy: "Գյումրի, Շահումյան 45", 
+        address_en: "Gyumri, Shahumyan 45",
+        address_ru: "Гюмри, Шаумяна 45", 
+        description_hy: "Շիրակի մարզում գյուղատնտեսական ապրանքների և տեղական արտադրանքի մատակարարում:", 
+        description_en: "Distribution of agricultural products and local goods in Shirak region.",
+        description_ru: "Распределение сельскохозяйственной продукции и местных товаров в Ширакской области.", 
+        phone: "+37410500003", 
+        email: "info@gyumridistributor.am", 
+        website: "https://gyumridistributor.am", 
+        whatsapp: "37410500003" 
+      },
+      { 
+        id: "VAN01", 
+        name_hy: "ՎԱՆԱՁՈՐԻ ՄԵԳԱԴԻՍՏՐԻԲՅՈՒՏՈՐ", 
+        name_en: "VANADZOR MEGADISTRIBUTOR",
+        name_ru: "МЕГАДИСТРИБЬЮТОР ВАНАДЗОРА", 
+        category_hy: "Մեծածախ Դիստրիբյուտոր", 
+        category_en: "Wholesale Distributor",
+        category_ru: "Оптовый Дистрибьютор", 
+        latlng: [40.8128, 44.4883],
+        address_hy: "Վանաձոր, Տիգրան Մեծ 78", 
+        address_en: "Vanadzor, Tigran Mets 78",
+        address_ru: "Ванадзор, Тигран Мец 78", 
+        description_hy: "Շինանյութերի և արդյունաբերական ապրանքների մատակարարում Լոռու մարզում:", 
+        description_en: "Distribution of construction materials and industrial products in Lori region.",
+        description_ru: "Распределение строительных материалов и промышленных товаров в Лорийской области.", 
+        phone: "+37410500004", 
+        email: "info@vanadzormega.am", 
+        website: "https://vanadzormega.am", 
+        whatsapp: "37410500004" 
+      },
+      { 
+        id: "ARAR01", 
+        name_hy: "ԱՐԱՐԱՏՅԱՆ ԱԳՐՈԲԻԶՆԵՍ", 
+        name_en: "ARARAT AGRIBUSINESS",
+        name_ru: "АГРОБИЗНЕС АРАРАТА", 
+        category_hy: "Գյուղատնտեսություն", 
+        category_en: "Agribusiness",
+        category_ru: "Агробизнес", 
+        latlng: [39.9131, 44.7200],
+        address_hy: "Արարատի մարզ, գ. Այգավան", 
+        address_en: "Ararat region, Aygevan village",
+        address_ru: "Араратская область, село Айгеван", 
+        description_hy: "Գյուղատնտեսական ներմուծումների, պարարտանյութերի և սերմերի բաշխում:", 
+        description_en: "Distribution of agricultural inputs, fertilizers and seeds.",
+        description_ru: "Распределение сельскохозяйственных ресурсов, удобрений и семян.", 
+        phone: "+37410500005", 
+        email: "info@araratagro.am", 
+        website: "https://araratagro.am", 
+        whatsapp: "37410500005" 
+      },
+      { 
+        id: "KO01", 
+        name_hy: "ԴԻՍՏՐԻԲՅՈՒՏՈՐ ԿՈՏԱՅՔ", 
+        name_en: "KOTAYK DISTRIBUTOR",
+        name_ru: "ДИСТРИБЬЮТОР КОТАЙКА", 
+        category_hy: "Մեծածախ Դիստրիբյուտոր", 
+        category_en: "Wholesale Distributor",
+        category_ru: "Оптовый Дистрибьютор", 
+        latlng: [40.4178, 44.5750],
+        address_hy: "Հրազդան, Աբովյան 12", 
+        address_en: "Hrazdan, Abovyan 12",
+        address_ru: "Раздан, Абовяна 12", 
+        description_hy: "Մաքրման միջոցների և կենցաղային ապրանքների մատակարարում:", 
+        description_en: "Distribution of cleaning products and household goods.",
+        description_ru: "Распределение моющих средств и товаров для дома.", 
+        phone: "+37410500006", 
+        email: "info@kotaykdistributor.am", 
+        website: "https://kotaykdistributor.am", 
+        whatsapp: "37410500006" 
+      },
+      { 
+        id: "LOG01", 
+        name_hy: "ԼՈԳԻՍՏԻԿԱ ԱՐՄԱՎԻՐ", 
+        name_en: "ARMAVIR LOGISTICS",
+        name_ru: "ЛОГИСТИКА АРМАВИРА", 
+        category_hy: "Լոգիստիկա և Տրանսպորտ", 
+        category_en: "Logistics & Transport",
+        category_ru: "Логистика и Транспорт", 
+        latlng: [40.1508, 44.0381],
+        address_hy: "Արմավիր, Վարդանանց 56", 
+        address_en: "Armavir, Vardanants 56",
+        address_ru: "Армавир, Вардананц 56", 
+        description_hy: "Լոգիստիկ լուծումներ և առաքում դուռ-դուռ:", 
+        description_en: "Logistics solutions and door-to-door delivery.",
+        description_ru: "Логистические решения и доставка от двери до двери.", 
+        phone: "+37410500007", 
+        email: "logistics@armavirlog.am", 
+        website: "https://armavirlogistics.am", 
+        whatsapp: "37410500007" 
+      },
+      { 
+        id: "TECH01", 
+        name_hy: "ՏԵԽՆՈԼՈԳԻԱ ԱՇՏԱՐԱԿ", 
+        name_en: "ASHTARAK TECH",
+        name_ru: "ТЕХНОЛОГИЯ АШТАРАКА", 
+        category_hy: "Տեխնոլոգիա", 
+        category_en: "Technology",
+        category_ru: "Технологии", 
+        latlng: [40.2992, 44.3619],
+        address_hy: "Աշտարակ, Սայաթ-Նովա 23", 
+        address_en: "Ashtarak, Sayat-Nova 23",
+        address_ru: "Аштарак, Саят-Нова 23", 
+        description_hy: "Համակարգիչների, տպիչների և գրասենյակային պարագաների մատակարարում:", 
+        description_en: "Distribution of computers, printers and office supplies.",
+        description_ru: "Распределение компьютеров, принтеров и офисных принадлежностей.", 
+        phone: "+37410500008", 
+        email: "tech@ashtaraktech.am", 
+        website: "https://ashtaraktech.am", 
+        whatsapp: "37410500008" 
+      },
+      { 
+        id: "DIL01", 
+        name_hy: "ՆԵՐԴՐՈՒՄՆԵՐ ԴԻԼԻՋԱՆ", 
+        name_en: "DILIJAN INVESTMENTS",
+        name_ru: "ИНВЕСТИЦИИ ДИЛИЖАНА", 
+        category_hy: "Ֆինանսներ և Ներդրումներ", 
+        category_en: "Finance & Investments",
+        category_ru: "Финансы и Инвестиции", 
+        latlng: [40.7394, 44.8581],
+        address_hy: "Դիլիջան, Շառլ Ազնավուր 8", 
+        address_en: "Dilijan, Charles Aznavour 8",
+        address_ru: "Дилижан, Шарль Азнавур 8", 
+        description_hy: "Ֆինանսական խորհրդատվություն և P2P վարկեր ձեռներեցների համար:", 
+        description_en: "Financial advisory and P2P loans for entrepreneurs.",
+        description_ru: "Финансовые консультации и P2P кредиты для предпринимателей.", 
+        phone: "+37410500009", 
+        email: "finance@dilijaninvest.am", 
+        website: "https://dilijaninvestments.am", 
+        whatsapp: "37410500009" 
+      },
+      { 
+        id: "SIS01", 
+        name_hy: "ՇԻՆԱՐԱՐՈՒԹՅՈՒՆ ՍԻՍԻԱՆ", 
+        name_en: "SISIAN CONSTRUCTIONS",
+        name_ru: "СТРОИТЕЛЬСТВО СИСИАНА", 
+        category_hy: "Շինարարություն", 
+        category_en: "Construction",
+        category_ru: "Строительство", 
+        latlng: [39.5167, 46.0333],
+        address_hy: "Սիսիան, Սայաթ-Նովա 5", 
+        address_en: "Sisian, Sayat-Nova 5",
+        address_ru: "Сисиан, Саят-Нова 5", 
+        description_hy: "Շինանյութեր և գործիքներ նախագծերի համար Սյունիքում:", 
+        description_en: "Construction materials and tools for projects in Syunik.",
+        description_ru: "Строительные материалы и инструменты для проектов в Сюнике.", 
+        phone: "+37410500010", 
+        email: "build@sisiaconstruct.am", 
+        website: "https://sisiaconstruction.am", 
+        whatsapp: "37410500010" 
+      },
+      { 
+        id: "EGA01", 
+        name_hy: "ԱՎՏՈՊԱՐՏԵՐ ԷՋՄԻԱԾԻՆ", 
+        name_en: "ECHMIADZIN AUTO PARTS",
+        name_ru: "АВТОЗАПЧАСТИ ЭЧМИАДЗИНА", 
+        category_hy: "Ավտոպարագաներ", 
+        category_en: "Auto Parts",
+        category_ru: "Автозапчасти", 
+        latlng: [40.1642, 44.2942],
+        address_hy: "Էջմիածին, Մեսրոպ Մաշտոց 34", 
+        address_en: "Echmiadzin, Mesrop Mashtots 34",
+        address_ru: "Эчмиадзин, Месроп Маштоц 34", 
+        description_hy: "Պահեստամասերի և աքսեսուարների մատակարարում:", 
+        description_en: "Distribution of spare parts and accessories for vehicles.",
+        description_ru: "Распределение запасных частей и аксессуаров для автомобилей.", 
+        phone: "+37410500011", 
+        email: "parts@echmiadzinparts.am", 
+        website: "https://echmiadzinparts.am", 
+        whatsapp: "37410500011" 
+      },
+      { 
+        id: "GAV01", 
+        name_hy: "ՆԱՇԽԱՐԱՐՈՒԹՅՈՒՆ ԳԱՎԱՌ", 
+        name_en: "GAVAR FASHION & TEXTILES",
+        name_ru: "МОДА И ТЕКСТИЛЬ ГАВАРА", 
+        category_hy: "Տեքստիլ", 
+        category_en: "Textiles",
+        category_ru: "Текстиль", 
+        latlng: [40.3589, 45.1267],
+        address_hy: "Գավառ, Ազատության 15", 
+        address_en: "Gavar, Azatutyun 15",
+        address_ru: "Гавар, Азатутюн 15", 
+        description_hy: "Գործվածքների, տեքստիլի և հագուստի մատակարարում Գեղարքունիքում:", 
+        description_en: "Distribution of fabrics, textiles and clothing in Gegharkunik.",
+        description_ru: "Распределение тканей, текстиля и одежды в Гегаркунике.", 
+        phone: "+37410500012", 
+        email: "textiles@gavartextiles.am", 
+        website: "https://gavartextiles.am", 
+        whatsapp: "37410500012" 
+      }
+    ];
+    
+    const translations = { 
+      hy: { 
+        buscar_placeholder: "Որոնել բիզնեսներ ամբողջ Հայաստանում...", 
+        centrar: "ԿԵՆՏՐՈՆԱՑՆԵԼ", 
+        servicios: "QRP2P ԾԱՌԱՅՈՒԹՅՈՒՆՆԵՐ", 
+        mapa: "Քարտեզ", 
+        satelite: "Արբանյակ", 
+        view_store: "ԴԻՏԵԼ ԽԱՆՈՒԹԸ",
+        sub_header: "ՀԱՅԱՍՏԱՆ"
+      },
+      en: { 
+        buscar_placeholder: "Search businesses across Armenia...", 
+        centrar: "CENTER", 
+        servicios: "QRP2P SERVICES", 
+        mapa: "Map", 
+        satelite: "Satellite", 
+        view_store: "VIEW STORE",
+        sub_header: "ARMENIA"
+      },
+      ru: { 
+        buscar_placeholder: "Поиск бизнеса по всей Армении...", 
+        centrar: "ЦЕНТР", 
+        servicios: "УСЛУГИ QRP2P", 
+        mapa: "Карта", 
+        satelite: "Спутник", 
+        view_store: "СМОТРЕТЬ МАГАЗИН",
+        sub_header: "АРМЕНИЯ"
+      }
+    };
+    
+    function t(key) { return translations[currentLang][key] || key; }
+    
+    function generarPopupHTML(business) { 
+      let name, category, description, address;
+      if (currentLang === 'hy') {
+        name = business.name_hy;
+        category = business.category_hy;
+        description = business.description_hy;
+        address = business.address_hy;
+      } else if (currentLang === 'ru') {
+        name = business.name_ru;
+        category = business.category_ru;
+        description = business.description_ru;
+        address = business.address_ru;
+      } else {
+        name = business.name_en;
+        category = business.category_en;
+        description = business.description_en;
+        address = business.address_en;
+      }
+      const storeText = t('view_store');
+      const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
+      let contactButtons = '';
+      if(business.website) contactButtons += `<a href="${business.website}" target="_blank" class="contact-link"><i class="fas fa-globe"></i> Web</a>`;
+      if(business.whatsapp) contactButtons += `<a href="https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>`;
+      if(business.phone) contactButtons += `<a href="tel:${business.phone}" class="contact-link"><i class="fas fa-phone"></i> Call</a>`;
+      if(business.email) contactButtons += `<a href="mailto:${business.email}" class="contact-link"><i class="fas fa-envelope"></i> Email</a>`;
+      return `<div class="popup-business-card"><div class="popup-business-header"><h3>⚡ ${name}</h3><span class="popup-business-category">${category}</span></div><div class="popup-business-info"><div class="popup-business-description">${description}</div><div class="popup-business-address"><i class="fas fa-map-pin"></i> ${address}</div><div class="popup-business-contact">${contactButtons}</div><a href="${websiteUrl}" target="_blank" class="btn-view-store"><i class="fas fa-store"></i> ${storeText}</a></div></div>`; 
+    }
+    
+    function initMap() { 
+      const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      
+      // Կենտրոն Հայաստանի (Երևան)
+      mapa = L.map('mapa', { center: [40.1792, 44.4991], zoom: 8, zoomControl: false });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      
+      let clusters = L.markerClusterGroup({ iconCreateFunction: cluster => L.divIcon({ html: `<div>${cluster.getChildCount()}</div>`, className: 'cluster-marcadores', iconSize: [40,40] }) }); 
+      let icono = L.divIcon({ className: 'negocio-marker', html: '⚡', iconSize: [32,32], popupAnchor: [0,-16] }); 
+      
+      verifiedBusinesses.forEach(business => { 
+        let popup = generarPopupHTML(business); 
+        let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
+        marker.datosNegocio = business; 
+        marker.datosBusqueda = `${business.name_hy} ${business.name_en} ${business.name_ru} ${business.category_hy} ${business.category_en} ${business.category_ru} ${business.description_hy} ${business.description_en} ${business.description_ru}`.toLowerCase(); 
+        marcadoresOriginales.push(marker); 
+        clusters.addLayer(marker); 
+      }); 
+      mapa.addLayer(clusters); 
+      
+      mapa.googleMapsLayer = googleMapsLayer;
+      mapa.googleSatelliteLayer = googleSatelliteLayer;
+    }
+    
+    function mostrarServiciosQRP2P() {
+      let container = document.getElementById('listaServicios');
+      container.innerHTML = '';
+      serviciosQRP2P.forEach(servicio => {
+        let btn = document.createElement('button');
+        btn.className = 'servicio-item-btn';
+        let name = currentLang === 'hy' ? servicio.name_hy : (currentLang === 'ru' ? servicio.name_ru : servicio.name_en);
+        btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${name}`;
+        btn.addEventListener('click', () => {
+          window.open(servicio.url, '_blank');
+          document.getElementById('servicioModal').style.display = 'none';
+        });
+        container.appendChild(btn);
+      });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      document.getElementById('servicioModal').style.display = 'flex';
+    }
+    
+    function centrarMapaRapido() {
+      if (navigator.geolocation) {
+        const btn = document.getElementById('centrar-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>ՈՐՈՆՈՒՄ...</span>';
+        navigator.geolocation.getCurrentPosition(
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'hy' ? 'Ձեր ընթացիկ դիրքը' : (currentLang === 'ru' ? 'Ваше текущее местоположение' : 'Your current location')); mapa.setView([latitude, longitude], 12); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([40.1792, 44.4991], 8); alert(currentLang === 'hy' ? 'Չհաջողվեց ստանալ ձեր դիրքը: Ցուցադրվում է Հայաստանը:' : (currentLang === 'ru' ? 'Не удалось определить ваше местоположение. Показана Армения.' : 'Could not get your location. Showing Armenia.')); }
+        );
+      } else { mapa.setView([40.1792, 44.4991], 8); }
+    }
+    
+    function updateUILanguage() {
+      document.getElementById('buscador').placeholder = t('buscar_placeholder');
+      document.getElementById('centrar-text').innerText = t('centrar');
+      document.getElementById('servicios-text').innerText = t('servicios');
+      document.getElementById('map-text').innerText = t('mapa');
+      document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      marcadoresOriginales.forEach(marker => { marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => { 
+      initMap(); updateUILanguage();
+      
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      
+      document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
+      
+      document.querySelectorAll('.lang-btn').forEach(btn => { 
+        btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); }); 
+      });
+      
+      let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 ${currentLang === 'hy' ? 'Որոնում...' : (currentLang === 'ru' ? 'Поиск...' : 'Searching...')}</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name;
+            if (currentLang === 'hy') name = m.datosNegocio.name_hy;
+            else if (currentLang === 'ru') name = m.datosNegocio.name_ru;
+            else name = m.datosNegocio.name_en;
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${currentLang === 'hy' ? 'Դիտել' : (currentLang === 'ru' ? 'Смотреть' : 'View')}</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 12); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ ${currentLang === 'hy' ? 'Հայաստանում արդյունքներ չեն գտնվել' : (currentLang === 'ru' ? 'В Армении результатов не найдено' : 'No results found in Armenia')}</div>`; 
+        }, 300); 
+      }); 
+      document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
+    });
+  </script>
+</body>
+</html>
