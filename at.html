@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>QRP2P ÖSTERREICH | VERIFIZIERTE UNTERNEHMEN | P2P-MARKTPLATZ | 0% PROVISION</title>
+  <meta name="description" content="QRP2P Österreich. Direkter Marktplatz zwischen verifizierten Käufern und Verkäufern in ganz Österreich. Finden Sie Unternehmen, Immobilien und Dienstleistungen. 0% lebenslange Provision.">
+  <meta name="keywords" content="QRP2P, Österreich, Austria, Marktplatz, Käufer, Verkäufer, verifiziert, 0% Provision, Unternehmen, Immobilien, Wien, Graz, Linz, Salzburg, Innsbruck">
+  <meta name="author" content="QRP2P">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#000000">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Libre Baskerville', serif; background-color: #ffffff; color: #111111; line-height: 1.5; font-size: 16px; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    #contenedor-mapa { width: 100%; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #ffffff; width: 100%; z-index: 1000; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #eaeaea; flex-shrink: 0; }
+    .contenedor-buscador { position: relative; flex: 1; max-width: 400px; }
+    #buscador { width: 100%; padding: 0.6rem 1.2rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 16px; font-family: 'Libre Baskerville', serif; transition: all 0.3s ease; background: #ffffff; user-select: text; }
+    #buscador:focus { outline: none; border-color: #000000; }
+    .btn-mapa { background: #000000; color: #ffffff; padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; display: flex; gap: 5px; font-family: 'Libre Baskerville', serif; transition: all 0.2s ease; }
+    .btn-mapa:hover { background: #333333; }
+    .btn-centrar { background-color: #000000; }
+    .btn-registro { background-color: #25D366; color: #000000; }
+    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
+    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
+    .map-type-btn { padding: 0.5rem 1rem; border: none; border-radius: 40px; cursor: pointer; background: transparent; font-family: 'Libre Baskerville', serif; font-weight: 600; }
+    .map-type-btn.active { background: #000000; color: white; }
+    .lang-selector { display: flex; gap: 0.3rem; margin-left: 0.5rem; }
+    .lang-btn { background: transparent; border: 1px solid #ccc; border-radius: 20px; padding: 0.4rem 0.8rem; cursor: pointer; font-family: 'Libre Baskerville', serif; font-weight: 600; font-size: 0.8rem; }
+    .lang-btn.active { background: #000000; color: white; border-color: #000000; }
+    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
+    .leaflet-control-zoom { display: none !important; }
+    .sugerencias-busqueda { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; display: none; }
+    .sugerencia-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .sugerencia-item:hover { background-color: #f5f5f5; }
+    .sugerencia-texto { flex: 1; }
+    .sugerencia-boton { margin-left: 10px; padding: 6px 12px; background-color: #000000; color: white; border: none; border-radius: 20px; cursor: pointer; }
+    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
+    
+    .popup-business-card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      width: 340px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .popup-business-header {
+      background: #000000;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .popup-business-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .popup-business-category {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+    }
+    .popup-business-info {
+      padding: 1rem;
+    }
+    .popup-business-description {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .popup-business-address {
+      font-size: 0.7rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .popup-business-address i {
+      margin-top: 0.2rem;
+      color: #000;
+    }
+    .popup-business-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 0.8rem;
+    }
+    .contact-link {
+      font-size: 0.7rem;
+      background: #f5f5f5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .contact-link i { font-size: 0.7rem; }
+    .btn-view-store {
+      display: block;
+      background: #000000;
+      color: white;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .btn-view-store:hover { background: #333333; transform: scale(0.98); }
+    
+    .servicio-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+    .servicio-container {
+      background: white;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .servicios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .servicios-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn i {
+      font-size: 1.1rem;
+    }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
+    
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
+  </style>
+</head>
+<body>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="botones-izquierda">
+        <div class="contenedor-buscador">
+          <input type="search" id="buscador" placeholder="Unternehmen in Österreich suchen..." enterkeyhint="search">
+          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+        </div>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">ZENTRIEREN</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">QRP2P SERVICES</span></button>
+      </div>
+      <div class="botones-derecha">
+        <button class="map-type-btn active" id="map-btn"><span id="map-text">Karte</span></button>
+        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Satellit</span></button>
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="de">DE</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+      </div>
+    </div>
+    <div id="mapa"></div>
+  </div>
+
+  <!-- QRP2P Services Modal Österreich -->
+  <div id="servicioModal" class="servicio-modal">
+    <div class="servicio-container">
+      <div class="servicios-header">
+        <h2 id="servicio-modal-title">QRP2P SERVICES <span class="zero-badge">0% PROVISION</span></h2>
+        <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sub-header" id="subHeaderText">ÖSTERREICH</div>
+      <div id="listaServicios" class="servicios-botones"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    let currentLang = 'de';
+    let mapa, userMarker, marcadoresOriginales = [], currentLayer;
+    
+    // QRP2P SERVICES (7 services)
+    const serviciosQRP2P = [
+      { 
+        id: "plan-anual", 
+        name_de: "JAHRESPLAN REGISTRIEREN", 
+        name_en: "REGISTER ANNUAL PLAN", 
+        icon: "fa-calendar-alt",
+        url: "https://qrp2p.com/plan-anual-austria"
+      },
+      { 
+        id: "administracion", 
+        name_de: "MONATLICHE VERWALTUNG", 
+        name_en: "MONTHLY ADMINISTRATION", 
+        icon: "fa-building",
+        url: "https://qrp2p.com/administration-austria"
+      },
+      { 
+        id: "marketing", 
+        name_de: "MONATLICHES MARKETING", 
+        name_en: "MONTHLY MARKETING", 
+        icon: "fa-chart-line",
+        url: "https://qrp2p.com/marketing-austria"
+      },
+      { 
+        id: "logistica", 
+        name_de: "LOGISTIK", 
+        name_en: "LOGISTICS", 
+        icon: "fa-truck",
+        url: "https://qrp2p.com/logistics-austria"
+      },
+      { 
+        id: "finanzas", 
+        name_de: "FINANZEN", 
+        name_en: "FINANCE", 
+        icon: "fa-coins",
+        url: "https://qrp2p.com/finance-austria"
+      },
+      { 
+        id: "contabilidad", 
+        name_de: "MONATLICHE BUCHHALTUNG", 
+        name_en: "MONTHLY ACCOUNTING", 
+        icon: "fa-calculator",
+        url: "https://qrp2p.com/accounting-austria"
+      },
+      { 
+        id: "academia", 
+        name_de: "QRP2P AKADEMIE", 
+        name_en: "QRP2P ACADEMY", 
+        icon: "fa-graduation-cap",
+        url: "https://qrp2p.com/academy"
+      }
+    ];
+    
+    // VERIFIED BUSINESSES - AUSTRIA (12 businesses across major cities)
+    const verifiedBusinesses = [
+      { 
+        id: "VIE01", 
+        name_de: "GROSSHANDEL WIEN MITTE", 
+        name_en: "VIENNA CENTER WHOLESALE", 
+        category_de: "Großhandel", 
+        category_en: "Wholesale Distributor", 
+        latlng: [48.2082, 16.3738],
+        address_de: "Kärntner Straße 123, 1010 Wien", 
+        address_en: "Kärntner Strasse 123, 1010 Vienna", 
+        description_de: "Vertrieb von Lebensmitteln, Getränken und Haushaltsprodukten in ganz Österreich.", 
+        description_en: "Distribution of food, beverages and household products throughout Austria.", 
+        phone: "+43123456789", 
+        email: "info@grosshandel-wien.at", 
+        website: "https://grosshandel-wien.at", 
+        whatsapp: "436641234567" 
+      },
+      { 
+        id: "VIE02", 
+        name_de: "IMMOBILIEN ÖSTERREICH P2P", 
+        name_en: "AUSTRIA P2P REAL ESTATE", 
+        category_de: "Immobilien", 
+        category_en: "Real Estate", 
+        latlng: [48.2100, 16.3650],
+        address_de: "Graben 28, 1010 Wien", 
+        address_en: "Graben 28, 1010 Vienna", 
+        description_de: "Direkter Kauf und Verkauf von Immobilien zwischen Eigentümern in Österreich. 0% Provision. Verifizierte Garantie.", 
+        description_en: "Buy and sell properties directly between owners in Austria. 0% commission. Verified guarantee.", 
+        phone: "+43123456790", 
+        email: "kontakt@immobilien-p2p.at", 
+        website: "https://qrp2p.com/at", 
+        whatsapp: "436641234568" 
+      },
+      { 
+        id: "GRA01", 
+        name_de: "GROSSHANDEL GRAZ", 
+        name_en: "GRAZ WHOLESALE", 
+        category_de: "Großhandel", 
+        category_en: "Wholesale Distributor", 
+        latlng: [47.0707, 15.4395],
+        address_de: "Herrengasse 45, 8010 Graz", 
+        address_en: "Herrengasse 45, 8010 Graz", 
+        description_de: "Vertrieb von steirischen Spezialitäten, Kürbiskernöl und regionalen Produkten.", 
+        description_en: "Distribution of Styrian specialties, pumpkin seed oil and regional products.", 
+        phone: "+433161234567", 
+        email: "info@grosshandel-graz.at", 
+        website: "https://grosshandel-graz.at", 
+        whatsapp: "436641234569" 
+      },
+      { 
+        id: "LIN01", 
+        name_de: "GROSSHANDEL LINZ", 
+        name_en: "LINZ WHOLESALE", 
+        category_de: "Großhandel", 
+        category_en: "Wholesale Distributor", 
+        latlng: [48.3069, 14.2858],
+        address_de: "Landstraße 67, 4020 Linz", 
+        address_en: "Landstrasse 67, 4020 Linz", 
+        description_de: "Vertrieb von Industriegütern und Stahlprodukten in Oberösterreich.", 
+        description_en: "Distribution of industrial goods and steel products in Upper Austria.", 
+        phone: "+437321234567", 
+        email: "info@grosshandel-linz.at", 
+        website: "https://grosshandel-linz.at", 
+        whatsapp: "436641234570" 
+      },
+      { 
+        id: "SZG01", 
+        name_de: "AGROHANDEL SALZBURG", 
+        name_en: "SALZBURG AGRIBUSINESS", 
+        category_de: "Agrarwirtschaft", 
+        category_en: "Agribusiness", 
+        latlng: [47.8095, 13.0550],
+        address_de: "Getreidegasse 23, 5020 Salzburg", 
+        address_en: "Getreidegasse 23, 5020 Salzburg", 
+        description_de: "Vertrieb von landwirtschaftlichen Betriebsmitteln, Düngemitteln und Saatgut in der Alpenregion.", 
+        description_en: "Distribution of agricultural inputs, fertilizers and seeds in the Alpine region.", 
+        phone: "+436621234567", 
+        email: "info@agro-salzburg.at", 
+        website: "https://agro-salzburg.at", 
+        whatsapp: "436641234571" 
+      },
+      { 
+        id: "INN01", 
+        name_de: "GROSSHANDEL INNSBRUCK", 
+        name_en: "INNSBRUCK WHOLESALE", 
+        category_de: "Großhandel", 
+        category_en: "Wholesale Distributor", 
+        latlng: [47.2692, 11.4041],
+        address_de: "Maria-Theresien-Straße 34, 6020 Innsbruck", 
+        address_en: "Maria-Theresien-Strasse 34, 6020 Innsbruck", 
+        description_de: "Vertrieb von Touristikartikeln, Sportausrüstung und regionalen Produkten in Tirol.", 
+        description_en: "Distribution of tourism products, sports equipment and regional products in Tyrol.", 
+        phone: "+435121234567", 
+        email: "info@grosshandel-innsbruck.at", 
+        website: "https://grosshandel-innsbruck.at", 
+        whatsapp: "436641234572" 
+      },
+      { 
+        id: "KLG01", 
+        name_de: "LOGISTIK KLAGENFURT", 
+        name_en: "KLAGENFURT LOGISTICS", 
+        category_de: "Logistik & Transport", 
+        category_en: "Logistics & Transport", 
+        latlng: [46.6249, 14.3057],
+        address_de: "Villacher Ring 12, 9020 Klagenfurt", 
+        address_en: "Villacher Ring 12, 9020 Klagenfurt", 
+        description_de: "Logistiklösungen und Tür-zu-Tür-Verteilung in Kärnten und Südösterreich.", 
+        description_en: "Logistics solutions and door-to-door distribution in Carinthia and southern Austria.", 
+        phone: "+434631234567", 
+        email: "info@logistik-klagenfurt.at", 
+        website: "https://logistik-klagenfurt.at", 
+        whatsapp: "436641234573" 
+      },
+      { 
+        id: "WEL01", 
+        name_de: "TECHNOLOGIE WELS", 
+        name_en: "WELS TECH", 
+        category_de: "Technologie", 
+        category_en: "Technology", 
+        latlng: [48.1560, 14.0248],
+        address_de: "Ringstraße 56, 4600 Wels", 
+        address_en: "Ringstrasse 56, 4600 Wels", 
+        description_de: "Vertrieb von Computern, Druckern und Büromaterial in Oberösterreich.", 
+        description_en: "Distribution of computers, printers and office supplies in Upper Austria.", 
+        phone: "+437241234567", 
+        email: "tech@tech-wels.at", 
+        website: "https://tech-wels.at", 
+        whatsapp: "436641234574" 
+      },
+      { 
+        id: "STP01", 
+        name_de: "INVESTITIONEN ST. PÖLTEN", 
+        name_en: "ST. PÖLTEN INVESTMENTS", 
+        category_de: "Finanzen & Investitionen", 
+        category_en: "Finance & Investments", 
+        latlng: [48.2033, 15.6381],
+        address_de: "Rathausplatz 8, 3100 St. Pölten", 
+        address_en: "Rathausplatz 8, 3100 St. Pölten", 
+        description_de: "Finanzberatung und P2P-Kredite für Unternehmer in Niederösterreich.", 
+        description_en: "Financial advisory and P2P loans for entrepreneurs in Lower Austria.", 
+        phone: "+4327421234567", 
+        email: "finance@invest-stp.at", 
+        website: "https://investments-stp.at", 
+        whatsapp: "436641234575" 
+      },
+      { 
+        id: "BRE01", 
+        name_de: "BAUWESEN BREGENZ", 
+        name_en: "BREGENZ CONSTRUCTIONS", 
+        category_de: "Bauwesen", 
+        category_en: "Construction", 
+        latlng: [47.5023, 9.7471],
+        address_de: "Kaiserstraße 45, 6900 Bregenz", 
+        address_en: "Kaiserstrasse 45, 6900 Bregenz", 
+        description_de: "Baumaterialien und Werkzeuge für Projekte in Vorarlberg.", 
+        description_en: "Construction materials and tools for projects in Vorarlberg.", 
+        phone: "+4355741234567", 
+        email: "bau@bregenz-construct.at", 
+        website: "https://bregenzconstruction.at", 
+        whatsapp: "436641234576" 
+      },
+      { 
+        id: "EIS01", 
+        name_de: "AUTOTEILE EISENSTADT", 
+        name_en: "EISENSTADT AUTO PARTS", 
+        category_de: "Autoteile", 
+        category_en: "Auto Parts", 
+        latlng: [47.8458, 16.5228],
+        address_de: "Hauptstraße 78, 7000 Eisenstadt", 
+        address_en: "Hauptstrasse 78, 7000 Eisenstadt", 
+        description_de: "Vertrieb von Ersatzteilen und Zubehör für Fahrzeuge im Burgenland.", 
+        description_en: "Distribution of spare parts and accessories for vehicles in Burgenland.", 
+        phone: "+4326821234567", 
+        email: "parts@autoteile-eisenstadt.at", 
+        website: "https://autoteile-eisenstadt.at", 
+        whatsapp: "436641234577" 
+      },
+      { 
+        id: "LEO01", 
+        name_de: "MODE & TEXTILIEN LEOBEN", 
+        name_en: "LEOBEN FASHION & TEXTILES", 
+        category_de: "Textilien", 
+        category_en: "Textiles", 
+        latlng: [47.3776, 15.0908],
+        address_de: "Hauptplatz 12, 8700 Leoben", 
+        address_en: "Hauptplatz 12, 8700 Leoben", 
+        description_de: "Vertrieb von Stoffen, Textilien und Bekleidung in der Steiermark.", 
+        description_en: "Distribution of fabrics, textiles and clothing in Styria.", 
+        phone: "+4338421234567", 
+        email: "textil@leoben-fashion.at", 
+        website: "https://leobentextiles.at", 
+        whatsapp: "436641234578" 
+      }
+    ];
+    
+    const translations = { 
+      de: { 
+        buscar_placeholder: "Unternehmen in ganz Österreich suchen...", 
+        centrar: "ZENTRIEREN", 
+        servicios: "QRP2P SERVICES", 
+        mapa: "Karte", 
+        satelite: "Satellit", 
+        view_store: "SHOP ANSEHEN",
+        sub_header: "ÖSTERREICH"
+      },
+      en: { 
+        buscar_placeholder: "Search businesses across Austria...", 
+        centrar: "CENTER", 
+        servicios: "QRP2P SERVICES", 
+        mapa: "Map", 
+        satelite: "Satellite", 
+        view_store: "VIEW STORE",
+        sub_header: "AUSTRIA"
+      }
+    };
+    
+    function t(key) { return translations[currentLang][key] || key; }
+    
+    function generarPopupHTML(business) { 
+      const name = currentLang === 'de' ? business.name_de : business.name_en;
+      const category = currentLang === 'de' ? business.category_de : business.category_en;
+      const description = currentLang === 'de' ? business.description_de : business.description_en;
+      const address = currentLang === 'de' ? business.address_de : business.address_en;
+      const storeText = t('view_store');
+      const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
+      let contactButtons = '';
+      if(business.website) contactButtons += `<a href="${business.website}" target="_blank" class="contact-link"><i class="fas fa-globe"></i> Web</a>`;
+      if(business.whatsapp) contactButtons += `<a href="https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>`;
+      if(business.phone) contactButtons += `<a href="tel:${business.phone}" class="contact-link"><i class="fas fa-phone"></i> Call</a>`;
+      if(business.email) contactButtons += `<a href="mailto:${business.email}" class="contact-link"><i class="fas fa-envelope"></i> Email</a>`;
+      return `<div class="popup-business-card"><div class="popup-business-header"><h3>⚡ ${name}</h3><span class="popup-business-category">${category}</span></div><div class="popup-business-info"><div class="popup-business-description">${description}</div><div class="popup-business-address"><i class="fas fa-map-pin"></i> ${address}</div><div class="popup-business-contact">${contactButtons}</div><a href="${websiteUrl}" target="_blank" class="btn-view-store"><i class="fas fa-store"></i> ${storeText}</a></div></div>`; 
+    }
+    
+    function initMap() { 
+      const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      
+      // Zentrum von Österreich (ungefähr)
+      mapa = L.map('mapa', { center: [47.6969, 13.3457], zoom: 7, zoomControl: false });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      
+      let clusters = L.markerClusterGroup({ iconCreateFunction: cluster => L.divIcon({ html: `<div>${cluster.getChildCount()}</div>`, className: 'cluster-marcadores', iconSize: [40,40] }) }); 
+      let icono = L.divIcon({ className: 'negocio-marker', html: '⚡', iconSize: [32,32], popupAnchor: [0,-16] }); 
+      
+      verifiedBusinesses.forEach(business => { 
+        let popup = generarPopupHTML(business); 
+        let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
+        marker.datosNegocio = business; 
+        marker.datosBusqueda = `${business.name_de} ${business.name_en} ${business.category_de} ${business.category_en} ${business.description_de} ${business.description_en}`.toLowerCase(); 
+        marcadoresOriginales.push(marker); 
+        clusters.addLayer(marker); 
+      }); 
+      mapa.addLayer(clusters); 
+      
+      mapa.googleMapsLayer = googleMapsLayer;
+      mapa.googleSatelliteLayer = googleSatelliteLayer;
+    }
+    
+    function mostrarServiciosQRP2P() {
+      let container = document.getElementById('listaServicios');
+      container.innerHTML = '';
+      serviciosQRP2P.forEach(servicio => {
+        let btn = document.createElement('button');
+        btn.className = 'servicio-item-btn';
+        let name = currentLang === 'de' ? servicio.name_de : servicio.name_en;
+        btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${name}`;
+        btn.addEventListener('click', () => {
+          window.open(servicio.url, '_blank');
+          document.getElementById('servicioModal').style.display = 'none';
+        });
+        container.appendChild(btn);
+      });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      document.getElementById('servicioModal').style.display = 'flex';
+    }
+    
+    function centrarMapaRapido() {
+      if (navigator.geolocation) {
+        const btn = document.getElementById('centrar-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>WIRD GESUCHT...</span>';
+        navigator.geolocation.getCurrentPosition(
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'de' ? 'Ihr aktueller Standort' : 'Your current location'); mapa.setView([latitude, longitude], 12); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([47.6969, 13.3457], 7); alert(currentLang === 'de' ? 'Ihr Standort konnte nicht ermittelt werden. Zeige Österreich.' : 'Could not get your location. Showing Austria.'); }
+        );
+      } else { mapa.setView([47.6969, 13.3457], 7); }
+    }
+    
+    function updateUILanguage() {
+      document.getElementById('buscador').placeholder = t('buscar_placeholder');
+      document.getElementById('centrar-text').innerText = t('centrar');
+      document.getElementById('servicios-text').innerText = t('servicios');
+      document.getElementById('map-text').innerText = t('mapa');
+      document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      marcadoresOriginales.forEach(marker => { marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => { 
+      initMap(); updateUILanguage();
+      
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      
+      document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
+      
+      document.querySelectorAll('.lang-btn').forEach(btn => { 
+        btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); }); 
+      });
+      
+      let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 Wird gesucht...</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name = currentLang === 'de' ? m.datosNegocio.name_de : m.datosNegocio.name_en; 
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${currentLang==='de'?'Anzeigen':'View'}</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 12); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ Keine Ergebnisse in Österreich gefunden</div>`; 
+        }, 300); 
+      }); 
+      document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
+    });
+  </script>
+</body>
+</html>
