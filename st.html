@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>QRP2P SÃO TOMÉ E PRÍNCIPE | NEGÓCIOS VERIFICADOS | MERCADO P2P | 0% COMISSÕES</title>
+  <meta name="description" content="QRP2P São Tomé e Príncipe. Mercado direto entre comprador e vendedor verificado em todo o país. Encontre negócios, propriedades e serviços. 0% comissões vitalícias.">
+  <meta name="keywords" content="QRP2P, São Tomé e Príncipe, São Tomé, Príncipe, mercado, comprador, vendedor, verificado, 0% comissões, negócios, propriedades">
+  <meta name="author" content="QRP2P">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#000000">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Libre Baskerville', serif; background-color: #ffffff; color: #111111; line-height: 1.5; font-size: 16px; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    #contenedor-mapa { width: 100%; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #ffffff; width: 100%; z-index: 1000; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #eaeaea; flex-shrink: 0; }
+    .contenedor-buscador { position: relative; flex: 1; max-width: 400px; }
+    #buscador { width: 100%; padding: 0.6rem 1.2rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 16px; font-family: 'Libre Baskerville', serif; transition: all 0.3s ease; background: #ffffff; user-select: text; }
+    #buscador:focus { outline: none; border-color: #000000; }
+    .btn-mapa { background: #000000; color: #ffffff; padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; display: flex; gap: 5px; font-family: 'Libre Baskerville', serif; transition: all 0.2s ease; }
+    .btn-mapa:hover { background: #333333; }
+    .btn-centrar { background-color: #000000; }
+    .btn-registro { background-color: #25D366; color: #000000; }
+    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
+    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
+    .map-type-btn { padding: 0.5rem 1rem; border: none; border-radius: 40px; cursor: pointer; background: transparent; font-family: 'Libre Baskerville', serif; font-weight: 600; }
+    .map-type-btn.active { background: #000000; color: white; }
+    .lang-selector { display: flex; gap: 0.3rem; margin-left: 0.5rem; }
+    .lang-btn { background: transparent; border: 1px solid #ccc; border-radius: 20px; padding: 0.4rem 0.8rem; cursor: pointer; font-family: 'Libre Baskerville', serif; font-weight: 600; font-size: 0.8rem; }
+    .lang-btn.active { background: #000000; color: white; border-color: #000000; }
+    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
+    .leaflet-control-zoom { display: none !important; }
+    .sugerencias-busqueda { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; display: none; }
+    .sugerencia-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .sugerencia-item:hover { background-color: #f5f5f5; }
+    .sugerencia-texto { flex: 1; }
+    .sugerencia-boton { margin-left: 10px; padding: 6px 12px; background-color: #000000; color: white; border: none; border-radius: 20px; cursor: pointer; }
+    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
+    
+    .popup-business-card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      width: 340px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .popup-business-header {
+      background: #000000;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .popup-business-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .popup-business-category {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+    }
+    .popup-business-info {
+      padding: 1rem;
+    }
+    .popup-business-description {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .popup-business-address {
+      font-size: 0.7rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .popup-business-address i {
+      margin-top: 0.2rem;
+      color: #000;
+    }
+    .popup-business-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 0.8rem;
+    }
+    .contact-link {
+      font-size: 0.7rem;
+      background: #f5f5f5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .contact-link i { font-size: 0.7rem; }
+    .btn-view-store {
+      display: block;
+      background: #000000;
+      color: white;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .btn-view-store:hover { background: #333333; transform: scale(0.98); }
+    
+    .servicio-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+    .servicio-container {
+      background: white;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .servicios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .servicios-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn i {
+      font-size: 1.1rem;
+    }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
+    
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
+  </style>
+</head>
+<body>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="botones-izquierda">
+        <div class="contenedor-buscador">
+          <input type="search" id="buscador" placeholder="Pesquisar negócios em São Tomé e Príncipe..." enterkeyhint="search">
+          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+        </div>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">CENTRAR</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">SERVIÇOS QRP2P</span></button>
+      </div>
+      <div class="botones-derecha">
+        <button class="map-type-btn active" id="map-btn"><span id="map-text">Mapa</span></button>
+        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Satélite</span></button>
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="pt">PT</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+      </div>
+    </div>
+    <div id="mapa"></div>
+  </div>
+
+  <!-- Modal de Serviços QRP2P São Tomé e Príncipe -->
+  <div id="servicioModal" class="servicio-modal">
+    <div class="servicio-container">
+      <div class="servicios-header">
+        <h2 id="servicio-modal-title">SERVIÇOS QRP2P <span class="zero-badge">0% COMISSÕES</span></h2>
+        <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sub-header" id="subHeaderText">SÃO TOMÉ E PRÍNCIPE</div>
+      <div id="listaServicios" class="servicios-botones"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    let currentLang = 'pt';
+    let mapa, userMarker, marcadoresOriginales = [], currentLayer;
+    
+    // SERVIÇOS QRP2P (7 serviços)
+    const serviciosQRP2P = [
+      { id: "plan-anual", name_pt: "REGISTAR PLANO ANUAL", name_en: "REGISTER ANNUAL PLAN", icon: "fa-calendar-alt", url: "https://qrp2p.com/plan-anual-stp" },
+      { id: "administracion", name_pt: "ADMINISTRAÇÃO MENSAL", name_en: "MONTHLY ADMINISTRATION", icon: "fa-building", url: "https://qrp2p.com/administracao-stp" },
+      { id: "marketing", name_pt: "MARKETING MENSAL", name_en: "MONTHLY MARKETING", icon: "fa-chart-line", url: "https://qrp2p.com/marketing-stp" },
+      { id: "logistica", name_pt: "LOGÍSTICA", name_en: "LOGISTICS", icon: "fa-truck", url: "https://qrp2p.com/logistica-stp" },
+      { id: "finanzas", name_pt: "FINANÇAS", name_en: "FINANCE", icon: "fa-coins", url: "https://qrp2p.com/financas-stp" },
+      { id: "contabilidad", name_pt: "CONTABILIDADE MENSAL", name_en: "MONTHLY ACCOUNTING", icon: "fa-calculator", url: "https://qrp2p.com/contabilidade-stp" },
+      { id: "academia", name_pt: "ACADEMIA QRP2P", name_en: "QRP2P ACADEMY", icon: "fa-graduation-cap", url: "https://qrp2p.com/academy" }
+    ];
+    
+    // NEGÓCIOS VERIFICADOS - SÃO TOMÉ E PRÍNCIPE (12 negócios nas ilhas)
+    const verifiedBusinesses = [
+      { id: "ST01", name_pt: "DISTRIBUIDORA SÃO TOMÉ CENTRO", name_en: "SAO TOME CENTER DISTRIBUTOR", category_pt: "Distribuidor Grossista", category_en: "Wholesale Distributor", latlng: [0.3365, 6.7275], address_pt: "Avenida da Independência 123, São Tomé", address_en: "Independence Avenue 123, São Tomé", description_pt: "Distribuição de alimentos, bebidas e produtos domésticos em todo o país.", description_en: "Distribution of food, beverages and household products across São Tomé and Príncipe.", phone: "+2392220001", email: "info@saotomedistribuidor.st", website: "https://saotomedistribuidor.st", whatsapp: "2392220001" },
+      { id: "ST02", name_pt: "IMOBILIÁRIA STP P2P", name_en: "STP P2P REAL ESTATE", category_pt: "Imobiliário", category_en: "Real Estate", latlng: [0.3400, 6.7300], address_pt: "Rua Dr. Manuel Rodrigues 45, São Tomé", address_en: "Dr. Manuel Rodrigues Street 45, São Tomé", description_pt: "Compre e venda propriedades diretamente entre proprietários em São Tomé e Príncipe. 0% comissões. Garantia verificada.", description_en: "Buy and sell properties directly between owners in São Tomé and Príncipe. 0% commission. Verified guarantee.", phone: "+2392220002", email: "contact@stpp2p.st", website: "https://qrp2p.com/st", whatsapp: "2392220002" },
+      { id: "ST03", name_pt: "DISTRIBUIDORA SANTO AMARO", name_en: "SANTO AMARO DISTRIBUTOR", category_pt: "Distribuidor Grossista", category_en: "Wholesale Distributor", latlng: [0.3667, 6.7333], address_pt: "Santo Amaro, Lobata", address_en: "Santo Amaro, Lobata", description_pt: "Distribuição de produtos agrícolas na região norte da ilha.", description_en: "Distribution of agricultural products in the northern region of the island.", phone: "+2392220003", email: "info@santoamarodistribuidor.st", website: "https://santoamarodistribuidor.st", whatsapp: "2392220003" },
+      { id: "ST04", name_pt: "NEVES DISTRIBUIDORA", name_en: "NEVES DISTRIBUTOR", category_pt: "Distribuidor Grossista", category_en: "Wholesale Distributor", latlng: [0.3500, 6.5500], address_pt: "Neves, Lembá", address_en: "Neves, Lembá", description_pt: "Distribuição de café e cacau na região oeste.", description_en: "Distribution of coffee and cocoa in the western region.", phone: "+2392220004", email: "info@nevesdistribuidor.st", website: "https://nevesdistribuidor.st", whatsapp: "2392220004" },
+      { id: "ST05", name_pt: "AGRODISTRIBUIDORA TRINDADE", name_en: "TRINDADE AGRIBUSINESS", category_pt: "Agroindústria", category_en: "Agribusiness", latlng: [0.3000, 6.6667], address_pt: "Trindade, Mé-Zóchi", address_en: "Trindade, Mé-Zóchi", description_pt: "Distribuição de insumos agrícolas, fertilizantes e sementes.", description_en: "Distribution of agricultural inputs, fertilizers and seeds.", phone: "+2392220005", email: "agro@trindadeagro.st", website: "https://trindadeagro.st", whatsapp: "2392220005" },
+      { id: "ST06", name_pt: "LOGÍSTICA SANTANA", name_en: "SANTANA LOGISTICS", category_pt: "Logística e Transporte", category_en: "Logistics & Transport", latlng: [0.2667, 6.7333], address_pt: "Santana, Cantagalo", address_en: "Santana, Cantagalo", description_pt: "Soluções logísticas e distribuição porta a porta nas duas ilhas.", description_en: "Logistics solutions and door-to-door delivery on both islands.", phone: "+2392220006", email: "logistics@santanalogistics.st", website: "https://santanalogistics.st", whatsapp: "2392220006" },
+      { id: "ST07", name_pt: "TECNOLOGIA SÃO TOMÉ", name_en: "SAO TOME TECH", category_pt: "Tecnologia", category_en: "Technology", latlng: [0.3350, 6.7250], address_pt: "Bairro da Liberdade 23, São Tomé", address_en: "Liberdade Neighborhood 23, São Tomé", description_pt: "Distribuição de computadores, impressoras e material de escritório.", description_en: "Distribution of computers, printers and office supplies.", phone: "+2392220007", email: "tech@saotometech.st", website: "https://saotometech.st", whatsapp: "2392220007" },
+      { id: "ST08", name_pt: "INVESTIMENTOS SÃO TOMÉ", name_en: "SAO TOME INVESTMENTS", category_pt: "Finanças e Investimentos", category_en: "Finance & Investments", latlng: [0.3300, 6.7200], address_pt: "Bairro das Palmeiras 45, São Tomé", address_en: "Palmeiras Neighborhood 45, São Tomé", description_pt: "Consultoria financeira e empréstimos P2P para empreendedores são-tomenses.", description_en: "Financial advisory and P2P loans for São Toméan entrepreneurs.", phone: "+2392220008", email: "finance@saotomeinvest.st", website: "https://saotomeinvestments.st", whatsapp: "2392220008" },
+      { id: "ST09", name_pt: "CONSTRUÇÕES SÃO TOMÉ", name_en: "SAO TOME CONSTRUCTIONS", category_pt: "Construção", category_en: "Construction", latlng: [0.3400, 6.7400], address_pt: "Bairro da Graça 12, São Tomé", address_en: "Graça Neighborhood 12, São Tomé", description_pt: "Materiais de construção e ferramentas para projetos no país.", description_en: "Construction materials and tools for projects in the country.", phone: "+2392220009", email: "build@saotomeconstruct.st", website: "https://saotomeconstruction.st", whatsapp: "2392220009" },
+      { id: "ST10", name_pt: "AUTOPEÇAS SÃO TOMÉ", name_en: "SAO TOME AUTO PARTS", category_pt: "Autopeças", category_en: "Auto Parts", latlng: [0.3450, 6.7350], address_pt: "Estrada de Pantufo 34, São Tomé", address_en: "Pantufo Road 34, São Tomé", description_pt: "Distribuição de peças de reposição e acessórios para veículos.", description_en: "Distribution of spare parts and accessories for vehicles.", phone: "+2392220010", email: "parts@saotomeautoparts.st", website: "https://saotomeautoparts.st", whatsapp: "2392220010" },
+      { id: "ST11", name_pt: "MODA E TÊXTEIS SÃO TOMÉ", name_en: "SAO TOME FASHION & TEXTILES", category_pt: "Têxteis", category_en: "Textiles", latlng: [0.3500, 6.7400], address_pt: "Bairro dos Algarves 56, São Tomé", address_en: "Algarves Neighborhood 56, São Tomé", description_pt: "Distribuição de tecidos, insumos têxteis e confecção.", description_en: "Distribution of fabrics, textile supplies and clothing.", phone: "+2392220011", email: "textiles@saotomefashion.st", website: "https://saotomefashion.st", whatsapp: "2392220011" },
+      { id: "PR01", name_pt: "DISTRIBUIDORA SANTO ANTÓNIO", name_en: "SANTO ANTÓNIO DISTRIBUTOR", category_pt: "Distribuidor Grossista", category_en: "Wholesale Distributor", latlng: [1.6369, 7.4178], address_pt: "Santo António, Príncipe", address_en: "Santo António, Príncipe", description_pt: "Distribuição de produtos do mar e turismo na ilha do Príncipe.", description_en: "Distribution of seafood and tourism products on Príncipe island.", phone: "+2392220012", email: "info@principe.distribuidor.st", website: "https://principedistribuidor.st", whatsapp: "2392220012" }
+    ];
+    
+    const translations = { 
+      pt: { buscar_placeholder: "Pesquisar negócios em São Tomé e Príncipe...", centrar: "CENTRAR", servicios: "SERVIÇOS QRP2P", mapa: "Mapa", satelite: "Satélite", view_store: "VER LOJA", sub_header: "SÃO TOMÉ E PRÍNCIPE" },
+      en: { buscar_placeholder: "Search businesses across São Tomé and Príncipe...", centrar: "CENTER", servicios: "QRP2P SERVICES", mapa: "Map", satelite: "Satellite", view_store: "VIEW STORE", sub_header: "SÃO TOMÉ AND PRÍNCIPE" }
+    };
+    
+    function t(key) { return translations[currentLang][key] || key; }
+    
+    function generarPopupHTML(business) { 
+      const name = currentLang === 'pt' ? business.name_pt : business.name_en;
+      const category = currentLang === 'pt' ? business.category_pt : business.category_en;
+      const description = currentLang === 'pt' ? business.description_pt : business.description_en;
+      const address = currentLang === 'pt' ? business.address_pt : business.address_en;
+      const storeText = t('view_store');
+      const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
+      let contactButtons = '';
+      if(business.website) contactButtons += `<a href="${business.website}" target="_blank" class="contact-link"><i class="fas fa-globe"></i> Web</a>`;
+      if(business.whatsapp) contactButtons += `<a href="https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>`;
+      if(business.phone) contactButtons += `<a href="tel:${business.phone}" class="contact-link"><i class="fas fa-phone"></i> Call</a>`;
+      if(business.email) contactButtons += `<a href="mailto:${business.email}" class="contact-link"><i class="fas fa-envelope"></i> Email</a>`;
+      return `<div class="popup-business-card"><div class="popup-business-header"><h3>⚡ ${name}</h3><span class="popup-business-category">${category}</span></div><div class="popup-business-info"><div class="popup-business-description">${description}</div><div class="popup-business-address"><i class="fas fa-map-pin"></i> ${address}</div><div class="popup-business-contact">${contactButtons}</div><a href="${websiteUrl}" target="_blank" class="btn-view-store"><i class="fas fa-store"></i> ${storeText}</a></div></div>`; 
+    }
+    
+    function initMap() { 
+      const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      mapa = L.map('mapa', { center: [0.3365, 6.7275], zoom: 10, zoomControl: false });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      let clusters = L.markerClusterGroup({ iconCreateFunction: cluster => L.divIcon({ html: `<div>${cluster.getChildCount()}</div>`, className: 'cluster-marcadores', iconSize: [40,40] }) }); 
+      let icono = L.divIcon({ className: 'negocio-marker', html: '⚡', iconSize: [32,32], popupAnchor: [0,-16] }); 
+      verifiedBusinesses.forEach(business => { 
+        let popup = generarPopupHTML(business); 
+        let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
+        marker.datosNegocio = business; 
+        marker.datosBusqueda = `${business.name_pt} ${business.name_en} ${business.category_pt} ${business.category_en} ${business.description_pt} ${business.description_en}`.toLowerCase(); 
+        marcadoresOriginales.push(marker); 
+        clusters.addLayer(marker); 
+      }); 
+      mapa.addLayer(clusters); 
+      mapa.googleMapsLayer = googleMapsLayer;
+      mapa.googleSatelliteLayer = googleSatelliteLayer;
+    }
+    
+    function mostrarServiciosQRP2P() {
+      let container = document.getElementById('listaServicios');
+      container.innerHTML = '';
+      serviciosQRP2P.forEach(servicio => {
+        let btn = document.createElement('button');
+        btn.className = 'servicio-item-btn';
+        let name = currentLang === 'pt' ? servicio.name_pt : servicio.name_en;
+        btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${name}`;
+        btn.addEventListener('click', () => { window.open(servicio.url, '_blank'); document.getElementById('servicioModal').style.display = 'none'; });
+        container.appendChild(btn);
+      });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      document.getElementById('servicioModal').style.display = 'flex';
+    }
+    
+    function centrarMapaRapido() {
+      if (navigator.geolocation) {
+        const btn = document.getElementById('centrar-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>LOCALIZANDO...</span>';
+        navigator.geolocation.getCurrentPosition(
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'pt' ? 'A sua localização atual' : 'Your current location'); mapa.setView([latitude, longitude], 12); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([0.3365, 6.7275], 10); alert(currentLang === 'pt' ? 'Não foi possível obter a sua localização. A mostrar São Tomé e Príncipe.' : 'Could not get your location. Showing São Tomé and Príncipe.'); }
+        );
+      } else { mapa.setView([0.3365, 6.7275], 10); }
+    }
+    
+    function updateUILanguage() {
+      document.getElementById('buscador').placeholder = t('buscar_placeholder');
+      document.getElementById('centrar-text').innerText = t('centrar');
+      document.getElementById('servicios-text').innerText = t('servicios');
+      document.getElementById('map-text').innerText = t('mapa');
+      document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      marcadoresOriginales.forEach(marker => { marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => { 
+      initMap(); updateUILanguage();
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
+      document.querySelectorAll('.lang-btn').forEach(btn => { 
+        btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); }); 
+      });
+      
+      let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 ${currentLang === 'pt' ? 'Pesquisando...' : 'Searching...'}</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name = currentLang === 'pt' ? m.datosNegocio.name_pt : m.datosNegocio.name_en; 
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${currentLang === 'pt' ? 'Ver' : 'View'}</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 14); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ ${currentLang === 'pt' ? 'Nenhum resultado encontrado em São Tomé e Príncipe' : 'No results found in São Tomé and Príncipe'}</div>`; 
+        }, 300); 
+      }); 
+      document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
+    });
+  </script>
+</body>
+</html>
