@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>QRP2P SINGAPORE | VERIFIED BUSINESSES | P2P MARKETPLACE | 0% COMMISSION</title>
+  <meta name="description" content="QRP2P Singapore. Direct marketplace between verified buyers and sellers across Singapore. Find businesses, properties and services. 0% lifetime commission.">
+  <meta name="keywords" content="QRP2P, Singapore, marketplace, buyer, seller, verified, 0% commission, businesses, properties, Orchard Road, Marina Bay, Jurong, Woodlands">
+  <meta name="author" content="QRP2P">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#000000">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Libre Baskerville', serif; background-color: #ffffff; color: #111111; line-height: 1.5; font-size: 16px; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    #contenedor-mapa { width: 100%; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #ffffff; width: 100%; z-index: 1000; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #eaeaea; flex-shrink: 0; }
+    .contenedor-buscador { position: relative; flex: 1; max-width: 400px; }
+    #buscador { width: 100%; padding: 0.6rem 1.2rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 16px; font-family: 'Libre Baskerville', serif; transition: all 0.3s ease; background: #ffffff; user-select: text; }
+    #buscador:focus { outline: none; border-color: #000000; }
+    .btn-mapa { background: #000000; color: #ffffff; padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; display: flex; gap: 5px; font-family: 'Libre Baskerville', serif; transition: all 0.2s ease; }
+    .btn-mapa:hover { background: #333333; }
+    .btn-centrar { background-color: #000000; }
+    .btn-registro { background-color: #25D366; color: #000000; }
+    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
+    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
+    .map-type-btn { padding: 0.5rem 1rem; border: none; border-radius: 40px; cursor: pointer; background: transparent; font-family: 'Libre Baskerville', serif; font-weight: 600; }
+    .map-type-btn.active { background: #000000; color: white; }
+    .lang-selector { display: flex; gap: 0.3rem; margin-left: 0.5rem; }
+    .lang-btn { background: transparent; border: 1px solid #ccc; border-radius: 20px; padding: 0.4rem 0.8rem; cursor: pointer; font-family: 'Libre Baskerville', serif; font-weight: 600; font-size: 0.8rem; }
+    .lang-btn.active { background: #000000; color: white; border-color: #000000; }
+    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
+    .leaflet-control-zoom { display: none !important; }
+    .sugerencias-busqueda { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; display: none; }
+    .sugerencia-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .sugerencia-item:hover { background-color: #f5f5f5; }
+    .sugerencia-texto { flex: 1; }
+    .sugerencia-boton { margin-left: 10px; padding: 6px 12px; background-color: #000000; color: white; border: none; border-radius: 20px; cursor: pointer; }
+    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
+    
+    .popup-business-card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      width: 340px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .popup-business-header {
+      background: #000000;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .popup-business-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .popup-business-category {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+    }
+    .popup-business-info {
+      padding: 1rem;
+    }
+    .popup-business-description {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .popup-business-address {
+      font-size: 0.7rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .popup-business-address i {
+      margin-top: 0.2rem;
+      color: #000;
+    }
+    .popup-business-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 0.8rem;
+    }
+    .contact-link {
+      font-size: 0.7rem;
+      background: #f5f5f5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .contact-link i { font-size: 0.7rem; }
+    .btn-view-store {
+      display: block;
+      background: #000000;
+      color: white;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .btn-view-store:hover { background: #333333; transform: scale(0.98); }
+    
+    .servicio-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+    .servicio-container {
+      background: white;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .servicios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .servicios-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn i {
+      font-size: 1.1rem;
+    }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
+    
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
+  </style>
+</head>
+<body>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="botones-izquierda">
+        <div class="contenedor-buscador">
+          <input type="search" id="buscador" placeholder="Search businesses across Singapore..." enterkeyhint="search">
+          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+        </div>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">CENTER</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">QRP2P SERVICES</span></button>
+      </div>
+      <div class="botones-derecha">
+        <button class="map-type-btn active" id="map-btn"><span id="map-text">Map</span></button>
+        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Satellite</span></button>
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="zh">中文</button>
+        </div>
+      </div>
+    </div>
+    <div id="mapa"></div>
+  </div>
+
+  <!-- QRP2P Services Modal Singapore -->
+  <div id="servicioModal" class="servicio-modal">
+    <div class="servicio-container">
+      <div class="servicios-header">
+        <h2 id="servicio-modal-title">QRP2P SERVICES <span class="zero-badge">0% COMMISSION</span></h2>
+        <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sub-header" id="subHeaderText">SINGAPORE</div>
+      <div id="listaServicios" class="servicios-botones"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    let currentLang = 'en';
+    let mapa, userMarker, marcadoresOriginales = [], currentLayer;
+    
+    // QRP2P SERVICES (7 services)
+    const serviciosQRP2P = [
+      { id: "plan-anual", name_en: "REGISTER ANNUAL PLAN", name_zh: "注册年度计划", icon: "fa-calendar-alt", url: "https://qrp2p.com/plan-anual-singapore" },
+      { id: "administracion", name_en: "MONTHLY ADMINISTRATION", name_zh: "月度行政管理", icon: "fa-building", url: "https://qrp2p.com/administration-singapore" },
+      { id: "marketing", name_en: "MONTHLY MARKETING", name_zh: "月度营销", icon: "fa-chart-line", url: "https://qrp2p.com/marketing-singapore" },
+      { id: "logistica", name_en: "LOGISTICS", name_zh: "物流", icon: "fa-truck", url: "https://qrp2p.com/logistics-singapore" },
+      { id: "finanzas", name_en: "FINANCE", name_zh: "金融", icon: "fa-coins", url: "https://qrp2p.com/finance-singapore" },
+      { id: "contabilidad", name_en: "MONTHLY ACCOUNTING", name_zh: "月度会计", icon: "fa-calculator", url: "https://qrp2p.com/accounting-singapore" },
+      { id: "academia", name_en: "QRP2P ACADEMY", name_zh: "QRP2P 学院", icon: "fa-graduation-cap", url: "https://qrp2p.com/academy" }
+    ];
+    
+    // VERIFIED BUSINESSES - SINGAPORE (12 businesses across island)
+    const verifiedBusinesses = [
+      { id: "SIN01", name_en: "ORCHARD ROAD CENTER DISTRIBUTOR", name_zh: "乌节路中心分销商", category_en: "Wholesale Distributor", category_zh: "批发分销商", latlng: [1.3048, 103.8318], address_en: "Orchard Road 123, Singapore", address_zh: "乌节路123号, 新加坡", description_en: "Distribution of food, beverages and household products across Singapore.", description_zh: "在新加坡各地分销食品、饮料和家居用品。", phone: "+6560000001", email: "info@orcharddistributor.sg", website: "https://orcharddistributor.sg", whatsapp: "6560000001" },
+      { id: "SIN02", name_en: "SINGAPORE P2P REAL ESTATE", name_zh: "新加坡 P2P 房地产", category_en: "Real Estate", category_zh: "房地产", latlng: [1.2900, 103.8520], address_en: "Raffles Place 45, Singapore", address_zh: "莱佛士坊45号, 新加坡", description_en: "Buy and sell properties directly between owners in Singapore. 0% commission. Verified guarantee.", description_zh: "在新加坡的业主之间直接买卖房产。0%佣金。验证保证。", phone: "+6560000002", email: "contact@singaporep2p.sg", website: "https://qrp2p.com/sg", whatsapp: "6560000002" },
+      { id: "SIN03", name_en: "JURONG EAST DISTRIBUTOR", name_zh: "裕廊东分销商", category_en: "Wholesale Distributor", category_zh: "批发分销商", latlng: [1.3333, 103.7422], address_en: "Jurong Gateway Road 78, Singapore", address_zh: "裕廊 gateway 路78号, 新加坡", description_en: "Distribution of industrial products and electronics in the west.", description_zh: "在西部分销工业产品和电子产品。", phone: "+6560000003", email: "info@jurongdistributor.sg", website: "https://jurongdistributor.sg", whatsapp: "6560000003" },
+      { id: "SIN04", name_en: "WOODLANDS DISTRIBUTOR", name_zh: "兀兰分销商", category_en: "Wholesale Distributor", category_zh: "批发分销商", latlng: [1.4360, 103.7860], address_en: "Woodlands Avenue 56, Singapore", address_zh: "兀兰大道56号, 新加坡", description_en: "Distribution of consumer goods in the northern region.", description_zh: "在北部地区分销消费品。", phone: "+6560000004", email: "info@woodlandsdistributor.sg", website: "https://woodlandsdistributor.sg", whatsapp: "6560000004" },
+      { id: "SIN05", name_en: "TAMPINES MEGADISTRIBUTOR", name_zh: "淡滨尼大型分销商", category_en: "Wholesale Distributor", category_zh: "批发分销商", latlng: [1.3521, 103.9450], address_en: "Tampines Central 34, Singapore", address_zh: "淡滨尼中心34号, 新加坡", description_en: "Distribution of household goods in the eastern region.", description_zh: "在东部地区分销家居用品。", phone: "+6560000005", email: "info@tampinesmega.sg", website: "https://tampinesmega.sg", whatsapp: "6560000005" },
+      { id: "SIN06", name_en: "SINGAPORE AGRIBUSINESS", name_zh: "新加坡农业综合企业", category_en: "Agribusiness", category_zh: "农业综合企业", latlng: [1.3690, 103.8500], address_en: "Lim Chu Kang Road 123, Singapore", address_zh: "林厝港路123号, 新加坡", description_en: "Distribution of agricultural inputs, fertilizers and seeds for urban farming.", description_zh: "为城市农业分销农业投入品、化肥和种子。", phone: "+6560000006", email: "agro@singaporeagro.sg", website: "https://singaporeagro.sg", whatsapp: "6560000006" },
+      { id: "SIN07", name_en: "BUKIT BATOK LOGISTICS", name_zh: "武吉巴督物流", category_en: "Logistics & Transport", category_zh: "物流与运输", latlng: [1.3490, 103.7490], address_en: "Bukit Batok Industrial Park 45, Singapore", address_zh: "武吉巴督工业园45号, 新加坡", description_en: "Logistics solutions and door-to-door delivery across Singapore.", description_zh: "在新加坡全岛提供物流解决方案和送货上门服务。", phone: "+6560000007", email: "logistics@bukitbatoklog.sg", website: "https://bukitbatoklogistics.sg", whatsapp: "6560000007" },
+      { id: "SIN08", name_en: "ONE NORTH TECH", name_zh: "纬壹科技城", category_en: "Technology", category_zh: "科技", latlng: [1.2940, 103.7870], address_en: "Ayer Rajah Crescent 12, Singapore", address_zh: "亚逸拉惹弯12号, 新加坡", description_en: "Distribution of computers, printers and office supplies for businesses.", description_zh: "为企业分销计算机、打印机和办公用品。", phone: "+6560000008", email: "tech@onenorthtech.sg", website: "https://onenorthtech.sg", whatsapp: "6560000008" },
+      { id: "SIN09", name_en: "CHANGI INVESTMENTS", name_zh: "樟宜投资", category_en: "Finance & Investments", category_zh: "金融与投资", latlng: [1.3590, 103.9740], address_en: "Changi Business Park 34, Singapore", address_zh: "樟宜商业园34号, 新加坡", description_en: "Financial advisory and P2P loans for entrepreneurs in Singapore.", description_zh: "为新加坡企业家提供财务咨询和P2P贷款。", phone: "+6560000009", email: "finance@changinvest.sg", website: "https://changinvestments.sg", whatsapp: "6560000009" },
+      { id: "SIN10", name_en: "PAYA LEBAR CONSTRUCTIONS", name_zh: "巴耶利峇建筑", category_en: "Construction", category_zh: "建筑", latlng: [1.3240, 103.8960], address_en: "Paya Lebar Road 67, Singapore", address_zh: "巴耶利峇路67号, 新加坡", description_en: "Construction materials and tools for projects across Singapore.", description_zh: "为新加坡各地的项目提供建筑材料和工具。", phone: "+6560000010", email: "build@payalebarbuild.sg", website: "https://payalebarconstruction.sg", whatsapp: "6560000010" },
+      { id: "SIN11", name_en: "KALLANG AUTO PARTS", name_zh: "加冷汽车配件", category_en: "Auto Parts", category_zh: "汽车配件", latlng: [1.3120, 103.8610], address_en: "Kallang Avenue 23, Singapore", address_zh: "加冷大道23号, 新加坡", description_en: "Distribution of spare parts and accessories for vehicles in Singapore.", description_zh: "在新加坡分销汽车备件和配件。", phone: "+6560000011", email: "parts@kallangautoparts.sg", website: "https://kallangautoparts.sg", whatsapp: "6560000011" },
+      { id: "SIN12", name_en: "BUGIS FASHION & TEXTILES", name_zh: "武吉士时装与纺织品", category_en: "Textiles", category_zh: "纺织品", latlng: [1.3000, 103.8580], address_en: "Bugis Street 45, Singapore", address_zh: "武吉士街45号, 新加坡", description_en: "Distribution of fabrics, textile supplies and clothing across the island.", description_zh: "在全岛分销面料、纺织用品和服装。", phone: "+6560000012", email: "textiles@bugisfashion.sg", website: "https://bugisfashion.sg", whatsapp: "6560000012" }
+    ];
+    
+    const translations = { 
+      en: { buscar_placeholder: "Search businesses across Singapore...", centrar: "CENTER", servicios: "QRP2P SERVICES", mapa: "Map", satelite: "Satellite", view_store: "VIEW STORE", sub_header: "SINGAPORE" },
+      zh: { buscar_placeholder: "搜索新加坡各地的企业...", centrar: "居中", servicios: "QRP2P 服务", mapa: "地图", satelite: "卫星", view_store: "查看店铺", sub_header: "新加坡" }
+    };
+    
+    function t(key) { return translations[currentLang][key] || key; }
+    
+    function generarPopupHTML(business) { 
+      const name = currentLang === 'zh' ? business.name_zh : business.name_en;
+      const category = currentLang === 'zh' ? business.category_zh : business.category_en;
+      const description = currentLang === 'zh' ? business.description_zh : business.description_en;
+      const address = currentLang === 'zh' ? business.address_zh : business.address_en;
+      const storeText = t('view_store');
+      const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
+      let contactButtons = '';
+      if(business.website) contactButtons += `<a href="${business.website}" target="_blank" class="contact-link"><i class="fas fa-globe"></i> Web</a>`;
+      if(business.whatsapp) contactButtons += `<a href="https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>`;
+      if(business.phone) contactButtons += `<a href="tel:${business.phone}" class="contact-link"><i class="fas fa-phone"></i> Call</a>`;
+      if(business.email) contactButtons += `<a href="mailto:${business.email}" class="contact-link"><i class="fas fa-envelope"></i> Email</a>`;
+      return `<div class="popup-business-card"><div class="popup-business-header"><h3>⚡ ${name}</h3><span class="popup-business-category">${category}</span></div><div class="popup-business-info"><div class="popup-business-description">${description}</div><div class="popup-business-address"><i class="fas fa-map-pin"></i> ${address}</div><div class="popup-business-contact">${contactButtons}</div><a href="${websiteUrl}" target="_blank" class="btn-view-store"><i class="fas fa-store"></i> ${storeText}</a></div></div>`; 
+    }
+    
+    function initMap() { 
+      const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      mapa = L.map('mapa', { center: [1.3521, 103.8198], zoom: 11, zoomControl: false });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      let clusters = L.markerClusterGroup({ iconCreateFunction: cluster => L.divIcon({ html: `<div>${cluster.getChildCount()}</div>`, className: 'cluster-marcadores', iconSize: [40,40] }) }); 
+      let icono = L.divIcon({ className: 'negocio-marker', html: '⚡', iconSize: [32,32], popupAnchor: [0,-16] }); 
+      verifiedBusinesses.forEach(business => { 
+        let popup = generarPopupHTML(business); 
+        let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
+        marker.datosNegocio = business; 
+        marker.datosBusqueda = `${business.name_en} ${business.name_zh} ${business.category_en} ${business.category_zh} ${business.description_en} ${business.description_zh}`.toLowerCase(); 
+        marcadoresOriginales.push(marker); 
+        clusters.addLayer(marker); 
+      }); 
+      mapa.addLayer(clusters); 
+      mapa.googleMapsLayer = googleMapsLayer;
+      mapa.googleSatelliteLayer = googleSatelliteLayer;
+    }
+    
+    function mostrarServiciosQRP2P() {
+      let container = document.getElementById('listaServicios');
+      container.innerHTML = '';
+      serviciosQRP2P.forEach(servicio => {
+        let btn = document.createElement('button');
+        btn.className = 'servicio-item-btn';
+        let name = currentLang === 'zh' ? servicio.name_zh : servicio.name_en;
+        btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${name}`;
+        btn.addEventListener('click', () => { window.open(servicio.url, '_blank'); document.getElementById('servicioModal').style.display = 'none'; });
+        container.appendChild(btn);
+      });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      document.getElementById('servicioModal').style.display = 'flex';
+    }
+    
+    function centrarMapaRapido() {
+      if (navigator.geolocation) {
+        const btn = document.getElementById('centrar-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>LOCATING...</span>';
+        navigator.geolocation.getCurrentPosition(
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'zh' ? '您当前的位置' : 'Your current location'); mapa.setView([latitude, longitude], 13); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([1.3521, 103.8198], 11); alert(currentLang === 'zh' ? '无法获取您的位置。正在显示新加坡。' : 'Could not get your location. Showing Singapore.'); }
+        );
+      } else { mapa.setView([1.3521, 103.8198], 11); }
+    }
+    
+    function updateUILanguage() {
+      document.getElementById('buscador').placeholder = t('buscar_placeholder');
+      document.getElementById('centrar-text').innerText = t('centrar');
+      document.getElementById('servicios-text').innerText = t('servicios');
+      document.getElementById('map-text').innerText = t('mapa');
+      document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      marcadoresOriginales.forEach(marker => { marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => { 
+      initMap(); updateUILanguage();
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
+      document.querySelectorAll('.lang-btn').forEach(btn => { 
+        btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); }); 
+      });
+      
+      let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 ${currentLang === 'zh' ? '搜索中...' : 'Searching...'}</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name = currentLang === 'zh' ? m.datosNegocio.name_zh : m.datosNegocio.name_en; 
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${currentLang === 'zh' ? '查看' : 'View'}</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 14); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ ${currentLang === 'zh' ? '在新加坡未找到结果' : 'No results found in Singapore'}</div>`; 
+        }, 300); 
+      }); 
+      document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
+    });
+  </script>
+</body>
+</html>
