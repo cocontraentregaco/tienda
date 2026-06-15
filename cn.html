@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>QRP2P 中国 | 认证商家 | P2P 市场 | 0% 佣金</title>
+  <meta name="description" content="QRP2P 中国。经过验证的买家和卖家之间的直接市场。寻找商业、房产和服务。0% 终身佣金。">
+  <meta name="keywords" content="QRP2P, 中国, China, 市场, 买家, 卖家, 认证, 0% 佣金, 商业, 房产, 北京, 上海, 广州, 深圳">
+  <meta name="author" content="QRP2P">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#000000">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Libre Baskerville', serif; background-color: #ffffff; color: #111111; line-height: 1.5; font-size: 16px; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    #contenedor-mapa { width: 100%; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #ffffff; width: 100%; z-index: 1000; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #eaeaea; flex-shrink: 0; }
+    .contenedor-buscador { position: relative; flex: 1; max-width: 400px; }
+    #buscador { width: 100%; padding: 0.6rem 1.2rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 16px; font-family: 'Libre Baskerville', serif; transition: all 0.3s ease; background: #ffffff; user-select: text; }
+    #buscador:focus { outline: none; border-color: #000000; }
+    .btn-mapa { background: #000000; color: #ffffff; padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; display: flex; gap: 5px; font-family: 'Libre Baskerville', serif; transition: all 0.2s ease; }
+    .btn-mapa:hover { background: #333333; }
+    .btn-centrar { background-color: #000000; }
+    .btn-registro { background-color: #25D366; color: #000000; }
+    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
+    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
+    .map-type-btn { padding: 0.5rem 1rem; border: none; border-radius: 40px; cursor: pointer; background: transparent; font-family: 'Libre Baskerville', serif; font-weight: 600; }
+    .map-type-btn.active { background: #000000; color: white; }
+    .lang-selector { display: flex; gap: 0.3rem; margin-left: 0.5rem; }
+    .lang-btn { background: transparent; border: 1px solid #ccc; border-radius: 20px; padding: 0.4rem 0.8rem; cursor: pointer; font-family: 'Libre Baskerville', serif; font-weight: 600; font-size: 0.8rem; }
+    .lang-btn.active { background: #000000; color: white; border-color: #000000; }
+    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
+    .leaflet-control-zoom { display: none !important; }
+    .sugerencias-busqueda { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; display: none; }
+    .sugerencia-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .sugerencia-item:hover { background-color: #f5f5f5; }
+    .sugerencia-texto { flex: 1; }
+    .sugerencia-boton { margin-left: 10px; padding: 6px 12px; background-color: #000000; color: white; border: none; border-radius: 20px; cursor: pointer; }
+    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
+    
+    .popup-business-card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      width: 340px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .popup-business-header {
+      background: #000000;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .popup-business-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .popup-business-category {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+    }
+    .popup-business-info {
+      padding: 1rem;
+    }
+    .popup-business-description {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .popup-business-address {
+      font-size: 0.7rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .popup-business-address i {
+      margin-top: 0.2rem;
+      color: #000;
+    }
+    .popup-business-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 0.8rem;
+    }
+    .contact-link {
+      font-size: 0.7rem;
+      background: #f5f5f5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .contact-link i { font-size: 0.7rem; }
+    .btn-view-store {
+      display: block;
+      background: #000000;
+      color: white;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .btn-view-store:hover { background: #333333; transform: scale(0.98); }
+    
+    .servicio-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+    .servicio-container {
+      background: white;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .servicios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .servicios-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn i {
+      font-size: 1.1rem;
+    }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
+    
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
+  </style>
+</head>
+<body>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="botones-izquierda">
+        <div class="contenedor-buscador">
+          <input type="search" id="buscador" placeholder="搜索中国各地的商家..." enterkeyhint="search">
+          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+        </div>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">居中</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">QRP2P 服务</span></button>
+      </div>
+      <div class="botones-derecha">
+        <button class="map-type-btn active" id="map-btn"><span id="map-text">地图</span></button>
+        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">卫星</span></button>
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="zh">中文</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+      </div>
+    </div>
+    <div id="mapa"></div>
+  </div>
+
+  <!-- QRP2P 服务模态框 -->
+  <div id="servicioModal" class="servicio-modal">
+    <div class="servicio-container">
+      <div class="servicios-header">
+        <h2 id="servicio-modal-title">QRP2P 服务 <span class="zero-badge">0% 佣金</span></h2>
+        <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sub-header" id="subHeaderText">中国</div>
+      <div id="listaServicios" class="servicios-botones"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    let currentLang = 'zh';
+    let mapa, userMarker, marcadoresOriginales = [], currentLayer;
+    
+    // QRP2P 服务 (7项服务)
+    const serviciosQRP2P = [
+      { 
+        id: "plan-anual", 
+        name_zh: "注册年度计划", 
+        name_en: "REGISTER ANNUAL PLAN", 
+        icon: "fa-calendar-alt",
+        url: "https://qrp2p.com/plan-anual-china"
+      },
+      { 
+        id: "administracion", 
+        name_zh: "月度行政管理", 
+        name_en: "MONTHLY ADMINISTRATION", 
+        icon: "fa-building",
+        url: "https://qrp2p.com/administration-china"
+      },
+      { 
+        id: "marketing", 
+        name_zh: "月度营销", 
+        name_en: "MONTHLY MARKETING", 
+        icon: "fa-chart-line",
+        url: "https://qrp2p.com/marketing-china"
+      },
+      { 
+        id: "logistica", 
+        name_zh: "物流", 
+        name_en: "LOGISTICS", 
+        icon: "fa-truck",
+        url: "https://qrp2p.com/logistics-china"
+      },
+      { 
+        id: "finanzas", 
+        name_zh: "金融", 
+        name_en: "FINANCE", 
+        icon: "fa-coins",
+        url: "https://qrp2p.com/finance-china"
+      },
+      { 
+        id: "contabilidad", 
+        name_zh: "月度会计", 
+        name_en: "MONTHLY ACCOUNTING", 
+        icon: "fa-calculator",
+        url: "https://qrp2p.com/accounting-china"
+      },
+      { 
+        id: "academia", 
+        name_zh: "QRP2P 学院", 
+        name_en: "QRP2P ACADEMY", 
+        icon: "fa-graduation-cap",
+        url: "https://qrp2p.com/academy"
+      }
+    ];
+    
+    // 认证商家 - 中国 (12个主要城市的商家)
+    const verifiedBusinesses = [
+      { 
+        id: "BJS01", 
+        name_zh: "北京中心分销商", 
+        name_en: "BEIJING CENTER DISTRIBUTOR", 
+        category_zh: "批发分销商", 
+        category_en: "Wholesale Distributor", 
+        latlng: [39.9042, 116.4074],
+        address_zh: "北京市朝阳区建国门外大街1号", 
+        address_en: "1 Jianguomenwai Ave, Chaoyang, Beijing", 
+        description_zh: "在中国各地分销食品、饮料和家居用品。", 
+        description_en: "Distribution of food, beverages and household products across China.", 
+        phone: "+861000000001", 
+        email: "info@beijingdistributor.cn", 
+        website: "https://beijingdistributor.cn", 
+        whatsapp: "861234567890" 
+      },
+      { 
+        id: "BJS02", 
+        name_zh: "中国 P2P 房地产", 
+        name_en: "CHINA P2P REAL ESTATE", 
+        category_zh: "房地产", 
+        category_en: "Real Estate", 
+        latlng: [39.9075, 116.3972],
+        address_zh: "北京市东城区王府井大街138号", 
+        address_en: "138 Wangfujing St, Dongcheng, Beijing", 
+        description_zh: "在中国业主之间直接买卖房产。0%佣金。认证保证。", 
+        description_en: "Buy and sell properties directly between owners in China. 0% commission. Verified guarantee.", 
+        phone: "+861000000002", 
+        email: "contact@chinap2prealty.cn", 
+        website: "https://qrp2p.com/cn", 
+        whatsapp: "861234567891" 
+      },
+      { 
+        id: "SHA01", 
+        name_zh: "上海分销商", 
+        name_en: "SHANGHAI DISTRIBUTOR", 
+        category_zh: "批发分销商", 
+        category_en: "Wholesale Distributor", 
+        latlng: [31.2304, 121.4737],
+        address_zh: "上海市黄浦区南京东路123号", 
+        address_en: "123 Nanjing Rd E, Huangpu, Shanghai", 
+        description_zh: "在华东地区分销电子产品和高科技产品。", 
+        description_en: "Distribution of electronics and tech products in East China.", 
+        phone: "+862100000001", 
+        email: "info@shanghaidistributor.cn", 
+        website: "https://shanghaidistributor.cn", 
+        whatsapp: "861234567892" 
+      },
+      { 
+        id: "GZ01", 
+        name_zh: "广州批发分销商", 
+        name_en: "GUANGZHOU WHOLESALE", 
+        category_zh: "批发分销商", 
+        category_en: "Wholesale Distributor", 
+        latlng: [23.1291, 113.2644],
+        address_zh: "广州市越秀区北京路345号", 
+        address_en: "345 Beijing Rd, Yuexiu, Guangzhou", 
+        description_zh: "在华南地区分销纺织品和服装。", 
+        description_en: "Distribution of textiles and clothing in South China.", 
+        phone: "+862000000001", 
+        email: "info@gzwholesale.cn", 
+        website: "https://gzwholesale.cn", 
+        whatsapp: "861234567893" 
+      },
+      { 
+        id: "SZ01", 
+        name_zh: "深圳高科技分销", 
+        name_en: "SHENZHEN TECH DISTRIBUTION", 
+        category_zh: "技术分销", 
+        category_en: "Technology Distributor", 
+        latlng: [22.5431, 114.0579],
+        address_zh: "深圳市南山区科技园高新南一道8号", 
+        address_en: "8 Gaoxin South 1st Rd, Nanshan, Shenzhen", 
+        description_zh: "计算机、打印机和办公用品的分销。", 
+        description_en: "Distribution of computers, printers and office supplies.", 
+        phone: "+8675500000001", 
+        email: "tech@shenzhentech.cn", 
+        website: "https://shenzhentech.cn", 
+        whatsapp: "861234567894" 
+      },
+      { 
+        id: "CD01", 
+        name_zh: "成都农业综合企业", 
+        name_en: "CHENGDU AGRIBUSINESS", 
+        category_zh: "农业综合企业", 
+        category_en: "Agribusiness", 
+        latlng: [30.5728, 104.0668],
+        address_zh: "成都市锦江区春熙路78号", 
+        address_en: "78 Chunxi Rd, Jinjiang, Chengdu", 
+        description_zh: "在中国西南地区分销农业投入品、化肥和种子。", 
+        description_en: "Distribution of agricultural inputs, fertilizers and seeds in Southwest China.", 
+        phone: "+862800000001", 
+        email: "agro@chengduagro.cn", 
+        website: "https://chengduagro.cn", 
+        whatsapp: "861234567895" 
+      },
+      { 
+        id: "WH01", 
+        name_zh: "武汉物流", 
+        name_en: "WUHAN LOGISTICS", 
+        category_zh: "物流与运输", 
+        category_en: "Logistics & Transport", 
+        latlng: [30.5928, 114.3055],
+        address_zh: "武汉市江汉区中山大道567号", 
+        address_en: "567 Zhongshan Ave, Jianghan, Wuhan", 
+        description_zh: "覆盖中国的物流解决方案和门到门配送。", 
+        description_en: "Logistics solutions and door-to-door delivery across China.", 
+        phone: "+862700000001", 
+        email: "logistics@wuhanlogistics.cn", 
+        website: "https://wuhanlogistics.cn", 
+        whatsapp: "861234567896" 
+      },
+      { 
+        id: "XA01", 
+        name_zh: "西安投资", 
+        name_en: "XI'AN INVESTMENTS", 
+        category_zh: "金融与投资", 
+        category_en: "Finance & Investments", 
+        latlng: [34.3416, 108.9402],
+        address_zh: "西安市雁塔区高新路89号", 
+        address_en: "89 Gaoxin Rd, Yanta, Xi'an", 
+        description_zh: "为中国西部创业者提供财务咨询和P2P贷款。", 
+        description_en: "Financial advisory and P2P loans for entrepreneurs in Western China.", 
+        phone: "+862900000001", 
+        email: "finance@xianinvest.cn", 
+        website: "https://xianinvestments.cn", 
+        whatsapp: "861234567897" 
+      },
+      { 
+        id: "NJ01", 
+        name_zh: "南京建筑", 
+        name_en: "NANJING CONSTRUCTIONS", 
+        category_zh: "建筑", 
+        category_en: "Construction", 
+        latlng: [32.0603, 118.7969],
+        address_zh: "南京市玄武区中山路234号", 
+        address_en: "234 Zhongshan Rd, Xuanwu, Nanjing", 
+        description_zh: "建筑材料及工具分销。", 
+        description_en: "Distribution of construction materials and tools.", 
+        phone: "+862500000001", 
+        email: "build@nanjingconstruct.cn", 
+        website: "https://nanjingconstruction.cn", 
+        whatsapp: "861234567898" 
+      },
+      { 
+        id: "HZ01", 
+        name_zh: "杭州汽车配件", 
+        name_en: "HANGZHOU AUTO PARTS", 
+        category_zh: "汽车配件", 
+        category_en: "Auto Parts", 
+        latlng: [30.2741, 120.1551],
+        address_zh: "杭州市西湖区曙光路456号", 
+        address_en: "456 Shuguang Rd, Xihu, Hangzhou", 
+        description_zh: "在华东地区分销汽车配件和用品。", 
+        description_en: "Distribution of spare parts and accessories for vehicles in East China.", 
+        phone: "+865710000001", 
+        email: "parts@hangzhouparts.cn", 
+        website: "https://hangzhouparts.cn", 
+        whatsapp: "861234567899" 
+      },
+      { 
+        id: "TJ01", 
+        name_zh: "天津时尚与纺织品", 
+        name_en: "TIANJIN FASHION & TEXTILES", 
+        category_zh: "纺织品", 
+        category_en: "Textiles", 
+        latlng: [39.0841, 117.2008],
+        address_zh: "天津市和平区南京路678号", 
+        address_en: "678 Nanjing Rd, Heping, Tianjin", 
+        description_zh: "面料、纺织用品和服装的分销。", 
+        description_en: "Distribution of fabrics, textile supplies and clothing.", 
+        phone: "+862200000001", 
+        email: "textiles@tianjinfashion.cn", 
+        website: "https://tianjinfashion.cn", 
+        whatsapp: "861234567800" 
+      },
+      { 
+        id: "QDH01", 
+        name_zh: "青岛贸易公司", 
+        name_en: "QINGDAO TRADING CO", 
+        category_zh: "进出口贸易", 
+        category_en: "Import/Export Trading", 
+        latlng: [36.0671, 120.3826],
+        address_zh: "青岛市市南区香港中路123号", 
+        address_en: "123 Hong Kong Middle Rd, Shinan, Qingdao", 
+        description_zh: "山东及华北地区国际商品分销。", 
+        description_en: "International goods distribution in Shandong and North China.", 
+        phone: "+865320000001", 
+        email: "trade@qingdaotrading.cn", 
+        website: "https://qingdaotrading.cn", 
+        whatsapp: "861234567801" 
+      }
+    ];
+    
+    const translations = { 
+      zh: { 
+        buscar_placeholder: "搜索中国各地的商家...", 
+        centrar: "居中", 
+        servicios: "QRP2P 服务", 
+        mapa: "地图", 
+        satelite: "卫星", 
+        view_store: "查看店铺",
+        sub_header: "中国"
+      },
+      en: { 
+        buscar_placeholder: "Search businesses across China...", 
+        centrar: "CENTER", 
+        servicios: "QRP2P SERVICES", 
+        mapa: "Map", 
+        satelite: "Satellite", 
+        view_store: "VIEW STORE",
+        sub_header: "CHINA"
+      }
+    };
+    
+    function t(key) { return translations[currentLang][key] || key; }
+    
+    function generarPopupHTML(business) { 
+      const name = currentLang === 'zh' ? business.name_zh : business.name_en;
+      const category = currentLang === 'zh' ? business.category_zh : business.category_en;
+      const description = currentLang === 'zh' ? business.description_zh : business.description_en;
+      const address = currentLang === 'zh' ? business.address_zh : business.address_en;
+      const storeText = t('view_store');
+      const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
+      let contactButtons = '';
+      if(business.website) contactButtons += `<a href="${business.website}" target="_blank" class="contact-link"><i class="fas fa-globe"></i> Web</a>`;
+      if(business.whatsapp) contactButtons += `<a href="https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>`;
+      if(business.phone) contactButtons += `<a href="tel:${business.phone}" class="contact-link"><i class="fas fa-phone"></i> Call</a>`;
+      if(business.email) contactButtons += `<a href="mailto:${business.email}" class="contact-link"><i class="fas fa-envelope"></i> Email</a>`;
+      return `<div class="popup-business-card"><div class="popup-business-header"><h3>⚡ ${name}</h3><span class="popup-business-category">${category}</span></div><div class="popup-business-info"><div class="popup-business-description">${description}</div><div class="popup-business-address"><i class="fas fa-map-pin"></i> ${address}</div><div class="popup-business-contact">${contactButtons}</div><a href="${websiteUrl}" target="_blank" class="btn-view-store"><i class="fas fa-store"></i> ${storeText}</a></div></div>`; 
+    }
+    
+    function initMap() { 
+      const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      
+      // 中国地理中心 (大约在西安附近)
+      mapa = L.map('mapa', { center: [35.8617, 104.1954], zoom: 5, zoomControl: false });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      
+      let clusters = L.markerClusterGroup({ iconCreateFunction: cluster => L.divIcon({ html: `<div>${cluster.getChildCount()}</div>`, className: 'cluster-marcadores', iconSize: [40,40] }) }); 
+      let icono = L.divIcon({ className: 'negocio-marker', html: '⚡', iconSize: [32,32], popupAnchor: [0,-16] }); 
+      
+      verifiedBusinesses.forEach(business => { 
+        let popup = generarPopupHTML(business); 
+        let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
+        marker.datosNegocio = business; 
+        marker.datosBusqueda = `${business.name_zh} ${business.name_en} ${business.category_zh} ${business.category_en} ${business.description_zh} ${business.description_en}`.toLowerCase(); 
+        marcadoresOriginales.push(marker); 
+        clusters.addLayer(marker); 
+      }); 
+      mapa.addLayer(clusters); 
+      
+      mapa.googleMapsLayer = googleMapsLayer;
+      mapa.googleSatelliteLayer = googleSatelliteLayer;
+    }
+    
+    function mostrarServiciosQRP2P() {
+      let container = document.getElementById('listaServicios');
+      container.innerHTML = '';
+      serviciosQRP2P.forEach(servicio => {
+        let btn = document.createElement('button');
+        btn.className = 'servicio-item-btn';
+        let name = currentLang === 'zh' ? servicio.name_zh : servicio.name_en;
+        btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${name}`;
+        btn.addEventListener('click', () => {
+          window.open(servicio.url, '_blank');
+          document.getElementById('servicioModal').style.display = 'none';
+        });
+        container.appendChild(btn);
+      });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      document.getElementById('servicioModal').style.display = 'flex';
+    }
+    
+    function centrarMapaRapido() {
+      if (navigator.geolocation) {
+        const btn = document.getElementById('centrar-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>定位中...</span>';
+        navigator.geolocation.getCurrentPosition(
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'zh' ? '您当前的位置' : 'Your current location'); mapa.setView([latitude, longitude], 12); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([35.8617, 104.1954], 5); alert(currentLang === 'zh' ? '无法获取您的位置。显示中国。' : 'Could not get your location. Showing China.'); }
+        );
+      } else { mapa.setView([35.8617, 104.1954], 5); }
+    }
+    
+    function updateUILanguage() {
+      document.getElementById('buscador').placeholder = t('buscar_placeholder');
+      document.getElementById('centrar-text').innerText = t('centrar');
+      document.getElementById('servicios-text').innerText = t('servicios');
+      document.getElementById('map-text').innerText = t('mapa');
+      document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      marcadoresOriginales.forEach(marker => { marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => { 
+      initMap(); updateUILanguage();
+      
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      
+      document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
+      
+      document.querySelectorAll('.lang-btn').forEach(btn => { 
+        btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); }); 
+      });
+      
+      let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 ${currentLang === 'zh' ? '搜索中...' : 'Searching...'}</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name = currentLang === 'zh' ? m.datosNegocio.name_zh : m.datosNegocio.name_en; 
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${currentLang === 'zh' ? '查看' : 'View'}</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 12); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ ${currentLang === 'zh' ? '未找到结果' : 'No results found in China'}</div>`; 
+        }, 300); 
+      }); 
+      document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
+    });
+  </script>
+</body>
+</html>
