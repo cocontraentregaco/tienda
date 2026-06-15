@@ -1,817 +1,651 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <meta name="description" content="18MLS Real Estate: El MLS inmobiliario más grande del mundo. Compra, vende e invierte en bienes raíces en 196 países.">
-    <meta name="keywords" content="18MLS, Real Estate, bienes raíces, MLS, marketplace P2P, global, compra venta inmuebles, inversión, propiedades, peer-to-peer, internacional, MLS inmobiliario, México, CDMX, Guadalajara, Monterrey">
-    <meta name="author" content="18MLS Real Estate">
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#000000">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="18MLS">
-    <meta name="mobile-web-app-capable" content="yes">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="/icon-192.png">
-    <title>18MLS | México - Estados y Ciudades</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>QRP2P MÉXICO | NEGOCIOS VERIFICADOS | MARKETPLACE P2P | 0% COMISIONES</title>
+  <meta name="description" content="QRP2P México. Marketplace directo entre comprador y vendedor verificado en todo el país. Encuentra negocios, propiedades y servicios. 0% comisiones de por vida.">
+  <meta name="keywords" content="QRP2P, México, Mexico, marketplace, comprador, vendedor, verificado, 0% comisiones, negocios, propiedades, CDMX, Guadalajara, Monterrey, Cancún">
+  <meta name="author" content="QRP2P">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#000000">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Libre Baskerville', serif; background-color: #ffffff; color: #111111; line-height: 1.5; font-size: 16px; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    #contenedor-mapa { width: 100%; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #ffffff; width: 100%; z-index: 1000; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #eaeaea; flex-shrink: 0; }
+    .contenedor-buscador { position: relative; flex: 1; max-width: 400px; }
+    #buscador { width: 100%; padding: 0.6rem 1.2rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 16px; font-family: 'Libre Baskerville', serif; transition: all 0.3s ease; background: #ffffff; user-select: text; }
+    #buscador:focus { outline: none; border-color: #000000; }
+    .btn-mapa { background: #000000; color: #ffffff; padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; display: flex; gap: 5px; font-family: 'Libre Baskerville', serif; transition: all 0.2s ease; }
+    .btn-mapa:hover { background: #333333; }
+    .btn-centrar { background-color: #000000; }
+    .btn-registro { background-color: #25D366; color: #000000; }
+    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
+    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
+    .map-type-btn { padding: 0.5rem 1rem; border: none; border-radius: 40px; cursor: pointer; background: transparent; font-family: 'Libre Baskerville', serif; font-weight: 600; }
+    .map-type-btn.active { background: #000000; color: white; }
+    .lang-selector { display: flex; gap: 0.3rem; margin-left: 0.5rem; }
+    .lang-btn { background: transparent; border: 1px solid #ccc; border-radius: 20px; padding: 0.4rem 0.8rem; cursor: pointer; font-family: 'Libre Baskerville', serif; font-weight: 600; font-size: 0.8rem; }
+    .lang-btn.active { background: #000000; color: white; border-color: #000000; }
+    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
+    .leaflet-control-zoom { display: none !important; }
+    .sugerencias-busqueda { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; display: none; }
+    .sugerencia-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .sugerencia-item:hover { background-color: #f5f5f5; }
+    .sugerencia-texto { flex: 1; }
+    .sugerencia-boton { margin-left: 10px; padding: 6px 12px; background-color: #000000; color: white; border: none; border-radius: 20px; cursor: pointer; }
+    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
     
-    <meta property="og:title" content="18MLS Real Estate — México">
-    <meta property="og:description" content="Selecciona tu estado o ciudad en México y accede al MLS inmobiliario más grande del mundo.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://18mls.com/mx">
-    <meta property="og:image" content="/icon-512.png">
+    .popup-business-card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      width: 340px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .popup-business-header {
+      background: #000000;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .popup-business-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .popup-business-category {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+    }
+    .popup-business-info {
+      padding: 1rem;
+    }
+    .popup-business-description {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .popup-business-address {
+      font-size: 0.7rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .popup-business-address i {
+      margin-top: 0.2rem;
+      color: #000;
+    }
+    .popup-business-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 0.8rem;
+    }
+    .contact-link {
+      font-size: 0.7rem;
+      background: #f5f5f5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .contact-link i { font-size: 0.7rem; }
+    .btn-view-store {
+      display: block;
+      background: #000000;
+      color: white;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .btn-view-store:hover { background: #333333; transform: scale(0.98); }
     
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="18MLS Real Estate - México">
-    <meta name="twitter:description" content="Encuentra propiedades en los principales estados y ciudades de México">
-    <meta name="twitter:image" content="/icon-512.png">
+    .servicio-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+    .servicio-container {
+      background: white;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .servicios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .servicios-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn i {
+      font-size: 1.1rem;
+    }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
     
-    <style>
-        * {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        input, textarea, [contenteditable="true"] {
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
-        }
-        
-        body {
-            background-color: #ffffff;
-            color: #000000;
-            font-family: 'Libre Baskerville', 'Times New Roman', Georgia, 'Baskerville', serif;
-            font-weight: 400;
-            line-height: 1.4;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            -webkit-touch-callout: none;
-            overflow-x: hidden;
-        }
-        
-        html {
-            touch-action: pan-x pan-y;
-            overflow-x: hidden;
-        }
-        
-        img, a, button {
-            -webkit-user-drag: none;
-            user-drag: none;
-        }
-        
-        .container {
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-            text-align: center;
-            overflow-x: hidden;
-        }
-
-        .back-link {
-            position: absolute;
-            top: 1.8rem;
-            left: 2rem;
-            font-family: 'Libre Baskerville', serif;
-            font-size: 0.85rem;
-            color: #3a3a3a;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: color 0.2s ease;
-            z-index: 10;
-        }
-
-        .back-link:hover {
-            color: #000000;
-        }
-
-        .language-bar {
-            position: absolute;
-            top: 1.8rem;
-            right: 2rem;
-            display: flex;
-            gap: 0.75rem;
-            z-index: 10;
-        }
-
-        .lang-btn {
-            background: none;
-            border: none;
-            font-family: 'Libre Baskerville', serif;
-            font-size: 0.85rem;
-            font-weight: 400;
-            color: #3a3a3a;
-            cursor: pointer;
-            padding: 0.25rem 0.5rem;
-            transition: all 0.2s ease;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .lang-btn.active {
-            color: #000000;
-            font-weight: 700;
-            border-bottom: 1.5px solid #000000;
-        }
-
-        .lang-btn:hover:not(.active) {
-            color: #000000;
-            background-color: #f5f5f5;
-        }
-
-        .brand {
-            margin-bottom: 2rem;
-            margin-top: 0.5rem;
-        }
-
-        .logo {
-            font-size: 2.8rem;
-            letter-spacing: -0.02em;
-            font-weight: 700;
-            text-transform: lowercase;
-            color: #000000;
-            text-decoration: none;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-            display: inline-block;
-            padding-bottom: 0.2rem;
-        }
-
-        .tagline {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            margin-top: 1rem;
-            color: #3a3a3a;
-            font-weight: 400;
-        }
-
-        .hero {
-            margin-bottom: 2rem;
-        }
-
-        .hero h1 {
-            font-size: 1.8rem;
-            font-weight: 400;
-            line-height: 1.3;
-            margin-bottom: 0.75rem;
-            color: #000000;
-            letter-spacing: -0.3px;
-        }
-
-        .hero p {
-            font-size: 1rem;
-            color: #2c2c2c;
-            max-width: 580px;
-            margin: 0 auto;
-            font-weight: 350;
-        }
-
-        .search-section {
-            max-width: 480px;
-            width: 100%;
-            margin: 1.8rem auto 2rem;
-            position: relative;
-        }
-
-        .search-input-wrapper {
-            position: relative;
-            width: 100%;
-            display: flex;
-            align-items: center;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1rem;
-            color: #8a8a8a;
-            pointer-events: none;
-            font-weight: 400;
-            z-index: 2;
-        }
-
-        .search-icon::before {
-            content: "🔍";
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 0.9rem 3rem 0.9rem 2.8rem;
-            font-family: 'Libre Baskerville', serif;
-            font-size: 0.95rem;
-            background: #ffffff;
-            border: 1.5px solid #e0e0e0;
-            color: #000000;
-            border-radius: 0px;
-            transition: all 0.25s ease;
-            outline: none;
-            letter-spacing: -0.2px;
-            box-shadow: none;
-        }
-
-        .search-input:focus {
-            border-color: #000000;
-            box-shadow: 0 0 0 1px rgba(0,0,0,0.05);
-        }
-
-        .search-input::placeholder {
-            color: #b0b0b0;
-            font-weight: 300;
-            font-style: italic;
-        }
-
-        .search-clear {
-            position: absolute;
-            right: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: #9a9a9a;
-            padding: 0 6px;
-            display: none;
-            font-family: monospace;
-            z-index: 2;
-            transition: color 0.2s;
-        }
-
-        .search-clear:hover {
-            color: #000000;
-        }
-
-        .results-count {
-            font-size: 0.7rem;
-            text-align: center;
-            margin-top: 0.65rem;
-            color: #5a5a5a;
-            letter-spacing: 0.3px;
-            font-style: italic;
-        }
-
-        .state-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0 2.5rem;
-            transition: all 0.2s;
-        }
-
-        .state-card {
-            background: #ffffff;
-            border: 1px solid #e0e0e0;
-            padding: 2rem 1.5rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            color: #000000;
-            display: block;
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .state-card.hidden-card {
-            display: none;
-        }
-
-        .state-card:hover {
-            border-color: #000000;
-            background-color: #fafafa;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        .state-card:active {
-            transform: translateY(1px);
-        }
-
-        .state-flag {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .state-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-        }
-
-        .city-list {
-            font-size: 0.75rem;
-            color: #4a4a4a;
-            margin-top: 0.8rem;
-            line-height: 1.4;
-            border-top: 1px solid #efefef;
-            padding-top: 0.8rem;
-        }
-
-        .city-badge {
-            display: inline-block;
-            background: #f5f5f5;
-            padding: 0.2rem 0.5rem;
-            margin: 0.2rem;
-            border-radius: 0;
-            font-size: 0.7rem;
-            color: #2c2c2c;
-        }
-
-        .state-domain {
-            font-size: 0.7rem;
-            color: #8a8a8a;
-            margin-top: 0.5rem;
-            font-family: monospace;
-        }
-
-        .divider {
-            width: 40px;
-            height: 1px;
-            background: #d4d4d4;
-            margin: 1rem auto;
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: #6c6c6c;
-            font-style: italic;
-            font-size: 0.9rem;
-            border-top: 1px solid #f0f0f0;
-            margin-top: 1rem;
-        }
-
-        .footer {
-            margin-top: 3rem;
-            font-size: 0.7rem;
-            color: #6c6c6c;
-            letter-spacing: 0.5px;
-            border-top: 1px solid #ececec;
-            padding-top: 2rem;
-        }
-
-        .footer p {
-            margin-bottom: 0.2rem;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 1.5rem;
-            }
-            .back-link {
-                position: relative;
-                top: 0;
-                left: 0;
-                justify-content: center;
-                margin-bottom: 1rem;
-                display: inline-flex;
-            }
-            .language-bar {
-                position: relative;
-                top: 0;
-                right: 0;
-                justify-content: center;
-                margin-bottom: 1rem;
-            }
-            .logo {
-                font-size: 2rem;
-            }
-            .hero h1 {
-                font-size: 1.4rem;
-            }
-            .state-name {
-                font-size: 1.3rem;
-            }
-            .state-selector {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            .search-section {
-                max-width: 360px;
-                margin: 1.2rem auto;
-            }
-            .search-input {
-                padding: 0.8rem 2.8rem 0.8rem 2.5rem;
-                font-size: 0.88rem;
-            }
-        }
-
-        .state-card:focus-visible {
-            outline: 2px solid #000000;
-            outline-offset: 4px;
-        }
-
-        a {
-            text-decoration: none;
-        }
-
-        @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
-    </style>
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
+  </style>
 </head>
 <body>
-
-<div class="container">
-    <a href="/" class="back-link" data-i18n="back_link">← Volver a países</a>
-    
-    <div class="language-bar">
-        <button class="lang-btn active" id="lang-es" data-lang="es">ES</button>
-        <button class="lang-btn" id="lang-en" data-lang="en">EN</button>
-    </div>
-
-    <div class="brand">
-        <span class="logo">18MLS.COM</span>
-        <div class="tagline" data-i18n="tagline">México · El MLS inmobiliario más grande del mundo</div>
-    </div>
-
-    <div class="hero">
-        <h1 data-i18n="title">SELECCIONA TU ESTADO</h1>
-        <div class="divider"></div>
-        <p data-i18n="subtitle">Encuentra propiedades en los principales estados y ciudades de México. Compra, vende e invierte directamente entre propietarios.</p>
-    </div>
-
-    <div class="search-section">
-        <div class="search-input-wrapper">
-            <span class="search-icon"></span>
-            <input type="text" id="stateSearch" class="search-input" placeholder="Buscar estado o ciudad..." autocomplete="off" spellcheck="false" aria-label="Buscar estado o ciudad">
-            <button id="clearSearch" class="search-clear" aria-label="Limpiar búsqueda">✕</button>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="botones-izquierda">
+        <div class="contenedor-buscador">
+          <input type="search" id="buscador" placeholder="Buscar negocios en todo México..." enterkeyhint="search">
+          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
         </div>
-        <div id="resultsCount" class="results-count"></div>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">CENTRAR</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">SERVICIOS QRP2P</span></button>
+      </div>
+      <div class="botones-derecha">
+        <button class="map-type-btn active" id="map-btn"><span id="map-text">Mapa</span></button>
+        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Satélite</span></button>
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="es">ES</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+      </div>
     </div>
+    <div id="mapa"></div>
+  </div>
 
-    <div id="statesContainer" class="state-selector"></div>
-
-    <div class="footer">
-        <p data-i18n="footer_copyright">© 18MLS.COM — El MLS inmobiliario más grande del mundo</p>
-        <p data-i18n="footer_tagline">Propiedades Directas · Sin Intermediarios · Transacciones Aseguradas</p>
-        <p style="margin-top: 0.5rem; font-size: 0.65rem;">México v1.0</p>
+  <!-- Modal de Servicios QRP2P México -->
+  <div id="servicioModal" class="servicio-modal">
+    <div class="servicio-container">
+      <div class="servicios-header">
+        <h2 id="servicio-modal-title">SERVICIOS QRP2P <span class="zero-badge">0% COMISIONES</span></h2>
+        <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sub-header" id="subHeaderText">MÉXICO</div>
+      <div id="listaServicios" class="servicios-botones"></div>
     </div>
-</div>
+  </div>
 
-<script>
-    // --------------------------------------------------------------
-    // 1. BLOQUEO DE INTERACCIONES
-    // --------------------------------------------------------------
-    (function() {
-        const blockEvents = ['copy', 'cut', 'paste', 'contextmenu', 'dragstart', 'selectstart'];
-        blockEvents.forEach(eventType => {
-            document.addEventListener(eventType, function(e) {
-                const isSearchInput = e.target.id === 'stateSearch' || e.target.closest('#stateSearch');
-                if (!isSearchInput) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    return false;
-                }
-                return true;
-            });
-        });
-        
-        document.addEventListener('keydown', function(e) {
-            const isSearchInputFocused = document.activeElement && document.activeElement.id === 'stateSearch';
-            if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'x' || e.key === 'a')) {
-                if (!isSearchInputFocused) {
-                    e.preventDefault();
-                    return false;
-                }
-            }
-        });
-        
-        let lastTouchEnd = 0;
-        document.addEventListener('touchstart', function(e) {
-            if (e.touches.length > 1) e.preventDefault();
-        }, { passive: false });
-        
-        document.addEventListener('touchend', function(e) {
-            const now = Date.now();
-            if (now - lastTouchEnd <= 300) e.preventDefault();
-            lastTouchEnd = now;
-        }, false);
-    })();
-
-    // --------------------------------------------------------------
-    // 2. DATOS DE ESTADOS Y CIUDADES DE MÉXICO (32 ENTIDADES)
-    // TODOS LOS EMOJIS SON LA BANDERA DE MÉXICO 🇲🇽
-    // --------------------------------------------------------------
-    const statesData = [
-        { id: 'aguascalientes', slug: 'aguascalientes', flag: '🇲🇽', nameKey: 'aguascalientes_name', subKey: 'aguascalientes_sub', state: 'Aguascalientes', capital: 'Aguascalientes', cities: ['Aguascalientes', 'Jesús María', 'Calvillo', 'Rincón de Romos'], urlPath: 'aguascalientes', searchTerms: ['aguascalientes', 'ags', 'hidrocalido'] },
-        { id: 'bajacalifornia', slug: 'bajacalifornia', flag: '🇲🇽', nameKey: 'bajacalifornia_name', subKey: 'bajacalifornia_sub', state: 'Baja California', capital: 'Mexicali', cities: ['Mexicali', 'Tijuana', 'Ensenada', 'Tecate', 'Rosarito', 'San Felipe'], urlPath: 'bajacalifornia', searchTerms: ['baja california', 'mexicali', 'tijuana', 'ensenada', 'bc'] },
-        { id: 'bajacaliforniasur', slug: 'bajacaliforniasur', flag: '🇲🇽', nameKey: 'bajacaliforniasur_name', subKey: 'bajacaliforniasur_sub', state: 'Baja California Sur', capital: 'La Paz', cities: ['La Paz', 'Cabo San Lucas', 'San José del Cabo', 'Todos Santos', 'Loreto'], urlPath: 'bajacaliforniasur', searchTerms: ['baja california sur', 'la paz', 'cabo san lucas', 'bcs', 'los cabos'] },
-        { id: 'campeche', slug: 'campeche', flag: '🇲🇽', nameKey: 'campeche_name', subKey: 'campeche_sub', state: 'Campeche', capital: 'Campeche', cities: ['Campeche', 'Ciudad del Carmen', 'Champotón', 'Escárcega'], urlPath: 'campeche', searchTerms: ['campeche', 'cam', 'ciudad del carmen'] },
-        { id: 'coahuila', slug: 'coahuila', flag: '🇲🇽', nameKey: 'coahuila_name', subKey: 'coahuila_sub', state: 'Coahuila', capital: 'Saltillo', cities: ['Saltillo', 'Torreón', 'Monclova', 'Piedras Negras', 'Acuña', 'Ramos Arizpe'], urlPath: 'coahuila', searchTerms: ['coahuila', 'saltillo', 'torreon', 'monclova'] },
-        { id: 'colima', slug: 'colima', flag: '🇲🇽', nameKey: 'colima_name', subKey: 'colima_sub', state: 'Colima', capital: 'Colima', cities: ['Colima', 'Manzanillo', 'Tecomán', 'Villa de Álvarez'], urlPath: 'colima', searchTerms: ['colima', 'manzanillo', 'tecoman'] },
-        { id: 'chiapas', slug: 'chiapas', flag: '🇲🇽', nameKey: 'chiapas_name', subKey: 'chiapas_sub', state: 'Chiapas', capital: 'Tuxtla Gutiérrez', cities: ['Tuxtla Gutiérrez', 'San Cristóbal de las Casas', 'Tapachula', 'Comitán', 'Palenque'], urlPath: 'chiapas', searchTerms: ['chiapas', 'tuxtla', 'san cristobal', 'tapachula', 'palenque'] },
-        { id: 'chihuahua', slug: 'chihuahua', flag: '🇲🇽', nameKey: 'chihuahua_name', subKey: 'chihuahua_sub', state: 'Chihuahua', capital: 'Chihuahua', cities: ['Chihuahua', 'Juárez', 'Delicias', 'Cuauhtémoc', 'Parral', 'Nuevo Casas Grandes'], urlPath: 'chihuahua', searchTerms: ['chihuahua', 'juarez', 'chihuahua capital', 'delicias'] },
-        { id: 'cdmx', slug: 'cdmx', flag: '🇲🇽', nameKey: 'cdmx_name', subKey: 'cdmx_sub', state: 'Ciudad de México', capital: 'CDMX', cities: ['Álvaro Obregón', 'Azcapotzalco', 'Benito Juárez', 'Coyoacán', 'Cuajimalpa', 'Cuauhtémoc', 'Gustavo A. Madero', 'Iztacalco', 'Iztapalapa', 'Magdalena Contreras', 'Miguel Hidalgo', 'Milpa Alta', 'Tláhuac', 'Tlalpan', 'Venustiano Carranza', 'Xochimilco'], urlPath: 'cdmx', searchTerms: ['cdmx', 'ciudad de mexico', 'mexico city', 'distrito federal', 'df'] },
-        { id: 'durango', slug: 'durango', flag: '🇲🇽', nameKey: 'durango_name', subKey: 'durango_sub', state: 'Durango', capital: 'Durango', cities: ['Durango', 'Gómez Palacio', 'Lerdo', 'Santiago Papasquiaro'], urlPath: 'durango', searchTerms: ['durango', 'gomez palacio', 'lerdo'] },
-        { id: 'guanajuato', slug: 'guanajuato', flag: '🇲🇽', nameKey: 'guanajuato_name', subKey: 'guanajuato_sub', state: 'Guanajuato', capital: 'Guanajuato', cities: ['León', 'Irapuato', 'Celaya', 'Guanajuato', 'Silao', 'Salamanca', 'San Miguel de Allende', 'Dolores Hidalgo'], urlPath: 'guanajuato', searchTerms: ['guanajuato', 'leon', 'irapuato', 'celaya', 'san miguel de allende'] },
-        { id: 'guerrero', slug: 'guerrero', flag: '🇲🇽', nameKey: 'guerrero_name', subKey: 'guerrero_sub', state: 'Guerrero', capital: 'Chilpancingo', cities: ['Acapulco', 'Chilpancingo', 'Iguala', 'Taxco', 'Zihuatanejo'], urlPath: 'guerrero', searchTerms: ['guerrero', 'acapulco', 'chilpancingo', 'iguala', 'taxco', 'zihuatanejo'] },
-        { id: 'hidalgo', slug: 'hidalgo', flag: '🇲🇽', nameKey: 'hidalgo_name', subKey: 'hidalgo_sub', state: 'Hidalgo', capital: 'Pachuca', cities: ['Pachuca', 'Mineral del Monte', 'Tula', 'Huejutla', 'Actopan'], urlPath: 'hidalgo', searchTerms: ['hidalgo', 'pachuca', 'tula', 'real del monte'] },
-        { id: 'jalisco', slug: 'jalisco', flag: '🇲🇽', nameKey: 'jalisco_name', subKey: 'jalisco_sub', state: 'Jalisco', capital: 'Guadalajara', cities: ['Guadalajara', 'Zapopan', 'Tlaquepaque', 'Tonalá', 'Puerto Vallarta', 'Lagos de Moreno', 'Ciudad Guzmán', 'Autlán'], urlPath: 'jalisco', searchTerms: ['jalisco', 'guadalajara', 'zapopan', 'puerto vallarta', 'gdl', 'tlaquepaque'] },
-        { id: 'mexicoestado', slug: 'estadodemexico', flag: '🇲🇽', nameKey: 'mexicoestado_name', subKey: 'mexicoestado_sub', state: 'Estado de México', capital: 'Toluca', cities: ['Ecatepec', 'Nezahualcóyotl', 'Naucalpan', 'Toluca', 'Tlalnepantla', 'Chimalhuacán', 'Atizapán', 'Cuautitlán Izcalli', 'Metepec', 'Huixquilucan'], urlPath: 'estadodemexico', searchTerms: ['estado de mexico', 'edomex', 'toluca', 'ecatepec', 'nezahualcoyotl', 'naucalpan'] },
-        { id: 'michoacan', slug: 'michoacan', flag: '🇲🇽', nameKey: 'michoacan_name', subKey: 'michoacan_sub', state: 'Michoacán', capital: 'Morelia', cities: ['Morelia', 'Uruapan', 'Lázaro Cárdenas', 'Zamora', 'Pátzcuaro', 'Zitácuaro'], urlPath: 'michoacan', searchTerms: ['michoacan', 'morelia', 'uruapan', 'patzcuaro', 'lazaro cardenas'] },
-        { id: 'morelos', slug: 'morelos', flag: '🇲🇽', nameKey: 'morelos_name', subKey: 'morelos_sub', state: 'Morelos', capital: 'Cuernavaca', cities: ['Cuernavaca', 'Jiutepec', 'Temixco', 'Cuautla', 'Yautepec'], urlPath: 'morelos', searchTerms: ['morelos', 'cuernavaca', 'cuautla', 'jiutepec'] },
-        { id: 'nayarit', slug: 'nayarit', flag: '🇲🇽', nameKey: 'nayarit_name', subKey: 'nayarit_sub', state: 'Nayarit', capital: 'Tepic', cities: ['Tepic', 'Riviera Nayarit', 'Nuevo Vallarta', 'Compostela', 'Jala'], urlPath: 'nayarit', searchTerms: ['nayarit', 'tepic', 'nuevo vallarta', 'riviera nayarit'] },
-        { id: 'nuevoleon', slug: 'nuevoleon', flag: '🇲🇽', nameKey: 'nuevoleon_name', subKey: 'nuevoleon_sub', state: 'Nuevo León', capital: 'Monterrey', cities: ['Monterrey', 'San Pedro Garza García', 'San Nicolás', 'Apodaca', 'Guadalupe', 'Santa Catarina', 'Escobedo'], urlPath: 'nuevoleon', searchTerms: ['nuevo leon', 'monterrey', 'san pedro', 'apodaca', 'mtty'] },
-        { id: 'oaxaca', slug: 'oaxaca', flag: '🇲🇽', nameKey: 'oaxaca_name', subKey: 'oaxaca_sub', state: 'Oaxaca', capital: 'Oaxaca', cities: ['Oaxaca', 'Puerto Escondido', 'Huatulco', 'Salina Cruz', 'Tehuantepec', 'Juchitán'], urlPath: 'oaxaca', searchTerms: ['oaxaca', 'puerto escondido', 'huatulco', 'tehuantepec'] },
-        { id: 'puebla', slug: 'puebla', flag: '🇲🇽', nameKey: 'puebla_name', subKey: 'puebla_sub', state: 'Puebla', capital: 'Puebla', cities: ['Puebla', 'Cholula', 'Atlixco', 'Tehuacán', 'San Andrés Cholula', 'San Pedro Cholula'], urlPath: 'puebla', searchTerms: ['puebla', 'cholula', 'tehuacan', 'atlixco', 'angelopolis'] },
-        { id: 'queretaro', slug: 'queretaro', flag: '🇲🇽', nameKey: 'queretaro_name', subKey: 'queretaro_sub', state: 'Querétaro', capital: 'Querétaro', cities: ['Querétaro', 'San Juan del Río', 'Corregidora', 'El Marqués', 'Tequisquiapan'], urlPath: 'queretaro', searchTerms: ['queretaro', 'queretaro capital', 'san juan del rio', 'qro'] },
-        { id: 'quintanaroo', slug: 'quintanaroo', flag: '🇲🇽', nameKey: 'quintanaroo_name', subKey: 'quintanaroo_sub', state: 'Quintana Roo', capital: 'Chetumal', cities: ['Cancún', 'Playa del Carmen', 'Tulum', 'Cozumel', 'Chetumal', 'Bacalar'], urlPath: 'quintanaroo', searchTerms: ['quintana roo', 'cancun', 'playa del carmen', 'tulum', 'cozumel', 'chetumal'] },
-        { id: 'sanluispotosi', slug: 'sanluispotosi', flag: '🇲🇽', nameKey: 'sanluispotosi_name', subKey: 'sanluispotosi_sub', state: 'San Luis Potosí', capital: 'San Luis Potosí', cities: ['San Luis Potosí', 'Soledad', 'Ciudad Valles', 'Matehuala', 'Rioverde'], urlPath: 'sanluispotosi', searchTerms: ['san luis potosi', 'slp', 'ciudad valles', 'matehuala'] },
-        { id: 'sinaloa', slug: 'sinaloa', flag: '🇲🇽', nameKey: 'sinaloa_name', subKey: 'sinaloa_sub', state: 'Sinaloa', capital: 'Culiacán', cities: ['Culiacán', 'Mazatlán', 'Los Mochis', 'Guasave', 'El Fuerte'], urlPath: 'sinaloa', searchTerms: ['sinaloa', 'culiacan', 'mazatlan', 'los mochis'] },
-        { id: 'sonora', slug: 'sonora', flag: '🇲🇽', nameKey: 'sonora_name', subKey: 'sonora_sub', state: 'Sonora', capital: 'Hermosillo', cities: ['Hermosillo', 'Ciudad Obregón', 'Nogales', 'San Luis Río Colorado', 'Puerto Peñasco'], urlPath: 'sonora', searchTerms: ['sonora', 'hermosillo', 'ciudad obregon', 'nogales', 'puerto penasco'] },
-        { id: 'tabasco', slug: 'tabasco', flag: '🇲🇽', nameKey: 'tabasco_name', subKey: 'tabasco_sub', state: 'Tabasco', capital: 'Villahermosa', cities: ['Villahermosa', 'Cárdenas', 'Comalcalco', 'Paraíso', 'Tenosique'], urlPath: 'tabasco', searchTerms: ['tabasco', 'villahermosa', 'cardenas', 'comalcalco'] },
-        { id: 'tamaulipas', slug: 'tamaulipas', flag: '🇲🇽', nameKey: 'tamaulipas_name', subKey: 'tamaulipas_sub', state: 'Tamaulipas', capital: 'Ciudad Victoria', cities: ['Reynosa', 'Matamoros', 'Nuevo Laredo', 'Ciudad Victoria', 'Tampico', 'Madero'], urlPath: 'tamaulipas', searchTerms: ['tamaulipas', 'reynosa', 'matamoros', 'nuevo laredo', 'tampico', 'cd victoria'] },
-        { id: 'tlaxcala', slug: 'tlaxcala', flag: '🇲🇽', nameKey: 'tlaxcala_name', subKey: 'tlaxcala_sub', state: 'Tlaxcala', capital: 'Tlaxcala', cities: ['Tlaxcala', 'Apizaco', 'Huamantla', 'Chiautempan', 'Zacatelco'], urlPath: 'tlaxcala', searchTerms: ['tlaxcala', 'apizaco', 'huamantla', 'tlaxcala capital'] },
-        { id: 'veracruz', slug: 'veracruz', flag: '🇲🇽', nameKey: 'veracruz_name', subKey: 'veracruz_sub', state: 'Veracruz', capital: 'Xalapa', cities: ['Veracruz', 'Xalapa', 'Coatzacoalcos', 'Córdoba', 'Orizaba', 'Poza Rica', 'Boca del Río'], urlPath: 'veracruz', searchTerms: ['veracruz', 'xalapa', 'jalapa', 'coatza', 'coatzacoalcos', 'boca del rio', 'cordoba', 'orizaba'] },
-        { id: 'yucatan', slug: 'yucatan', flag: '🇲🇽', nameKey: 'yucatan_name', subKey: 'yucatan_sub', state: 'Yucatán', capital: 'Mérida', cities: ['Mérida', 'Valladolid', 'Tizimín', 'Progreso', 'Kanasín', 'Umán'], urlPath: 'yucatan', searchTerms: ['yucatan', 'merida', 'valladolid', 'progreso', 'chichen itza'] },
-        { id: 'zacatecas', slug: 'zacatecas', flag: '🇲🇽', nameKey: 'zacatecas_name', subKey: 'zacatecas_sub', state: 'Zacatecas', capital: 'Zacatecas', cities: ['Zacatecas', 'Fresnillo', 'Jerez', 'Guadalupe', 'Sombrerete'], urlPath: 'zacatecas', searchTerms: ['zacatecas', 'fresnillo', 'jerez', 'zacatecas capital'] }
-    ];
-
-    // --------------------------------------------------------------
-    // 3. TRADUCCIONES (ESPAÑOL E INGLÉS)
-    // --------------------------------------------------------------
-    const translations = {
-        es: {
-            back_link: "← Volver a países",
-            tagline: "México · El MLS inmobiliario más grande del mundo",
-            title: "SELECCIONA TU ESTADO",
-            subtitle: "Encuentra propiedades en los principales estados y ciudades de México. Compra, vende e invierte directamente entre propietarios.",
-            aguascalientes_name: "Aguascalientes", aguascalientes_sub: "Corazón del Bajío",
-            bajacalifornia_name: "Baja California", bajacalifornia_sub: "Norte del país",
-            bajacaliforniasur_name: "Baja California Sur", bajacaliforniasur_sub: "Perla del Mar de Cortés",
-            campeche_name: "Campeche", campeche_sub: "Ciudad amurallada",
-            coahuila_name: "Coahuila", coahuila_sub: "Cuna del Carbonero",
-            colima_name: "Colima", colima_sub: "Pequeño gigante",
-            chiapas_name: "Chiapas", chiapas_sub: "Rincón de la naturaleza",
-            chihuahua_name: "Chihuahua", chihuahua_sub: "Grandeza del norte",
-            cdmx_name: "Ciudad de México", cdmx_sub: "Capital del país",
-            durango_name: "Durango", durango_sub: "Tierra del cine",
-            guanajuato_name: "Guanajuato", guanajuato_sub: "Cuna de la independencia",
-            guerrero_name: "Guerrero", guerrero_sub: "Sol y playa",
-            hidalgo_name: "Hidalgo", hidalgo_sub: "Cuna del fútbol",
-            jalisco_name: "Jalisco", jalisco_sub: "Tierra del tequila y mariachi",
-            mexicoestado_name: "Estado de México", mexicoestado_sub: "Corazón del país",
-            michoacan_name: "Michoacán", michoacan_sub: "Alma de México",
-            morelos_name: "Morelos", morelos_sub: "Tierra de primavera eterna",
-            nayarit_name: "Nayarit", nayarit_sub: "Paraíso del Pacífico",
-            nuevoleon_name: "Nuevo León", nuevoleon_sub: "Industria y desarrollo",
-            oaxaca_name: "Oaxaca", oaxaca_sub: "Tierra de la guelaguetza",
-            puebla_name: "Puebla", puebla_sub: "Angeles y tradición",
-            queretaro_name: "Querétaro", queretaro_sub: "Historia y modernidad",
-            quintanaroo_name: "Quintana Roo", quintanaroo_sub: "Caribe mexicano",
-            sanluispotosi_name: "San Luis Potosí", sanluispotosi_sub: "Bosques y desierto",
-            sinaloa_name: "Sinaloa", sinaloa_sub: "Brisa del Pacífico",
-            sonora_name: "Sonora", sonora_sub: "Desierto y mar",
-            tabasco_name: "Tabasco", tabasco_sub: "Paraíso tropical",
-            tamaulipas_name: "Tamaulipas", tamaulipas_sub: "Frontera norte",
-            tlaxcala_name: "Tlaxcala", tlaxcala_sub: "Cuna de la nación",
-            veracruz_name: "Veracruz", veracruz_sub: "Puerto histórico",
-            yucatan_name: "Yucatán", yucatan_sub: "Tierra del henequén",
-            zacatecas_name: "Zacatecas", zacatecas_sub: "Rosa de los vientos",
-            footer_copyright: "© 18MLS.COM — El MLS inmobiliario más grande del mundo",
-            footer_tagline: "Propiedades Directas · Sin Intermediarios · Transacciones Aseguradas",
-            no_results: "No se encontraron estados o ciudades. Prueba con otro término de búsqueda."
-        },
-        en: {
-            back_link: "← Back to countries",
-            tagline: "Mexico · The largest real estate MLS in the world",
-            title: "SELECT YOUR STATE",
-            subtitle: "Find properties in Mexico's main states and cities. Buy, sell and invest directly between owners.",
-            aguascalientes_name: "Aguascalientes", aguascalientes_sub: "Heart of the Bajío",
-            bajacalifornia_name: "Baja California", bajacalifornia_sub: "Northern border",
-            bajacaliforniasur_name: "Baja California Sur", bajacaliforniasur_sub: "Pearl of the Sea of Cortez",
-            campeche_name: "Campeche", campeche_sub: "Walled city",
-            coahuila_name: "Coahuila", coahuila_sub: "Coal region",
-            colima_name: "Colima", colima_sub: "Little giant",
-            chiapas_name: "Chiapas", chiapas_sub: "Nature's corner",
-            chihuahua_name: "Chihuahua", chihuahua_sub: "Northern greatness",
-            cdmx_name: "Mexico City", cdmx_sub: "Country's capital",
-            durango_name: "Durango", durango_sub: "Film land",
-            guanajuato_name: "Guanajuato", guanajuato_sub: "Independence cradle",
-            guerrero_name: "Guerrero", guerrero_sub: "Sun and beach",
-            hidalgo_name: "Hidalgo", hidalgo_sub: "Football cradle",
-            jalisco_name: "Jalisco", jalisco_sub: "Tequila and mariachi land",
-            mexicoestado_name: "State of Mexico", mexicoestado_sub: "Heart of the country",
-            michoacan_name: "Michoacán", michoacan_sub: "Soul of Mexico",
-            morelos_name: "Morelos", morelos_sub: "Eternal spring land",
-            nayarit_name: "Nayarit", nayarit_sub: "Pacific paradise",
-            nuevoleon_name: "Nuevo León", nuevoleon_sub: "Industry and development",
-            oaxaca_name: "Oaxaca", oaxaca_sub: "Guelaguetza land",
-            puebla_name: "Puebla", puebla_sub: "Angels and tradition",
-            queretaro_name: "Querétaro", queretaro_sub: "History and modernity",
-            quintanaroo_name: "Quintana Roo", quintanaroo_sub: "Mexican Caribbean",
-            sanluispotosi_name: "San Luis Potosí", sanluispotosi_sub: "Forests and desert",
-            sinaloa_name: "Sinaloa", sinaloa_sub: "Pacific breeze",
-            sonora_name: "Sonora", sonora_sub: "Desert and sea",
-            tabasco_name: "Tabasco", tabasco_sub: "Tropical paradise",
-            tamaulipas_name: "Tamaulipas", tamaulipas_sub: "Northern border",
-            tlaxcala_name: "Tlaxcala", tlaxcala_sub: "Nation's cradle",
-            veracruz_name: "Veracruz", veracruz_sub: "Historic port",
-            yucatan_name: "Yucatán", yucatan_sub: "Henequen land",
-            zacatecas_name: "Zacatecas", zacatecas_sub: "Wind rose",
-            footer_copyright: "© 18MLS.COM — The largest real estate MLS in the world",
-            footer_tagline: "direct properties · no intermediaries · smart investing",
-            no_results: "No states or cities found. Try another search term."
-        }
-    };
-
-    // --------------------------------------------------------------
-    // 4. LÓGICA DE RENDER Y BÚSQUEDA
-    // --------------------------------------------------------------
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
     let currentLang = 'es';
-    let currentFilter = '';
-
-    function normalizeString(str) {
-        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^\w\s]/g, '');
+    let mapa, userMarker, marcadoresOriginales = [], currentLayer;
+    
+    // SERVICIOS QRP2P (7 servicios)
+    const serviciosQRP2P = [
+      { 
+        id: "plan-anual", 
+        name_es: "REGISTRAR PLAN ANUAL", 
+        name_en: "REGISTER ANNUAL PLAN", 
+        icon: "fa-calendar-alt",
+        url: "https://qrp2p.com/plan-anual-mexico"
+      },
+      { 
+        id: "administracion", 
+        name_es: "ADMINISTRACIÓN MENSUAL", 
+        name_en: "MONTHLY ADMINISTRATION", 
+        icon: "fa-building",
+        url: "https://qrp2p.com/administracion-mexico"
+      },
+      { 
+        id: "marketing", 
+        name_es: "MARKETING MENSUAL", 
+        name_en: "MONTHLY MARKETING", 
+        icon: "fa-chart-line",
+        url: "https://qrp2p.com/marketing-mexico"
+      },
+      { 
+        id: "logistica", 
+        name_es: "LOGÍSTICA", 
+        name_en: "LOGISTICS", 
+        icon: "fa-truck",
+        url: "https://qrp2p.com/logistica-mexico"
+      },
+      { 
+        id: "finanzas", 
+        name_es: "FINANZAS", 
+        name_en: "FINANCE", 
+        icon: "fa-coins",
+        url: "https://qrp2p.com/finanzas-mexico"
+      },
+      { 
+        id: "contabilidad", 
+        name_es: "CONTABILIDAD MENSUAL", 
+        name_en: "MONTHLY ACCOUNTING", 
+        icon: "fa-calculator",
+        url: "https://qrp2p.com/contabilidad-mexico"
+      },
+      { 
+        id: "academia", 
+        name_es: "ACADEMIA QRP2P", 
+        name_en: "QRP2P ACADEMY", 
+        icon: "fa-graduation-cap",
+        url: "https://qrp2p.com/academy"
+      }
+    ];
+    
+    // NEGOCIOS VERIFICADOS - MÉXICO (12 negocios en ciudades principales)
+    const verifiedBusinesses = [
+      { 
+        id: "CDMX01", 
+        name_es: "DISTRIBUIDORA CDMX CENTRO", 
+        name_en: "CDMX CENTER DISTRIBUTOR", 
+        category_es: "Distribuidora Mayorista", 
+        category_en: "Wholesale Distributor", 
+        latlng: [19.4326, -99.1332],
+        address_es: "Paseo de la Reforma 123, Ciudad de México", 
+        address_en: "Paseo de la Reforma 123, Mexico City", 
+        description_es: "Distribución de alimentos, bebidas y productos para el hogar en todo México.", 
+        description_en: "Distribution of food, beverages and household products throughout Mexico.", 
+        phone: "+525512345678", 
+        email: "info@cdmxdistribuidora.com.mx", 
+        website: "https://cdmxdistribuidora.com.mx", 
+        whatsapp: "5215512345678" 
+      },
+      { 
+        id: "CDMX02", 
+        name_es: "INMOBILIARIA MÉXICO P2P", 
+        name_en: "MEXICO P2P REAL ESTATE", 
+        category_es: "Bienes Raíces", 
+        category_en: "Real Estate", 
+        latlng: [19.4340, -99.1400],
+        address_es: "Av. Insurgentes Sur 456, CDMX", 
+        address_en: "Insurgentes Sur Ave 456, Mexico City", 
+        description_es: "Compra y venta de propiedades directo entre propietarios en México. 0% comisiones. Verificación garantizada.", 
+        description_en: "Buy and sell properties directly between owners in Mexico. 0% commission. Verified guarantee.", 
+        phone: "+525512345679", 
+        email: "contacto@inmobiliariamexico.com.mx", 
+        website: "https://qrp2p.com/mx", 
+        whatsapp: "5215512345679" 
+      },
+      { 
+        id: "GDL01", 
+        name_es: "DISTRIBUIDORA GUADALAJARA", 
+        name_en: "GUADALAJARA DISTRIBUTOR", 
+        category_es: "Distribuidora Mayorista", 
+        category_en: "Wholesale Distributor", 
+        latlng: [20.6597, -103.3496],
+        address_es: "Av. Vallarta 789, Guadalajara, Jalisco", 
+        address_en: "Vallarta Ave 789, Guadalajara, Jalisco", 
+        description_es: "Distribución de tequila, productos artesanales y electrónicos en el occidente.", 
+        description_en: "Distribution of tequila, artisanal products and electronics in the west.", 
+        phone: "+523312345678", 
+        email: "info@gdldistribuidora.com.mx", 
+        website: "https://gdldistribuidora.com.mx", 
+        whatsapp: "523312345678" 
+      },
+      { 
+        id: "MTY01", 
+        name_es: "MEGADISTRIBUIDORA MONTERREY", 
+        name_en: "MONTERREY MEGADISTRIBUTOR", 
+        category_es: "Distribuidora Mayorista", 
+        category_en: "Wholesale Distributor", 
+        latlng: [25.6866, -100.3161],
+        address_es: "Av. Eugenio Garza Sada 234, Monterrey, NL", 
+        address_en: "Eugenio Garza Sada Ave 234, Monterrey, NL", 
+        description_es: "Distribución de productos industriales y acero en el noreste de México.", 
+        description_en: "Distribution of industrial products and steel in northeastern Mexico.", 
+        phone: "+528181234567", 
+        email: "info@monterreymega.com.mx", 
+        website: "https://monterreymega.com.mx", 
+        whatsapp: "528181234567" 
+      },
+      { 
+        id: "PUE01", 
+        name_es: "AGRODISTRIBUIDORA PUEBLA", 
+        name_en: "PUEBLA AGRIBUSINESS", 
+        category_es: "Agroindustria", 
+        category_en: "Agribusiness", 
+        latlng: [19.0413, -98.2062],
+        address_es: "Blvd. Hermanos Serdán 567, Puebla", 
+        address_en: "Hermanos Serdán Blvd 567, Puebla", 
+        description_es: "Distribución de insumos agrícolas, fertilizantes y semillas en el centro del país.", 
+        description_en: "Distribution of agricultural inputs, fertilizers and seeds in central Mexico.", 
+        phone: "+522221234567", 
+        email: "agro@pueblaagro.com.mx", 
+        website: "https://pueblaagro.com.mx", 
+        whatsapp: "522221234567" 
+      },
+      { 
+        id: "QRO01", 
+        name_es: "DISTRIBUIDORA QUERÉTARO", 
+        name_en: "QUERETARO DISTRIBUTOR", 
+        category_es: "Distribuidora Mayorista", 
+        category_en: "Wholesale Distributor", 
+        latlng: [20.5888, -100.3899],
+        address_es: "Av. 5 de Febrero 890, Querétaro", 
+        address_en: "5 de Febrero Ave 890, Queretaro", 
+        description_es: "Distribución de productos automotrices y refacciones en el Bajío.", 
+        description_en: "Distribution of automotive products and parts in the Bajío region.", 
+        phone: "+524421234567", 
+        email: "info@queretarodistribuidora.com.mx", 
+        website: "https://queretarodistribuidora.com.mx", 
+        whatsapp: "524421234567" 
+      },
+      { 
+        id: "CUN01", 
+        name_es: "LOGÍSTICA CANCÚN", 
+        name_en: "CANCUN LOGISTICS", 
+        category_es: "Logística y Transporte", 
+        category_en: "Logistics & Transport", 
+        latlng: [21.1619, -86.8515],
+        address_es: "Blvd. Kukulcán 123, Cancún, QR", 
+        address_en: "Kukulcan Blvd 123, Cancun, QR", 
+        description_es: "Soluciones logísticas y distribución puerta a puerta en la península de Yucatán.", 
+        description_en: "Logistics solutions and door-to-door distribution in the Yucatan Peninsula.", 
+        phone: "+529981234567", 
+        email: "logistica@cancunlogistics.com.mx", 
+        website: "https://cancunlogistics.com.mx", 
+        whatsapp: "529981234567" 
+      },
+      { 
+        id: "MER01", 
+        name_es: "TECNOLOGÍA MÉRIDA", 
+        name_en: "MERIDA TECH", 
+        category_es: "Tecnología", 
+        category_en: "Technology", 
+        latlng: [20.9671, -89.6237],
+        address_es: "Paseo de Montejo 456, Mérida, Yucatán", 
+        address_en: "Paseo de Montejo 456, Merida, Yucatan", 
+        description_es: "Distribución de equipos de cómputo, impresoras y suministros de oficina.", 
+        description_en: "Distribution of computers, printers and office supplies.", 
+        phone: "+529991234567", 
+        email: "tech@meridatech.com.mx", 
+        website: "https://meridatech.com.mx", 
+        whatsapp: "529991234567" 
+      },
+      { 
+        id: "TIJ01", 
+        name_es: "INVERSIONES TIJUANA", 
+        name_en: "TIJUANA INVESTMENTS", 
+        category_es: "Finanzas e Inversiones", 
+        category_en: "Finance & Investments", 
+        latlng: [32.5149, -117.0382],
+        address_es: "Av. Revolución 789, Tijuana, BC", 
+        address_en: "Revolución Ave 789, Tijuana, BC", 
+        description_es: "Asesoría financiera y préstamos P2P para emprendedores de la frontera norte.", 
+        description_en: "Financial advisory and P2P loans for entrepreneurs on the northern border.", 
+        phone: "+526641234567", 
+        email: "finance@tijuanainvest.com.mx", 
+        website: "https://tijuanainvestments.com.mx", 
+        whatsapp: "526641234567" 
+      },
+      { 
+        id: "LEO01", 
+        name_es: "CONSTRUCCIONES LEÓN", 
+        name_en: "LEON CONSTRUCTIONS", 
+        category_es: "Construcción", 
+        category_en: "Construction", 
+        latlng: [21.1232, -101.6840],
+        address_es: "Blvd. Adolfo López Mateos 234, León, Gto", 
+        address_en: "Adolfo López Mateos Blvd 234, Leon, Gto", 
+        description_es: "Materiales de construcción y herramientas para proyectos en el Bajío.", 
+        description_en: "Construction materials and tools for projects in the Bajío region.", 
+        phone: "+524771234567", 
+        email: "build@leonconstruct.com.mx", 
+        website: "https://leonconstruction.com.mx", 
+        whatsapp: "524771234567" 
+      },
+      { 
+        id: "SLP01", 
+        name_es: "AUTOPARTES SAN LUIS POTOSÍ", 
+        name_en: "SAN LUIS POTOSI AUTO PARTS", 
+        category_es: "Autopartes", 
+        category_en: "Auto Parts", 
+        latlng: [22.1565, -100.9855],
+        address_es: "Av. Carranza 567, San Luis Potosí", 
+        address_en: "Carranza Ave 567, San Luis Potosi", 
+        description_es: "Distribución de repuestos y accesorios para vehículos en la zona centro-norte.", 
+        description_en: "Distribution of spare parts and accessories for vehicles in the central-north zone.", 
+        phone: "+524441234567", 
+        email: "parts@slpautoparts.com.mx", 
+        website: "https://slpautoparts.com.mx", 
+        whatsapp: "524441234567" 
+      },
+      { 
+        id: "CHS01", 
+        name_es: "MODA Y TEXTILES CHIHUAHUA", 
+        name_en: "CHIHUAHUA FASHION & TEXTILES", 
+        category_es: "Textiles", 
+        category_en: "Textiles", 
+        latlng: [28.6353, -106.0889],
+        address_es: "Av. Tecnológico 890, Chihuahua", 
+        address_en: "Tecnológico Ave 890, Chihuahua", 
+        description_es: "Distribución de telas, insumos textiles y confección en el norte de México.", 
+        description_en: "Distribution of fabrics, textile supplies and clothing in northern Mexico.", 
+        phone: "+526141234567", 
+        email: "textiles@chihuahuafashion.com.mx", 
+        website: "https://chihuahuafashion.com.mx", 
+        whatsapp: "526141234567" 
+      }
+    ];
+    
+    const translations = { 
+      es: { 
+        buscar_placeholder: "Buscar negocios en todo México...", 
+        centrar: "CENTRAR", 
+        servicios: "SERVICIOS QRP2P", 
+        mapa: "Mapa", 
+        satelite: "Satélite", 
+        view_store: "VER TIENDA",
+        sub_header: "MÉXICO"
+      },
+      en: { 
+        buscar_placeholder: "Search businesses across Mexico...", 
+        centrar: "CENTER", 
+        servicios: "QRP2P SERVICES", 
+        mapa: "Map", 
+        satelite: "Satellite", 
+        view_store: "VIEW STORE",
+        sub_header: "MEXICO"
+      }
+    };
+    
+    function t(key) { return translations[currentLang][key] || key; }
+    
+    function generarPopupHTML(business) { 
+      const name = currentLang === 'es' ? business.name_es : business.name_en;
+      const category = currentLang === 'es' ? business.category_es : business.category_en;
+      const description = currentLang === 'es' ? business.description_es : business.description_en;
+      const address = currentLang === 'es' ? business.address_es : business.address_en;
+      const storeText = t('view_store');
+      const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
+      let contactButtons = '';
+      if(business.website) contactButtons += `<a href="${business.website}" target="_blank" class="contact-link"><i class="fas fa-globe"></i> Web</a>`;
+      if(business.whatsapp) contactButtons += `<a href="https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>`;
+      if(business.phone) contactButtons += `<a href="tel:${business.phone}" class="contact-link"><i class="fas fa-phone"></i> Call</a>`;
+      if(business.email) contactButtons += `<a href="mailto:${business.email}" class="contact-link"><i class="fas fa-envelope"></i> Email</a>`;
+      return `<div class="popup-business-card"><div class="popup-business-header"><h3>⚡ ${name}</h3><span class="popup-business-category">${category}</span></div><div class="popup-business-info"><div class="popup-business-description">${description}</div><div class="popup-business-address"><i class="fas fa-map-pin"></i> ${address}</div><div class="popup-business-contact">${contactButtons}</div><a href="${websiteUrl}" target="_blank" class="btn-view-store"><i class="fas fa-store"></i> ${storeText}</a></div></div>`; 
     }
-
-    function getSearchableTextForState(state, langData) {
-        const stateName = langData[state.nameKey] || state.state;
-        const stateSub = langData[state.subKey] || '';
-        const baseTerms = state.searchTerms || [];
-        const citiesText = state.cities.join(' ');
-        let combined = `${stateName} ${stateSub} ${citiesText} ${state.state} ${state.capital} ${baseTerms.join(' ')}`.toLowerCase();
-        return normalizeString(combined);
+    
+    function initMap() { 
+      const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      
+      // Centro geográfico de México
+      mapa = L.map('mapa', { center: [23.6345, -102.5528], zoom: 5, zoomControl: false });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      
+      let clusters = L.markerClusterGroup({ iconCreateFunction: cluster => L.divIcon({ html: `<div>${cluster.getChildCount()}</div>`, className: 'cluster-marcadores', iconSize: [40,40] }) }); 
+      let icono = L.divIcon({ className: 'negocio-marker', html: '⚡', iconSize: [32,32], popupAnchor: [0,-16] }); 
+      
+      verifiedBusinesses.forEach(business => { 
+        let popup = generarPopupHTML(business); 
+        let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
+        marker.datosNegocio = business; 
+        marker.datosBusqueda = `${business.name_es} ${business.name_en} ${business.category_es} ${business.category_en} ${business.description_es} ${business.description_en}`.toLowerCase(); 
+        marcadoresOriginales.push(marker); 
+        clusters.addLayer(marker); 
+      }); 
+      mapa.addLayer(clusters); 
+      
+      mapa.googleMapsLayer = googleMapsLayer;
+      mapa.googleSatelliteLayer = googleSatelliteLayer;
     }
-
-    function formatCityList(cities) {
-        if (!cities || cities.length === 0) return '';
-        const maxCities = 5;
-        const visibleCities = cities.slice(0, maxCities);
-        const hasMore = cities.length > maxCities;
-        let html = '<div class="city-list">';
-        visibleCities.forEach(city => {
-            html += `<span class="city-badge">${escapeHtml(city)}</span>`;
+    
+    function mostrarServiciosQRP2P() {
+      let container = document.getElementById('listaServicios');
+      container.innerHTML = '';
+      serviciosQRP2P.forEach(servicio => {
+        let btn = document.createElement('button');
+        btn.className = 'servicio-item-btn';
+        let name = currentLang === 'es' ? servicio.name_es : servicio.name_en;
+        btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${name}`;
+        btn.addEventListener('click', () => {
+          window.open(servicio.url, '_blank');
+          document.getElementById('servicioModal').style.display = 'none';
         });
-        if (hasMore) {
-            html += `<span class="city-badge">+${cities.length - maxCities} más</span>`;
-        }
-        html += '</div>';
-        return html;
+        container.appendChild(btn);
+      });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      document.getElementById('servicioModal').style.display = 'flex';
     }
-
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
+    
+    function centrarMapaRapido() {
+      if (navigator.geolocation) {
+        const btn = document.getElementById('centrar-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>OBTENIENDO...</span>';
+        navigator.geolocation.getCurrentPosition(
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'es' ? 'Tu ubicación actual' : 'Your current location'); mapa.setView([latitude, longitude], 12); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([23.6345, -102.5528], 5); alert(currentLang === 'es' ? 'No se pudo obtener tu ubicación. Mostrando México.' : 'Could not get your location. Showing Mexico.'); }
+        );
+      } else { mapa.setView([23.6345, -102.5528], 5); }
     }
-
-    function renderStates() {
-        const container = document.getElementById('statesContainer');
-        if (!container) return;
-        const langData = translations[currentLang];
-        const filterNorm = normalizeString(currentFilter);
-        
-        let html = '';
-        let visibleCount = 0;
-        
-        statesData.forEach(state => {
-            const searchableText = getSearchableTextForState(state, langData);
-            const matches = filterNorm === '' || searchableText.includes(filterNorm);
-            if (matches) visibleCount++;
-            
-            const stateName = langData[state.nameKey] || state.state;
-            const stateSub = langData[state.subKey] || state.capital;
-            const displayStyle = matches ? '' : 'hidden-card';
-            
-            // URL con ruta: https://18mls.com/jalisco (slug)
-            const fullUrl = `https://18mls.com/${state.urlPath}`;
-            
-            html += `
-                <a href="${fullUrl}" class="state-card ${displayStyle}" target="_self" rel="noopener noreferrer" data-state-id="${state.id}">
-                    <div class="state-flag">${state.flag}</div>
-                    <div class="state-name">${escapeHtml(stateName)}</div>
-                    <div class="city-list" style="font-size:0.75rem; color:#4a4a4a; margin-top:0.5rem;">${escapeHtml(state.capital)}</div>
-                    ${formatCityList(state.cities)}
-                    <div class="divider" style="margin: 0.8rem auto; width: 30px;"></div>
-                    <div class="state-domain">${fullUrl}</div>
-                </a>
-            `;
-        });
-        
-        if (visibleCount === 0 && currentFilter !== '') {
-            html += `<div class="no-results">${escapeHtml(langData.no_results)}</div>`;
-        }
-        
-        container.innerHTML = html;
-        
-        const resultsSpan = document.getElementById('resultsCount');
-        if (resultsSpan) {
-            if (currentFilter === '') {
-                resultsSpan.innerHTML = '';
-            } else {
-                const resultText = currentLang === 'es' 
-                    ? `${visibleCount} resultado${visibleCount !== 1 ? 's' : ''} encontrado${visibleCount !== 1 ? 's' : ''}`
-                    : `${visibleCount} result${visibleCount !== 1 ? 's' : ''} found`;
-                resultsSpan.innerHTML = resultText;
-            }
-        }
-        
-        const clearBtn = document.getElementById('clearSearch');
-        if (clearBtn) {
-            clearBtn.style.display = currentFilter !== '' ? 'block' : 'none';
-        }
+    
+    function updateUILanguage() {
+      document.getElementById('buscador').placeholder = t('buscar_placeholder');
+      document.getElementById('centrar-text').innerText = t('centrar');
+      document.getElementById('servicios-text').innerText = t('servicios');
+      document.getElementById('map-text').innerText = t('mapa');
+      document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      marcadoresOriginales.forEach(marker => { marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); });
     }
-
-    function setLanguage(lang) {
-        if (!translations[lang]) return;
-        currentLang = lang;
-        const elements = document.querySelectorAll('[data-i18n]');
-        elements.forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            if (translations[lang][key] !== undefined) {
-                if (key === 'title') {
-                    el.innerHTML = translations[lang][key];
-                } else {
-                    el.innerText = translations[lang][key];
-                }
-            }
-        });
-        const searchInput = document.getElementById('stateSearch');
-        if (searchInput) {
-            searchInput.placeholder = currentLang === 'es' ? 'Buscar estado o ciudad...' : 'Search state or city...';
-        }
-        renderStates();
-        
-        document.getElementById('lang-es').classList.toggle('active', lang === 'es');
-        document.getElementById('lang-en').classList.toggle('active', lang === 'en');
-        document.documentElement.lang = lang === 'es' ? 'es' : 'en';
-        localStorage.setItem('18mls_lang_mexico', lang);
-    }
-
-    let debounceTimer;
-    function onSearchInput(value) {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            currentFilter = value;
-            renderStates();
-        }, 180);
-    }
-
-    function initSearch() {
-        const searchInput = document.getElementById('stateSearch');
-        const clearBtn = document.getElementById('clearSearch');
-        if (!searchInput) return;
-        
-        searchInput.addEventListener('input', (e) => {
-            onSearchInput(e.target.value);
-        });
-        
-        if (clearBtn) {
-            clearBtn.addEventListener('click', () => {
-                searchInput.value = '';
-                onSearchInput('');
-                searchInput.focus();
-            });
-        }
-    }
-
-    function loadInitialLanguage() {
-        const savedLang = localStorage.getItem('18mls_lang_mexico');
-        if (savedLang && (savedLang === 'es' || savedLang === 'en')) {
-            setLanguage(savedLang);
-        } else {
-            const browserLang = navigator.language || '';
-            setLanguage(browserLang.startsWith('es') ? 'es' : 'en');
-        }
-    }
-
-    function bindLanguageEvents() {
-        document.getElementById('lang-es').addEventListener('click', () => setLanguage('es'));
-        document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-        initSearch();
-        bindLanguageEvents();
-        loadInitialLanguage();
-        renderStates();
-        
-        const searchInputPlace = document.getElementById('stateSearch');
-        if (searchInputPlace) {
-            searchInputPlace.placeholder = currentLang === 'es' ? 'Buscar estado o ciudad...' : 'Search state or city...';
-        }
+    
+    document.addEventListener('DOMContentLoaded', () => { 
+      initMap(); updateUILanguage();
+      
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      
+      document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
+      
+      document.querySelectorAll('.lang-btn').forEach(btn => { 
+        btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); }); 
+      });
+      
+      let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 Buscando...</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name = currentLang === 'es' ? m.datosNegocio.name_es : m.datosNegocio.name_en; 
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${currentLang==='es'?'Ver':'View'}</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 12); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ No se encontraron resultados en México</div>`; 
+        }, 300); 
+      }); 
+      document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
     });
-</script>
+  </script>
 </body>
 </html>
