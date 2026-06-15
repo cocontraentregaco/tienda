@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>QRP2P TANZANIA | BIASHARA ZILIZOTHIBITISHWA | SOKO LA P2P | 0% COMMISSION</title>
+  <meta name="description" content="QRP2P Tanzania. Soko la moja kwa moja kati ya mnunuzi na muuzaji aliye thibitishwa kote nchini. Tafuta biashara, mali na huduma. 0% tume ya maisha.">
+  <meta name="keywords" content="QRP2P, Tanzania, soko, mnunuzi, muuzaji, thibitishwa, 0% tume, biashara, mali, Dar es Salaam, Arusha, Mwanza, Dodoma, Zanzibar">
+  <meta name="author" content="QRP2P">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#000000">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Libre Baskerville', serif; background-color: #ffffff; color: #111111; line-height: 1.5; font-size: 16px; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    #contenedor-mapa { width: 100%; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #ffffff; width: 100%; z-index: 1000; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #eaeaea; flex-shrink: 0; }
+    .contenedor-buscador { position: relative; flex: 1; max-width: 400px; }
+    #buscador { width: 100%; padding: 0.6rem 1.2rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 16px; font-family: 'Libre Baskerville', serif; transition: all 0.3s ease; background: #ffffff; user-select: text; }
+    #buscador:focus { outline: none; border-color: #000000; }
+    .btn-mapa { background: #000000; color: #ffffff; padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; display: flex; gap: 5px; font-family: 'Libre Baskerville', serif; transition: all 0.2s ease; }
+    .btn-mapa:hover { background: #333333; }
+    .btn-centrar { background-color: #000000; }
+    .btn-registro { background-color: #25D366; color: #000000; }
+    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
+    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
+    .map-type-btn { padding: 0.5rem 1rem; border: none; border-radius: 40px; cursor: pointer; background: transparent; font-family: 'Libre Baskerville', serif; font-weight: 600; }
+    .map-type-btn.active { background: #000000; color: white; }
+    .lang-selector { display: flex; gap: 0.3rem; margin-left: 0.5rem; }
+    .lang-btn { background: transparent; border: 1px solid #ccc; border-radius: 20px; padding: 0.4rem 0.8rem; cursor: pointer; font-family: 'Libre Baskerville', serif; font-weight: 600; font-size: 0.8rem; }
+    .lang-btn.active { background: #000000; color: white; border-color: #000000; }
+    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
+    .leaflet-control-zoom { display: none !important; }
+    .sugerencias-busqueda { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; display: none; }
+    .sugerencia-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .sugerencia-item:hover { background-color: #f5f5f5; }
+    .sugerencia-texto { flex: 1; }
+    .sugerencia-boton { margin-left: 10px; padding: 6px 12px; background-color: #000000; color: white; border: none; border-radius: 20px; cursor: pointer; }
+    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
+    
+    .popup-business-card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      width: 340px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .popup-business-header {
+      background: #000000;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .popup-business-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .popup-business-category {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+    }
+    .popup-business-info {
+      padding: 1rem;
+    }
+    .popup-business-description {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .popup-business-address {
+      font-size: 0.7rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .popup-business-address i {
+      margin-top: 0.2rem;
+      color: #000;
+    }
+    .popup-business-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 0.8rem;
+    }
+    .contact-link {
+      font-size: 0.7rem;
+      background: #f5f5f5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .contact-link i { font-size: 0.7rem; }
+    .btn-view-store {
+      display: block;
+      background: #000000;
+      color: white;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .btn-view-store:hover { background: #333333; transform: scale(0.98); }
+    
+    .servicio-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+    .servicio-container {
+      background: white;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .servicios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .servicios-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn i {
+      font-size: 1.1rem;
+    }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
+    
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
+  </style>
+</head>
+<body>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="botones-izquierda">
+        <div class="contenedor-buscador">
+          <input type="search" id="buscador" placeholder="Tafuta biashara kote Tanzania..." enterkeyhint="search">
+          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+        </div>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">KATIKATI</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">HUDUMA ZA QRP2P</span></button>
+      </div>
+      <div class="botones-derecha">
+        <button class="map-type-btn active" id="map-btn"><span id="map-text">Ramani</span></button>
+        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Setilaiti</span></button>
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="sw">SW</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+      </div>
+    </div>
+    <div id="mapa"></div>
+  </div>
+
+  <!-- Modal ya Huduma za QRP2P Tanzania -->
+  <div id="servicioModal" class="servicio-modal">
+    <div class="servicio-container">
+      <div class="servicios-header">
+        <h2 id="servicio-modal-title">HUDUMA ZA QRP2P <span class="zero-badge">0% TUME</span></h2>
+        <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sub-header" id="subHeaderText">TANZANIA</div>
+      <div id="listaServicios" class="servicios-botones"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    let currentLang = 'sw';
+    let mapa, userMarker, marcadoresOriginales = [], currentLayer;
+    
+    // HUDUMA ZA QRP2P (7 services)
+    const serviciosQRP2P = [
+      { 
+        id: "plan-anual", 
+        name_sw: "SAJILI MPANGO WA MWAKA", 
+        name_en: "REGISTER ANNUAL PLAN", 
+        icon: "fa-calendar-alt",
+        url: "https://qrp2p.com/plan-anual-tanzania"
+      },
+      { 
+        id: "administracion", 
+        name_sw: "UTAWALA WA KILA MWEZI", 
+        name_en: "MONTHLY ADMINISTRATION", 
+        icon: "fa-building",
+        url: "https://qrp2p.com/administration-tanzania"
+      },
+      { 
+        id: "marketing", 
+        name_sw: "MASOKO YA KILA MWEZI", 
+        name_en: "MONTHLY MARKETING", 
+        icon: "fa-chart-line",
+        url: "https://qrp2p.com/marketing-tanzania"
+      },
+      { 
+        id: "logistica", 
+        name_sw: "VIFAA VYA USAFIRI", 
+        name_en: "LOGISTICS", 
+        icon: "fa-truck",
+        url: "https://qrp2p.com/logistics-tanzania"
+      },
+      { 
+        id: "finanzas", 
+        name_sw: "FEDHA", 
+        name_en: "FINANCE", 
+        icon: "fa-coins",
+        url: "https://qrp2p.com/finance-tanzania"
+      },
+      { 
+        id: "contabilidad", 
+        name_sw: "UHASIBU WA KILA MWEZI", 
+        name_en: "MONTHLY ACCOUNTING", 
+        icon: "fa-calculator",
+        url: "https://qrp2p.com/accounting-tanzania"
+      },
+      { 
+        id: "academia", 
+        name_sw: "AKADEMI YA QRP2P", 
+        name_en: "QRP2P ACADEMY", 
+        icon: "fa-graduation-cap",
+        url: "https://qrp2p.com/academy"
+      }
+    ];
+    
+    // BIASHARA ZILIZOTHIBITISHWA - TANZANIA (12 businesses across major cities)
+    const verifiedBusinesses = [
+      { 
+        id: "DAR01", 
+        name_sw: "MGAVUJI DAR ES SALAAM CENTER", 
+        name_en: "DAR ES SALAAM CENTER DISTRIBUTOR", 
+        category_sw: "Msambazaji wa Jumla", 
+        category_en: "Wholesale Distributor", 
+        latlng: [-6.7924, 39.2083],
+        address_sw: "Mtaa wa Samora 123, Dar es Salaam", 
+        address_en: "Samora Street 123, Dar es Salaam", 
+        description_sw: "Usambazaji wa chakula, vinywaji na bidhaa za nyumbani kote Tanzania.", 
+        description_en: "Distribution of food, beverages and household products throughout Tanzania.", 
+        phone: "+255222000001", 
+        email: "info@daregmegadist.co.tz", 
+        website: "https://daregmegadist.co.tz", 
+        whatsapp: "255712345678" 
+      },
+      { 
+        id: "DAR02", 
+        name_sw: "MALI ISIYO HAMISHIKA TANZANIA P2P", 
+        name_en: "TANZANIA P2P REAL ESTATE", 
+        category_sw: "Mali Isiyo Hamishika", 
+        category_en: "Real Estate", 
+        latlng: [-6.8000, 39.2800],
+        address_sw: "Mtaa wa Ohio 45, Dar es Salaam", 
+        address_en: "Ohio Street 45, Dar es Salaam", 
+        description_sw: "Nunua na uuze mali moja kwa moja kati ya wamiliki nchini Tanzania. 0% tume. Dhamana iliyothibitishwa.", 
+        description_en: "Buy and sell properties directly between owners in Tanzania. 0% commission. Verified guarantee.", 
+        phone: "+255222000002", 
+        email: "contact@tanzaniap2p.co.tz", 
+        website: "https://qrp2p.com/tz", 
+        whatsapp: "255712345679" 
+      },
+      { 
+        id: "ARU01", 
+        name_sw: "MGAVUJI ARUSHA", 
+        name_en: "ARUSHA DISTRIBUTOR", 
+        category_sw: "Msambazaji wa Jumla", 
+        category_en: "Wholesale Distributor", 
+        latlng: [-3.3869, 36.6830],
+        address_sw: "Mtaa wa Boma 78, Arusha", 
+        address_en: "Boma Street 78, Arusha", 
+        description_sw: "Usambazaji wa kahawa na bidhaa za utalii katika kanda ya kaskazini.", 
+        description_en: "Distribution of coffee and tourism products in the northern region.", 
+        phone: "+255272000001", 
+        email: "info@arushadistributor.co.tz", 
+        website: "https://arushadistributor.co.tz", 
+        whatsapp: "255712345680" 
+      },
+      { 
+        id: "MWA01", 
+        name_sw: "MWANZA MEGADISTRIBUTOR", 
+        name_en: "MWANZA MEGADISTRIBUTOR", 
+        category_sw: "Msambazaji wa Jumla", 
+        category_en: "Wholesale Distributor", 
+        latlng: [-2.5164, 32.9000],
+        address_sw: "Mtaa wa Kenyatta 234, Mwanza", 
+        address_en: "Kenyatta Street 234, Mwanza", 
+        description_sw: "Usambazaji wa samaki na bidhaa za uvuvi katika Ziwa Victoria.", 
+        description_en: "Distribution of fish and fishing products in Lake Victoria region.", 
+        phone: "+255282000001", 
+        email: "info@mwanzaomega.co.tz", 
+        website: "https://mwanzaomega.co.tz", 
+        whatsapp: "255712345681" 
+      },
+      { 
+        id: "DOD01", 
+        name_sw: "DODOMA AGRIBUSINESS", 
+        name_en: "DODOMA AGRIBUSINESS", 
+        category_sw: "Biashara ya Kilimo", 
+        category_en: "Agribusiness", 
+        latlng: [-6.1629, 35.7516],
+        address_sw: "Mtaa wa Jamhuri 56, Dodoma", 
+        address_en: "Jamhuri Street 56, Dodoma", 
+        description_sw: "Usambazaji wa pembejeo za kilimo, mbolea na mbegu.", 
+        description_en: "Distribution of agricultural inputs, fertilizers and seeds.", 
+        phone: "+255262000001", 
+        email: "agro@dodomaagro.co.tz", 
+        website: "https://dodomaagro.co.tz", 
+        whatsapp: "255712345682" 
+      },
+      { 
+        id: "ZNZ01", 
+        name_sw: "MGAVUJI ZANZIBAR", 
+        name_en: "ZANZIBAR DISTRIBUTOR", 
+        category_sw: "Msambazaji wa Jumla", 
+        category_en: "Wholesale Distributor", 
+        latlng: [-6.1659, 39.2026],
+        address_sw: "Mtaa wa Kenyatta 78, Zanzibar", 
+        address_en: "Kenyatta Street 78, Zanzibar", 
+        description_sw: "Usambazaji wa karafuu, viungo na bidhaa za baharini katika visiwa.", 
+        description_en: "Distribution of cloves, spices and marine products in the islands.", 
+        phone: "+255242000001", 
+        email: "info@zanzibardistributor.co.tz", 
+        website: "https://zanzibardistributor.co.tz", 
+        whatsapp: "255712345683" 
+      },
+      { 
+        id: "TAB01", 
+        name_sw: "TABORA LOGISTICS", 
+        name_en: "TABORA LOGISTICS", 
+        category_sw: "Vifaa na Usafirishaji", 
+        category_en: "Logistics & Transport", 
+        latlng: [-5.0167, 32.8000],
+        address_sw: "Tabora, Kati ya Jiji", 
+        address_en: "Tabora, City Center", 
+        description_sw: "Ufumbuzi wa vifaa na usafirishaji wa mlango kwa mlango kote Tanzania.", 
+        description_en: "Logistics solutions and door-to-door delivery across Tanzania.", 
+        phone: "+255262000002", 
+        email: "logistics@taboralogistics.co.tz", 
+        website: "https://taboralogistics.co.tz", 
+        whatsapp: "255712345684" 
+      },
+      { 
+        id: "MTW01", 
+        name_sw: "MTWARA TECH", 
+        name_en: "MTWARA TECH", 
+        category_sw: "Teknolojia", 
+        category_en: "Technology", 
+        latlng: [-10.2667, 40.1833],
+        address_sw: "Mtwara, Mji", 
+        address_en: "Mtwara Town", 
+        description_sw: "Usambazaji wa kompyuta, printa na vifaa vya ofisi.", 
+        description_en: "Distribution of computers, printers and office supplies.", 
+        phone: "+255232000001", 
+        email: "tech@mtwaratech.co.tz", 
+        website: "https://mtwaratech.co.tz", 
+        whatsapp: "255712345685" 
+      },
+      { 
+        id: "MBE01", 
+        name_sw: "MBEYA INVESTMENTS", 
+        name_en: "MBEYA INVESTMENTS", 
+        category_sw: "Fedha na Uwekezaji", 
+        category_en: "Finance & Investments", 
+        latlng: [-8.9000, 33.4500],
+        address_sw: "Mbeya, Kituo cha Biashara", 
+        address_en: "Mbeya, Business Center", 
+        description_sw: "Ushauri wa kifedha na mikopo ya P2P kwa wajasiriamali wa Tanzania.", 
+        description_en: "Financial advisory and P2P loans for Tanzanian entrepreneurs.", 
+        phone: "+255252000001", 
+        email: "finance@mbeyainvest.co.tz", 
+        website: "https://mbeyainvestments.co.tz", 
+        whatsapp: "255712345686" 
+      },
+      { 
+        id: "SON01", 
+        name_sw: "SONGEA CONSTRUCTIONS", 
+        name_en: "SONGEA CONSTRUCTIONS", 
+        category_sw: "Ujenzi", 
+        category_en: "Construction", 
+        latlng: [-10.6833, 35.6500],
+        address_sw: "Songea, Ruvuma", 
+        address_en: "Songea, Ruvuma", 
+        description_sw: "Vifaa vya ujenzi na zana za miradi kusini mwa Tanzania.", 
+        description_en: "Construction materials and tools for projects in southern Tanzania.", 
+        phone: "+255252000002", 
+        email: "build@songeaconstruct.co.tz", 
+        website: "https://songeaconstruction.co.tz", 
+        whatsapp: "255712345687" 
+      },
+      { 
+        id: "LIN01", 
+        name_sw: "LINDI AUTO PARTS", 
+        name_en: "LINDI AUTO PARTS", 
+        category_sw: "Sehemu za Magari", 
+        category_en: "Auto Parts", 
+        latlng: [-9.9833, 39.7167],
+        address_sw: "Lindi, Mji", 
+        address_en: "Lindi Town", 
+        description_sw: "Usambazaji wa sehemu za akiba na vifaa vya magari.", 
+        description_en: "Distribution of spare parts and accessories for vehicles.", 
+        phone: "+255232000002", 
+        email: "parts@lindiautoparts.co.tz", 
+        website: "https://lindiautoparts.co.tz", 
+        whatsapp: "255712345688" 
+      },
+      { 
+        id: "KIG01", 
+        name_sw: "KIGOMA FASHION & TEXTILES", 
+        name_en: "KIGOMA FASHION & TEXTILES", 
+        category_sw: "Nguo na Vitambaa", 
+        category_en: "Textiles", 
+        latlng: [-4.8833, 29.6333],
+        address_sw: "Kigoma, Mji", 
+        address_en: "Kigoma Town", 
+        description_sw: "Usambazaji wa vitambaa, vifaa vya nguo na mavazi magharibi mwa Tanzania.", 
+        description_en: "Distribution of fabrics, textile supplies and clothing in western Tanzania.", 
+        phone: "+255282000002", 
+        email: "textiles@kigomafashion.co.tz", 
+        website: "https://kigomafashion.co.tz", 
+        whatsapp: "255712345689" 
+      }
+    ];
+    
+    const translations = { 
+      sw: { 
+        buscar_placeholder: "Tafuta biashara kote Tanzania...", 
+        centrar: "KATIKATI", 
+        servicios: "HUDUMA ZA QRP2P", 
+        mapa: "Ramani", 
+        satelite: "Setilaiti", 
+        view_store: "LIWA DUKA",
+        sub_header: "TANZANIA"
+      },
+      en: { 
+        buscar_placeholder: "Search businesses across Tanzania...", 
+        centrar: "CENTER", 
+        servicios: "QRP2P SERVICES", 
+        mapa: "Map", 
+        satelite: "Satellite", 
+        view_store: "VIEW STORE",
+        sub_header: "TANZANIA"
+      }
+    };
+    
+    function t(key) { return translations[currentLang][key] || key; }
+    
+    function generarPopupHTML(business) { 
+      const name = currentLang === 'sw' ? business.name_sw : business.name_en;
+      const category = currentLang === 'sw' ? business.category_sw : business.category_en;
+      const description = currentLang === 'sw' ? business.description_sw : business.description_en;
+      const address = currentLang === 'sw' ? business.address_sw : business.address_en;
+      const storeText = t('view_store');
+      const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
+      let contactButtons = '';
+      if(business.website) contactButtons += `<a href="${business.website}" target="_blank" class="contact-link"><i class="fas fa-globe"></i> Web</a>`;
+      if(business.whatsapp) contactButtons += `<a href="https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>`;
+      if(business.phone) contactButtons += `<a href="tel:${business.phone}" class="contact-link"><i class="fas fa-phone"></i> Call</a>`;
+      if(business.email) contactButtons += `<a href="mailto:${business.email}" class="contact-link"><i class="fas fa-envelope"></i> Email</a>`;
+      return `<div class="popup-business-card"><div class="popup-business-header"><h3>⚡ ${name}</h3><span class="popup-business-category">${category}</span></div><div class="popup-business-info"><div class="popup-business-description">${description}</div><div class="popup-business-address"><i class="fas fa-map-pin"></i> ${address}</div><div class="popup-business-contact">${contactButtons}</div><a href="${websiteUrl}" target="_blank" class="btn-view-store"><i class="fas fa-store"></i> ${storeText}</a></div></div>`; 
+    }
+    
+    function initMap() { 
+      const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      
+      // Center of Tanzania (Dodoma)
+      mapa = L.map('mapa', { center: [-6.1629, 35.7516], zoom: 6, zoomControl: false });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      
+      let clusters = L.markerClusterGroup({ iconCreateFunction: cluster => L.divIcon({ html: `<div>${cluster.getChildCount()}</div>`, className: 'cluster-marcadores', iconSize: [40,40] }) }); 
+      let icono = L.divIcon({ className: 'negocio-marker', html: '⚡', iconSize: [32,32], popupAnchor: [0,-16] }); 
+      
+      verifiedBusinesses.forEach(business => { 
+        let popup = generarPopupHTML(business); 
+        let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
+        marker.datosNegocio = business; 
+        marker.datosBusqueda = `${business.name_sw} ${business.name_en} ${business.category_sw} ${business.category_en} ${business.description_sw} ${business.description_en}`.toLowerCase(); 
+        marcadoresOriginales.push(marker); 
+        clusters.addLayer(marker); 
+      }); 
+      mapa.addLayer(clusters); 
+      
+      mapa.googleMapsLayer = googleMapsLayer;
+      mapa.googleSatelliteLayer = googleSatelliteLayer;
+    }
+    
+    function mostrarServiciosQRP2P() {
+      let container = document.getElementById('listaServicios');
+      container.innerHTML = '';
+      serviciosQRP2P.forEach(servicio => {
+        let btn = document.createElement('button');
+        btn.className = 'servicio-item-btn';
+        let name = currentLang === 'sw' ? servicio.name_sw : servicio.name_en;
+        btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${name}`;
+        btn.addEventListener('click', () => {
+          window.open(servicio.url, '_blank');
+          document.getElementById('servicioModal').style.display = 'none';
+        });
+        container.appendChild(btn);
+      });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      document.getElementById('servicioModal').style.display = 'flex';
+    }
+    
+    function centrarMapaRapido() {
+      if (navigator.geolocation) {
+        const btn = document.getElementById('centrar-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>KUTAFUTA...</span>';
+        navigator.geolocation.getCurrentPosition(
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'sw' ? 'Mahali ulipo sasa' : 'Your current location'); mapa.setView([latitude, longitude], 12); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([-6.1629, 35.7516], 6); alert(currentLang === 'sw' ? 'Haikuweza kupata eneo lako. Tanzania inaonyeshwa.' : 'Could not get your location. Showing Tanzania.'); }
+        );
+      } else { mapa.setView([-6.1629, 35.7516], 6); }
+    }
+    
+    function updateUILanguage() {
+      document.getElementById('buscador').placeholder = t('buscar_placeholder');
+      document.getElementById('centrar-text').innerText = t('centrar');
+      document.getElementById('servicios-text').innerText = t('servicios');
+      document.getElementById('map-text').innerText = t('mapa');
+      document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      marcadoresOriginales.forEach(marker => { marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => { 
+      initMap(); updateUILanguage();
+      
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      
+      document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
+      
+      document.querySelectorAll('.lang-btn').forEach(btn => { 
+        btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); }); 
+      });
+      
+      let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 ${currentLang === 'sw' ? 'Kutafuta...' : 'Searching...'}</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name = currentLang === 'sw' ? m.datosNegocio.name_sw : m.datosNegocio.name_en; 
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${currentLang === 'sw' ? 'Angalia' : 'View'}</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 12); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ ${currentLang === 'sw' ? 'Hakuna matokeo yaliyopatikana Tanzania' : 'No results found in Tanzania'}</div>`; 
+        }, 300); 
+      }); 
+      document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
+    });
+  </script>
+</body>
+</html>
