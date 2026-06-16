@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>QRP2P CAMBODIA | VERIFIED BUSINESSES | P2P MARKETPLACE | 0% COMMISSION</title>
+  <meta name="description" content="QRP2P Cambodia. Direct marketplace between verified buyers and sellers across Cambodia. Find businesses, properties and services. 0% lifetime commission.">
+  <meta name="keywords" content="QRP2P, Cambodia, Kampuchea, marketplace, buyer, seller, verified, 0% commission, businesses, properties, Phnom Penh, Siem Reap">
+  <meta name="author" content="QRP2P">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#000000">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Libre Baskerville', serif; background-color: #ffffff; color: #111111; line-height: 1.5; font-size: 16px; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    #contenedor-mapa { width: 100%; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #ffffff; width: 100%; z-index: 1000; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #eaeaea; flex-shrink: 0; }
+    .contenedor-buscador { position: relative; flex: 1; max-width: 400px; }
+    #buscador { width: 100%; padding: 0.6rem 1.2rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 16px; font-family: 'Libre Baskerville', serif; transition: all 0.3s ease; background: #ffffff; user-select: text; }
+    #buscador:focus { outline: none; border-color: #000000; }
+    .btn-mapa { background: #000000; color: #ffffff; padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; display: flex; gap: 5px; font-family: 'Libre Baskerville', serif; transition: all 0.2s ease; }
+    .btn-mapa:hover { background: #333333; }
+    .btn-centrar { background-color: #000000; }
+    .btn-registro { background-color: #25D366; color: #000000; }
+    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
+    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
+    .map-type-btn { padding: 0.5rem 1rem; border: none; border-radius: 40px; cursor: pointer; background: transparent; font-family: 'Libre Baskerville', serif; font-weight: 600; }
+    .map-type-btn.active { background: #000000; color: white; }
+    .lang-selector { display: flex; gap: 0.3rem; margin-left: 0.5rem; }
+    .lang-btn { background: transparent; border: 1px solid #ccc; border-radius: 20px; padding: 0.4rem 0.8rem; cursor: pointer; font-family: 'Libre Baskerville', serif; font-weight: 600; font-size: 0.8rem; }
+    .lang-btn.active { background: #000000; color: white; border-color: #000000; }
+    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
+    .leaflet-control-zoom { display: none !important; }
+    .sugerencias-busqueda { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; display: none; }
+    .sugerencia-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .sugerencia-item:hover { background-color: #f5f5f5; }
+    .sugerencia-texto { flex: 1; }
+    .sugerencia-boton { margin-left: 10px; padding: 6px 12px; background-color: #000000; color: white; border: none; border-radius: 20px; cursor: pointer; }
+    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
+    
+    .popup-business-card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      width: 340px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .popup-business-header {
+      background: #000000;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .popup-business-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .popup-business-category {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+    }
+    .popup-business-info {
+      padding: 1rem;
+    }
+    .popup-business-description {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .popup-business-address {
+      font-size: 0.7rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .popup-business-address i {
+      margin-top: 0.2rem;
+      color: #000;
+    }
+    .popup-business-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 0.8rem;
+    }
+    .contact-link {
+      font-size: 0.7rem;
+      background: #f5f5f5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .contact-link i { font-size: 0.7rem; }
+    .btn-view-store {
+      display: block;
+      background: #000000;
+      color: white;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .btn-view-store:hover { background: #333333; transform: scale(0.98); }
+    
+    .servicio-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+    .servicio-container {
+      background: white;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .servicios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .servicios-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn i {
+      font-size: 1.1rem;
+    }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
+    
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
+  </style>
+</head>
+<body>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="botones-izquierda">
+        <div class="contenedor-buscador">
+          <input type="search" id="buscador" placeholder="Search businesses across Cambodia..." enterkeyhint="search">
+          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+        </div>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">CENTER</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">QRP2P SERVICES</span></button>
+      </div>
+      <div class="botones-derecha">
+        <button class="map-type-btn active" id="map-btn"><span id="map-text">Map</span></button>
+        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Satellite</span></button>
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="km">KM</button>
+        </div>
+      </div>
+    </div>
+    <div id="mapa"></div>
+  </div>
+
+  <!-- QRP2P Services Modal Cambodia -->
+  <div id="servicioModal" class="servicio-modal">
+    <div class="servicio-container">
+      <div class="servicios-header">
+        <h2 id="servicio-modal-title">QRP2P SERVICES <span class="zero-badge">0% COMMISSION</span></h2>
+        <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sub-header" id="subHeaderText">CAMBODIA</div>
+      <div id="listaServicios" class="servicios-botones"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    let currentLang = 'en';
+    let mapa, userMarker, marcadoresOriginales = [], currentLayer;
+    
+    // QRP2P SERVICES (7 services)
+    const serviciosQRP2P = [
+      { id: "plan-anual", name_en: "REGISTER ANNUAL PLAN", name_km: "ចុះឈ្មោះផែនការប្រចាំឆ្នាំ", icon: "fa-calendar-alt", url: "https://qrp2p.com/plan-anual-cambodia" },
+      { id: "administracion", name_en: "MONTHLY ADMINISTRATION", name_km: "រដ្ឋបាលប្រចាំខែ", icon: "fa-building", url: "https://qrp2p.com/administration-cambodia" },
+      { id: "marketing", name_en: "MONTHLY MARKETING", name_km: "ទីផ្សារប្រចាំខែ", icon: "fa-chart-line", url: "https://qrp2p.com/marketing-cambodia" },
+      { id: "logistica", name_en: "LOGISTICS", name_km: "ភស្តុភារ", icon: "fa-truck", url: "https://qrp2p.com/logistics-cambodia" },
+      { id: "finanzas", name_en: "FINANCE", name_km: "ហិរញ្ញវត្ថុ", icon: "fa-coins", url: "https://qrp2p.com/finance-cambodia" },
+      { id: "contabilidad", name_en: "MONTHLY ACCOUNTING", name_km: "គណនេយ្យប្រចាំខែ", icon: "fa-calculator", url: "https://qrp2p.com/accounting-cambodia" },
+      { id: "academia", name_en: "QRP2P ACADEMY", name_km: "QRP2P បណ្ឌិត្យសភា", icon: "fa-graduation-cap", url: "https://qrp2p.com/academy" }
+    ];
+    
+    // VERIFIED BUSINESSES - CAMBODIA (14 businesses across major cities)
+    const verifiedBusinesses = [
+      // Phnom Penh
+      { id: "PPH01", name_en: "PHNOM PENH DISTRIBUTORS", name_km: "ភ្នំពេញ អ្នកចែកចាយ", category_en: "Wholesale Distributor", category_km: "អ្នកចែកចាយដុំ", latlng: [11.5564, 104.9282], address_en: "Tuol Kork, Phnom Penh", address_km: "ទួលគោក ភ្នំពេញ", description_en: "Distribution of food, beverages and household products across Cambodia.", description_km: "ការចែកចាយអាហារ ភេសជ្ជៈ និងផលិតផលប្រើប្រាស់ក្នុងផ្ទះទូទាំងប្រទេសកម្ពុជា", phone: "+8558000001", email: "info@phnompenhdistributors.kh", website: "https://phnompenhdistributors.kh", whatsapp: "8558000001" },
+      { id: "PPH02", name_en: "CAMBODIA P2P REAL ESTATE", name_km: "កម្ពុជា P2P អចលនទ្រព្យ", category_en: "Real Estate", category_km: "អចលនទ្រព្យ", latlng: [11.5700, 104.9400], address_en: "BKK1, Phnom Penh", address_km: "BKK1, ភ្នំពេញ", description_en: "Buy and sell properties directly between owners in Cambodia. 0% commission. Verified guarantee.", description_km: "ទិញ និងលក់អចលនទ្រព្យដោយផ្ទាល់រវាងម្ចាស់នៅកម្ពុជា 0% កម្រៃជើងសារ ការធានាបានផ្ទៀងផ្ទាត់", phone: "+8558000002", email: "contact@p2prealestate.kh", website: "https://qrp2p.com/kh", whatsapp: "8558000002" },
+      { id: "PPH03", name_en: "PHNOM PENH TECH SOLUTIONS", name_km: "ភ្នំពេញ ដំណោះស្រាយបច្ចេកវិទ្យា", category_en: "Technology", category_km: "បច្ចេកវិទ្យា", latlng: [11.5400, 104.9200], address_en: "Sen Sok, Phnom Penh", address_km: "សែនសុខ ភ្នំពេញ", description_en: "Distribution of computers, servers and IT solutions for businesses.", description_km: "ការចែកចាយកុំព្យូទ័រ ម៉ាស៊ីនបម្រើ និងដំណោះស្រាយ IT សម្រាប់អាជីវកម្ម", phone: "+8558000003", email: "tech@phnompenhtech.kh", website: "https://phnompenhtech.kh", whatsapp: "8558000003" },
+      { id: "PPH04", name_en: "PHNOM PENH AUTO PARTS", name_km: "ភ្នំពេញ គ្រឿងបន្លាស់រថយន្ត", category_en: "Auto Parts", category_km: "គ្រឿងបន្លាស់រថយន្ត", latlng: [11.5800, 104.9500], address_en: "Chamkar Mon, Phnom Penh", address_km: "ចំការមន ភ្នំពេញ", description_en: "Distribution of spare parts and accessories for vehicles in Cambodia.", description_km: "ការចែកចាយគ្រឿងបន្លាស់ និងគ្រឿងបន្ថែមសម្រាប់យានយន្តនៅកម្ពុជា", phone: "+8558000004", email: "parts@phnompenhauto.kh", website: "https://phnompenhauto.kh", whatsapp: "8558000004" },
+      
+      // Siem Reap
+      { id: "REP01", name_en: "SIEM REAP DISTRIBUTORS", name_km: "សៀមរាប អ្នកចែកចាយ", category_en: "Wholesale Distributor", category_km: "អ្នកចែកចាយដុំ", latlng: [13.3622, 103.8597], address_en: "Siem Reap Industrial Zone", address_km: "តំបន់ឧស្សាហកម្មសៀមរាប", description_en: "Distribution of goods across the Siem Reap region.", description_km: "ការចែកចាយទំនិញនៅតំបន់សៀមរាប", phone: "+8558000005", email: "info@siemreapdistributors.kh", website: "https://siemreapdistributors.kh", whatsapp: "8558000005" },
+      { id: "REP02", name_en: "SIEM REAP TOURISM SUPPLIES", name_km: "សៀមរាប ការផ្គត់ផ្គង់ទេសចរណ៍", category_en: "General Trading", category_km: "ពាណិជ្ជកម្មទូទៅ", latlng: [13.3700, 103.8700], address_en: "Siem Reap Central, Siem Reap", address_km: "កណ្តាលក្រុងសៀមរាប", description_en: "Tourism and hospitality supplies for the Angkor region.", description_km: "ការផ្គត់ផ្គង់ទេសចរណ៍ និងបដិសណ្ឋារកិច្ចសម្រាប់តំបន់អង្គរ", phone: "+8558000006", email: "trade@siemreaptrading.kh", website: "https://siemreaptrading.kh", whatsapp: "8558000006" },
+      
+      // Battambang
+      { id: "BAT01", name_en: "BATTAMBANG AGRIBUSINESS", name_km: "បាត់ដំបង អាជីវកម្មកសិកម្ម", category_en: "Agribusiness", category_km: "អាជីវកម្មកសិកម្ម", latlng: [13.1027, 103.1982], address_en: "Battambang Agricultural Zone", address_km: "តំបន់កសិកម្មបាត់ដំបង", description_en: "Distribution of farming supplies and agricultural products.", description_km: "ការចែកចាយសម្ភារៈកសិកម្ម និងផលិតផលកសិកម្ម", phone: "+8558000007", email: "agro@battambangagro.kh", website: "https://battambangagro.kh", whatsapp: "8558000007" },
+      
+      // Sihanoukville
+      { id: "KOS01", name_en: "SIHANOUKVILLE DISTRIBUTORS", name_km: "ព្រះសីហនុ អ្នកចែកចាយ", category_en: "Wholesale Distributor", category_km: "អ្នកចែកចាយដុំ", latlng: [10.6090, 103.5296], address_en: "Sihanoukville Port Zone", address_km: "តំបន់កំពង់ផែព្រះសីហនុ", description_en: "Distribution of goods through Cambodia's main port.", description_km: "ការចែកចាយទំនិញតាមរយៈកំពង់ផែសំខាន់របស់កម្ពុជា", phone: "+8558000008", email: "info@sihanoukvilledistributors.kh", website: "https://sihanoukvilledistributors.kh", whatsapp: "8558000008" },
+      { id: "KOS02", name_en: "SIHANOUKVILLE LOGISTICS", name_km: "ព្រះសីហនុ ភស្តុភារ", category_en: "Logistics & Transport", category_km: "ភស្តុភារ និងដឹកជញ្ជូន", latlng: [10.6200, 103.5400], address_en: "Sihanoukville Logistics Hub", address_km: "មជ្ឈមណ្ឌលភស្តុភារព្រះសីហនុ", description_en: "Logistics solutions for the Gulf of Thailand region.", description_km: "ដំណោះស្រាយភស្តុភារសម្រាប់តំបន់ឈូងសមុទ្រថៃ", phone: "+8558000009", email: "logistics@sihanoukvillelogistics.kh", website: "https://sihanoukvillelogistics.kh", whatsapp: "8558000009" },
+      
+      // Kampong Cham
+      { id: "KPC01", name_en: "KAMPONG CHAM TRADING CO", name_km: "កំពង់ចាម ក្រុមហ៊ុនពាណិជ្ជកម្ម", category_en: "General Trading", category_km: "ពាណិជ្ជកម្មទូទៅ", latlng: [11.9933, 105.4636], address_en: "Kampong Cham Central Market", address_km: "ផ្សារកណ្តាលកំពង់ចាម", description_en: "General trading and distribution for central Cambodia.", description_km: "ពាណិជ្ជកម្មទូទៅ និងការចែកចាយសម្រាប់តំបន់កណ្តាលកម្ពុជា", phone: "+8558000010", email: "trade@kampongchamtrading.kh", website: "https://kampongchamtrading.kh", whatsapp: "8558000010" },
+      
+      // Takeo
+      { id: "TAK01", name_en: "TAKEO AGRIBUSINESS", name_km: "តាកែវ អាជីវកម្មកសិកម្ម", category_en: "Agribusiness", category_km: "អាជីវកម្មកសិកម្ម", latlng: [10.9833, 104.7833], address_en: "Takeo Agricultural Zone", address_km: "តំបន់កសិកម្មតាកែវ", description_en: "Distribution of agricultural products from the southern region.", description_km: "ការចែកចាយផលិតផលកសិកម្មពីតំបន់ភាគខាងត្បូង", phone: "+8558000011", email: "agro@takeoagro.kh", website: "https://takeoagro.kh", whatsapp: "8558000011" },
+      
+      // Kampong Speu
+      { id: "KSP01", name_en: "KAMPONG SPEU CONSTRUCTIONS", name_km: "កំពង់ស្ពឺ សំណង់", category_en: "Construction", category_km: "សំណង់", latlng: [11.4500, 104.5167], address_en: "Kampong Speu Building District", address_km: "តំបន់សំណង់កំពង់ស្ពឺ", description_en: "Construction materials and building solutions for Cambodia.", description_km: "សម្ភារៈសំណង់ និងដំណោះស្រាយសាងសង់សម្រាប់កម្ពុជា", phone: "+8558000012", email: "build@kampongspeuconstruct.kh", website: "https://kampongspeuconstruction.kh", whatsapp: "8558000012" },
+      
+      // Kampot
+      { id: "KPT01", name_en: "KAMPOT TRADING CO", name_km: "កំពត ក្រុមហ៊ុនពាណិជ្ជកម្ម", category_en: "General Trading", category_km: "ពាណិជ្ជកម្មទូទៅ", latlng: [10.6000, 104.1667], address_en: "Kampot Central Market", address_km: "ផ្សារកណ្តាលកំពត", description_en: "General trading and distribution for the southern coast.", description_km: "ពាណិជ្ជកម្មទូទៅ និងការចែកចាយសម្រាប់ឆ្នេរភាគខាងត្បូង", phone: "+8558000013", email: "trade@kampottrading.kh", website: "https://kampottrading.kh", whatsapp: "8558000013" },
+      
+      // Poipet
+      { id: "POI01", name_en: "POIPET LOGISTICS", name_km: "ប៉ោយប៉ែត ភស្តុភារ", category_en: "Logistics & Transport", category_km: "ភស្តុភារ និងដឹកជញ្ជូន", latlng: [13.6500, 102.5667], address_en: "Poipet Logistics Hub", address_km: "មជ្ឈមណ្ឌលភស្តុភារប៉ោយប៉ែត", description_en: "Cross-border logistics solutions at the Thailand border.", description_km: "ដំណោះស្រាយភស្តុភារឆ្លងដែននៅព្រំដែនថៃ", phone: "+8558000014", email: "logistics@poipetlogistics.kh", website: "https://poipetlogistics.kh", whatsapp: "8558000014" }
+    ];
+    
+    const translations = { 
+      en: { 
+        buscar_placeholder: "Search businesses across Cambodia...", 
+        centrar: "CENTER", 
+        servicios: "QRP2P SERVICES", 
+        mapa: "Map", 
+        satelite: "Satellite", 
+        view_store: "VIEW STORE", 
+        sub_header: "CAMBODIA",
+        no_results: "No results found in Cambodia"
+      },
+      km: { 
+        buscar_placeholder: "ស្វែងរកអាជីវកម្មនៅទូទាំងកម្ពុជា...", 
+        centrar: "កណ្តាល", 
+        servicios: "សេវាកម្ម QRP2P", 
+        mapa: "ផែនទី", 
+        satelite: "ផ្កាយរណប", 
+        view_store: "មើលហាង", 
+        sub_header: "កម្ពុជា",
+        no_results: "មិនមានលទ្ធផលនៅកម្ពុជា"
+      }
+    };
+    
+    function t(key) { return translations[currentLang][key] || key; }
+    
+    function getBusinessText(business, field) {
+      if (currentLang === 'km' && business[field + '_km']) {
+        return business[field + '_km'];
+      }
+      return business[field + '_en'];
+    }
+    
+    function generarPopupHTML(business) { 
+      const name = getBusinessText(business, 'name');
+      const category = getBusinessText(business, 'category');
+      const description = getBusinessText(business, 'description');
+      const address = getBusinessText(business, 'address');
+      const storeText = t('view_store');
+      const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
+      let contactButtons = '';
+      if(business.website) contactButtons += `<a href="${business.website}" target="_blank" class="contact-link"><i class="fas fa-globe"></i> Web</a>`;
+      if(business.whatsapp) contactButtons += `<a href="https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>`;
+      if(business.phone) contactButtons += `<a href="tel:${business.phone}" class="contact-link"><i class="fas fa-phone"></i> Call</a>`;
+      if(business.email) contactButtons += `<a href="mailto:${business.email}" class="contact-link"><i class="fas fa-envelope"></i> Email</a>`;
+      return `<div class="popup-business-card"><div class="popup-business-header"><h3>⚡ ${name}</h3><span class="popup-business-category">${category}</span></div><div class="popup-business-info"><div class="popup-business-description">${description}</div><div class="popup-business-address"><i class="fas fa-map-pin"></i> ${address}</div><div class="popup-business-contact">${contactButtons}</div><a href="${websiteUrl}" target="_blank" class="btn-view-store"><i class="fas fa-store"></i> ${storeText}</a></div></div>`; 
+    }
+    
+    function initMap() { 
+      const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      mapa = L.map('mapa', { center: [12.5657, 104.9910], zoom: 7, zoomControl: false });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      let clusters = L.markerClusterGroup({ iconCreateFunction: cluster => L.divIcon({ html: `<div>${cluster.getChildCount()}</div>`, className: 'cluster-marcadores', iconSize: [40,40] }) }); 
+      let icono = L.divIcon({ className: 'negocio-marker', html: '⚡', iconSize: [32,32], popupAnchor: [0,-16] }); 
+      verifiedBusinesses.forEach(business => { 
+        let popup = generarPopupHTML(business); 
+        let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
+        marker.datosNegocio = business; 
+        marker.datosBusqueda = `${business.name_en} ${business.name_km} ${business.category_en} ${business.category_km} ${business.description_en} ${business.description_km}`.toLowerCase(); 
+        marcadoresOriginales.push(marker); 
+        clusters.addLayer(marker); 
+      }); 
+      mapa.addLayer(clusters); 
+      mapa.googleMapsLayer = googleMapsLayer;
+      mapa.googleSatelliteLayer = googleSatelliteLayer;
+    }
+    
+    function mostrarServiciosQRP2P() {
+      let container = document.getElementById('listaServicios');
+      container.innerHTML = '';
+      serviciosQRP2P.forEach(servicio => {
+        let btn = document.createElement('button');
+        btn.className = 'servicio-item-btn';
+        const name = currentLang === 'km' ? servicio.name_km : servicio.name_en;
+        btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${name}`;
+        btn.addEventListener('click', () => { window.open(servicio.url, '_blank'); document.getElementById('servicioModal').style.display = 'none'; });
+        container.appendChild(btn);
+      });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      document.getElementById('servicioModal').style.display = 'flex';
+    }
+    
+    function centrarMapaRapido() {
+      if (navigator.geolocation) {
+        const btn = document.getElementById('centrar-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>LOCATING...</span>';
+        navigator.geolocation.getCurrentPosition(
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup('Your current location'); mapa.setView([latitude, longitude], 12); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([12.5657, 104.9910], 7); alert('Could not get your location. Showing Cambodia.'); }
+        );
+      } else { mapa.setView([12.5657, 104.9910], 7); }
+    }
+    
+    function updateUILanguage() {
+      document.getElementById('buscador').placeholder = t('buscar_placeholder');
+      document.getElementById('centrar-text').innerText = t('centrar');
+      document.getElementById('servicios-text').innerText = t('servicios');
+      document.getElementById('map-text').innerText = t('mapa');
+      document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      marcadoresOriginales.forEach(marker => { 
+        marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); 
+      });
+      
+      // Update service modal title
+      document.getElementById('servicio-modal-title').innerHTML = `QRP2P ${t('servicios')} <span class="zero-badge">0% COMMISSION</span>`;
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => { 
+      initMap(); updateUILanguage();
+      
+      // Language switcher
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentLang = this.dataset.lang;
+          updateUILanguage();
+          // Update service list if modal is open
+          if (document.getElementById('servicioModal').style.display === 'flex') {
+            mostrarServiciosQRP2P();
+          }
+        });
+      });
+      
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
+      
+      let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 Searching...</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name = getBusinessText(m.datosNegocio, 'name'); 
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${t('view_store')}</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 14); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ ${t('no_results')}</div>`; 
+        }, 300); 
+      }); 
+      document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
+    });
+  </script>
+</body>
+</html>
