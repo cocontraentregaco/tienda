@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>QRP2P PARAGUAY | NEGOCIOS VERIFICADOS | MARKETPLACE P2P | 0% COMISIONES</title>
+  <meta name="description" content="QRP2P Paraguay. Marketplace directo entre comprador y vendedor verificado en todo el país. Encuentra negocios, propiedades y servicios. 0% comisiones de por vida.">
+  <meta name="keywords" content="QRP2P, Paraguay, marketplace, comprador, vendedor, verificado, 0% comisiones, negocios, propiedades, Asunción, Ciudad del Este, Encarnación, San Lorenzo, Luque">
+  <meta name="author" content="QRP2P">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#000000">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Libre Baskerville', serif; background-color: #ffffff; color: #111111; line-height: 1.5; font-size: 16px; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    #contenedor-mapa { width: 100%; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #ffffff; width: 100%; z-index: 1000; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #eaeaea; flex-shrink: 0; }
+    .contenedor-buscador { position: relative; flex: 1; max-width: 400px; }
+    #buscador { width: 100%; padding: 0.6rem 1.2rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 16px; font-family: 'Libre Baskerville', serif; transition: all 0.3s ease; background: #ffffff; user-select: text; }
+    #buscador:focus { outline: none; border-color: #000000; }
+    .btn-mapa { background: #000000; color: #ffffff; padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; display: flex; gap: 5px; font-family: 'Libre Baskerville', serif; transition: all 0.2s ease; }
+    .btn-mapa:hover { background: #333333; }
+    .btn-centrar { background-color: #000000; }
+    .btn-registro { background-color: #25D366; color: #000000; }
+    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
+    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
+    .map-type-btn { padding: 0.5rem 1rem; border: none; border-radius: 40px; cursor: pointer; background: transparent; font-family: 'Libre Baskerville', serif; font-weight: 600; }
+    .map-type-btn.active { background: #000000; color: white; }
+    .lang-selector { display: flex; gap: 0.3rem; margin-left: 0.5rem; }
+    .lang-btn { background: transparent; border: 1px solid #ccc; border-radius: 20px; padding: 0.4rem 0.8rem; cursor: pointer; font-family: 'Libre Baskerville', serif; font-weight: 600; font-size: 0.8rem; }
+    .lang-btn.active { background: #000000; color: white; border-color: #000000; }
+    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
+    .leaflet-control-zoom { display: none !important; }
+    .sugerencias-busqueda { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; display: none; }
+    .sugerencia-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .sugerencia-item:hover { background-color: #f5f5f5; }
+    .sugerencia-texto { flex: 1; }
+    .sugerencia-boton { margin-left: 10px; padding: 6px 12px; background-color: #000000; color: white; border: none; border-radius: 20px; cursor: pointer; }
+    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
+    
+    .popup-business-card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      width: 340px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .popup-business-header {
+      background: #000000;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .popup-business-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .popup-business-category {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+    }
+    .popup-business-info {
+      padding: 1rem;
+    }
+    .popup-business-description {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .popup-business-address {
+      font-size: 0.7rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .popup-business-address i {
+      margin-top: 0.2rem;
+      color: #000;
+    }
+    .popup-business-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 0.8rem;
+    }
+    .contact-link {
+      font-size: 0.7rem;
+      background: #f5f5f5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .contact-link i { font-size: 0.7rem; }
+    .btn-view-store {
+      display: block;
+      background: #000000;
+      color: white;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .btn-view-store:hover { background: #333333; transform: scale(0.98); }
+    
+    .servicio-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+    .servicio-container {
+      background: white;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .servicios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .servicios-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn i {
+      font-size: 1.1rem;
+    }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
+    
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
+  </style>
+</head>
+<body>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="botones-izquierda">
+        <div class="contenedor-buscador">
+          <input type="search" id="buscador" placeholder="Buscar negocios en todo Paraguay..." enterkeyhint="search">
+          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+        </div>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">CENTRAR</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">SERVICIOS QRP2P</span></button>
+      </div>
+      <div class="botones-derecha">
+        <button class="map-type-btn active" id="map-btn"><span id="map-text">Mapa</span></button>
+        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Satélite</span></button>
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="es">ES</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="gn">GN</button>
+        </div>
+      </div>
+    </div>
+    <div id="mapa"></div>
+  </div>
+
+  <!-- Modal de Servicios QRP2P Paraguay -->
+  <div id="servicioModal" class="servicio-modal">
+    <div class="servicio-container">
+      <div class="servicios-header">
+        <h2 id="servicio-modal-title">SERVICIOS QRP2P <span class="zero-badge">0% COMISIONES</span></h2>
+        <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sub-header" id="subHeaderText">PARAGUAY</div>
+      <div id="listaServicios" class="servicios-botones"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    let currentLang = 'es';
+    let mapa, userMarker, marcadoresOriginales = [], currentLayer;
+    
+    // SERVICIOS QRP2P (7 servicios)
+    const serviciosQRP2P = [
+      { id: "plan-anual", name_es: "REGISTRAR PLAN ANUAL", name_en: "REGISTER ANNUAL PLAN", name_gn: "REGISTRA PLAN ANUAL", icon: "fa-calendar-alt", url: "https://qrp2p.com/plan-anual-paraguay" },
+      { id: "administracion", name_es: "ADMINISTRACIÓN MENSUAL", name_en: "MONTHLY ADMINISTRATION", name_gn: "ADMINISTRASION MENSUAL", icon: "fa-building", url: "https://qrp2p.com/administracion-paraguay" },
+      { id: "marketing", name_es: "MARKETING MENSUAL", name_en: "MONTHLY MARKETING", name_gn: "MARKETING MENSUAL", icon: "fa-chart-line", url: "https://qrp2p.com/marketing-paraguay" },
+      { id: "logistica", name_es: "LOGÍSTICA", name_en: "LOGISTICS", name_gn: "LOGÍSTIKA", icon: "fa-truck", url: "https://qrp2p.com/logistica-paraguay" },
+      { id: "finanzas", name_es: "FINANZAS", name_en: "FINANCE", name_gn: "FINANSAS", icon: "fa-coins", url: "https://qrp2p.com/finanzas-paraguay" },
+      { id: "contabilidad", name_es: "CONTABILIDAD MENSUAL", name_en: "MONTHLY ACCOUNTING", name_gn: "CONTABILIDAD MENSUAL", icon: "fa-calculator", url: "https://qrp2p.com/contabilidad-paraguay" },
+      { id: "academia", name_es: "ACADEMIA QRP2P", name_en: "QRP2P ACADEMY", name_gn: "ACADEMIA QRP2P", icon: "fa-graduation-cap", url: "https://qrp2p.com/academy" }
+    ];
+    
+    // NEGOCIOS VERIFICADOS - PARAGUAY (12 negocios en ciudades principales)
+    const verifiedBusinesses = [
+      { id: "ASU01", name_es: "DISTRIBUIDORA ASUNCIÓN CENTRO", name_en: "ASUNCION CENTER DISTRIBUTOR", name_gn: "DISTRIBUIDORA ASUNCIÓN CENTRO", category_es: "Distribuidora Mayorista", category_en: "Wholesale Distributor", category_gn: "Distribuidora Mayorista", latlng: [-25.2637, -57.5759], address_es: "Av. Mariscal López 123, Asunción", address_en: "Mariscal López Ave 123, Asunción", address_gn: "Av. Mariscal López 123, Asunción", description_es: "Distribución de alimentos, bebidas y productos para el hogar en todo Paraguay.", description_en: "Distribution of food, beverages and household products throughout Paraguay.", description_gn: "Distribución de alimentos, bebidas y productos para el hogar en todo Paraguay.", phone: "+59521100001", email: "info@asunciondistribuidora.com.py", website: "https://asunciondistribuidora.com.py", whatsapp: "595981000001" },
+      { id: "ASU02", name_es: "INMOBILIARIA PARAGUAY P2P", name_en: "PARAGUAY P2P REAL ESTATE", name_gn: "INMOBILIARIA PARAGUAY P2P", category_es: "Bienes Raíces", category_en: "Real Estate", category_gn: "Bienes Raíces", latlng: [-25.2800, -57.5800], address_es: "Calle Palma 456, Asunción", address_en: "Palma Street 456, Asunción", address_gn: "Calle Palma 456, Asunción", description_es: "Compra y venta de propiedades directo entre propietarios en Paraguay. 0% comisiones. Verificación garantizada.", description_en: "Buy and sell properties directly between owners in Paraguay. 0% commission. Verified guarantee.", description_gn: "Compra y venta de propiedades directo entre propietarios en Paraguay. 0% comisiones. Verificación garantizada.", phone: "+59521100002", email: "contacto@paraguayp2p.com.py", website: "https://qrp2p.com/py", whatsapp: "595981000002" },
+      { id: "CDE01", name_es: "DISTRIBUIDORA CIUDAD DEL ESTE", name_en: "CIUDAD DEL ESTE DISTRIBUTOR", name_gn: "DISTRIBUIDORA CIUDAD DEL ESTE", category_es: "Distribuidora Mayorista", category_en: "Wholesale Distributor", category_gn: "Distribuidora Mayorista", latlng: [-25.5167, -54.6167], address_es: "Av. Internacional 78, Ciudad del Este", address_en: "Internacional Ave 78, Ciudad del Este", address_gn: "Av. Internacional 78, Ciudad del Este", description_es: "Distribución de productos electrónicos y de importación en la Triple Frontera.", description_en: "Distribution of electronics and imported products in the Triple Frontier.", description_gn: "Distribución de productos electrónicos y de importación en la Triple Frontera.", phone: "+59561100001", email: "info@cdedistribuidora.com.py", website: "https://cdedistribuidora.com.py", whatsapp: "595981000003" },
+      { id: "ENC01", name_es: "DISTRIBUIDORA ENCARNACIÓN", name_en: "ENCARNACION DISTRIBUTOR", name_gn: "DISTRIBUIDORA ENCARNACIÓN", category_es: "Distribuidora Mayorista", category_en: "Wholesale Distributor", category_gn: "Distribuidora Mayorista", latlng: [-27.3333, -55.8667], address_es: "Av. Costanera 234, Encarnación", address_en: "Costanera Ave 234, Encarnación", address_gn: "Av. Costanera 234, Encarnación", description_es: "Distribución de productos turísticos y artesanales en el sur.", description_en: "Distribution of tourism and handicraft products in the south.", description_gn: "Distribución de productos turísticos y artesanales en el sur.", phone: "+59571100001", email: "info@encarnaciondistribuidora.com.py", website: "https://encarnaciondistribuidora.com.py", whatsapp: "595981000004" },
+      { id: "SLO01", name_es: "SAN LORENZO MEGADISTRIBUIDORA", name_en: "SAN LORENZO MEGADISTRIBUTOR", name_gn: "SAN LORENZO MEGADISTRIBUIDORA", category_es: "Distribuidora Mayorista", category_en: "Wholesale Distributor", category_gn: "Distribuidora Mayorista", latlng: [-25.3333, -57.5000], address_es: "Ruta Mcal. Estigarribia 567, San Lorenzo", address_en: "Mcal. Estigarribia Route 567, San Lorenzo", address_gn: "Ruta Mcal. Estigarribia 567, San Lorenzo", description_es: "Distribución de productos industriales y universitarios.", description_en: "Distribution of industrial and university products.", description_gn: "Distribución de productos industriales y universitarios.", phone: "+59521100003", email: "info@sanlorenzomega.com.py", website: "https://sanlorenzomega.com.py", whatsapp: "595981000005" },
+      { id: "LUQ01", name_es: "LUQUE AGRODISTRIBUIDORA", name_en: "LUQUE AGRIBUSINESS", name_gn: "LUQUE AGRODISTRIBUIDORA", category_es: "Agroindustria", category_en: "Agribusiness", category_gn: "Agroindustria", latlng: [-25.2700, -57.4900], address_es: "Av. Gral. Aquino 345, Luque", address_en: "Gral. Aquino Ave 345, Luque", address_gn: "Av. Gral. Aquino 345, Luque", description_es: "Distribución de insumos agrícolas, fertilizantes y semillas.", description_en: "Distribution of agricultural inputs, fertilizers and seeds.", description_gn: "Distribución de insumos agrícolas, fertilizantes y semillas.", phone: "+59521100004", email: "agro@luqueagro.com.py", website: "https://luqueagro.com.py", whatsapp: "595981000006" },
+      { id: "CAI01", name_es: "CAAGUAZÚ LOGÍSTICA", name_en: "CAAGUAZU LOGISTICS", name_gn: "CAAGUAZÚ LOGÍSTICA", category_es: "Logística y Transporte", category_en: "Logistics & Transport", category_gn: "Logística y Transporte", latlng: [-25.4500, -56.4500], address_es: "Ruta 2 km 150, Caaguazú", address_en: "Route 2 km 150, Caaguazú", address_gn: "Ruta 2 km 150, Caaguazú", description_es: "Soluciones logísticas y distribución puerta a puerta en todo Paraguay.", description_en: "Logistics solutions and door-to-door delivery across Paraguay.", description_gn: "Soluciones logísticas y distribución puerta a puerta en todo Paraguay.", phone: "+59552100001", email: "logistics@caaguazulogistics.com.py", website: "https://caaguazulogistics.com.py", whatsapp: "595981000007" },
+      { id: "CON01", name_es: "CONCEPCIÓN TECH", name_en: "CONCEPCION TECH", name_gn: "CONCEPCIÓN TECH", category_es: "Tecnología", category_en: "Technology", category_gn: "Tecnología", latlng: [-23.4000, -57.4333], address_es: "Av. Pinedo 123, Concepción", address_en: "Pinedo Ave 123, Concepción", address_gn: "Av. Pinedo 123, Concepción", description_es: "Distribución de equipos de cómputo, impresoras y suministros de oficina.", description_en: "Distribution of computers, printers and office supplies.", description_gn: "Distribución de equipos de cómputo, impresoras y suministros de oficina.", phone: "+59533100001", email: "tech@concepciontech.com.py", website: "https://concepciontech.com.py", whatsapp: "595981000008" },
+      { id: "VIL01", name_es: "VILLARRICA INVERSIONES", name_en: "VILLARRICA INVESTMENTS", name_gn: "VILLARRICA INVERSIONES", category_es: "Finanzas e Inversiones", category_en: "Finance & Investments", category_gn: "Finanzas e Inversiones", latlng: [-25.7500, -56.4333], address_es: "Calle Estigarribia 234, Villarrica", address_en: "Estigarribia Street 234, Villarrica", address_gn: "Calle Estigarribia 234, Villarrica", description_es: "Asesoría financiera y préstamos P2P para emprendedores paraguayos.", description_en: "Financial advisory and P2P loans for Paraguayan entrepreneurs.", description_gn: "Asesoría financiera y préstamos P2P para emprendedores paraguayos.", phone: "+59554100001", email: "finance@villarricainvest.com.py", website: "https://villarricainvestments.com.py", whatsapp: "595981000009" },
+      { id: "PED01", name_es: "CONSTRUCCIONES PEDRO JUAN CABALLERO", name_en: "PEDRO JUAN CABALLERO CONSTRUCTIONS", name_gn: "CONSTRUCCIONES PEDRO JUAN CABALLERO", category_es: "Construcción", category_en: "Construction", category_gn: "Construcción", latlng: [-22.5333, -55.7500], address_es: "Av. Internacional 456, Pedro Juan Caballero", address_en: "Internacional Ave 456, Pedro Juan Caballero", address_gn: "Av. Internacional 456, Pedro Juan Caballero", description_es: "Materiales de construcción y herramientas para proyectos en el norte.", description_en: "Construction materials and tools for projects in the north.", description_gn: "Materiales de construcción y herramientas para proyectos en el norte.", phone: "+59536100001", email: "build@pedrojuancaballeroconstruct.com.py", website: "https://pedrojuancaballeroconstruction.com.py", whatsapp: "595981000010" },
+      { id: "COR01", name_es: "AUTOPARTES CORONEL OVIEDO", name_en: "CORONEL OVIEDO AUTO PARTS", name_gn: "AUTOPARTES CORONEL OVIEDO", category_es: "Autopartes", category_en: "Auto Parts", category_gn: "Autopartes", latlng: [-25.4167, -56.4333], address_es: "Ruta 8 km 234, Coronel Oviedo", address_en: "Route 8 km 234, Coronel Oviedo", address_gn: "Ruta 8 km 234, Coronel Oviedo", description_es: "Distribución de repuestos y accesorios para vehículos en el centro del país.", description_en: "Distribution of spare parts and accessories for vehicles in the center of the country.", description_gn: "Distribución de repuestos y accesorios para vehículos en el centro del país.", phone: "+59552100002", email: "parts@oviedoautoparts.com.py", website: "https://oviedoautoparts.com.py", whatsapp: "595981000011" },
+      { id: "ITA01", name_es: "MODA Y TEXTILES ITAPÚA", name_en: "ITAPUA FASHION & TEXTILES", name_gn: "MODA Y TEXTILES ITAPÚA", category_es: "Textiles", category_en: "Textiles", category_gn: "Textiles", latlng: [-26.8333, -56.1833], address_es: "Encarnación, Departamento de Itapúa", address_en: "Encarnación, Itapúa Department", address_gn: "Encarnación, Departamento de Itapúa", description_es: "Distribución de telas, insumos textiles y confección en el sur del país.", description_en: "Distribution of fabrics, textile supplies and clothing in the south of the country.", description_gn: "Distribución de telas, insumos textiles y confección en el sur del país.", phone: "+59571100002", email: "textiles@itapuafashion.com.py", website: "https://itapuafashion.com.py", whatsapp: "595981000012" }
+    ];
+    
+    const translations = { 
+      es: { buscar_placeholder: "Buscar negocios en todo Paraguay...", centrar: "CENTRAR", servicios: "SERVICIOS QRP2P", mapa: "Mapa", satelite: "Satélite", view_store: "VER TIENDA", sub_header: "PARAGUAY" },
+      en: { buscar_placeholder: "Search businesses across Paraguay...", centrar: "CENTER", servicios: "QRP2P SERVICES", mapa: "Map", satelite: "Satellite", view_store: "VIEW STORE", sub_header: "PARAGUAY" },
+      gn: { buscar_placeholder: "Buscar negocios en todo Paraguay...", centrar: "CENTRAR", servicios: "SERVICIOS QRP2P", mapa: "Mapa", satelite: "Satélite", view_store: "VER TIENDA", sub_header: "PARAGUAY" }
+    };
+    
+    function t(key) { return translations[currentLang][key] || key; }
+    
+    function generarPopupHTML(business) { 
+      const name = currentLang === 'gn' ? business.name_gn : (currentLang === 'es' ? business.name_es : business.name_en);
+      const category = currentLang === 'gn' ? business.category_gn : (currentLang === 'es' ? business.category_es : business.category_en);
+      const description = currentLang === 'gn' ? business.description_gn : (currentLang === 'es' ? business.description_es : business.description_en);
+      const address = currentLang === 'gn' ? business.address_gn : (currentLang === 'es' ? business.address_es : business.address_en);
+      const storeText = t('view_store');
+      const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
+      let contactButtons = '';
+      if(business.website) contactButtons += `<a href="${business.website}" target="_blank" class="contact-link"><i class="fas fa-globe"></i> Web</a>`;
+      if(business.whatsapp) contactButtons += `<a href="https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>`;
+      if(business.phone) contactButtons += `<a href="tel:${business.phone}" class="contact-link"><i class="fas fa-phone"></i> Call</a>`;
+      if(business.email) contactButtons += `<a href="mailto:${business.email}" class="contact-link"><i class="fas fa-envelope"></i> Email</a>`;
+      return `<div class="popup-business-card"><div class="popup-business-header"><h3>⚡ ${name}</h3><span class="popup-business-category">${category}</span></div><div class="popup-business-info"><div class="popup-business-description">${description}</div><div class="popup-business-address"><i class="fas fa-map-pin"></i> ${address}</div><div class="popup-business-contact">${contactButtons}</div><a href="${websiteUrl}" target="_blank" class="btn-view-store"><i class="fas fa-store"></i> ${storeText}</a></div></div>`; 
+    }
+    
+    function initMap() { 
+      const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      mapa = L.map('mapa', { center: [-23.4425, -58.4438], zoom: 7, zoomControl: false });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      let clusters = L.markerClusterGroup({ iconCreateFunction: cluster => L.divIcon({ html: `<div>${cluster.getChildCount()}</div>`, className: 'cluster-marcadores', iconSize: [40,40] }) }); 
+      let icono = L.divIcon({ className: 'negocio-marker', html: '⚡', iconSize: [32,32], popupAnchor: [0,-16] }); 
+      verifiedBusinesses.forEach(business => { 
+        let popup = generarPopupHTML(business); 
+        let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
+        marker.datosNegocio = business; 
+        marker.datosBusqueda = `${business.name_es} ${business.name_en} ${business.name_gn} ${business.category_es} ${business.category_en} ${business.category_gn} ${business.description_es} ${business.description_en} ${business.description_gn}`.toLowerCase(); 
+        marcadoresOriginales.push(marker); 
+        clusters.addLayer(marker); 
+      }); 
+      mapa.addLayer(clusters); 
+      mapa.googleMapsLayer = googleMapsLayer;
+      mapa.googleSatelliteLayer = googleSatelliteLayer;
+    }
+    
+    function mostrarServiciosQRP2P() {
+      let container = document.getElementById('listaServicios');
+      container.innerHTML = '';
+      serviciosQRP2P.forEach(servicio => {
+        let btn = document.createElement('button');
+        btn.className = 'servicio-item-btn';
+        let name = currentLang === 'gn' ? servicio.name_gn : (currentLang === 'es' ? servicio.name_es : servicio.name_en);
+        btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${name}`;
+        btn.addEventListener('click', () => { window.open(servicio.url, '_blank'); document.getElementById('servicioModal').style.display = 'none'; });
+        container.appendChild(btn);
+      });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      document.getElementById('servicioModal').style.display = 'flex';
+    }
+    
+    function centrarMapaRapido() {
+      if (navigator.geolocation) {
+        const btn = document.getElementById('centrar-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>OBTENIENDO...</span>';
+        navigator.geolocation.getCurrentPosition(
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'gn' ? 'Nde tenda' : (currentLang === 'es' ? 'Tu ubicación actual' : 'Your current location')); mapa.setView([latitude, longitude], 12); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([-23.4425, -58.4438], 7); alert(currentLang === 'gn' ? 'Ndaikatúi ereko ne tenda. Paraguay ojehechauka.' : (currentLang === 'es' ? 'No se pudo obtener tu ubicación. Mostrando Paraguay.' : 'Could not get your location. Showing Paraguay.')); }
+        );
+      } else { mapa.setView([-23.4425, -58.4438], 7); }
+    }
+    
+    function updateUILanguage() {
+      document.getElementById('buscador').placeholder = t('buscar_placeholder');
+      document.getElementById('centrar-text').innerText = t('centrar');
+      document.getElementById('servicios-text').innerText = t('servicios');
+      document.getElementById('map-text').innerText = t('mapa');
+      document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      marcadoresOriginales.forEach(marker => { marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => { 
+      initMap(); updateUILanguage();
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
+      document.querySelectorAll('.lang-btn').forEach(btn => { 
+        btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); }); 
+      });
+      
+      let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 ${currentLang === 'gn' ? 'Jheka...' : (currentLang === 'es' ? 'Buscando...' : 'Searching...')}</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name = currentLang === 'gn' ? m.datosNegocio.name_gn : (currentLang === 'es' ? m.datosNegocio.name_es : m.datosNegocio.name_en); 
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${currentLang === 'gn' ? 'Hecha' : (currentLang === 'es' ? 'Ver' : 'View')}</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 12); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ ${currentLang === 'gn' ? 'Ndojejuhúi Paraguái-pe' : (currentLang === 'es' ? 'No se encontraron resultados en Paraguay' : 'No results found in Paraguay')}</div>`; 
+        }, 300); 
+      }); 
+      document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
+    });
+  </script>
+</body>
+</html>
