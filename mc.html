@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>QRP2P MONACO | ENTREPRISES VÉRIFIÉES | PLATEFORME P2P | 0% COMMISSION</title>
+  <meta name="description" content="QRP2P Monaco. Plateforme directe entre acheteur et vendeur vérifiés dans toute la Principauté. Trouvez des entreprises, propriétés et services. 0% commission à vie.">
+  <meta name="keywords" content="QRP2P, Monaco, Principauté, plateforme, acheteur, vendeur, vérifié, 0% commission, entreprises, propriétés, Monte-Carlo, La Condamine, Fontvieille">
+  <meta name="author" content="QRP2P">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#000000">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Libre Baskerville', serif; background-color: #ffffff; color: #111111; line-height: 1.5; font-size: 16px; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    #contenedor-mapa { width: 100%; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #ffffff; width: 100%; z-index: 1000; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #eaeaea; flex-shrink: 0; }
+    .contenedor-buscador { position: relative; flex: 1; max-width: 400px; }
+    #buscador { width: 100%; padding: 0.6rem 1.2rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 16px; font-family: 'Libre Baskerville', serif; transition: all 0.3s ease; background: #ffffff; user-select: text; }
+    #buscador:focus { outline: none; border-color: #000000; }
+    .btn-mapa { background: #000000; color: #ffffff; padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; display: flex; gap: 5px; font-family: 'Libre Baskerville', serif; transition: all 0.2s ease; }
+    .btn-mapa:hover { background: #333333; }
+    .btn-centrar { background-color: #000000; }
+    .btn-registro { background-color: #25D366; color: #000000; }
+    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
+    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
+    .map-type-btn { padding: 0.5rem 1rem; border: none; border-radius: 40px; cursor: pointer; background: transparent; font-family: 'Libre Baskerville', serif; font-weight: 600; }
+    .map-type-btn.active { background: #000000; color: white; }
+    .lang-selector { display: flex; gap: 0.3rem; margin-left: 0.5rem; }
+    .lang-btn { background: transparent; border: 1px solid #ccc; border-radius: 20px; padding: 0.4rem 0.8rem; cursor: pointer; font-family: 'Libre Baskerville', serif; font-weight: 600; font-size: 0.8rem; }
+    .lang-btn.active { background: #000000; color: white; border-color: #000000; }
+    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
+    .leaflet-control-zoom { display: none !important; }
+    .sugerencias-busqueda { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; display: none; }
+    .sugerencia-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .sugerencia-item:hover { background-color: #f5f5f5; }
+    .sugerencia-texto { flex: 1; }
+    .sugerencia-boton { margin-left: 10px; padding: 6px 12px; background-color: #000000; color: white; border: none; border-radius: 20px; cursor: pointer; }
+    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
+    
+    .popup-business-card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      width: 340px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .popup-business-header {
+      background: #000000;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .popup-business-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .popup-business-category {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+    }
+    .popup-business-info {
+      padding: 1rem;
+    }
+    .popup-business-description {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .popup-business-address {
+      font-size: 0.7rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .popup-business-address i {
+      margin-top: 0.2rem;
+      color: #000;
+    }
+    .popup-business-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 0.8rem;
+    }
+    .contact-link {
+      font-size: 0.7rem;
+      background: #f5f5f5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .contact-link i { font-size: 0.7rem; }
+    .btn-view-store {
+      display: block;
+      background: #000000;
+      color: white;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .btn-view-store:hover { background: #333333; transform: scale(0.98); }
+    
+    .servicio-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+    .servicio-container {
+      background: white;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .servicios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .servicios-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn i {
+      font-size: 1.1rem;
+    }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
+    
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
+  </style>
+</head>
+<body>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="botones-izquierda">
+        <div class="contenedor-buscador">
+          <input type="search" id="buscador" placeholder="Rechercher des entreprises à Monaco..." enterkeyhint="search">
+          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+        </div>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">CENTRER</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">SERVICES QRP2P</span></button>
+      </div>
+      <div class="botones-derecha">
+        <button class="map-type-btn active" id="map-btn"><span id="map-text">Carte</span></button>
+        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Satellite</span></button>
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="fr">FR</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="it">IT</button>
+        </div>
+      </div>
+    </div>
+    <div id="mapa"></div>
+  </div>
+
+  <!-- Modal des Services QRP2P Monaco -->
+  <div id="servicioModal" class="servicio-modal">
+    <div class="servicio-container">
+      <div class="servicios-header">
+        <h2 id="servicio-modal-title">SERVICES QRP2P <span class="zero-badge">0% COMMISSION</span></h2>
+        <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sub-header" id="subHeaderText">MONACO</div>
+      <div id="listaServicios" class="servicios-botones"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    let currentLang = 'fr';
+    let mapa, userMarker, marcadoresOriginales = [], currentLayer;
+    
+    // SERVICES QRP2P (7 services)
+    const serviciosQRP2P = [
+      { id: "plan-anual", name_fr: "ENREGISTRER PLAN ANNUEL", name_en: "REGISTER ANNUAL PLAN", name_it: "REGISTRA PIANO ANNUALE", icon: "fa-calendar-alt", url: "https://qrp2p.com/plan-anual-monaco" },
+      { id: "administracion", name_fr: "ADMINISTRATION MENSUELLE", name_en: "MONTHLY ADMINISTRATION", name_it: "AMMINISTRAZIONE MENSILE", icon: "fa-building", url: "https://qrp2p.com/administration-monaco" },
+      { id: "marketing", name_fr: "MARKETING MENSUEL", name_en: "MONTHLY MARKETING", name_it: "MARKETING MENSILE", icon: "fa-chart-line", url: "https://qrp2p.com/marketing-monaco" },
+      { id: "logistica", name_fr: "LOGISTIQUE", name_en: "LOGISTICS", name_it: "LOGISTICA", icon: "fa-truck", url: "https://qrp2p.com/logistics-monaco" },
+      { id: "finanzas", name_fr: "FINANCES", name_en: "FINANCE", name_it: "FINANZA", icon: "fa-coins", url: "https://qrp2p.com/finance-monaco" },
+      { id: "contabilidad", name_fr: "COMPTABILITÉ MENSUELLE", name_en: "MONTHLY ACCOUNTING", name_it: "CONTABILITÀ MENSILE", icon: "fa-calculator", url: "https://qrp2p.com/accounting-monaco" },
+      { id: "academia", name_fr: "ACADÉMIE QRP2P", name_en: "QRP2P ACADEMY", name_it: "ACCADEMIA QRP2P", icon: "fa-graduation-cap", url: "https://qrp2p.com/academy" }
+    ];
+    
+    // ENTREPRISES VÉRIFIÉES - MONACO (12 entreprises dans la Principauté)
+    const verifiedBusinesses = [
+      { id: "MON01", name_fr: "DISTRIBUTEUR MONTE-CARLO", name_en: "MONTE-CARLO DISTRIBUTOR", name_it: "DISTRIBUTORE MONTE-CARLO", category_fr: "Distributeur en Gros", category_en: "Wholesale Distributor", category_it: "Distributore all'Ingrosso", latlng: [43.7384, 7.4246], address_fr: "Boulevard des Moulins 123, Monte-Carlo", address_en: "Boulevard des Moulins 123, Monte-Carlo", address_it: "Boulevard des Moulins 123, Monte-Carlo", description_fr: "Distribution de produits alimentaires, boissons et produits ménagers dans toute la Principauté.", description_en: "Distribution of food, beverages and household products throughout the Principality.", description_it: "Distribuzione di prodotti alimentari, bevande e prodotti domestici in tutto il Principato.", phone: "+37799000001", email: "info@montecarlodistributeur.mc", website: "https://montecarlodistributeur.mc", whatsapp: "37799000001" },
+      { id: "MON02", name_fr: "IMMOBILIER MONACO P2P", name_en: "MONACO P2P REAL ESTATE", name_it: "IMMOBILIARE MONACO P2P", category_fr: "Immobilier", category_en: "Real Estate", category_it: "Immobiliare", latlng: [43.7400, 7.4280], address_fr: "Place du Casino 45, Monte-Carlo", address_en: "Place du Casino 45, Monte-Carlo", address_it: "Place du Casino 45, Monte-Carlo", description_fr: "Achetez et vendez des propriétés directement entre propriétaires à Monaco. 0% commission. Garantie vérifiée.", description_en: "Buy and sell properties directly between owners in Monaco. 0% commission. Verified guarantee.", description_it: "Acquista e vendi proprietà direttamente tra proprietari a Monaco. 0% commissione. Garanzia verificata.", phone: "+37799000002", email: "contact@monacop2p.mc", website: "https://qrp2p.com/mc", whatsapp: "37799000002" },
+      { id: "MON03", name_fr: "DISTRIBUTEUR LA CONDAMINE", name_en: "LA CONDAMINE DISTRIBUTOR", name_it: "DISTRIBUTORE LA CONDAMINE", category_fr: "Distributeur en Gros", category_en: "Wholesale Distributor", category_it: "Distributore all'Ingrosso", latlng: [43.7350, 7.4200], address_fr: "Rue Grimaldi 78, La Condamine", address_en: "Grimaldi Street 78, La Condamine", address_it: "Rue Grimaldi 78, La Condamine", description_fr: "Distribution de produits de luxe et d'articles de mode.", description_en: "Distribution of luxury goods and fashion items.", description_it: "Distribuzione di beni di lusso e articoli di moda.", phone: "+37799000003", email: "info@condaminedistributeur.mc", website: "https://condaminedistributeur.mc", whatsapp: "37799000003" },
+      { id: "MON04", name_fr: "DISTRIBUTEUR FONTVIEILLE", name_en: "FONTVIEILLE DISTRIBUTOR", name_it: "DISTRIBUTORE FONTVIEILLE", category_fr: "Distributeur en Gros", category_en: "Wholesale Distributor", category_it: "Distributore all'Ingrosso", latlng: [43.7300, 7.4200], address_fr: "Avenue des Ligures 56, Fontvieille", address_en: "Ligures Avenue 56, Fontvieille", address_it: "Avenue des Ligures 56, Fontvieille", description_fr: "Distribution de produits marins et de spécialités méditerranéennes.", description_en: "Distribution of seafood and Mediterranean specialties.", description_it: "Distribuzione di prodotti ittici e specialità mediterranee.", phone: "+37799000004", email: "info@fontvieilledistributeur.mc", website: "https://fontvieilledistributeur.mc", whatsapp: "37799000004" },
+      { id: "MON05", name_fr: "AGROBUSINESS MONACO", name_en: "MONACO AGRIBUSINESS", name_it: "AGROBUSINESS MONACO", category_fr: "Agro-industrie", category_en: "Agribusiness", category_it: "Agrobusiness", latlng: [43.7320, 7.4220], address_fr: "Fontvieille, Serres de Monaco", address_en: "Fontvieille, Monaco's Greenhouses", address_it: "Fontvieille, Serre di Monaco", description_fr: "Distribution d'intrants agricoles, d'engrais et de semences pour l'agriculture urbaine.", description_en: "Distribution of agricultural inputs, fertilizers and seeds for urban agriculture.", description_it: "Distribuzione di input agricoli, fertilizzanti e semi per l'agricoltura urbana.", phone: "+37799000005", email: "agro@monacoagro.mc", website: "https://monacoagro.mc", whatsapp: "37799000005" },
+      { id: "MON06", name_fr: "LOGISTIQUE MONACO", name_en: "MONACO LOGISTICS", name_it: "LOGISTICA MONACO", category_fr: "Logistique et Transport", category_en: "Logistics & Transport", category_it: "Logistica e Trasporto", latlng: [43.7360, 7.4260], address_fr: "Port Hercule, Quai Antoine Ier", address_en: "Port Hercules, Quai Antoine Ier", address_it: "Port Hercules, Quai Antoine Ier", description_fr: "Solutions logistiques et distribution porte-à-porte dans la Principauté.", description_en: "Logistics solutions and door-to-door delivery in the Principality.", description_it: "Soluzioni logistiche e consegna porta a porta nel Principato.", phone: "+37799000006", email: "logistics@monacologistics.mc", website: "https://monacologistics.mc", whatsapp: "37799000006" },
+      { id: "MON07", name_fr: "TECHNOLOGIE MONTE-CARLO", name_en: "MONTE-CARLO TECH", name_it: "TECNOLOGIA MONTE-CARLO", category_fr: "Technologie", category_en: "Technology", category_it: "Tecnologia", latlng: [43.7390, 7.4270], address_fr: "Boulevard Louis II 23, Monte-Carlo", address_en: "Louis II Boulevard 23, Monte-Carlo", address_it: "Louis II Boulevard 23, Monte-Carlo", description_fr: "Distribution d'ordinateurs, imprimantes et fournitures de bureau.", description_en: "Distribution of computers, printers and office supplies.", description_it: "Distribuzione di computer, stampanti e forniture per ufficio.", phone: "+37799000007", email: "tech@montecarlotech.mc", website: "https://montecarlotech.mc", whatsapp: "37799000007" },
+      { id: "MON08", name_fr: "INVESTISSEMENTS MONACO", name_en: "MONACO INVESTMENTS", name_it: "INVESTIMENTI MONACO", category_fr: "Finance et Investissements", category_en: "Finance & Investments", category_it: "Finanza e Investimenti", latlng: [43.7380, 7.4290], address_fr: "Boulevard Princesse Charlotte 34, Monte-Carlo", address_en: "Princesse Charlotte Boulevard 34, Monte-Carlo", address_it: "Princesse Charlotte Boulevard 34, Monte-Carlo", description_fr: "Conseil financier et prêts P2P pour entrepreneurs monégasques.", description_en: "Financial advisory and P2P loans for Monegasque entrepreneurs.", description_it: "Consulenza finanziaria e prestiti P2P per imprenditori monegaschi.", phone: "+37799000008", email: "finance@monacoinvest.mc", website: "https://monacoinvestments.mc", whatsapp: "37799000008" },
+      { id: "MON09", name_fr: "CONSTRUCTIONS MONACO", name_en: "MONACO CONSTRUCTIONS", name_it: "COSTRUZIONI MONACO", category_fr: "Construction", category_en: "Construction", category_it: "Costruzioni", latlng: [43.7350, 7.4240], address_fr: "Rue des Remparts 45, Monaco-Ville", address_en: "Remparts Street 45, Monaco-Ville", address_it: "Remparts Street 45, Monaco-Ville", description_fr: "Matériaux de construction et outils pour projets en Principauté.", description_en: "Construction materials and tools for projects in the Principality.", description_it: "Materiali da costruzione e attrezzi per progetti nel Principato.", phone: "+37799000009", email: "build@monaconstruct.mc", website: "https://monacoconstruction.mc", whatsapp: "37799000009" },
+      { id: "MON10", name_fr: "PIÈCES AUTO MONACO", name_en: "MONACO AUTO PARTS", name_it: "AUTO RICAMBI MONACO", category_fr: "Pièces Auto", category_en: "Auto Parts", category_it: "Auto Ricambi", latlng: [43.7340, 7.4210], address_fr: "Avenue de Grande-Bretagne 34, Monte-Carlo", address_en: "Great Britain Avenue 34, Monte-Carlo", address_it: "Great Britain Avenue 34, Monte-Carlo", description_fr: "Distribution de pièces de rechange et accessoires pour véhicules.", description_en: "Distribution of spare parts and accessories for vehicles.", description_it: "Distribuzione di ricambi e accessori per veicoli.", phone: "+37799000010", email: "parts@monacoautoparts.mc", website: "https://monacoautoparts.mc", whatsapp: "37799000010" },
+      { id: "MON11", name_fr: "MODE ET TEXTILES MONACO", name_en: "MONACO FASHION & TEXTILES", name_it: "MODA E TESSUTI MONACO", category_fr: "Textiles", category_en: "Textiles", category_it: "Tessuti", latlng: [43.7395, 7.4265], address_fr: "Boulevard des Moulins 56, Monte-Carlo", address_en: "Boulevard des Moulins 56, Monte-Carlo", address_it: "Boulevard des Moulins 56, Monte-Carlo", description_fr: "Distribution de tissus, textiles et vêtements de luxe.", description_en: "Distribution of luxury fabrics, textiles and clothing.", description_it: "Distribuzione di tessuti, tessili e abbigliamento di lusso.", phone: "+37799000011", email: "textiles@monacofashion.mc", website: "https://monacofashion.mc", whatsapp: "37799000011" },
+      { id: "MON12", name_fr: "COMMERCE MONACO", name_en: "MONACO TRADING CO", name_it: "COMMERCIO MONACO", category_fr: "Commerce Général", category_en: "General Trading", category_it: "Commercio Generale", latlng: [43.7370, 7.4230], address_fr: "Rue Grimaldi 12, La Condamine", address_en: "Grimaldi Street 12, La Condamine", address_it: "Grimaldi Street 12, La Condamine", description_fr: "Distribution de marchandises générales et d'articles ménagers.", description_en: "General merchandise and household goods distribution.", description_it: "Distribuzione di merci generali e articoli per la casa.", phone: "+37799000012", email: "trade@monacotrading.mc", website: "https://monacotrading.mc", whatsapp: "37799000012" }
+    ];
+    
+    const translations = { 
+      fr: { buscar_placeholder: "Rechercher des entreprises à Monaco...", centrar: "CENTRER", servicios: "SERVICES QRP2P", mapa: "Carte", satelite: "Satellite", view_store: "VOIR LA BOUTIQUE", sub_header: "MONACO" },
+      en: { buscar_placeholder: "Search businesses across Monaco...", centrar: "CENTER", servicios: "QRP2P SERVICES", mapa: "Map", satelite: "Satellite", view_store: "VIEW STORE", sub_header: "MONACO" },
+      it: { buscar_placeholder: "Cerca aziende a Monaco...", centrar: "CENTRARE", servicios: "SERVIZI QRP2P", mapa: "Mappa", satelite: "Satellite", view_store: "VISUALIZZA NEGOZIO", sub_header: "MONACO" }
+    };
+    
+    function t(key) { return translations[currentLang][key] || key; }
+    
+    function generarPopupHTML(business) { 
+      let name, category, description, address;
+      if (currentLang === 'it') { name = business.name_it; category = business.category_it; description = business.description_it; address = business.address_it; }
+      else if (currentLang === 'en') { name = business.name_en; category = business.category_en; description = business.description_en; address = business.address_en; }
+      else { name = business.name_fr; category = business.category_fr; description = business.description_fr; address = business.address_fr; }
+      const storeText = t('view_store');
+      const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
+      let contactButtons = '';
+      if(business.website) contactButtons += `<a href="${business.website}" target="_blank" class="contact-link"><i class="fas fa-globe"></i> Web</a>`;
+      if(business.whatsapp) contactButtons += `<a href="https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>`;
+      if(business.phone) contactButtons += `<a href="tel:${business.phone}" class="contact-link"><i class="fas fa-phone"></i> Call</a>`;
+      if(business.email) contactButtons += `<a href="mailto:${business.email}" class="contact-link"><i class="fas fa-envelope"></i> Email</a>`;
+      return `<div class="popup-business-card"><div class="popup-business-header"><h3>⚡ ${name}</h3><span class="popup-business-category">${category}</span></div><div class="popup-business-info"><div class="popup-business-description">${description}</div><div class="popup-business-address"><i class="fas fa-map-pin"></i> ${address}</div><div class="popup-business-contact">${contactButtons}</div><a href="${websiteUrl}" target="_blank" class="btn-view-store"><i class="fas fa-store"></i> ${storeText}</a></div></div>`; 
+    }
+    
+    function initMap() { 
+      const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      mapa = L.map('mapa', { center: [43.7384, 7.4246], zoom: 14, zoomControl: false });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      let clusters = L.markerClusterGroup({ iconCreateFunction: cluster => L.divIcon({ html: `<div>${cluster.getChildCount()}</div>`, className: 'cluster-marcadores', iconSize: [40,40] }) }); 
+      let icono = L.divIcon({ className: 'negocio-marker', html: '⚡', iconSize: [32,32], popupAnchor: [0,-16] }); 
+      verifiedBusinesses.forEach(business => { 
+        let popup = generarPopupHTML(business); 
+        let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
+        marker.datosNegocio = business; 
+        marker.datosBusqueda = `${business.name_fr} ${business.name_en} ${business.name_it} ${business.category_fr} ${business.category_en} ${business.category_it} ${business.description_fr} ${business.description_en} ${business.description_it}`.toLowerCase(); 
+        marcadoresOriginales.push(marker); 
+        clusters.addLayer(marker); 
+      }); 
+      mapa.addLayer(clusters); 
+      mapa.googleMapsLayer = googleMapsLayer;
+      mapa.googleSatelliteLayer = googleSatelliteLayer;
+    }
+    
+    function mostrarServiciosQRP2P() {
+      let container = document.getElementById('listaServicios');
+      container.innerHTML = '';
+      serviciosQRP2P.forEach(servicio => {
+        let btn = document.createElement('button');
+        btn.className = 'servicio-item-btn';
+        let name = currentLang === 'it' ? servicio.name_it : (currentLang === 'en' ? servicio.name_en : servicio.name_fr);
+        btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${name}`;
+        btn.addEventListener('click', () => { window.open(servicio.url, '_blank'); document.getElementById('servicioModal').style.display = 'none'; });
+        container.appendChild(btn);
+      });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      document.getElementById('servicioModal').style.display = 'flex';
+    }
+    
+    function centrarMapaRapido() {
+      if (navigator.geolocation) {
+        const btn = document.getElementById('centrar-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>LOCALISATION...</span>';
+        navigator.geolocation.getCurrentPosition(
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup(currentLang === 'it' ? 'La tua posizione attuale' : (currentLang === 'en' ? 'Your current location' : 'Votre position actuelle')); mapa.setView([latitude, longitude], 14); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([43.7384, 7.4246], 14); alert(currentLang === 'it' ? 'Impossibile ottenere la tua posizione. Visualizzazione di Monaco.' : (currentLang === 'en' ? 'Could not get your location. Showing Monaco.' : 'Impossible d\'obtenir votre position. Affichage de Monaco.')); }
+        );
+      } else { mapa.setView([43.7384, 7.4246], 14); }
+    }
+    
+    function updateUILanguage() {
+      document.getElementById('buscador').placeholder = t('buscar_placeholder');
+      document.getElementById('centrar-text').innerText = t('centrar');
+      document.getElementById('servicios-text').innerText = t('servicios');
+      document.getElementById('map-text').innerText = t('mapa');
+      document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      marcadoresOriginales.forEach(marker => { marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => { 
+      initMap(); updateUILanguage();
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
+      document.querySelectorAll('.lang-btn').forEach(btn => { 
+        btn.addEventListener('click', () => { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentLang = btn.getAttribute('data-lang'); updateUILanguage(); }); 
+      });
+      
+      let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 ${currentLang === 'it' ? 'Ricerca...' : (currentLang === 'en' ? 'Searching...' : 'Recherche...')}</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name = currentLang === 'it' ? m.datosNegocio.name_it : (currentLang === 'en' ? m.datosNegocio.name_en : m.datosNegocio.name_fr); 
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${currentLang === 'it' ? 'Visualizza' : (currentLang === 'en' ? 'View' : 'Voir')}</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 15); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ ${currentLang === 'it' ? 'Nessun risultato trovato a Monaco' : (currentLang === 'en' ? 'No results found in Monaco' : 'Aucun résultat trouvé à Monaco')}</div>`; 
+        }, 300); 
+      }); 
+      document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
+    });
+  </script>
+</body>
+</html>
