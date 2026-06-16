@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>QRP2P UNITED KINGDOM | VERIFIED BUSINESSES | P2P MARKETPLACE | 0% COMMISSION</title>
+  <meta name="description" content="QRP2P United Kingdom. Direct marketplace between verified buyers and sellers across the UK. Find businesses, properties and services. 0% lifetime commission.">
+  <meta name="keywords" content="QRP2P, United Kingdom, UK, Britain, marketplace, buyer, seller, verified, 0% commission, businesses, properties, London, Birmingham, Manchester, Glasgow, Leeds">
+  <meta name="author" content="QRP2P">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#000000">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Libre Baskerville', serif; background-color: #ffffff; color: #111111; line-height: 1.5; font-size: 16px; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    #contenedor-mapa { width: 100%; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #ffffff; width: 100%; z-index: 1000; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #eaeaea; flex-shrink: 0; }
+    .contenedor-buscador { position: relative; flex: 1; max-width: 400px; }
+    #buscador { width: 100%; padding: 0.6rem 1.2rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 16px; font-family: 'Libre Baskerville', serif; transition: all 0.3s ease; background: #ffffff; user-select: text; }
+    #buscador:focus { outline: none; border-color: #000000; }
+    .btn-mapa { background: #000000; color: #ffffff; padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; display: flex; gap: 5px; font-family: 'Libre Baskerville', serif; transition: all 0.2s ease; }
+    .btn-mapa:hover { background: #333333; }
+    .btn-centrar { background-color: #000000; }
+    .btn-registro { background-color: #25D366; color: #000000; }
+    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
+    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
+    .map-type-btn { padding: 0.5rem 1rem; border: none; border-radius: 40px; cursor: pointer; background: transparent; font-family: 'Libre Baskerville', serif; font-weight: 600; }
+    .map-type-btn.active { background: #000000; color: white; }
+    .lang-selector { display: flex; gap: 0.3rem; margin-left: 0.5rem; }
+    .lang-btn { background: transparent; border: 1px solid #ccc; border-radius: 20px; padding: 0.4rem 0.8rem; cursor: pointer; font-family: 'Libre Baskerville', serif; font-weight: 600; font-size: 0.8rem; }
+    .lang-btn.active { background: #000000; color: white; border-color: #000000; }
+    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
+    .leaflet-control-zoom { display: none !important; }
+    .sugerencias-busqueda { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; display: none; }
+    .sugerencia-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .sugerencia-item:hover { background-color: #f5f5f5; }
+    .sugerencia-texto { flex: 1; }
+    .sugerencia-boton { margin-left: 10px; padding: 6px 12px; background-color: #000000; color: white; border: none; border-radius: 20px; cursor: pointer; }
+    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
+    
+    .popup-business-card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      width: 340px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .popup-business-header {
+      background: #000000;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .popup-business-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .popup-business-category {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+    }
+    .popup-business-info {
+      padding: 1rem;
+    }
+    .popup-business-description {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .popup-business-address {
+      font-size: 0.7rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .popup-business-address i {
+      margin-top: 0.2rem;
+      color: #000;
+    }
+    .popup-business-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 0.8rem;
+    }
+    .contact-link {
+      font-size: 0.7rem;
+      background: #f5f5f5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .contact-link i { font-size: 0.7rem; }
+    .btn-view-store {
+      display: block;
+      background: #000000;
+      color: white;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .btn-view-store:hover { background: #333333; transform: scale(0.98); }
+    
+    .servicio-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+    .servicio-container {
+      background: white;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .servicios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .servicios-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn i {
+      font-size: 1.1rem;
+    }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
+    
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
+  </style>
+</head>
+<body>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="botones-izquierda">
+        <div class="contenedor-buscador">
+          <input type="search" id="buscador" placeholder="Search businesses across the United Kingdom..." enterkeyhint="search">
+          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+        </div>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">CENTER</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">QRP2P SERVICES</span></button>
+      </div>
+      <div class="botones-derecha">
+        <button class="map-type-btn active" id="map-btn"><span id="map-text">Map</span></button>
+        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Satellite</span></button>
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="en">EN</button>
+        </div>
+      </div>
+    </div>
+    <div id="mapa"></div>
+  </div>
+
+  <!-- QRP2P Services Modal United Kingdom -->
+  <div id="servicioModal" class="servicio-modal">
+    <div class="servicio-container">
+      <div class="servicios-header">
+        <h2 id="servicio-modal-title">QRP2P SERVICES <span class="zero-badge">0% COMMISSION</span></h2>
+        <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sub-header" id="subHeaderText">UNITED KINGDOM</div>
+      <div id="listaServicios" class="servicios-botones"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    let currentLang = 'en';
+    let mapa, userMarker, marcadoresOriginales = [], currentLayer;
+    
+    // QRP2P SERVICES (7 services)
+    const serviciosQRP2P = [
+      { id: "plan-anual", name_en: "REGISTER ANNUAL PLAN", icon: "fa-calendar-alt", url: "https://qrp2p.com/plan-anual-uk" },
+      { id: "administracion", name_en: "MONTHLY ADMINISTRATION", icon: "fa-building", url: "https://qrp2p.com/administration-uk" },
+      { id: "marketing", name_en: "MONTHLY MARKETING", icon: "fa-chart-line", url: "https://qrp2p.com/marketing-uk" },
+      { id: "logistica", name_en: "LOGISTICS", icon: "fa-truck", url: "https://qrp2p.com/logistics-uk" },
+      { id: "finanzas", name_en: "FINANCE", icon: "fa-coins", url: "https://qrp2p.com/finance-uk" },
+      { id: "contabilidad", name_en: "MONTHLY ACCOUNTING", icon: "fa-calculator", url: "https://qrp2p.com/accounting-uk" },
+      { id: "academia", name_en: "QRP2P ACADEMY", icon: "fa-graduation-cap", url: "https://qrp2p.com/academy" }
+    ];
+    
+    // VERIFIED BUSINESSES - UNITED KINGDOM (12 businesses across major cities)
+    const verifiedBusinesses = [
+      { id: "LON01", name_en: "LONDON CENTER DISTRIBUTOR", category_en: "Wholesale Distributor", latlng: [51.5074, -0.1278], address_en: "Oxford Street 123, London W1D 1LL", description_en: "Distribution of food, beverages and household products across the United Kingdom.", phone: "+442070000001", email: "info@londondistributor.co.uk", website: "https://londondistributor.co.uk", whatsapp: "447900000001" },
+      { id: "LON02", name_en: "UK P2P REAL ESTATE", category_en: "Real Estate", latlng: [51.5100, -0.1300], address_en: "Baker Street 45, London NW1 6XE", description_en: "Buy and sell properties directly between owners in the UK. 0% commission. Verified guarantee.", phone: "+442070000002", email: "contact@ukp2p.co.uk", website: "https://qrp2p.com/gb", whatsapp: "447900000002" },
+      { id: "BIR01", name_en: "BIRMINGHAM DISTRIBUTOR", category_en: "Wholesale Distributor", latlng: [52.4862, -1.8904], address_en: "New Street 78, Birmingham B2 4ND", description_en: "Distribution of automotive products in the West Midlands.", phone: "+442120000001", email: "info@birminghamdistributor.co.uk", website: "https://birminghamdistributor.co.uk", whatsapp: "447900000003" },
+      { id: "MAN01", name_en: "MANCHESTER MEGADISTRIBUTOR", category_en: "Wholesale Distributor", latlng: [53.4808, -2.2426], address_en: "Market Street 56, Manchester M1 1PW", description_en: "Distribution of textiles and industrial products in the North West.", phone: "+441610000001", email: "info@manchestermega.co.uk", website: "https://manchestermega.co.uk", whatsapp: "447900000004" },
+      { id: "GLA01", name_en: "GLASGOW DISTRIBUTOR", category_en: "Wholesale Distributor", latlng: [55.8642, -4.2518], address_en: "Buchanan Street 34, Glasgow G1 3JZ", description_en: "Distribution of whisky and Scottish products in Scotland.", phone: "+441410000001", email: "info@glasgowdistributor.co.uk", website: "https://glasgowdistributor.co.uk", whatsapp: "447900000005" },
+      { id: "LDS01", name_en: "LEEDS AGRIBUSINESS", category_en: "Agribusiness", latlng: [53.8008, -1.5491], address_en: "Briggate 67, Leeds LS1 6AD", description_en: "Distribution of agricultural inputs, fertilizers and seeds in Yorkshire.", phone: "+441130000001", email: "agro@leedsagro.co.uk", website: "https://leedsagro.co.uk", whatsapp: "447900000006" },
+      { id: "LVP01", name_en: "LIVERPOOL LOGISTICS", category_en: "Logistics & Transport", latlng: [53.4084, -2.9916], address_en: "Liverpool One, Liverpool L1 3EU", description_en: "Logistics solutions and door-to-door delivery across the UK.", phone: "+441510000001", email: "logistics@liverpoollogistics.co.uk", website: "https://liverpoollogistics.co.uk", whatsapp: "447900000007" },
+      { id: "BRI01", name_en: "BRISTOL TECH", category_en: "Technology", latlng: [51.4545, -2.5879], address_en: "Park Street 45, Bristol BS1 5LY", description_en: "Distribution of computers, printers and office supplies for businesses.", phone: "+441170000001", email: "tech@bristoltech.co.uk", website: "https://bristoltech.co.uk", whatsapp: "447900000008" },
+      { id: "SHE01", name_en: "SHEFFIELD INVESTMENTS", category_en: "Finance & Investments", latlng: [53.3811, -1.4701], address_en: "The Moor 23, Sheffield S1 4PA", description_en: "Financial advisory and P2P loans for entrepreneurs in the UK.", phone: "+441140000001", email: "finance@sheffieldinvest.co.uk", website: "https://sheffieldinvestments.co.uk", whatsapp: "447900000009" },
+      { id: "LEI01", name_en: "LEICESTER CONSTRUCTIONS", category_en: "Construction", latlng: [52.6369, -1.1398], address_en: "High Street 34, Leicester LE1 5YP", description_en: "Construction materials and tools for projects across the East Midlands.", phone: "+441160000001", email: "build@leicesterconstruct.co.uk", website: "https://leicesterconstruction.co.uk", whatsapp: "447900000010" },
+      { id: "NCL01", name_en: "NEWCASTLE AUTO PARTS", category_en: "Auto Parts", latlng: [54.9783, -1.6178], address_en: "Grainger Street 67, Newcastle NE1 5JG", description_en: "Distribution of spare parts and accessories for vehicles in the North East.", phone: "+441910000001", email: "parts@newcastleautoparts.co.uk", website: "https://newcastleautoparts.co.uk", whatsapp: "447900000011" },
+      { id: "NOT01", name_en: "NOTTINGHAM FASHION & TEXTILES", category_en: "Textiles", latlng: [52.9548, -1.1581], address_en: "Lace Market, Nottingham NG1 1PB", description_en: "Distribution of fabrics, textile supplies and clothing across the East Midlands.", phone: "+441150000001", email: "textiles@nottinghamfashion.co.uk", website: "https://nottinghamfashion.co.uk", whatsapp: "447900000012" }
+    ];
+    
+    const translations = { 
+      en: { buscar_placeholder: "Search businesses across the United Kingdom...", centrar: "CENTER", servicios: "QRP2P SERVICES", mapa: "Map", satelite: "Satellite", view_store: "VIEW STORE", sub_header: "UNITED KINGDOM" }
+    };
+    
+    function t(key) { return translations[currentLang][key] || key; }
+    
+    function generarPopupHTML(business) { 
+      const name = business.name_en;
+      const category = business.category_en;
+      const description = business.description_en;
+      const address = business.address_en;
+      const storeText = t('view_store');
+      const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
+      let contactButtons = '';
+      if(business.website) contactButtons += `<a href="${business.website}" target="_blank" class="contact-link"><i class="fas fa-globe"></i> Web</a>`;
+      if(business.whatsapp) contactButtons += `<a href="https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>`;
+      if(business.phone) contactButtons += `<a href="tel:${business.phone}" class="contact-link"><i class="fas fa-phone"></i> Call</a>`;
+      if(business.email) contactButtons += `<a href="mailto:${business.email}" class="contact-link"><i class="fas fa-envelope"></i> Email</a>`;
+      return `<div class="popup-business-card"><div class="popup-business-header"><h3>⚡ ${name}</h3><span class="popup-business-category">${category}</span></div><div class="popup-business-info"><div class="popup-business-description">${description}</div><div class="popup-business-address"><i class="fas fa-map-pin"></i> ${address}</div><div class="popup-business-contact">${contactButtons}</div><a href="${websiteUrl}" target="_blank" class="btn-view-store"><i class="fas fa-store"></i> ${storeText}</a></div></div>`; 
+    }
+    
+    function initMap() { 
+      const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      mapa = L.map('mapa', { center: [54.0, -2.5], zoom: 6, zoomControl: false });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      let clusters = L.markerClusterGroup({ iconCreateFunction: cluster => L.divIcon({ html: `<div>${cluster.getChildCount()}</div>`, className: 'cluster-marcadores', iconSize: [40,40] }) }); 
+      let icono = L.divIcon({ className: 'negocio-marker', html: '⚡', iconSize: [32,32], popupAnchor: [0,-16] }); 
+      verifiedBusinesses.forEach(business => { 
+        let popup = generarPopupHTML(business); 
+        let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
+        marker.datosNegocio = business; 
+        marker.datosBusqueda = `${business.name_en} ${business.category_en} ${business.description_en}`.toLowerCase(); 
+        marcadoresOriginales.push(marker); 
+        clusters.addLayer(marker); 
+      }); 
+      mapa.addLayer(clusters); 
+      mapa.googleMapsLayer = googleMapsLayer;
+      mapa.googleSatelliteLayer = googleSatelliteLayer;
+    }
+    
+    function mostrarServiciosQRP2P() {
+      let container = document.getElementById('listaServicios');
+      container.innerHTML = '';
+      serviciosQRP2P.forEach(servicio => {
+        let btn = document.createElement('button');
+        btn.className = 'servicio-item-btn';
+        btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${servicio.name_en}`;
+        btn.addEventListener('click', () => { window.open(servicio.url, '_blank'); document.getElementById('servicioModal').style.display = 'none'; });
+        container.appendChild(btn);
+      });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      document.getElementById('servicioModal').style.display = 'flex';
+    }
+    
+    function centrarMapaRapido() {
+      if (navigator.geolocation) {
+        const btn = document.getElementById('centrar-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>LOCATING...</span>';
+        navigator.geolocation.getCurrentPosition(
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup('Your current location'); mapa.setView([latitude, longitude], 12); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([54.0, -2.5], 6); alert('Could not get your location. Showing the United Kingdom.'); }
+        );
+      } else { mapa.setView([54.0, -2.5], 6); }
+    }
+    
+    function updateUILanguage() {
+      document.getElementById('buscador').placeholder = t('buscar_placeholder');
+      document.getElementById('centrar-text').innerText = t('centrar');
+      document.getElementById('servicios-text').innerText = t('servicios');
+      document.getElementById('map-text').innerText = t('mapa');
+      document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      marcadoresOriginales.forEach(marker => { marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => { 
+      initMap(); updateUILanguage();
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
+      
+      let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 Searching...</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name = m.datosNegocio.name_en; 
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">View</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 12); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ No results found in the United Kingdom</div>`; 
+        }, 300); 
+      }); 
+      document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
+    });
+  </script>
+</body>
+</html>
