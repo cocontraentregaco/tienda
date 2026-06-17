@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>QRP2P COSTA RICA | VERIFIED BUSINESSES | P2P MARKETPLACE | 0% COMMISSION</title>
+  <meta name="description" content="QRP2P Costa Rica. Direct marketplace between verified buyers and sellers across Costa Rica. Find businesses, properties and services. 0% lifetime commission.">
+  <meta name="keywords" content="QRP2P, Costa Rica, marketplace, buyer, seller, verified, 0% commission, businesses, properties, San José, Alajuela, Cartago">
+  <meta name="author" content="QRP2P">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#000000">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Libre Baskerville', serif; background-color: #ffffff; color: #111111; line-height: 1.5; font-size: 16px; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    #contenedor-mapa { width: 100%; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #ffffff; width: 100%; z-index: 1000; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #eaeaea; flex-shrink: 0; }
+    .contenedor-buscador { position: relative; flex: 1; max-width: 400px; }
+    #buscador { width: 100%; padding: 0.6rem 1.2rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 16px; font-family: 'Libre Baskerville', serif; transition: all 0.3s ease; background: #ffffff; user-select: text; }
+    #buscador:focus { outline: none; border-color: #000000; }
+    .btn-mapa { background: #000000; color: #ffffff; padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; display: flex; gap: 5px; font-family: 'Libre Baskerville', serif; transition: all 0.2s ease; }
+    .btn-mapa:hover { background: #333333; }
+    .btn-centrar { background-color: #000000; }
+    .btn-registro { background-color: #25D366; color: #000000; }
+    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
+    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
+    .map-type-btn { padding: 0.5rem 1rem; border: none; border-radius: 40px; cursor: pointer; background: transparent; font-family: 'Libre Baskerville', serif; font-weight: 600; }
+    .map-type-btn.active { background: #000000; color: white; }
+    .lang-selector { display: flex; gap: 0.3rem; margin-left: 0.5rem; }
+    .lang-btn { background: transparent; border: 1px solid #ccc; border-radius: 20px; padding: 0.4rem 0.8rem; cursor: pointer; font-family: 'Libre Baskerville', serif; font-weight: 600; font-size: 0.8rem; }
+    .lang-btn.active { background: #000000; color: white; border-color: #000000; }
+    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
+    .leaflet-control-zoom { display: none !important; }
+    .sugerencias-busqueda { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; display: none; }
+    .sugerencia-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .sugerencia-item:hover { background-color: #f5f5f5; }
+    .sugerencia-texto { flex: 1; }
+    .sugerencia-boton { margin-left: 10px; padding: 6px 12px; background-color: #000000; color: white; border: none; border-radius: 20px; cursor: pointer; }
+    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
+    
+    .popup-business-card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      width: 340px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .popup-business-header {
+      background: #000000;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .popup-business-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .popup-business-category {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+    }
+    .popup-business-info {
+      padding: 1rem;
+    }
+    .popup-business-description {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .popup-business-address {
+      font-size: 0.7rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .popup-business-address i {
+      margin-top: 0.2rem;
+      color: #000;
+    }
+    .popup-business-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 0.8rem;
+    }
+    .contact-link {
+      font-size: 0.7rem;
+      background: #f5f5f5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .contact-link i { font-size: 0.7rem; }
+    .btn-view-store {
+      display: block;
+      background: #000000;
+      color: white;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .btn-view-store:hover { background: #333333; transform: scale(0.98); }
+    
+    .servicio-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+    .servicio-container {
+      background: white;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .servicios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .servicios-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn i {
+      font-size: 1.1rem;
+    }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
+    
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
+  </style>
+</head>
+<body>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="botones-izquierda">
+        <div class="contenedor-buscador">
+          <input type="search" id="buscador" placeholder="Search businesses across Costa Rica..." enterkeyhint="search">
+          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+        </div>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">CENTER</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">QRP2P SERVICES</span></button>
+      </div>
+      <div class="botones-derecha">
+        <button class="map-type-btn active" id="map-btn"><span id="map-text">Map</span></button>
+        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Satellite</span></button>
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="es">ES</button>
+        </div>
+      </div>
+    </div>
+    <div id="mapa"></div>
+  </div>
+
+  <!-- QRP2P Services Modal Costa Rica -->
+  <div id="servicioModal" class="servicio-modal">
+    <div class="servicio-container">
+      <div class="servicios-header">
+        <h2 id="servicio-modal-title">QRP2P SERVICES <span class="zero-badge">0% COMMISSION</span></h2>
+        <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sub-header" id="subHeaderText">COSTA RICA</div>
+      <div id="listaServicios" class="servicios-botones"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    let currentLang = 'en';
+    let mapa, userMarker, marcadoresOriginales = [], currentLayer;
+    
+    // QRP2P SERVICES (7 services)
+    const serviciosQRP2P = [
+      { id: "plan-anual", name_en: "REGISTER ANNUAL PLAN", name_es: "REGISTRAR PLAN ANUAL", icon: "fa-calendar-alt", url: "https://qrp2p.com/plan-anual-costarica" },
+      { id: "administracion", name_en: "MONTHLY ADMINISTRATION", name_es: "ADMINISTRACIÓN MENSUAL", icon: "fa-building", url: "https://qrp2p.com/administration-costarica" },
+      { id: "marketing", name_en: "MONTHLY MARKETING", name_es: "MARKETING MENSUAL", icon: "fa-chart-line", url: "https://qrp2p.com/marketing-costarica" },
+      { id: "logistica", name_en: "LOGISTICS", name_es: "LOGÍSTICA", icon: "fa-truck", url: "https://qrp2p.com/logistics-costarica" },
+      { id: "finanzas", name_en: "FINANCE", name_es: "FINANZAS", icon: "fa-coins", url: "https://qrp2p.com/finance-costarica" },
+      { id: "contabilidad", name_en: "MONTHLY ACCOUNTING", name_es: "CONTABILIDAD MENSUAL", icon: "fa-calculator", url: "https://qrp2p.com/accounting-costarica" },
+      { id: "academia", name_en: "QRP2P ACADEMY", name_es: "ACADEMIA QRP2P", icon: "fa-graduation-cap", url: "https://qrp2p.com/academy" }
+    ];
+    
+    // VERIFIED BUSINESSES - COSTA RICA (14 businesses across major cities)
+    const verifiedBusinesses = [
+      // San José
+      { id: "SJO01", name_en: "SAN JOSÉ DISTRIBUTORS", name_es: "DISTRIBUIDORES SAN JOSÉ", category_en: "Wholesale Distributor", category_es: "Distribuidor Mayorista", latlng: [9.9281, -84.0907], address_en: "San José Industrial Zone", address_es: "Zona Industrial San José", description_en: "Distribution of food, beverages and household products across Costa Rica.", description_es: "Distribución de alimentos, bebidas y productos para el hogar en toda Costa Rica.", phone: "+50680000001", email: "info@sanjosedistributors.cr", website: "https://sanjosedistributors.cr", whatsapp: "50680000001" },
+      { id: "SJO02", name_en: "COSTA RICA P2P REAL ESTATE", name_es: "COSTA RICA P2P BIENES RAÍCES", category_en: "Real Estate", category_es: "Bienes Raíces", latlng: [9.9400, -84.1000], address_en: "Escazú, San José", address_es: "Escazú, San José", description_en: "Buy and sell properties directly between owners in Costa Rica. 0% commission. Verified guarantee.", description_es: "Compre y venda propiedades directamente entre propietarios en Costa Rica. 0% comisión. Garantía verificada.", phone: "+50680000002", email: "contact@p2prealestate.cr", website: "https://qrp2p.com/cr", whatsapp: "50680000002" },
+      { id: "SJO03", name_en: "SAN JOSÉ TECH SOLUTIONS", name_es: "SOLUCIONES TECNOLÓGICAS SAN JOSÉ", category_en: "Technology", category_es: "Tecnología", latlng: [9.9200, -84.0800], address_en: "Pavas, San José", address_es: "Pavas, San José", description_en: "Distribution of computers, servers and IT solutions for businesses.", description_es: "Distribución de computadoras, servidores y soluciones de TI para empresas.", phone: "+50680000003", email: "tech@sanjosetech.cr", website: "https://sanjosetech.cr", whatsapp: "50680000003" },
+      { id: "SJO04", name_en: "SAN JOSÉ AUTO PARTS", name_es: "REPUESTOS AUTOMOTRICES SAN JOSÉ", category_en: "Auto Parts", category_es: "Repuestos Automotrices", latlng: [9.9500, -84.1100], address_en: "La Uruca, San José", address_es: "La Uruca, San José", description_en: "Distribution of spare parts and accessories for vehicles in Costa Rica.", description_es: "Distribución de repuestos y accesorios para vehículos en Costa Rica.", phone: "+50680000004", email: "parts@sanjoseauto.cr", website: "https://sanjoseauto.cr", whatsapp: "50680000004" },
+      { id: "SJO05", name_en: "SAN JOSÉ FINANCE GROUP", name_es: "GRUPO FINANCIERO SAN JOSÉ", category_en: "Finance & Investments", category_es: "Finanzas e Inversiones", latlng: [9.9300, -84.0900], address_en: "San Pedro, San José", address_es: "San Pedro, San José", description_en: "Financial advisory and investment services for Costa Rican entrepreneurs.", description_es: "Servicios de asesoría financiera e inversiones para emprendedores costarricenses.", phone: "+50680000005", email: "finance@sanjosefinance.cr", website: "https://sanjosefinance.cr", whatsapp: "50680000005" },
+      
+      // Alajuela
+      { id: "ALA01", name_en: "ALAJUELA DISTRIBUTORS", name_es: "DISTRIBUIDORES ALAJUELA", category_en: "Wholesale Distributor", category_es: "Distribuidor Mayorista", latlng: [10.0167, -84.2167], address_en: "Alajuela Industrial Zone", address_es: "Zona Industrial Alajuela", description_en: "Distribution of goods across the Alajuela region.", description_es: "Distribución de mercancías en la región de Alajuela.", phone: "+50680000006", email: "info@alajueladistributors.cr", website: "https://alajueladistributors.cr", whatsapp: "50680000006" },
+      { id: "ALA02", name_en: "ALAJUELA AGRIBUSINESS", name_es: "AGROALAJUELA", category_en: "Agribusiness", category_es: "Agronegocios", latlng: [10.0200, -84.2300], address_en: "Alajuela Agricultural Zone", address_es: "Zona Agrícola Alajuela", description_en: "Distribution of farming supplies and agricultural products.", description_es: "Distribución de insumos agrícolas y productos agropecuarios.", phone: "+50680000007", email: "agro@alajuelaagro.cr", website: "https://alajuelaagro.cr", whatsapp: "50680000007" },
+      
+      // Cartago
+      { id: "CAR01", name_en: "CARTAGO DISTRIBUTORS", name_es: "DISTRIBUIDORES CARTAGO", category_en: "Wholesale Distributor", category_es: "Distribuidor Mayorista", latlng: [9.8667, -83.9167], address_en: "Cartago Industrial Area", address_es: "Zona Industrial Cartago", description_en: "Distribution of goods across the Cartago region.", description_es: "Distribución de mercancías en la región de Cartago.", phone: "+50680000008", email: "info@cartagodistributors.cr", website: "https://cartagodistributors.cr", whatsapp: "50680000008" },
+      
+      // Heredia
+      { id: "HER01", name_en: "HEREDIA DISTRIBUTORS", name_es: "DISTRIBUIDORES HEREDIA", category_en: "Wholesale Distributor", category_es: "Distribuidor Mayorista", latlng: [10.0000, -84.1167], address_en: "Heredia Industrial Zone", address_es: "Zona Industrial Heredia", description_en: "Distribution of goods across the Heredia region.", description_es: "Distribución de mercancías en la región de Heredia.", phone: "+50680000009", email: "info@herediadistributors.cr", website: "https://herediadistributors.cr", whatsapp: "50680000009" },
+      { id: "HER02", name_en: "HEREDIA LOGISTICS", name_es: "LOGÍSTICA HEREDIA", category_en: "Logistics & Transport", category_es: "Logística y Transporte", latlng: [10.0100, -84.1200], address_en: "Heredia Logistics Hub", address_es: "Centro Logístico Heredia", description_en: "Logistics solutions for the central region of Costa Rica.", description_es: "Soluciones logísticas para la región central de Costa Rica.", phone: "+50680000010", email: "logistics@heredialogistics.cr", website: "https://heredialogistics.cr", whatsapp: "50680000010" },
+      
+      // Guanacaste
+      { id: "GUA01", name_en: "GUANACASTE AGRIBUSINESS", name_es: "AGROGUANACASTE", category_en: "Agribusiness", category_es: "Agronegocios", latlng: [10.5000, -85.5000], address_en: "Guanacaste Agricultural Zone", address_es: "Zona Agrícola Guanacaste", description_en: "Distribution of agricultural products from the northwest region.", description_es: "Distribución de productos agrícolas de la región noroeste.", phone: "+50680000011", email: "agro@guanacasteagro.cr", website: "https://guanacasteagro.cr", whatsapp: "50680000011" },
+      
+      // Puntarenas
+      { id: "PUN01", name_en: "PUNTARENAS TRADING CO", name_es: "COMERCIAL PUNTARENAS", category_en: "General Trading", category_es: "Comercio General", latlng: [9.9833, -84.8333], address_en: "Puntarenas Central Market", address_es: "Mercado Central Puntarenas", description_en: "General trading and distribution for the Pacific coast region.", description_es: "Comercio general y distribución para la región del Pacífico.", phone: "+50680000012", email: "trade@puntarenastrading.cr", website: "https://puntarenastrading.cr", whatsapp: "50680000012" },
+      
+      // Limón
+      { id: "LIM01", name_en: "LIMÓN TRADING CO", name_es: "COMERCIAL LIMÓN", category_en: "General Trading", category_es: "Comercio General", latlng: [9.9833, -83.0333], address_en: "Limón Central Market", address_es: "Mercado Central Limón", description_en: "General trading and distribution for the Caribbean coast region.", description_es: "Comercio general y distribución para la región del Caribe.", phone: "+50680000013", email: "trade@limontrading.cr", website: "https://limontrading.cr", whatsapp: "50680000013" },
+      
+      // San Carlos
+      { id: "SCA01", name_en: "SAN CARLOS CONSTRUCTIONS", name_es: "CONSTRUCCIONES SAN CARLOS", category_en: "Construction", category_es: "Construcción", latlng: [10.4667, -84.3833], address_en: "San Carlos Building District", address_es: "Distrito de Construcción San Carlos", description_en: "Construction materials and building solutions for northern Costa Rica.", description_es: "Materiales de construcción y soluciones para el norte de Costa Rica.", phone: "+50680000014", email: "build@sancarlosconstruct.cr", website: "https://sancarlosconstruction.cr", whatsapp: "50680000014" }
+    ];
+    
+    const translations = { 
+      en: { 
+        buscar_placeholder: "Search businesses across Costa Rica...", 
+        centrar: "CENTER", 
+        servicios: "QRP2P SERVICES", 
+        mapa: "Map", 
+        satelite: "Satellite", 
+        view_store: "VIEW STORE", 
+        sub_header: "COSTA RICA",
+        no_results: "No results found in Costa Rica"
+      },
+      es: { 
+        buscar_placeholder: "Busque negocios en Costa Rica...", 
+        centrar: "CENTRO", 
+        servicios: "SERVICIOS QRP2P", 
+        mapa: "Mapa", 
+        satelite: "Satélite", 
+        view_store: "VER TIENDA", 
+        sub_header: "COSTA RICA",
+        no_results: "No se encontraron resultados en Costa Rica"
+      }
+    };
+    
+    function t(key) { return translations[currentLang][key] || key; }
+    
+    function getBusinessText(business, field) {
+      if (currentLang === 'es' && business[field + '_es']) {
+        return business[field + '_es'];
+      }
+      return business[field + '_en'];
+    }
+    
+    function generarPopupHTML(business) { 
+      const name = getBusinessText(business, 'name');
+      const category = getBusinessText(business, 'category');
+      const description = getBusinessText(business, 'description');
+      const address = getBusinessText(business, 'address');
+      const storeText = t('view_store');
+      const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
+      let contactButtons = '';
+      if(business.website) contactButtons += `<a href="${business.website}" target="_blank" class="contact-link"><i class="fas fa-globe"></i> Web</a>`;
+      if(business.whatsapp) contactButtons += `<a href="https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>`;
+      if(business.phone) contactButtons += `<a href="tel:${business.phone}" class="contact-link"><i class="fas fa-phone"></i> Call</a>`;
+      if(business.email) contactButtons += `<a href="mailto:${business.email}" class="contact-link"><i class="fas fa-envelope"></i> Email</a>`;
+      return `<div class="popup-business-card"><div class="popup-business-header"><h3>⚡ ${name}</h3><span class="popup-business-category">${category}</span></div><div class="popup-business-info"><div class="popup-business-description">${description}</div><div class="popup-business-address"><i class="fas fa-map-pin"></i> ${address}</div><div class="popup-business-contact">${contactButtons}</div><a href="${websiteUrl}" target="_blank" class="btn-view-store"><i class="fas fa-store"></i> ${storeText}</a></div></div>`; 
+    }
+    
+    function initMap() { 
+      const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      mapa = L.map('mapa', { center: [9.8, -84.0], zoom: 7, zoomControl: false });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      let clusters = L.markerClusterGroup({ iconCreateFunction: cluster => L.divIcon({ html: `<div>${cluster.getChildCount()}</div>`, className: 'cluster-marcadores', iconSize: [40,40] }) }); 
+      let icono = L.divIcon({ className: 'negocio-marker', html: '⚡', iconSize: [32,32], popupAnchor: [0,-16] }); 
+      verifiedBusinesses.forEach(business => { 
+        let popup = generarPopupHTML(business); 
+        let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
+        marker.datosNegocio = business; 
+        marker.datosBusqueda = `${business.name_en} ${business.name_es} ${business.category_en} ${business.category_es} ${business.description_en} ${business.description_es}`.toLowerCase(); 
+        marcadoresOriginales.push(marker); 
+        clusters.addLayer(marker); 
+      }); 
+      mapa.addLayer(clusters); 
+      mapa.googleMapsLayer = googleMapsLayer;
+      mapa.googleSatelliteLayer = googleSatelliteLayer;
+    }
+    
+    function mostrarServiciosQRP2P() {
+      let container = document.getElementById('listaServicios');
+      container.innerHTML = '';
+      serviciosQRP2P.forEach(servicio => {
+        let btn = document.createElement('button');
+        btn.className = 'servicio-item-btn';
+        const name = currentLang === 'es' ? servicio.name_es : servicio.name_en;
+        btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${name}`;
+        btn.addEventListener('click', () => { window.open(servicio.url, '_blank'); document.getElementById('servicioModal').style.display = 'none'; });
+        container.appendChild(btn);
+      });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      document.getElementById('servicioModal').style.display = 'flex';
+    }
+    
+    function centrarMapaRapido() {
+      if (navigator.geolocation) {
+        const btn = document.getElementById('centrar-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>LOCATING...</span>';
+        navigator.geolocation.getCurrentPosition(
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup('Your current location'); mapa.setView([latitude, longitude], 12); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([9.8, -84.0], 7); alert('Could not get your location. Showing Costa Rica.'); }
+        );
+      } else { mapa.setView([9.8, -84.0], 7); }
+    }
+    
+    function updateUILanguage() {
+      document.getElementById('buscador').placeholder = t('buscar_placeholder');
+      document.getElementById('centrar-text').innerText = t('centrar');
+      document.getElementById('servicios-text').innerText = t('servicios');
+      document.getElementById('map-text').innerText = t('mapa');
+      document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      marcadoresOriginales.forEach(marker => { 
+        marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); 
+      });
+      
+      // Update service modal title
+      document.getElementById('servicio-modal-title').innerHTML = `QRP2P ${t('servicios')} <span class="zero-badge">0% COMMISSION</span>`;
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => { 
+      initMap(); updateUILanguage();
+      
+      // Language switcher
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentLang = this.dataset.lang;
+          updateUILanguage();
+          // Update service list if modal is open
+          if (document.getElementById('servicioModal').style.display === 'flex') {
+            mostrarServiciosQRP2P();
+          }
+        });
+      });
+      
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
+      
+      let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 Searching...</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name = getBusinessText(m.datosNegocio, 'name'); 
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${t('view_store')}</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 14); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ ${t('no_results')}</div>`; 
+        }, 300); 
+      }); 
+      document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
+    });
+  </script>
+</body>
+</html>
