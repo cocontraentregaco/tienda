@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>QRP2P HUNGARY | VERIFIED BUSINESSES | P2P MARKETPLACE | 0% COMMISSION</title>
+  <meta name="description" content="QRP2P Hungary. Direct marketplace between verified buyers and sellers across Hungary. Find businesses, properties and services. 0% lifetime commission.">
+  <meta name="keywords" content="QRP2P, Hungary, Magyarország, marketplace, buyer, seller, verified, 0% commission, businesses, properties, Budapest, Debrecen, Szeged">
+  <meta name="author" content="QRP2P">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#000000">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Libre Baskerville', serif; background-color: #ffffff; color: #111111; line-height: 1.5; font-size: 16px; overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    #contenedor-mapa { width: 100%; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    #barra-superior { display: flex; gap: 0.8rem; padding: 0.8rem; background: #ffffff; width: 100%; z-index: 1000; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #eaeaea; flex-shrink: 0; }
+    .contenedor-buscador { position: relative; flex: 1; max-width: 400px; }
+    #buscador { width: 100%; padding: 0.6rem 1.2rem; border: 1.5px solid #e0e0e0; border-radius: 50px; font-size: 16px; font-family: 'Libre Baskerville', serif; transition: all 0.3s ease; background: #ffffff; user-select: text; }
+    #buscador:focus { outline: none; border-color: #000000; }
+    .btn-mapa { background: #000000; color: #ffffff; padding: 0.6rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; display: flex; gap: 5px; font-family: 'Libre Baskerville', serif; transition: all 0.2s ease; }
+    .btn-mapa:hover { background: #333333; }
+    .btn-centrar { background-color: #000000; }
+    .btn-registro { background-color: #25D366; color: #000000; }
+    .botones-izquierda { display: flex; gap: 0.8rem; align-items: center; }
+    .botones-derecha { display: flex; gap: 0.5rem; background: #f0f0f0; padding: 0.3rem; border-radius: 50px; }
+    .map-type-btn { padding: 0.5rem 1rem; border: none; border-radius: 40px; cursor: pointer; background: transparent; font-family: 'Libre Baskerville', serif; font-weight: 600; }
+    .map-type-btn.active { background: #000000; color: white; }
+    .lang-selector { display: flex; gap: 0.3rem; margin-left: 0.5rem; }
+    .lang-btn { background: transparent; border: 1px solid #ccc; border-radius: 20px; padding: 0.4rem 0.8rem; cursor: pointer; font-family: 'Libre Baskerville', serif; font-weight: 600; font-size: 0.8rem; }
+    .lang-btn.active { background: #000000; color: white; border-color: #000000; }
+    #mapa { flex: 1; background: #f0f0f0; width: 100%; min-height: 0; }
+    .leaflet-control-zoom { display: none !important; }
+    .sugerencias-busqueda { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; max-height: 200px; overflow-y: auto; display: none; }
+    .sugerencia-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .sugerencia-item:hover { background-color: #f5f5f5; }
+    .sugerencia-texto { flex: 1; }
+    .sugerencia-boton { margin-left: 10px; padding: 6px 12px; background-color: #000000; color: white; border: none; border-radius: 20px; cursor: pointer; }
+    .cluster-marcadores { background: rgba(0,0,0,0.7); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .negocio-marker { background: transparent; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .user-location-marker { background: transparent; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; }
+    
+    .popup-business-card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      width: 340px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .popup-business-header {
+      background: #000000;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .popup-business-header h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+    }
+    .popup-business-category {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+    }
+    .popup-business-info {
+      padding: 1rem;
+    }
+    .popup-business-description {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .popup-business-address {
+      font-size: 0.7rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .popup-business-address i {
+      margin-top: 0.2rem;
+      color: #000;
+    }
+    .popup-business-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 0.8rem;
+    }
+    .contact-link {
+      font-size: 0.7rem;
+      background: #f5f5f5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .contact-link i { font-size: 0.7rem; }
+    .btn-view-store {
+      display: block;
+      background: #000000;
+      color: white;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .btn-view-store:hover { background: #333333; transform: scale(0.98); }
+    
+    .servicio-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+    .servicio-container {
+      background: white;
+      border-radius: 28px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .servicios-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .servicios-header h2 {
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .servicios-botones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn {
+      background: #000000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    .servicio-item-btn i {
+      font-size: 1.1rem;
+    }
+    .servicio-item-btn:hover { background: #333333; transform: scale(0.98); }
+    
+    .zero-badge {
+      background: #25D366;
+      color: #000;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.5rem;
+      font-weight: bold;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .sub-header {
+      text-align: center;
+      margin-top: 0.3rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 680px) { .popup-business-card { width: 280px; } .servicio-container { padding: 1rem; } }
+  </style>
+</head>
+<body>
+  <div id="contenedor-mapa">
+    <div id="barra-superior">
+      <div class="botones-izquierda">
+        <div class="contenedor-buscador">
+          <input type="search" id="buscador" placeholder="Search businesses across Hungary..." enterkeyhint="search">
+          <div id="sugerencias-busqueda" class="sugerencias-busqueda"></div>
+        </div>
+        <button class="btn-mapa btn-centrar" id="centrar-btn"><i class="fas fa-location-dot"></i><span id="centrar-text">CENTER</span></button>
+        <button class="btn-mapa btn-registro" id="servicios-btn"><i class="fas fa-bolt"></i><span id="servicios-text">QRP2P SERVICES</span></button>
+      </div>
+      <div class="botones-derecha">
+        <button class="map-type-btn active" id="map-btn"><span id="map-text">Map</span></button>
+        <button class="map-type-btn" id="satellite-btn"><span id="satellite-text">Satellite</span></button>
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="hu">HU</button>
+        </div>
+      </div>
+    </div>
+    <div id="mapa"></div>
+  </div>
+
+  <!-- QRP2P Services Modal Hungary -->
+  <div id="servicioModal" class="servicio-modal">
+    <div class="servicio-container">
+      <div class="servicios-header">
+        <h2 id="servicio-modal-title">QRP2P SERVICES <span class="zero-badge">0% COMMISSION</span></h2>
+        <button id="closeServicioBtn" style="background:transparent; border:none; font-size:1.8rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="sub-header" id="subHeaderText">HUNGARY</div>
+      <div id="listaServicios" class="servicios-botones"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+    let currentLang = 'en';
+    let mapa, userMarker, marcadoresOriginales = [], currentLayer;
+    
+    // QRP2P SERVICES (7 services)
+    const serviciosQRP2P = [
+      { id: "plan-anual", name_en: "REGISTER ANNUAL PLAN", name_hu: "ÉVES TERV REGISZTRÁLÁSA", icon: "fa-calendar-alt", url: "https://qrp2p.com/plan-anual-hungary" },
+      { id: "administracion", name_en: "MONTHLY ADMINISTRATION", name_hu: "HAVI ADMINISZTRÁCIÓ", icon: "fa-building", url: "https://qrp2p.com/administration-hungary" },
+      { id: "marketing", name_en: "MONTHLY MARKETING", name_hu: "HAVI MARKETING", icon: "fa-chart-line", url: "https://qrp2p.com/marketing-hungary" },
+      { id: "logistica", name_en: "LOGISTICS", name_hu: "LOGISZTIKA", icon: "fa-truck", url: "https://qrp2p.com/logistics-hungary" },
+      { id: "finanzas", name_en: "FINANCE", name_hu: "PÉNZÜGY", icon: "fa-coins", url: "https://qrp2p.com/finance-hungary" },
+      { id: "contabilidad", name_en: "MONTHLY ACCOUNTING", name_hu: "HAVI KÖNYVELÉS", icon: "fa-calculator", url: "https://qrp2p.com/accounting-hungary" },
+      { id: "academia", name_en: "QRP2P ACADEMY", name_hu: "QRP2P AKADÉMIA", icon: "fa-graduation-cap", url: "https://qrp2p.com/academy" }
+    ];
+    
+    // VERIFIED BUSINESSES - HUNGARY (16 businesses across major cities)
+    const verifiedBusinesses = [
+      // Budapest
+      { id: "BUD01", name_en: "BUDAPEST DISTRIBUTORS", name_hu: "BUDAPESTI FORGALMAZÓK", category_en: "Wholesale Distributor", category_hu: "NAGYNagykereskedő", latlng: [47.4979, 19.0402], address_en: "Budapest Industrial Zone", address_hu: "Budapesti Iparterület", description_en: "Distribution of food, beverages and household products across Hungary.", description_hu: "Élelmiszerek, italok és háztartási termékek forgalmazása Magyarországon.", phone: "+36800000001", email: "info@budapestdistributors.hu", website: "https://budapestdistributors.hu", whatsapp: "36800000001" },
+      { id: "BUD02", name_en: "HUNGARY P2P REAL ESTATE", name_hu: "MAGYARORSZÁG P2P INGATLAN", category_en: "Real Estate", category_hu: "INGATLAN", latlng: [47.5000, 19.0500], address_en: "District V, Budapest", address_hu: "V. kerület, Budapest", description_en: "Buy and sell properties directly between owners in Hungary. 0% commission. Verified guarantee.", description_hu: "Ingatlanok vásárlása és eladása közvetlenül a tulajdonosok között Magyarországon. 0% jutalék. Ellenőrzött garancia.", phone: "+36800000002", email: "contact@p2prealestate.hu", website: "https://qrp2p.com/hu", whatsapp: "36800000002" },
+      { id: "BUD03", name_en: "BUDAPEST TECH SOLUTIONS", name_hu: "BUDAPESTI TECH MEGOLDÁSOK", category_en: "Technology", category_hu: "TECHNOLÓGIA", latlng: [47.4900, 19.0300], address_en: "Újbuda, Budapest", address_hu: "Újbuda, Budapest", description_en: "Distribution of computers, servers and IT solutions for businesses.", description_hu: "Számítógépek, szerverek és IT-megoldások forgalmazása vállalkozások számára.", phone: "+36800000003", email: "tech@budapesttech.hu", website: "https://budapesttech.hu", whatsapp: "36800000003" },
+      { id: "BUD04", name_en: "BUDAPEST AUTO PARTS", name_hu: "BUDAPESTI AUTO ALKATRÉSZEK", category_en: "Auto Parts", category_hu: "AUTO ALKATRÉSZEK", latlng: [47.5100, 19.0600], address_en: "Kőbánya, Budapest", address_hu: "Kőbánya, Budapest", description_en: "Distribution of spare parts and accessories for vehicles in Hungary.", description_hu: "Gépjárműalkatrészek és tartozékok forgalmazása Magyarországon.", phone: "+36800000004", email: "parts@budapestauto.hu", website: "https://budapestauto.hu", whatsapp: "36800000004" },
+      { id: "BUD05", name_en: "BUDAPEST FINANCE GROUP", name_hu: "BUDAPESTI PÉNZÜGYI CSOPORT", category_en: "Finance & Investments", category_hu: "PÉNZÜGY ÉS BEFEKTETÉSEK", latlng: [47.4950, 19.0400], address_en: "Terézváros, Budapest", address_hu: "Terézváros, Budapest", description_en: "Financial advisory and investment services for Hungarian entrepreneurs.", description_hu: "Pénzügyi tanácsadás és befektetési szolgáltatások magyar vállalkozók számára.", phone: "+36800000005", email: "finance@budapestfinance.hu", website: "https://budapestfinance.hu", whatsapp: "36800000005" },
+      
+      // Debrecen
+      { id: "DEB01", name_en: "DEBRECEN DISTRIBUTORS", name_hu: "DEBRECENI FORGALMAZÓK", category_en: "Wholesale Distributor", category_hu: "NAGYNagykereskedő", latlng: [47.5316, 21.6273], address_en: "Debrecen Industrial Zone", address_hu: "Debreceni Iparterület", description_en: "Distribution of goods across the Debrecen region.", description_hu: "Áruk forgalmazása a Debreceni régióban.", phone: "+36800000006", email: "info@debrecendistributors.hu", website: "https://debrecendistributors.hu", whatsapp: "36800000006" },
+      { id: "DEB02", name_en: "DEBRECEN AGRIBUSINESS", name_hu: "DEBRECENI AGROÜZLET", category_en: "Agribusiness", category_hu: "AGROÜZLET", latlng: [47.5400, 21.6400], address_en: "Debrecen Agricultural Zone", address_hu: "Debreceni Mezőgazdasági Zóna", description_en: "Distribution of farming supplies and agricultural products.", description_hu: "Mezőgazdasági termékek és kellékek forgalmazása.", phone: "+36800000007", email: "agro@debrecenagro.hu", website: "https://debrecenagro.hu", whatsapp: "36800000007" },
+      
+      // Szeged
+      { id: "SZE01", name_en: "SZEGED DISTRIBUTORS", name_hu: "SZEGEDI FORGALMAZÓK", category_en: "Wholesale Distributor", category_hu: "NAGYNagykereskedő", latlng: [46.2530, 20.1414], address_en: "Szeged Industrial Zone", address_hu: "Szegedi Iparterület", description_en: "Distribution of goods across the Szeged region.", description_hu: "Áruk forgalmazása a Szegedi régióban.", phone: "+36800000008", email: "info@szegeddistributors.hu", website: "https://szegeddistributors.hu", whatsapp: "36800000008" },
+      { id: "SZE02", name_en: "SZEGED TRADING CO", name_hu: "SZEGEDI KERESKEDELMI TÁRSASÁG", category_en: "General Trading", category_hu: "ÁLTALÁNOS KERESKEDELEM", latlng: [46.2600, 14.2600], address_en: "Szeged Central Market", address_hu: "Szegedi Központi Piac", description_en: "General trading and distribution for the Szeged region.", description_hu: "Általános kereskedelem és forgalmazás a Szegedi régióban.", phone: "+36800000009", email: "trade@szegedtrading.hu", website: "https://szegedtrading.hu", whatsapp: "36800000009" },
+      
+      // Miskolc
+      { id: "MIS01", name_en: "MISKOLC DISTRIBUTORS", name_hu: "MISKOLCI FORGALMAZÓK", category_en: "Wholesale Distributor", category_hu: "NAGYNagykereskedő", latlng: [48.1035, 20.7914], address_en: "Miskolc Industrial Zone", address_hu: "Miskolci Iparterület", description_en: "Distribution of goods across the Miskolc region.", description_hu: "Áruk forgalmazása a Miskolci régióban.", phone: "+36800000010", email: "info@miskolcdistributors.hu", website: "https://miskolcdistributors.hu", whatsapp: "36800000010" },
+      
+      // Pécs
+      { id: "PEC01", name_en: "PÉCS DISTRIBUTORS", name_hu: "PÉCSI FORGALMAZÓK", category_en: "Wholesale Distributor", category_hu: "NAGYNagykereskedő", latlng: [46.0727, 18.2323], address_en: "Pécs Industrial Zone", address_hu: "Pécsi Iparterület", description_en: "Distribution of goods across the Pécs region.", description_hu: "Áruk forgalmazása a Pécsi régióban.", phone: "+36800000011", email: "info@pecsdistributors.hu", website: "https://pecsdistributors.hu", whatsapp: "36800000011" },
+      { id: "PEC02", name_en: "PÉCS TRADING CO", name_hu: "PÉCSI KERESKEDELMI TÁRSASÁG", category_en: "General Trading", category_hu: "ÁLTALÁNOS KERESKEDELEM", latlng: [46.0800, 18.2400], address_en: "Pécs Central Market", address_hu: "Pécsi Központi Piac", description_en: "General trading and distribution for the Pécs region.", description_hu: "Általános kereskedelem és forgalmazás a Pécsi régióban.", phone: "+36800000012", email: "trade@pecstrading.hu", website: "https://pecstrading.hu", whatsapp: "36800000012" },
+      
+      // Győr
+      { id: "GYO01", name_en: "GYŐR DISTRIBUTORS", name_hu: "GYŐRI FORGALMAZÓK", category_en: "Wholesale Distributor", category_hu: "NAGYNagykereskedő", latlng: [47.6875, 17.6504], address_en: "Győr Industrial Zone", address_hu: "Győri Iparterület", description_en: "Distribution of goods across the Győr region.", description_hu: "Áruk forgalmazása a Győri régióban.", phone: "+36800000013", email: "info@gyordistributors.hu", website: "https://gyordistributors.hu", whatsapp: "36800000013" },
+      
+      // Székesfehérvár
+      { id: "SZE01", name_en: "SZÉKESFEHÉRVÁR DISTRIBUTORS", name_hu: "SZÉKESFEHÉRVÁRI FORGALMAZÓK", category_en: "Wholesale Distributor", category_hu: "NAGYNagykereskedő", latlng: [47.1900, 18.4100], address_en: "Székesfehérvár Industrial Zone", address_hu: "Székesfehérvári Iparterület", description_en: "Distribution of goods across the Székesfehérvár region.", description_hu: "Áruk forgalmazása a Székesfehérvári régióban.", phone: "+36800000014", email: "info@szekesfehervardistributors.hu", website: "https://szekesfehervardistributors.hu", whatsapp: "36800000014" },
+      
+      // Szombathely
+      { id: "SZO01", name_en: "SZOMBATHELY TRADING CO", name_hu: "SZOMBATHELYI KERESKEDELMI TÁRSASÁG", category_en: "General Trading", category_hu: "ÁLTALÁNOS KERESKEDELEM", latlng: [47.2300, 16.6200], address_en: "Szombathely Central Market", address_hu: "Szombathelyi Központi Piac", description_en: "General trading and distribution for the Szombathely region.", description_hu: "Általános kereskedelem és forgalmazás a Szombathelyi régióban.", phone: "+36800000015", email: "trade@szombathelytrading.hu", website: "https://szombathelytrading.hu", whatsapp: "36800000015" },
+      
+      // Kecskemét
+      { id: "KEC01", name_en: "KECSKEMÉT CONSTRUCTIONS", name_hu: "KECSKEMÉTI ÉPÍTÉSEK", category_en: "Construction", category_hu: "ÉPÍTÉS", latlng: [46.9000, 19.6900], address_en: "Kecskemét Building District", address_hu: "Kecskeméti Építési Körzet", description_en: "Construction materials and building solutions for Hungary.", description_hu: "Építőanyagok és építési megoldások Magyarországnak.", phone: "+36800000016", email: "build@kecskemetconstruct.hu", website: "https://kecskemetconstruction.hu", whatsapp: "36800000016" }
+    ];
+    
+    const translations = { 
+      en: { 
+        buscar_placeholder: "Search businesses across Hungary...", 
+        centrar: "CENTER", 
+        servicios: "QRP2P SERVICES", 
+        mapa: "Map", 
+        satelite: "Satellite", 
+        view_store: "VIEW STORE", 
+        sub_header: "HUNGARY",
+        no_results: "No results found in Hungary"
+      },
+      hu: { 
+        buscar_placeholder: "Keressen vállalkozásokat Magyarországon...", 
+        centrar: "KÖZPONT", 
+        servicios: "QRP2P SZOLGÁLTATÁSOK", 
+        mapa: "Térkép", 
+        satelite: "Műhold", 
+        view_store: "BOLT MEGTEKINTÉSE", 
+        sub_header: "MAGYARORSZÁG",
+        no_results: "Nem található eredmény Magyarországon"
+      }
+    };
+    
+    function t(key) { return translations[currentLang][key] || key; }
+    
+    function getBusinessText(business, field) {
+      if (currentLang === 'hu' && business[field + '_hu']) {
+        return business[field + '_hu'];
+      }
+      return business[field + '_en'];
+    }
+    
+    function generarPopupHTML(business) { 
+      const name = getBusinessText(business, 'name');
+      const category = getBusinessText(business, 'category');
+      const description = getBusinessText(business, 'description');
+      const address = getBusinessText(business, 'address');
+      const storeText = t('view_store');
+      const websiteUrl = business.website || (business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : '#');
+      let contactButtons = '';
+      if(business.website) contactButtons += `<a href="${business.website}" target="_blank" class="contact-link"><i class="fas fa-globe"></i> Web</a>`;
+      if(business.whatsapp) contactButtons += `<a href="https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>`;
+      if(business.phone) contactButtons += `<a href="tel:${business.phone}" class="contact-link"><i class="fas fa-phone"></i> Call</a>`;
+      if(business.email) contactButtons += `<a href="mailto:${business.email}" class="contact-link"><i class="fas fa-envelope"></i> Email</a>`;
+      return `<div class="popup-business-card"><div class="popup-business-header"><h3>⚡ ${name}</h3><span class="popup-business-category">${category}</span></div><div class="popup-business-info"><div class="popup-business-description">${description}</div><div class="popup-business-address"><i class="fas fa-map-pin"></i> ${address}</div><div class="popup-business-contact">${contactButtons}</div><a href="${websiteUrl}" target="_blank" class="btn-view-store"><i class="fas fa-store"></i> ${storeText}</a></div></div>`; 
+    }
+    
+    function initMap() { 
+      const googleMapsLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      const googleSatelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+      mapa = L.map('mapa', { center: [47.0, 19.5], zoom: 7, zoomControl: false });
+      currentLayer = googleMapsLayer;
+      currentLayer.addTo(mapa);
+      let clusters = L.markerClusterGroup({ iconCreateFunction: cluster => L.divIcon({ html: `<div>${cluster.getChildCount()}</div>`, className: 'cluster-marcadores', iconSize: [40,40] }) }); 
+      let icono = L.divIcon({ className: 'negocio-marker', html: '⚡', iconSize: [32,32], popupAnchor: [0,-16] }); 
+      verifiedBusinesses.forEach(business => { 
+        let popup = generarPopupHTML(business); 
+        let marker = L.marker(business.latlng, { icon: icono }).bindPopup(popup, { maxWidth: 380, className: 'custom-popup' }); 
+        marker.datosNegocio = business; 
+        marker.datosBusqueda = `${business.name_en} ${business.name_hu} ${business.category_en} ${business.category_hu} ${business.description_en} ${business.description_hu}`.toLowerCase(); 
+        marcadoresOriginales.push(marker); 
+        clusters.addLayer(marker); 
+      }); 
+      mapa.addLayer(clusters); 
+      mapa.googleMapsLayer = googleMapsLayer;
+      mapa.googleSatelliteLayer = googleSatelliteLayer;
+    }
+    
+    function mostrarServiciosQRP2P() {
+      let container = document.getElementById('listaServicios');
+      container.innerHTML = '';
+      serviciosQRP2P.forEach(servicio => {
+        let btn = document.createElement('button');
+        btn.className = 'servicio-item-btn';
+        const name = currentLang === 'hu' ? servicio.name_hu : servicio.name_en;
+        btn.innerHTML = `<i class="fas ${servicio.icon}"></i> ${name}`;
+        btn.addEventListener('click', () => { window.open(servicio.url, '_blank'); document.getElementById('servicioModal').style.display = 'none'; });
+        container.appendChild(btn);
+      });
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      document.getElementById('servicioModal').style.display = 'flex';
+    }
+    
+    function centrarMapaRapido() {
+      if (navigator.geolocation) {
+        const btn = document.getElementById('centrar-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>LOCATING...</span>';
+        navigator.geolocation.getCurrentPosition(
+          pos => { const { latitude, longitude } = pos.coords; if (userMarker) mapa.removeLayer(userMarker); userMarker = L.marker([latitude, longitude], { icon: L.divIcon({ className: 'user-location-marker', html: '📍', iconSize: [28, 28] }) }).addTo(mapa).bindPopup('Your current location'); mapa.setView([latitude, longitude], 12); btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; },
+          err => { btn.innerHTML = '<i class="fas fa-location-dot"></i><span>'+t('centrar')+'</span>'; mapa.setView([47.0, 19.5], 7); alert('Could not get your location. Showing Hungary.'); }
+        );
+      } else { mapa.setView([47.0, 19.5], 7); }
+    }
+    
+    function updateUILanguage() {
+      document.getElementById('buscador').placeholder = t('buscar_placeholder');
+      document.getElementById('centrar-text').innerText = t('centrar');
+      document.getElementById('servicios-text').innerText = t('servicios');
+      document.getElementById('map-text').innerText = t('mapa');
+      document.getElementById('satellite-text').innerText = t('satelite');
+      document.getElementById('subHeaderText').innerText = t('sub_header');
+      marcadoresOriginales.forEach(marker => { 
+        marker.bindPopup(generarPopupHTML(marker.datosNegocio), { maxWidth: 380, className: 'custom-popup' }); 
+      });
+      
+      // Update service modal title
+      document.getElementById('servicio-modal-title').innerHTML = `QRP2P ${t('servicios')} <span class="zero-badge">0% COMMISSION</span>`;
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => { 
+      initMap(); updateUILanguage();
+      
+      // Language switcher
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentLang = this.dataset.lang;
+          updateUILanguage();
+          // Update service list if modal is open
+          if (document.getElementById('servicioModal').style.display === 'flex') {
+            mostrarServiciosQRP2P();
+          }
+        });
+      });
+      
+      document.getElementById('centrar-btn').addEventListener('click', centrarMapaRapido);
+      document.getElementById('servicios-btn').addEventListener('click', mostrarServiciosQRP2P);
+      document.getElementById('map-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleMapsLayer; currentLayer.addTo(mapa); document.getElementById('map-btn').classList.add('active'); document.getElementById('satellite-btn').classList.remove('active'); }); 
+      document.getElementById('satellite-btn').addEventListener('click', () => { mapa.removeLayer(currentLayer); currentLayer = mapa.googleSatelliteLayer; currentLayer.addTo(mapa); document.getElementById('satellite-btn').classList.add('active'); document.getElementById('map-btn').classList.remove('active'); }); 
+      document.getElementById('closeServicioBtn').addEventListener('click', () => document.getElementById('servicioModal').style.display = 'none');
+      window.addEventListener('click', (e) => { if(e.target === document.getElementById('servicioModal')) document.getElementById('servicioModal').style.display = 'none'; });
+      
+      let inputBuscar = document.getElementById('buscador'); let buscadorTimeout;
+      inputBuscar.addEventListener('input', (e) => { 
+        clearTimeout(buscadorTimeout); 
+        let term = e.target.value.trim(); 
+        let sugDiv = document.getElementById('sugerencias-busqueda'); 
+        if(term.length < 2) { sugDiv.style.display = 'none'; return; } 
+        sugDiv.innerHTML = `<div class="sugerencia-item">🔍 Searching...</div>`; 
+        sugDiv.style.display = 'block'; 
+        buscadorTimeout = setTimeout(() => { 
+          let resultados = marcadoresOriginales.filter(m => m.datosBusqueda.includes(term.toLowerCase())); 
+          sugDiv.innerHTML = ''; 
+          resultados.forEach(m => { 
+            let name = getBusinessText(m.datosNegocio, 'name'); 
+            let item = document.createElement('div'); 
+            item.className = 'sugerencia-item'; 
+            item.innerHTML = `<div class="sugerencia-texto"><strong>⚡ ${name}</strong></div><button class="sugerencia-boton">${t('view_store')}</button>`; 
+            item.querySelector('.sugerencia-boton').addEventListener('click', () => { m.openPopup(); mapa.setView(m.getLatLng(), 14); sugDiv.style.display = 'none'; }); 
+            sugDiv.appendChild(item); 
+          }); 
+          if(resultados.length===0) sugDiv.innerHTML = `<div class="sugerencia-item">❌ ${t('no_results')}</div>`; 
+        }, 300); 
+      }); 
+      document.addEventListener('click', (e) => { if(!e.target.closest('.contenedor-buscador')) document.getElementById('sugerencias-busqueda').style.display = 'none'; });
+    });
+  </script>
+</body>
+</html>
